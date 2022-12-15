@@ -49,14 +49,16 @@ function Login() {
 
   return (
     <Container>
-      <Avatar size={64} style={{ backgroundColor: '#1980da' }} icon={<UserOutlined />} />
       
-      <Form id='login-form' labelCol={{span: 8,}} wrapperCol={{span: 16,}} >
+      <Form id='login-form' className='form' >
+
+        <Avatar size={64} style={{ backgroundColor: '#1980da', marginBottom: '16px' }} icon={<UserOutlined />} />
 
         <Form.Item label="Indicador" name="indicador" rules={[{ required: true, message: 'Porfavor ingrese su indicador',},]} >
           <Input 
             size="large" 
             placeholder="Indicador"
+            className='input'
             onChange={(e) => {setIndicador(e.target.value)}}
           />
         </Form.Item>
@@ -65,15 +67,17 @@ function Login() {
           <Input.Password 
             size="large" 
             placeholder="Contraseña"
+            className='input'
             onChange={(e) => {setPassword(e.target.value)}}
           />
         </Form.Item>
 
-        <Form.Item name="rol" label="Rol" rules={[{ required: true }]}>
+        <Form.Item name="rol" label="Rol------" rules={[{ required: true }]}>
           <Select
             defaultValue="user"
             allowClear
             size="large"
+            className='input'
             onChange={(e) => {setRol(e.target.value)}}
             options={[
               { value: 'user', label: 'User' },
@@ -82,11 +86,11 @@ function Login() {
           />
         </Form.Item>
 
-        <Form.Item name="remember" valuePropName="unchecked" wrapperCol={{ offset: 8, span: 16,}} >
+        <Form.Item name="remember" valuePropName="unchecked" >
           <Checkbox>Recordar</Checkbox>
         </Form.Item>
 
-        <Form.Item wrapperCol={{ offset: 8, span: 16,}} >
+        <Form.Item >
           <Button type="primary" htmlType="submit" onClick={createPost} >
             Login
           </Button>
@@ -107,5 +111,21 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  gap: 32px;
+
+  .form{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 120px;
+
+    .input{
+      width: 200px;
+    }
+  }
+
+  button{
+    width: 100px;
+    height: 40px;
+  }
 `;
