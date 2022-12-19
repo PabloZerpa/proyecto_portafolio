@@ -10,21 +10,9 @@ function Login() {
   const [password, setPassword] = useState('');
   const [indicador, setIndicador] = useState('');
   const [rol, setRol] = useState('');
+
   const navigate = useNavigate();
-
   const clearForm = () => document.getElementById("login-form").reset();
-
-  function probarToken() {
-    const token = document.cookie.replace('token=', '');
-
-    fetch('http://localhost:3001/api/user', {
-        method: 'GET',
-        headers: { 'auth-token': token },
-      }).then(res => res.json()).then((data) => {
-        console.log(data);
-      })
-  }
-
 
   function createPost() {
     if(password.length !== '' && indicador.length !== '' && rol.length !== ''){
@@ -72,13 +60,13 @@ function Login() {
           />
         </Form.Item>
 
-        <Form.Item name="rol" label="Rol------" rules={[{ required: true }]}>
+        <Form.Item name="rol" label="Rol" rules={[{ required: true }]}>
           <Select
-            defaultValue="user"
-            allowClear
             size="large"
+            placeholder="Seleccione"
             className='input'
             onChange={(e) => {setRol(e.target.value)}}
+            style={{ marginLeft: '38px' }}
             options={[
               { value: 'user', label: 'User' },
               { value: 'admin', label: 'Admin' }

@@ -1,16 +1,25 @@
 
-import { Link } from "react-router-dom";
-import { FaHome, FaRegListAlt, FaServer, FaCubes } from "react-icons/fa";
-import { Input } from 'antd';
-import styled from "styled-components";
 import { useState } from "react";
-import { UserOutlined } from '@ant-design/icons';
-import { Avatar } from 'antd';
+import { Link } from "react-router-dom";
+import { Dropdown } from 'antd';
+import { FaUserCircle, FaPowerOff, FaCog } from 'react-icons/fa';
+import styled from "styled-components";
 
-const { Search } = Input;
-const onSearch = (value) => console.log(value);
+const items = [
+  {
+    key: '0',
+    icon: <FaCog />,
+    label: <Link className="linkNav" to="/dashboard" >Configuracion</Link>
+  },
+  {
+    key: '1',
+    icon: <FaPowerOff />,
+    label: <Link className="linkNav" to="/" >Cerrar Sesion</Link>
+  },
+];
 
 function Navbar() {
+
   const [isLogin, setIsLogin] = useState(true);
 
   return (
@@ -20,34 +29,27 @@ function Navbar() {
         <img src="https://logodownload.org/wp-content/uploads/2019/03/pdvsa-logo.png" alt="logo" className="logo" />
       </Link>
 
+      <div className="title">Repositorio de Infraestructura y Aplicaciones</div>
+
       {!isLogin ? (
-          <div className="title">Repositorio de Infraestructura y Aplicaciones</div>
+        <div></div>
       ) : (
         <div>
 
-          <ul className="userOptions center">
-            <Link className="linkNav center" to="/dashboard" ><FaHome className="icon" />Inicio</Link>
-            <Link className="linkNav center" to="/" ><FaCubes className="icon" />Aplicaciones</Link>
-            <Link className="linkNav center" to="/" ><FaRegListAlt className="icon" />Administra</Link>
-            <Link className="linkNav center" to="/" ><FaServer className="icon" />Servidores</Link>
-          </ul>
+            <Dropdown
+                menu={{ items }}
+                trigger={['click']}
+                placement="bottom"
+                style={{background: '#1980da'}}
+              >
+                <a className="center" onClick={(e) => e.preventDefault()}>
+                  Nombre de Usuario
+                  <FaUserCircle style={{ color: '#1980da', fontSize: '42px', marginRight: '32px', cursor: "pointer" }} />
+                </a>
+            </Dropdown>
 
         </div>
-
       )}
-
-      <div className="prueba">
-        <Search 
-          className="searchBar"
-          allowClear
-          placeholder="Search" 
-          onSearch={onSearch} 
-          enterButton
-          size="large"
-          style={{width: 250, marginRight: '16px' }}
-        />
-        <Avatar shape="square" size='large' style={{ backgroundColor: '#1980da', cursor: 'pointer' }} icon={<UserOutlined />} />
-      </div>
 
     </Navegation>
   );
@@ -59,7 +61,7 @@ const Navegation = styled.nav`
   width: 100%;
   height: 80px;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   background: #ffffff;
   position: fixed;
@@ -68,19 +70,19 @@ const Navegation = styled.nav`
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 10px;
   }
 
   .logo{
     width: 120px;
-    /* position: absolute;
-    top: 20px;
-    left: 80px; */
+    margin-left: 32px;
   }
 
   .title{
-    font-size: 24px;
+    font-size: 18px;
     font-weight: bold;
     color: #000;
+    text-align: center;
   }
   
   .userOptions{
@@ -116,12 +118,10 @@ const Navegation = styled.nav`
       color: #000;
     }
 
-    .searchBar{
-      /* position: absolute;
-      top: 20px;
-      right: 80px; */
+    .userMenu{
+      cursor: pointer;
     }
+
   }
 
-  
 `;
