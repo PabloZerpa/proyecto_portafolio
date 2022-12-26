@@ -1,46 +1,54 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; 
-import { Button, Checkbox, Form, Input, Avatar, Select } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button, Checkbox, Form, Input, Select } from 'antd';
+import { FaUserCircle } from 'react-icons/fa';
 import styled from "styled-components";
-import Axios from "axios";
+import axios from "axios";
+
+const baseUrl = 'http://localhost:3001/api/login';
 
 function Login() {
-
+  
   const [password, setPassword] = useState('');
   const [indicador, setIndicador] = useState('');
   const [rol, setRol] = useState('');
+  const [token, setToken] = useState('');
 
   const navigate = useNavigate();
-  const clearForm = () => document.getElementById("login-form").reset();
+  const clearForm = () => document.getElementById("loginForm").reset();
 
-  function createPost() {
+  // -------------------- FUNCION PARA INICIAR SESION --------------------
+  async function loginUser() {
+    
     if(password.length !== '' && indicador.length !== '' && rol.length !== ''){
 
-      Axios.post('http://localhost:3001/api/auth/login', {
-        indicador: indicador,
-        password: password,
-        rol: rol,
-      })
-      .then((cred) => {
-        console.log(cred.data);
-        document.cookie = `token=${cred.data.token}; max-age=${60*3}; path=/; samesite=strict`;
+      console.log(indicador,password,rol);
+      
+      try {
+        const { data } = await axios.post(baseUrl, {indicador: indicador,password: password,rol: rol,}, )
+        console.log(data);
+
+        document.cookie = `token=${data.token}; max-age=${60*3}; path=/; samesite=strict`;
         console.log(document.cookie);
-      })
-      .then(() => {
+
         clearForm();
         navigate("/dashboard");
-      });
+
+      } catch (error) {
+        console.log(error);
+      }
 
     }
   }
 
   return (
+
     <Container>
       
-      <Form id='login-form' className='form' >
+      <Form id='loginForm' className='form' method = 'POST' >
 
-        <Avatar size={64} style={{ backgroundColor: '#1980da', marginBottom: '16px' }} icon={<UserOutlined />} />
+        <FaUserCircle style={{ color: '#1980da', fontSize: '64px', marginBottom: '16px' }} />
 
         <Form.Item label="Indicador" name="indicador" rules={[{ required: true, message: 'Porfavor ingrese su indicador',},]} >
           <Input 
@@ -65,7 +73,7 @@ function Login() {
             size="large"
             placeholder="Seleccione"
             className='input'
-            onChange={(e) => {setRol(e.target.value)}}
+            onChange={(e) => {setRol(e)}}
             style={{ marginLeft: '38px' }}
             options={[
               { value: 'user', label: 'User' },
@@ -79,7 +87,7 @@ function Login() {
         </Form.Item>
 
         <Form.Item >
-          <Button type="primary" htmlType="submit" onClick={createPost} >
+          <Button type="primary" htmlType="submit" onClick={loginUser} >
             Login
           </Button>
         </Form.Item>
@@ -111,7 +119,7 @@ const Container = styled.div`
       width: 200px;
     }
   }
-
+  
   button{
     width: 100px;
     height: 40px;

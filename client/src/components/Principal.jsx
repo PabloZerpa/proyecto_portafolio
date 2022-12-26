@@ -1,77 +1,83 @@
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Layout, Table, Input } from 'antd';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import styled from "styled-components";
-import Axios from "axios";
+import axios from "axios";
 
 const { Search } = Input;
 const onSearch = (value) => console.log(value);
 const { Content } = Layout;
 const baseURL = "http://localhost:3001/api/user";
 
-const columnas = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-    },
-    {
-      title: 'Acronimo',
-      dataIndex: 'acronimo',
-      key: 'acronimo',
-    },
-    {
-      title: 'Nombre',
-      dataIndex: 'nombre',
-      key: 'nombre',
-    },
-  ];
+// const columnas = [
+//     {
+//       title: 'ID',
+//       dataIndex: 'id',
+//       key: 'id',
+//     },
+//     {
+//       title: 'Acronimo',
+//       dataIndex: 'acronimo',
+//       key: 'acronimo',
+//     },
+//     {
+//       title: 'Nombre',
+//       dataIndex: 'nombre',
+//       key: 'nombre',
+//     },
+//   ];
 
-  const datos = [
-    {
-      key: '1',
-      id: 1,
-      acronimo: 'sapcod',
-      name: 'SISTEMA AUTOMATIZADO DE PREVENCION Y CONTROL DE DERRAMES',
-    },
-  ];
+//   const datos = [
+//     {
+//       key: '1',
+//       id: 12264,
+//       acronimo: 'sapcod',
+//       nombre: 'SISTEMA AUTOMATIZADO DE PREVENCION Y CONTROL DE DERRAMES',
+//     },
+//   ];
 
-function UserContent() {
+function Principal() {
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState([]);
 
   useEffect(() => {
 
     const token = document.cookie.replace('token=', '');
-    const fetchData = async () => {
+    console.log(token);
+
+    const obtenerDatos = async () => {
       try {
-        const response = await Axios({url: baseURL,
+        const { data } = await axios({url: baseURL,
           method: 'GET',
-          headers: { 'auth-token': token },
+          headers: { 'Authorization': token },
         });
-        setData(response.data);
-        setIsLoading(false)
+        console.log(data);
+        setData(data);
+        setIsLoading(false);
       } catch (error) {console.log(error);}
     };
-    fetchData();
+
+    obtenerDatos();
   }, [setData]);
+
 
     return (
       <Container>
 
         <Content className="content center">
-        <Search 
-              allowClear
-              enterButton
-              className="searchBar"
-              placeholder="Search" 
-              onSearch={onSearch} 
-              size="large"
-              style={{width: '50%'}}
-          />
 
+          <Search 
+            allowClear
+            enterButton
+            className="searchBar"
+            placeholder="Search" 
+            onSearch={onSearch} 
+            size="large"
+            style={{width: '50%'}}
+          />
+          
           {isLoading ? (
             <>
               <AiOutlineLoading3Quarters style={{ color: '#1980da', fontSize: '60px' }} />
@@ -79,21 +85,23 @@ function UserContent() {
             </>
           ) : (
             <>
-
-              <Table 
+            
+              {/*<Table 
                 style={{width: '90%'}}
                 pagination={false}
                 columns={columnas} 
-                dataSource={datos} />
+                dataSource={datos} 
+              />*/}
 
-              {/*data.map((item) => (
+              {data.map((item) => (
                 <div key={item.id}>
-                  <h3>{item.name}</h3>
-                  <p>{item.cedula}</p>
-                  <p>{item.email}</p>
+                  <h3>{item.id}</h3>
+                  <p>{item.indicador}</p>
                   <p>{item.password}</p>
+                  <p>{item.rol}</p>
                 </div>
-              ))*/}
+              ))}
+
             </>
           )}
 
@@ -105,7 +113,7 @@ function UserContent() {
     );
 }
 
-export default UserContent;
+export default Principal;
 
 const Container = styled.nav`
     width: 100%;

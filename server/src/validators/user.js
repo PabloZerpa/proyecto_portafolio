@@ -3,10 +3,9 @@ const { check, validationResult } = require("express-validator");
 
 // *************** VALIDAR DATOS USUARIOS ***************
 const validatorCreateItem = [
-    check("name").exists().notEmpty().isString(),
-    check("cedula").exists().notEmpty().isNumeric(),
-    check("email").exists().notEmpty().isEmail().normalizeEmail(),
+    check("indicador").exists().notEmpty().isString(),
     check("password").exists().notEmpty().isLength({min:8, max:12}),
+    check("rol").exists().notEmpty().isString(),
     (req,res,next) => {
         try{
             validationResult(req).throw();

@@ -1,7 +1,8 @@
 
 import React from "react";
-import UserMenu from "../components/UserMenu";
-import UserContent from "../components/UserContent";
+import Header from "../components/Header";
+import MenuUsuario from "../components/MenuUsuario";
+import Principal from "../components/Principal";
 import styled from "styled-components";
 
 function Dashboard() {
@@ -9,9 +10,11 @@ function Dashboard() {
   return (
     <Container>
 
-      <UserMenu />
+      <Header login={true} user={'Pablo'} />
+
+      <MenuUsuario />
       
-      <UserContent />
+      <Principal />
       
     </Container>
   )

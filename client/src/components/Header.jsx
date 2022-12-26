@@ -4,7 +4,11 @@ import { Link } from "react-router-dom";
 import { Dropdown } from 'antd';
 import { FaUserCircle, FaPowerOff, FaCog } from 'react-icons/fa';
 import styled from "styled-components";
+import axios from "axios";
 
+const baseURL = "http://localhost:3001/api/logout";
+
+// -------------------- CONTENIDO INTERNO DROPDOWN --------------------
 const items = [
   {
     key: '0',
@@ -14,40 +18,47 @@ const items = [
   {
     key: '1',
     icon: <FaPowerOff />,
-    label: <Link className="linkNav" to="/" >Cerrar Sesion</Link>
+    label: <Link className="linkNav" onClick={logoutUser} to="/" >Cerrar Sesion</Link>
   },
 ];
 
-function Navbar() {
+// -------------------- FUNCION PARA CERRAR SESION --------------------
+async function logoutUser() {
 
-  const [isLogin, setIsLogin] = useState(true);
+  console.log('LOGOUT');
+  try {
+    await axios.get(baseURL);
+  } catch (error) {console.log(error);}
+}
+
+// -------------------- NAVEGACION --------------------
+function Header({ login }) {
+
+  const [data, setData] = useState([]);
 
   return (
+    
     <Navegation>
-
       <Link className="linkNav" to="/">
         <img src="https://logodownload.org/wp-content/uploads/2019/03/pdvsa-logo.png" alt="logo" className="logo" />
       </Link>
-
       <div className="title">Repositorio de Infraestructura y Aplicaciones</div>
 
-      {!isLogin ? (
+      {!login ? (
         <div></div>
       ) : (
-        <div>
-
+        <div className="perfilUsuario">
             <Dropdown
                 menu={{ items }}
                 trigger={['click']}
                 placement="bottom"
                 style={{background: '#1980da'}}
-              >
-                <a className="center" onClick={(e) => e.preventDefault()}>
-                  Nombre de Usuario
+            >
+                <a href='/' className="center" onClick={(e) => e.preventDefault()}>
+                  {data.indicador}
                   <FaUserCircle style={{ color: '#1980da', fontSize: '42px', marginRight: '32px', cursor: "pointer" }} />
                 </a>
             </Dropdown>
-
         </div>
       )}
 
@@ -55,7 +66,7 @@ function Navbar() {
   );
 } 
 
-export default Navbar;
+export default Header;
 
 const Navegation = styled.nav`
   width: 100%;
@@ -84,44 +95,10 @@ const Navegation = styled.nav`
     color: #000;
     text-align: center;
   }
-  
-  .userOptions{
-    width: 100%;
-    height: 80px;
-    margin-top: 15px;
-    font-size: 14px;
-    font-weight: bold;
+
+  a{
+    text-decoration: none;
     color: #000;
-    gap: 10px;
-
-    *{
-      width: 120px;
-      height: 50px;
-      background: none;
-    }
-    *:hover{
-      width: 120px;
-      height: 50px;
-      background: #1f8bf0;
-      border-radius: 5px;
-    }
-
-    .linkNav{
-      text-decoration: none;
-      gap: 5px;
-
-      .icon{
-        width: 16px;
-      }
-    }
-    .linkNav:visited{
-      color: #000;
-    }
-
-    .userMenu{
-      cursor: pointer;
-    }
-
   }
-
+  
 `;

@@ -1,7 +1,7 @@
 
 const pool = require('../config');
 const { matchedData } = require('express-validator');
-const { handleHttpError } = require('../utils/handleErrors');
+const { handleHttpError } = require('../middlewares/handleErrors');
 
 // *************** OBTENER TODOS LOS DATOS ***************
 const getItems = async (req,res) => {
@@ -19,9 +19,7 @@ const getItem = async (req,res) => {
         const body = matchedData(req);
         const {id} = body;
         const [rows] = await pool.query('SELECT * FROM usuarios WHERE id = ?', [req.params]);
-        res.send({
-            id: rows.insertId
-        });
+        res.send({ id: rows.insertId });
     } catch (error) {
         handleHttpError(res,"ERROR_CREATE_ITEMS");
     }
@@ -31,14 +29,13 @@ const getItem = async (req,res) => {
 const createItems = async (req,res) => {
     try {
         const body = matchedData(req);
-        const {name, cedula, email, password} = body;
-        const [rows] = await pool.query('INSERT INTO usuarios (name, cedula, email, password) VALUES (?,?,?,?)', [name, cedula, email, password]);
+        const {indicador, password, rol} = body;
+        const [rows] = await pool.query('INSERT INTO usuarios (indicador, password, rol) VALUES (?,?,?)', [indicador,password,rol]);
         res.send({
             id: rows.insertId,
-            name, 
-            cedula, 
-            email, 
-            password
+            indicador,
+            password,
+            rol,
         });
     } catch (error) {
         handleHttpError(res,"ERROR_CREATE_ITEMS");
@@ -50,14 +47,13 @@ const createItems = async (req,res) => {
 const updateItems = async (req,res) => {
     try {
         const body = matchedData(req);
-        const {name, cedula, email, password} = body;
-        const [rows] = await pool.query('UPDATE usuarios SET name = IFNULL(?), cedula = IFNULL(?), email = IFNULL(?), password = IFNULL(?) WHERE id = ? ', [name, cedula, email, password]);
+        const {indicador, password, rol} = body;
+        const [rows] = await pool.query('UPDATE usuarios SET indicador = IFNULL(?), password = IFNULL(?), rol = IFNULL(?) WHERE id = ? ', [indicador, password, rol]);
         res.send({
             id: rows.insertId,
-            name, 
-            cedula, 
-            email, 
-            password
+            indicador,
+            password,
+            rol
         });
     } catch (error) {
         handleHttpError(res,"ERROR_UPDATE_ITEMS");
@@ -75,4 +71,4 @@ const deleteItems = async (req,res) => {
 };
 
 
-module.exports = { getItems, getItem, createItems, updateItems, deleteItems};
+module.exports = { getItems, getItem, createItems, updateItems, deleteItems };

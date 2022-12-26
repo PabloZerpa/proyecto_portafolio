@@ -1,21 +1,21 @@
 
 import { Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
+import Header from "./components/Header";
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import 'antd/dist/reset.css';
 
 export default function App() {
+
   return (
     <>
-      <Navbar />
+      <Header login={false} />
       <Routes>
         <Route exact path="/" element={<Login />} />
         <Route exact path="/dashboard" element={<Dashboard />} />
         <Route exact path="*" element={<NotFound />} />
       </Routes>
     </>
-    
   );
 }
 
