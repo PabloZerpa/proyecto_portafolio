@@ -11,10 +11,10 @@ const auth = async (req, res, next) => {
     console.log(token);
     if(token)
         next();
-    else return 
-        res.send('NO AUTORIZADO');
+    else 
+        return res.send('NO AUTORIZADO');
         
-  };
+};
 
 const authSession = async (req,res,next) => {
     if (req.cookies.jwt) {
@@ -32,4 +32,4 @@ const authSession = async (req,res,next) => {
     }
 }
 
-  module.exports = { auth, authSession };
+module.exports = { auth, authSession };

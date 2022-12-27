@@ -1,20 +1,27 @@
 
-import React from "react";
+import { useEffect, useState } from "react";
 import Header from "../components/Header";
-import MenuUsuario from "../components/MenuUsuario";
-import Principal from "../components/Principal";
+import Barra from "../components/Barra";
+import Contenido from "../components/Contenido";
 import styled from "styled-components";
+import AuthService from "../services/auth.service";
 
 function Dashboard() {
+
+  const [user, setUser] = useState('');
+
+  useEffect(() => {
+    setUser(AuthService.getCurrentUser());
+  }, []);
 
   return (
     <Container>
 
-      <Header login={true} user={'Pablo'} />
+      <Header user={user} />
 
-      <MenuUsuario />
+      <Barra />
       
-      <Principal />
+      <Contenido />
       
     </Container>
   )

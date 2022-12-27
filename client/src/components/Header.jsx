@@ -44,7 +44,7 @@ function Header({ login }) {
       </Link>
       <div className="title">Repositorio de Infraestructura y Aplicaciones</div>
 
-      {!login ? (
+      {login ? (
         <div></div>
       ) : (
         <div className="perfilUsuario">

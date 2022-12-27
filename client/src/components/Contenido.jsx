@@ -1,7 +1,10 @@
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Layout, Table, Input } from 'antd';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import UserService from "../services/user.service";
+import AuthService from "../services/auth.service";
 import styled from "styled-components";
 import axios from "axios";
 
@@ -10,41 +13,45 @@ const onSearch = (value) => console.log(value);
 const { Content } = Layout;
 const baseURL = "http://localhost:3001/api/user";
 
-// const columnas = [
-//     {
-//       title: 'ID',
-//       dataIndex: 'id',
-//       key: 'id',
-//     },
-//     {
-//       title: 'Acronimo',
-//       dataIndex: 'acronimo',
-//       key: 'acronimo',
-//     },
-//     {
-//       title: 'Nombre',
-//       dataIndex: 'nombre',
-//       key: 'nombre',
-//     },
-//   ];
+const columnas = [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+    },
+    {
+      title: 'Acronimo',
+      dataIndex: 'acronimo',
+      key: 'acronimo',
+    },
+    {
+      title: 'Nombre',
+      dataIndex: 'nombre',
+      key: 'nombre',
+    },
+  ];
 
-//   const datos = [
-//     {
-//       key: '1',
-//       id: 12264,
-//       acronimo: 'sapcod',
-//       nombre: 'SISTEMA AUTOMATIZADO DE PREVENCION Y CONTROL DE DERRAMES',
-//     },
-//   ];
+  const datos = [
+    {
+      key: '1',
+      id: 12264,
+      acronimo: 'sapcod',
+      nombre: 'SISTEMA AUTOMATIZADO DE PREVENCION Y CONTROL DE DERRAMES',
+    },
+  ];
 
-function Principal() {
+function Contenido() {
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
+  const [user, setUser] = useState([]);
+  const navigate = useNavigate();
 
-  useEffect(() => {
 
-    const token = document.cookie.replace('token=', '');
+  /*useEffect(() => {
+
+    const tokenServer = document.cookie.replace('token=', '');
+    const token = tokenServer.split(" ")[1];
     console.log(token);
 
     const obtenerDatos = async () => {
@@ -54,12 +61,25 @@ function Principal() {
           headers: { 'Authorization': token },
         });
         console.log(data);
-        setData(data);
-        setIsLoading(false);
       } catch (error) {console.log(error);}
     };
 
     obtenerDatos();
+  }, [setData]);*/
+
+  useEffect(() => {
+
+    setUser(AuthService.getCurrentUser());
+
+    if (!user) 
+      navigate("/login");
+
+    UserService.getUserData()
+    .then((response) => {
+      console.log(response.data);
+    },);
+
+
   }, [setData]);
 
 
@@ -86,21 +106,21 @@ function Principal() {
           ) : (
             <>
             
-              {/*<Table 
+              <Table 
                 style={{width: '90%'}}
                 pagination={false}
                 columns={columnas} 
                 dataSource={datos} 
-              />*/}
+              />
 
-              {data.map((item) => (
+              {/*data.map((item) => (
                 <div key={item.id}>
                   <h3>{item.id}</h3>
                   <p>{item.indicador}</p>
                   <p>{item.password}</p>
                   <p>{item.rol}</p>
                 </div>
-              ))}
+              ))*/}
 
             </>
           )}
@@ -113,7 +133,7 @@ function Principal() {
     );
 }
 
-export default Principal;
+export default Contenido;
 
 const Container = styled.nav`
     width: 100%;

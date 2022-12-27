@@ -6,7 +6,7 @@ import { FaHome, FaRegListAlt, FaServer, FaCode, FaDatabase, FaFileAlt, FaEnvelo
 import styled from "styled-components";
 
 function opciones(label, key, icon, children, type) {
-  return { key, icon, children, label, type };
+    return { key, icon, children, label, type };
 }
 
 const items = [
@@ -32,7 +32,7 @@ const items = [
 ];
 
 
-function MenuUsuario() {
+function Barra() {
     return (
         <Container>
             <Menu mode="inline" className="menu" items={items} />
@@ -40,7 +40,7 @@ function MenuUsuario() {
     );
 }
 
-export default MenuUsuario;
+export default Barra;
 
 const Container = styled.nav`
     margin: 0;

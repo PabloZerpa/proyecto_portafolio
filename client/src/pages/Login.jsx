@@ -5,6 +5,7 @@ import { Button, Checkbox, Form, Input, Select } from 'antd';
 import { FaUserCircle } from 'react-icons/fa';
 import styled from "styled-components";
 import axios from "axios";
+import AuthService from '../services/auth.service';
 
 const baseUrl = 'http://localhost:3001/api/login';
 
@@ -19,15 +20,11 @@ function Login() {
   const clearForm = () => document.getElementById("loginForm").reset();
 
   // -------------------- FUNCION PARA INICIAR SESION --------------------
-  async function loginUser() {
+  async function login() {
     
-    if(password.length !== '' && indicador.length !== '' && rol.length !== ''){
-
-      console.log(indicador,password,rol);
-      
+    /*if(password.length > 7 && indicador.length !== '' && rol.length !== ''){
       try {
         const { data } = await axios.post(baseUrl, {indicador: indicador,password: password,rol: rol,}, )
-        console.log(data);
 
         document.cookie = `token=${data.token}; max-age=${60*3}; path=/; samesite=strict`;
         console.log(document.cookie);
@@ -38,8 +35,14 @@ function Login() {
       } catch (error) {
         console.log(error);
       }
+    }*/
 
-    }
+    AuthService.login(indicador,password,rol)
+      .then(() => {
+          clearForm();
+          navigate("/dashboard");
+          window.location.reload();
+      },);
   }
 
   return (
@@ -87,7 +90,7 @@ function Login() {
         </Form.Item>
 
         <Form.Item >
-          <Button type="primary" htmlType="submit" onClick={loginUser} >
+          <Button type="primary" htmlType="submit" onClick={login} >
             Login
           </Button>
         </Form.Item>
