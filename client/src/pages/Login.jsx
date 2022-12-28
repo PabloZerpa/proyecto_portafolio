@@ -4,38 +4,19 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Checkbox, Form, Input, Select } from 'antd';
 import { FaUserCircle } from 'react-icons/fa';
 import styled from "styled-components";
-import axios from "axios";
 import AuthService from '../services/auth.service';
-
-const baseUrl = 'http://localhost:3001/api/login';
 
 function Login() {
   
   const [password, setPassword] = useState('');
   const [indicador, setIndicador] = useState('');
   const [rol, setRol] = useState('');
-  const [token, setToken] = useState('');
 
   const navigate = useNavigate();
   const clearForm = () => document.getElementById("loginForm").reset();
 
   // -------------------- FUNCION PARA INICIAR SESION --------------------
   async function login() {
-    
-    /*if(password.length > 7 && indicador.length !== '' && rol.length !== ''){
-      try {
-        const { data } = await axios.post(baseUrl, {indicador: indicador,password: password,rol: rol,}, )
-
-        document.cookie = `token=${data.token}; max-age=${60*3}; path=/; samesite=strict`;
-        console.log(document.cookie);
-
-        clearForm();
-        navigate("/dashboard");
-
-      } catch (error) {
-        console.log(error);
-      }
-    }*/
 
     AuthService.login(indicador,password,rol)
       .then(() => {
@@ -46,7 +27,6 @@ function Login() {
   }
 
   return (
-
     <Container>
       
       <Form id='loginForm' className='form' method = 'POST' >
@@ -97,6 +77,7 @@ function Login() {
 
       </Form>
     </Container>
+
   );
 }
 

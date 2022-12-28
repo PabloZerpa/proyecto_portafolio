@@ -5,6 +5,7 @@ import { Menu } from 'antd';
 import { FaHome, FaRegListAlt, FaServer, FaCode, FaDatabase, FaFileAlt, FaEnvelopeOpenText } from "react-icons/fa";
 import styled from "styled-components";
 
+// -------------------- FUNCION PARA GENERAR LAS OPCIONES DE LA BARRA LATERAL --------------------
 function opciones(label, key, icon, children, type) {
     return { key, icon, children, label, type };
 }

@@ -1,17 +1,13 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { Layout, Table, Input } from 'antd';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import UserService from "../services/user.service";
-import AuthService from "../services/auth.service";
 import styled from "styled-components";
-import axios from "axios";
+import UserService from "../services/user.service";
 
+const { Content } = Layout;
 const { Search } = Input;
 const onSearch = (value) => console.log(value);
-const { Content } = Layout;
-const baseURL = "http://localhost:3001/api/user";
 
 const columnas = [
     {
@@ -42,43 +38,16 @@ const columnas = [
 
 function Contenido() {
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState([]);
-  const [user, setUser] = useState([]);
-  const navigate = useNavigate();
-
-
-  /*useEffect(() => {
-
-    const tokenServer = document.cookie.replace('token=', '');
-    const token = tokenServer.split(" ")[1];
-    console.log(token);
-
-    const obtenerDatos = async () => {
-      try {
-        const { data } = await axios({url: baseURL,
-          method: 'GET',
-          headers: { 'Authorization': token },
-        });
-        console.log(data);
-      } catch (error) {console.log(error);}
-    };
-
-    obtenerDatos();
-  }, [setData]);*/
 
   useEffect(() => {
-
-    setUser(AuthService.getCurrentUser());
-
-    if (!user) 
-      navigate("/login");
 
     UserService.getUserData()
     .then((response) => {
       console.log(response.data);
+      setIsLoading(false);
     },);
-
 
   }, [setData]);
 

@@ -1,6 +1,4 @@
 
-/*
-
 const activeDirectory = require("activedirectory");
 const { handleHttpError } = require("./handleErrors");
 
@@ -34,7 +32,5 @@ const verificarUser = (req, res, next) => {
 }
 
 
-  
-  module.exports = { authUser, verificarUser };
 
-  */
+  module.exports = { authUser, verificarUser };

@@ -1,11 +1,15 @@
 
 import { useEffect, useState } from "react";
-import { Routes, Route } from "react-router-dom";
-import Header from "./components/Header";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+// ---------- COMPONENTES ----------
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import Header from "./components/Header";
+import {Protegida} from "./components/Protegida";
 import 'antd/dist/reset.css';
 
+// ---------- SERVICIOS ----------
 import AuthService from "./services/auth.service";
 
 
@@ -18,17 +22,21 @@ export default function App() {
   }, []);
 
   return (
-    <>
+    <BrowserRouter>
+
       <Header user={user} />
+
       <Routes>
-        <Route exact path="/" element={<Login />} />
-        <Route exact path="/dashboard" element={<Dashboard />} />
-        <Route exact path="*" element={<NotFound />} />
+        <Route exact path="/" element={AuthService.getCurrentUser() ? <Navigate to='dashboard' /> : <Login />} />
+
+        <Route exact path="/dashboard" element={
+          <Protegida redirectTo='/'>
+            <Dashboard />
+          </Protegida> } />
+
       </Routes>
-    </>
+      
+    </BrowserRouter>
   );
 }
 
-function NotFound() {
-  return <>Ha llegado a una página que no existe</>;
-}

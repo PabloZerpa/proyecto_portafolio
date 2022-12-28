@@ -1,10 +1,10 @@
 
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Dropdown } from 'antd';
 import { FaUserCircle, FaPowerOff, FaCog } from 'react-icons/fa';
 import styled from "styled-components";
 import axios from "axios";
+import AuthService from '../services/auth.service';
 
 const baseURL = "http://localhost:3001/api/logout";
 
@@ -25,16 +25,15 @@ const items = [
 // -------------------- FUNCION PARA CERRAR SESION --------------------
 async function logoutUser() {
 
-  console.log('LOGOUT');
+  AuthService.logout();
+  window.location.reload();
   try {
     await axios.get(baseURL);
   } catch (error) {console.log(error);}
 }
 
 // -------------------- NAVEGACION --------------------
-function Header({ login }) {
-
-  const [data, setData] = useState([]);
+function Header({ user }) {
 
   return (
     
@@ -44,7 +43,7 @@ function Header({ login }) {
       </Link>
       <div className="title">Repositorio de Infraestructura y Aplicaciones</div>
 
-      {login ? (
+      {AuthService.getCurrentUser() == null ? (
         <div></div>
       ) : (
         <div className="perfilUsuario">
@@ -55,7 +54,7 @@ function Header({ login }) {
                 style={{background: '#1980da'}}
             >
                 <a href='/' className="center" onClick={(e) => e.preventDefault()}>
-                  {data.indicador}
+                  {user.indicador}
                   <FaUserCircle style={{ color: '#1980da', fontSize: '42px', marginRight: '32px', cursor: "pointer" }} />
                 </a>
             </Dropdown>
@@ -100,5 +99,4 @@ const Navegation = styled.nav`
     text-decoration: none;
     color: #000;
   }
-  
 `;
