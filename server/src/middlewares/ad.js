@@ -1,36 +1,66 @@
-
 const activeDirectory = require("activedirectory");
-const { handleHttpError } = require("./handleErrors");
 
-const config = { url : 'ldap://matsed06.pdvsa.com', baseDN : 'OU=Usuarios,DC=pdvsa,DC=com' }
+const config = { 
+    url: 'ldap://matsed06.pdvsa.com', 
+    baseDN: 'OU=Usuarios,DC=pdvsa,DC=com', 
+}
 const ad = new activeDirectory(config);
 
 // *************** VERIFICAR EL TOKEN PARA EL LOGIN ***************
-const authUser = async (req, res, next) => {
+const autenticarUser = async(req, res, next) => {
     try {
         const { indicador, password } = req.body;
         const correo = `${indicador}@pdvsa.com`.toLowerCase();
-    
+
         ad.authenticate(correo, password, (err, auth) => {
-            if(auth) next();
-            if(err) return handleHttpError(res, 401, 'Datos incorrectos')
-        })
+            if (err) {
+                console.log('ERROR: ' + JSON.stringify(err));
+                return;
+            }
+
+            if (auth) {
+                console.log('Authenticated!');
+                next();
+            } else {
+                console.log('Authentication failed!');
+            }
+        });
 
     } catch (e) {
-        handleHttpError(res, 'NO SE PUDO AUNTETICAR', e);
+        console.log('NO SE PUDO AUNTETICAR');
     }
 };
 
 const verificarUser = (req, res, next) => {
 
-    const indicador = req.body.indicador.toLowerCase();
+    const { indicador } = req.body;
 
-    ad.userExists(indicador, (err, exist) => {
-        if(!exist) return manejarResp(res, 403, `El indicador ${indicador}, no se encuentra registrado en la intranet de PDVSA`);
+    ad.userExists(indicador, function(err, exists) {
+        if (err) {
+            console.log('ERROR: ' + JSON.stringify(err));
+            return;
+        }
+
+        console.log(indicador + ' exists: ' + exists);
         next();
+    });
+}
+
+const buscarUser = (req, res, next) => {
+
+    const { indicador } = req.body;
+
+    ad.findUser(indicador, true, function(err, users) {
+        if (err) {
+            console.log('ERROR: ' + JSON.stringify(err));
+            return;
+        }
+
+        if (!user) console.log('User: ' + indicador + ' not found.');
+        else console.log(JSON.stringify(user));
     });
 }
 
 
 
-  module.exports = { authUser, verificarUser };
+module.exports = { autenticarUser, verificarUser, buscarUser };

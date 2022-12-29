@@ -16,14 +16,17 @@ function Login() {
   const clearForm = () => document.getElementById("loginForm").reset();
 
   // -------------------- FUNCION PARA INICIAR SESION --------------------
-  async function login() {
+  async function handleLogin() {
 
-    AuthService.login(indicador,password,rol)
-      .then(() => {
-          clearForm();
-          navigate("/dashboard");
-          window.location.reload();
-      },);
+    try {
+      await AuthService.login(indicador,password,rol);
+      clearForm();
+      navigate("/dashboard");
+      window.location.reload();
+    } 
+    catch (error) {
+      console.error(error);
+    }
   }
 
   return (
@@ -70,7 +73,7 @@ function Login() {
         </Form.Item>
 
         <Form.Item >
-          <Button type="primary" htmlType="submit" onClick={login} >
+          <Button type="primary" htmlType="submit" onClick={handleLogin} >
             Login
           </Button>
         </Form.Item>

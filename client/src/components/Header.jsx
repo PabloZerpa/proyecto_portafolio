@@ -18,12 +18,12 @@ const items = [
   {
     key: '1',
     icon: <FaPowerOff />,
-    label: <Link className="linkNav" onClick={logoutUser} to="/" >Cerrar Sesion</Link>
+    label: <Link className="linkNav" onClick={handleLogin} to="/" >Cerrar Sesion</Link>
   },
 ];
 
 // -------------------- FUNCION PARA CERRAR SESION --------------------
-async function logoutUser() {
+async function handleLogin() {
 
   AuthService.logout();
   window.location.reload();
@@ -43,7 +43,7 @@ function Header({ user }) {
       </Link>
       <div className="title">Repositorio de Infraestructura y Aplicaciones</div>
 
-      {AuthService.getCurrentUser() == null ? (
+      {AuthService.obtenerUsuario() == null ? (
         <div></div>
       ) : (
         <div className="perfilUsuario">

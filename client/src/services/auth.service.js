@@ -25,7 +25,7 @@ class AuthService {
     }
 
     // ---------------- OBTENER USUARIO ------------------
-    getCurrentUser() {
+    obtenerUsuario() {
         return JSON.parse(localStorage.getItem('user'));
     }
 

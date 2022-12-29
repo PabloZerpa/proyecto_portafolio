@@ -1,7 +1,7 @@
 
 const router = require("express").Router();
 const { getItems, getItem, createItems, updateItems, deleteItems } = require("../controllers/user");
-const { auth, authSession } = require("../middlewares/auth");
+const { auth } = require("../middlewares/auth");
 const { validatorCreateItem, validatorGetItem } = require("../validators/user");
 
 router.get("/", auth, getItems); 

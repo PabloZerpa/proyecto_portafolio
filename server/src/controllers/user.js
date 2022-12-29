@@ -1,15 +1,15 @@
 
 const pool = require('../config');
 const { matchedData } = require('express-validator');
-const { handleHttpError } = require('../middlewares/handleErrors');
 
 // *************** OBTENER TODOS LOS DATOS ***************
 const getItems = async (req,res) => {
     try {
-        const data = await pool.query(`SELECT * FROM usuarios`);
-        res.send(data[0]);
+        // const data = await pool.query(`SELECT * FROM usuarios`);
+        // res.send(data[0]);
+        res.send('ENVIANDO USUARIOS');
     } catch (error) {
-        handleHttpError(res,"ERROR_GET_ITEMS");
+        console.log("ERROR_GET_ITEMS");
     }
 };
 
@@ -21,7 +21,7 @@ const getItem = async (req,res) => {
         const [rows] = await pool.query('SELECT * FROM usuarios WHERE id = ?', [req.params]);
         res.send({ id: rows.insertId });
     } catch (error) {
-        handleHttpError(res,"ERROR_CREATE_ITEMS");
+        console.log("ERROR_CREATE_ITEMS");
     }
 };
 
@@ -38,7 +38,7 @@ const createItems = async (req,res) => {
             rol,
         });
     } catch (error) {
-        handleHttpError(res,"ERROR_CREATE_ITEMS");
+        console.log("ERROR_CREATE_ITEMS");
     }
     
 };
@@ -56,7 +56,7 @@ const updateItems = async (req,res) => {
             rol
         });
     } catch (error) {
-        handleHttpError(res,"ERROR_UPDATE_ITEMS");
+        console.log("ERROR_UPDATE_ITEMS");
     }
 };
  
@@ -66,7 +66,7 @@ const deleteItems = async (req,res) => {
         const [result] = await pool.query('DELETE FROM usuarios WHERE id = ?', [req.params.id]);
         res.sendStatus(204);
     } catch (error) {
-        handleHttpError(res,"ERROR_DELETE_ITEMS");
+        console.log("ERROR_DELETE_ITEMS");
     }
 };
 

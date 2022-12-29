@@ -1,12 +1,12 @@
 
 import { useEffect, useState } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // ---------- COMPONENTES ----------
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Header from "./components/Header";
-import {Protegida} from "./components/Protegida";
+import { Protegida } from "./components/Protegida";
 import 'antd/dist/reset.css';
 
 // ---------- SERVICIOS ----------
@@ -18,7 +18,7 @@ export default function App() {
   const [user, setUser] = useState('');
 
   useEffect(() => {
-    setUser(AuthService.getCurrentUser());
+    setUser(AuthService.obtenerUsuario());
   }, []);
 
   return (
@@ -27,12 +27,17 @@ export default function App() {
       <Header user={user} />
 
       <Routes>
-        <Route exact path="/" element={AuthService.getCurrentUser() ? <Navigate to='dashboard' /> : <Login />} />
+        <Route exact path="/" element={
+          <Protegida redirectTo='/dashboard'>
+            <Login />
+          </Protegida> 
+        } />
 
         <Route exact path="/dashboard" element={
           <Protegida redirectTo='/'>
             <Dashboard />
-          </Protegida> } />
+          </Protegida> 
+        } />
 
       </Routes>
       

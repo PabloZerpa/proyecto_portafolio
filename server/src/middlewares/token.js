@@ -3,9 +3,7 @@ const pool = require('../config');
 const jwt = require('jsonwebtoken');
 
 const generarToken = async (indicador) => {
-
     return token = jwt.sign({indicador}, 'SECRETO#123', {expiresIn: '1h'});
-
 };
 
 // *************** VERIFICAR EL TOKEN PARA EL LOGIN ***************
@@ -17,7 +15,8 @@ const verificarToken = async (authorization) => {
         // return user;
         return tokenData;
 
-    }catch(e){
+    }
+    catch(e){
         return console.error(e);
     }
 };

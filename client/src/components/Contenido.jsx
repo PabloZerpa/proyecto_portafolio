@@ -3,53 +3,27 @@ import { useState, useEffect } from "react";
 import { Layout, Table, Input } from 'antd';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import styled from "styled-components";
+import { columnas, datosTabla } from "../services/opciones.service";
 import UserService from "../services/user.service";
 
 const { Content } = Layout;
 const { Search } = Input;
-const onSearch = (value) => console.log(value);
-
-const columnas = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-    },
-    {
-      title: 'Acronimo',
-      dataIndex: 'acronimo',
-      key: 'acronimo',
-    },
-    {
-      title: 'Nombre',
-      dataIndex: 'nombre',
-      key: 'nombre',
-    },
-  ];
-
-  const datos = [
-    {
-      key: '1',
-      id: 12264,
-      acronimo: 'sapcod',
-      nombre: 'SISTEMA AUTOMATIZADO DE PREVENCION Y CONTROL DE DERRAMES',
-    },
-  ];
 
 function Contenido() {
 
   const [isLoading, setIsLoading] = useState(true);
-  const [data, setData] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
 
   useEffect(() => {
 
-    UserService.getUserData()
-    .then((response) => {
-      console.log(response.data);
-      setIsLoading(false);
-    },);
+    UserService.obtenerDatosUsuario()
+      .then((response) => {
+        setUsuarios(response.data);
+        setIsLoading(false);
+        console.log(usuarios);
+      });
 
-  }, [setData]);
+  }, [setUsuarios]);
 
 
     return (
@@ -60,9 +34,7 @@ function Contenido() {
           <Search 
             allowClear
             enterButton
-            className="searchBar"
             placeholder="Search" 
-            onSearch={onSearch} 
             size="large"
             style={{width: '50%'}}
           />
@@ -79,10 +51,10 @@ function Contenido() {
                 style={{width: '90%'}}
                 pagination={false}
                 columns={columnas} 
-                dataSource={datos} 
+                dataSource={datosTabla} 
               />
 
-              {/*data.map((item) => (
+              {/*usuarios.map((item) => (
                 <div key={item.id}>
                   <h3>{item.id}</h3>
                   <p>{item.indicador}</p>

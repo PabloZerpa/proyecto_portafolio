@@ -4,9 +4,12 @@ import AuthService from '../services/auth.service';
 
 export const Protegida = ({children, redirectTo}) => {
 
-    console.log('PASANDO POR RUTA PROTEGIDA');
-
-    if(AuthService.getCurrentUser() == null)
+    if(redirectTo === '/dashboard'){
+        if(AuthService.obtenerUsuario() !== null){
+            return <Navigate to={redirectTo} />
+        }
+    }
+    else if(AuthService.obtenerUsuario() === null)
         return <Navigate to={redirectTo} />
 
         
