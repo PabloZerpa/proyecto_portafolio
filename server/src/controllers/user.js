@@ -5,9 +5,8 @@ const { matchedData } = require('express-validator');
 // *************** OBTENER TODOS LOS DATOS ***************
 const getItems = async (req,res) => {
     try {
-        // const data = await pool.query(`SELECT * FROM usuarios`);
-        // res.send(data[0]);
-        res.send('ENVIANDO USUARIOS');
+        const data = await pool.query(`SELECT * FROM usuarios`);
+        res.send(data[0]);
     } catch (error) {
         console.log("ERROR_GET_ITEMS");
     }

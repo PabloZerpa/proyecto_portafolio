@@ -8,9 +8,8 @@ const login = async (req, res) => {
     try {
         const body = matchedData(req);
         const {indicador, password, rol} = body;
-        // const query = await pool.query('SELECT * FROM usuarios WHERE indicador = ?', [indicador]);
-        // const user = query[0][0];
-        const user = {indicador, password, rol};
+        const query = await pool.query('SELECT * FROM usuarios WHERE indicador = ?', [indicador]);
+        const user = query[0][0];
         
         // ********** VERIFICA QUE EL USUARIO EXISTA **********
         if(!user){

@@ -1,13 +1,10 @@
 
 import { useState, useEffect } from "react";
-import { Layout, Table, Input } from 'antd';
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import styled from "styled-components";
-import { columnas, datosTabla } from "../services/opciones.service";
-import UserService from "../services/user.service";
+import { Spinner, Flex, CheckboxGroup, Checkbox, Stack } from '@chakra-ui/react';
+import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Tfoot, TableCaption } from '@chakra-ui/react'
+import Search from "./Search";
 
-const { Content } = Layout;
-const { Search } = Input;
+import UserService from "../services/user.service";
 
 function Contenido() {
 
@@ -27,79 +24,71 @@ function Contenido() {
 
 
     return (
-      <Container>
+      <Flex align='center' justify='space-around' direction='column' bg='#c2c2c2' w='100%' h='800px' ml='240px' pt='60px' >
 
-        <Content className="content center">
+        <Flex align='center' direction='column' gap='20px' >
 
-          <Search 
-            allowClear
-            enterButton
-            placeholder="Search" 
-            size="large"
-            style={{width: '50%'}}
-          />
+          <CheckboxGroup colorScheme='blue' defaultValue={['nombre']}>
+            <Stack spacing={[1, 5]} direction={['column', 'row']}>
+              <Checkbox value='id'>ID</Checkbox>
+              <Checkbox value='acronimo'>Acronimo</Checkbox>
+              <Checkbox value='nombre'>Nombre</Checkbox>
+            </Stack>
+          </CheckboxGroup>
+
+          <Search />
           
-          {isLoading ? (
-            <>
-              <AiOutlineLoading3Quarters style={{ color: '#1980da', fontSize: '60px' }} />
+        </Flex>
+
+        {isLoading ? (
+          <>
+              <Spinner thickness='3px' speed='0.5s' color='blue.500' size='xl' />
               Loading
             </>
           ) : (
             <>
-            
-              <Table 
-                style={{width: '90%'}}
-                pagination={false}
-                columns={columnas} 
-                dataSource={datosTabla} 
-              />
 
-              {/*usuarios.map((item) => (
-                <div key={item.id}>
-                  <h3>{item.id}</h3>
-                  <p>{item.indicador}</p>
-                  <p>{item.password}</p>
-                  <p>{item.rol}</p>
-                </div>
-              ))*/}
+              <TableContainer  w='80%' >
+                
+                <Table variant='simple' color='black' bg='#a0a0a0' borderRadius='10px'>
+                  <Thead>
+                    <Tr>
+                      <Th isNumeric>ID</Th>
+                      <Th>Acronimo</Th>
+                      <Th>Nombre</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+
+                    <Tr>
+                      <Td isNumeric>12264</Td>
+                      <Td>sapcod</Td>
+                      <Td>SISTEMA AUTOMATIZADO DE PREVENCION Y CONTROL DE DERRAMES</Td>
+                    </Tr>
+
+                    <Tr>
+                      <Td isNumeric>21003</Td>
+                      <Td>savi</Td>
+                      <Td>SISTEMA AUTOMATIZADO DE </Td>
+                    </Tr>
+
+                    <Tr>
+                      <Td isNumeric>11650</Td>
+                      <Td>sap</Td>
+                      <Td>SISTEMA AUTOMATIZADO DE </Td>
+                    </Tr>
+                  </Tbody>
+                </Table>
+              </TableContainer>
 
             </>
           )}
 
           <div></div>
-
-        </Content>
-      </Container>
+        
+      </Flex>
 
     );
 }
 
 export default Contenido;
-
-const Container = styled.nav`
-    width: 100%;
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-
-    .center{
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .content{
-      padding-left: 15%;
-      padding-top: 100px;
-      margin: 0;
-      min-height: 280;
-      width: 100%;
-      height: 100vh;
-      background: "#c2c2c2";
-      display: flex;
-      justify-content: flex-start;
-      flex-direction: column;
-      gap: 36px;
-    }
-`;

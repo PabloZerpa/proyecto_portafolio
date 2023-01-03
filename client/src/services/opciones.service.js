@@ -28,6 +28,16 @@ export const barraItems = [
     opciones(<Link className="linkNav" to="/dashboard" >Solicitudes</Link>, 'sub7', <FaEnvelopeOpenText />),
 ];
 
+export const LinkItems = [
+  { name: <Link className="linkNav" to="/dashboard" >Inicio</Link>, icon: FaHome },
+  { name: <Link className="linkNav" to="/aplicaciones" >Aplicaciones</Link>, icon: FaCode },
+  { name: <Link className="linkNav" to="/administracion" >Administracion</Link>, icon: FaRegListAlt },
+  { name: <Link className="linkNav" to="/servidores" >Servidores</Link>, icon: FaServer },
+  { name: <Link className="linkNav" to="/basedatos" >Base de datos</Link>, icon: FaDatabase },
+  { name: <Link className="linkNav" to="/documentacion" >Documentacion</Link>, icon: FaFileAlt },
+  { name: <Link className="linkNav" to="/solicitudes" >Solicitudes</Link>, icon: FaEnvelopeOpenText },
+];
+
 
 // -------------------- FUNCION PARA GENERAR LAS COLUMNAS DE LA BARRA LATERAL --------------------
 export const columnas = [

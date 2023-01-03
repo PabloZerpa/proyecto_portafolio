@@ -9,7 +9,7 @@ function Dashboard() {
       <Container>
     
         <Barra />
-          
+        
         <Contenido />
           
       </Container>

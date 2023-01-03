@@ -1,102 +1,88 @@
 
 import { Link } from "react-router-dom";
-import { Dropdown } from 'antd';
-import { FaUserCircle, FaPowerOff, FaCog } from 'react-icons/fa';
-import styled from "styled-components";
+import { FaUserCircle, FaPowerOff, FaCog, FaChevronDown } from 'react-icons/fa';
+import { Flex, Box, Text, Image, Menu, MenuButton, MenuList, MenuItem, Button } from '@chakra-ui/react';
 import axios from "axios";
 import AuthService from '../services/auth.service';
 
 const baseURL = "http://localhost:3001/api/logout";
 
-// -------------------- CONTENIDO INTERNO DROPDOWN --------------------
-const items = [
-  {
-    key: '0',
-    icon: <FaCog />,
-    label: <Link className="linkNav" to="/dashboard" >Configuracion</Link>
-  },
-  {
-    key: '1',
-    icon: <FaPowerOff />,
-    label: <Link className="linkNav" onClick={handleLogin} to="/" >Cerrar Sesion</Link>
-  },
-];
-
 // -------------------- FUNCION PARA CERRAR SESION --------------------
-async function handleLogin() {
+async function handleLogout() {
 
-  AuthService.logout();
-  window.location.reload();
-  try {
-    await axios.get(baseURL);
-  } catch (error) {console.log(error);}
+    try {
+        AuthService.logout();
+        window.location.reload();
+        await axios.get(baseURL);
+    } 
+    catch (error) {
+        console.log(error);
+    }
 }
 
 // -------------------- NAVEGACION --------------------
 function Header({ user }) {
 
   return (
+    <Flex  
+        w='100%' 
+        h='80px' 
+        bg='white' 
+        position='fixed' 
+        align='center' 
+        justify='space-between' 
+        shadow='1px 1px 10px #636363' >
+
+        <Link  to="/">
+            <Image w='120px' ml='32px' alt='logo'
+                src='https://logodownload.org/wp-content/uploads/2019/03/pdvsa-logo.png'
+            />
+        </Link>
+        <Text color='black' fontSize='xl' fontWeight='bold' textAlign='center'>
+            Repositorio de Infraestructura y Aplicaciones
+        </Text>
+
+        {AuthService.obtenerUsuario() == null ? (
+            <div></div>
+        ) : (
+            <Menu>
+                <MenuButton 
+                    color='black'
+                    mr='16px'
+                    variant='text'
+                    textDecoration='none'
+                    as={Button} 
+                    leftIcon={<FaUserCircle color='#1980da' fontSize='42px' />}
+                >
+                    <Box display='flex' alignItems='center' gap='5px' fontSize='14px' >
+                        <Box display='flex' flexDir='column' >
+                            <Text fontSize='lg' >{user.indicador}</Text>
+                            <Text fontSize='sm' color="gray" >{user.rol}</Text>
+                        </Box>
+                        <FaChevronDown />
+                        
+                    </Box>
+                </MenuButton>
+
+                <MenuList>
+                    <MenuItem display='flex' gap='5px' >
+                        <FaCog />
+                        <Link to="/dashboard" >Configuracion</Link>
+                    </MenuItem>
+                    
+                    <MenuItem display='flex' gap='5px' >
+                        <FaPowerOff />
+                        <Link onClick={handleLogout} to="/" >Cerrar Sesion</Link>
+                    </MenuItem>
+                </MenuList>
+                
+            </Menu>
+        )}
+
+    </Flex>
     
-    <Navegation>
-      <Link className="linkNav" to="/">
-        <img src="https://logodownload.org/wp-content/uploads/2019/03/pdvsa-logo.png" alt="logo" className="logo" />
-      </Link>
-      <div className="title">Repositorio de Infraestructura y Aplicaciones</div>
-
-      {AuthService.obtenerUsuario() == null ? (
-        <div></div>
-      ) : (
-        <div className="perfilUsuario">
-            <Dropdown
-                menu={{ items }}
-                trigger={['click']}
-                placement="bottom"
-                style={{background: '#1980da'}}
-            >
-                <a href='/' className="center" onClick={(e) => e.preventDefault()}>
-                  {user.indicador}
-                  <FaUserCircle style={{ color: '#1980da', fontSize: '42px', marginRight: '32px', cursor: "pointer" }} />
-                </a>
-            </Dropdown>
-        </div>
-      )}
-
-    </Navegation>
   );
 } 
 
 export default Header;
 
-const Navegation = styled.nav`
-  width: 100%;
-  height: 80px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #ffffff;
-  position: fixed;
-
-  .center{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .logo{
-    width: 120px;
-    margin-left: 32px;
-  }
-
-  .title{
-    font-size: 18px;
-    font-weight: bold;
-    color: #000;
-    text-align: center;
-  }
-
-  a{
-    text-decoration: none;
-    color: #000;
-  }
-`;

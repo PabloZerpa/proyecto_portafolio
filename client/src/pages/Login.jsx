@@ -1,9 +1,11 @@
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Checkbox, Form, Input, Select } from 'antd';
-import { FaUserCircle } from 'react-icons/fa';
-import styled from "styled-components";
+
+import { FaUserCircle, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { Center, Flex, FormControl, FormLabel, Button, Select, Checkbox, InputGroup, InputRightElement, Input, Avatar, Box } from '@chakra-ui/react';
+import { useToast } from '@chakra-ui/react';
+        
 import AuthService from '../services/auth.service';
 
 function Login() {
@@ -11,104 +13,122 @@ function Login() {
   const [password, setPassword] = useState('');
   const [indicador, setIndicador] = useState('');
   const [rol, setRol] = useState('');
+  const [show, setShow] = useState(false);
 
+  const handleClick = () => setShow(!show);
   const navigate = useNavigate();
-  const clearForm = () => document.getElementById("loginForm").reset();
+  const toast = useToast();
+
+  const toastSucces = () =>{
+    toast({
+        title: 'Login Completado',
+        description: "Bienvenido",
+        status: 'success',
+        position: 'top',
+        duration: 3000,
+        isClosable: true,
+    })
+  }
+
+  const toastFail = () =>{
+    toast({
+        title: 'Error al Iniciar Sesion',
+        description: "No se puedo completar el login",
+        status: 'error',
+        position: 'top',
+        duration: 3000,
+        isClosable: true,
+    })
+  }
+
 
   // -------------------- FUNCION PARA INICIAR SESION --------------------
   async function handleLogin() {
-
+    console.log(indicador,password,rol);
     try {
-      await AuthService.login(indicador,password,rol);
-      clearForm();
-      navigate("/dashboard");
-      window.location.reload();
+        await AuthService.login(indicador,password,rol);
+        toastSucces();
+        navigate("/dashboard");
+        window.location.reload();
     } 
     catch (error) {
-      console.error(error);
+        toastFail();
+        console.error(error);
     }
   }
 
   return (
-    <Container>
-      
-      <Form id='loginForm' className='form' method = 'POST' >
+    
+    <Center bg='#c2c2c2' w='100%' h='800px' >
 
-        <FaUserCircle style={{ color: '#1980da', fontSize: '64px', marginBottom: '16px' }} />
+        <Flex
+            w='25%' 
+            color='black' 
+            direction='column' 
+            align='center' 
+            justify='center' 
+            gap='16px'
+        >
+            
+            <Avatar size='lg' color='#1980da' icon={<FaUserCircle fontSize='6rem' />} />
 
-        <Form.Item label="Indicador" name="indicador" rules={[{ required: true, message: 'Porfavor ingrese su indicador',},]} >
-          <Input 
-            size="large" 
-            placeholder="Indicador"
-            className='input'
-            onChange={(e) => {setIndicador(e.target.value)}}
-          />
-        </Form.Item>
+            <FormControl display='flex' alignItems='center' isRequired >
+                <FormLabel>Indicador:</FormLabel>
+                <Input 
+                    type='text' 
+                    placeholder='Indicador'
+                    bg='white' 
+                    w='200px' 
+                    onChange={(e) => {setIndicador(e.target.value)}} />
+            </FormControl>
 
-        <Form.Item label="Password" name="password" rules={[{ required: true, message: 'Porfavor ingrese su contraseña',},]} >
-          <Input.Password 
-            size="large" 
-            placeholder="Contraseña"
-            className='input'
-            onChange={(e) => {setPassword(e.target.value)}}
-          />
-        </Form.Item>
+            <FormControl display='flex' alignItems='center' isRequired >
+                <FormLabel>Password:</FormLabel>
+                <Box>
+                    <InputGroup >
+                        <Input
+                            bg='white'
+                            w='200px'
+                            type={show ? 'text' : 'password'}
+                            placeholder='Password'
+                            onChange={(e) => {setPassword(e.target.value)}}
+                        />
+                        <InputRightElement width='3rem' ml='20px' >
+                            <Button variant='text' color='black' onClick={handleClick}>
+                                {show ? <FaEye /> : <FaEyeSlash />}
+                            </Button>
+                        </InputRightElement>
+                    </InputGroup>
+                </Box>
+            </FormControl>
 
-        <Form.Item name="rol" label="Rol" rules={[{ required: true }]}>
-          <Select
-            size="large"
-            placeholder="Seleccione"
-            className='input'
-            onChange={(e) => {setRol(e)}}
-            style={{ marginLeft: '38px' }}
-            options={[
-              { value: 'user', label: 'User' },
-              { value: 'admin', label: 'Admin' }
-            ]}
-          />
-        </Form.Item>
+            <FormControl display='flex' alignItems='center' isRequired >
+                <FormLabel>Rol:-------</FormLabel>
+                <Select 
+                    placeholder='Seleccione Rol' 
+                    bg='white' w='200px' 
+                    onChange={(e) => {
+                        console.log(e.target.value);
+                        setRol(e.target.value);
+                        console.log(rol);
+                    }}
+                >
+                    <option value='user'>User</option>
+                    <option value='admin'>Admin</option>
+                </Select>
+            </FormControl>
 
-        <Form.Item name="remember" valuePropName="unchecked" >
-          <Checkbox>Recordar</Checkbox>
-        </Form.Item>
+            <Checkbox >Recordar</Checkbox>
 
-        <Form.Item >
-          <Button type="primary" htmlType="submit" onClick={handleLogin} >
-            Login
-          </Button>
-        </Form.Item>
+            <Button bg='#1980da' w='100px' h='40px' type='submit' onClick={handleLogin}>
+                Login
+            </Button>
 
-      </Form>
-    </Container>
-
+        </Flex>
+        
+    </Center>
+    
   );
 }
 
 export default Login;
-
-const Container = styled.div`
-  width: 100%;
-  height: 720px;
-  background: #c2c2c2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-
-  .form{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    margin-top: 120px;
-
-    .input{
-      width: 200px;
-    }
-  }
-  
-  button{
-    width: 100px;
-    height: 40px;
-  }
-`;
