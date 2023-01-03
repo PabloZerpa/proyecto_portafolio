@@ -1,5 +1,5 @@
 
-import Barra from "../components/Barra";
+import Navegacion from "../components/Navegacion";
 import Contenido from "../components/Contenido";
 import styled from "styled-components";
 
@@ -8,7 +8,7 @@ function Dashboard() {
   return (
       <Container>
     
-        <Barra />
+        <Navegacion />
         
         <Contenido />
           

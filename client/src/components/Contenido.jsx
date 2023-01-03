@@ -1,10 +1,14 @@
 
 import { useState, useEffect } from "react";
-import { Spinner, Flex, CheckboxGroup, Checkbox, Stack } from '@chakra-ui/react';
-import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Tfoot, TableCaption } from '@chakra-ui/react'
-import Search from "./Search";
+
+import { Table, Input, Spin } from 'antd';
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { columnas, datosTabla } from "../services/opciones.service";
+import styled from "styled-components";
 
 import UserService from "../services/user.service";
+
+const { Search } = Input;
 
 function Contenido() {
 
@@ -24,71 +28,63 @@ function Contenido() {
 
 
     return (
-      <Flex align='center' justify='space-around' direction='column' bg='#c2c2c2' w='100%' h='800px' ml='240px' pt='60px' >
+      <Container>
 
-        <Flex align='center' direction='column' gap='20px' >
+        <div className="content center">
 
-          <CheckboxGroup colorScheme='blue' defaultValue={['nombre']}>
-            <Stack spacing={[1, 5]} direction={['column', 'row']}>
-              <Checkbox value='id'>ID</Checkbox>
-              <Checkbox value='acronimo'>Acronimo</Checkbox>
-              <Checkbox value='nombre'>Nombre</Checkbox>
-            </Stack>
-          </CheckboxGroup>
+          <Search allowClear enterButton placeholder="Search" size="large" style={{width: '50%'}} />
 
-          <Search />
-          
-        </Flex>
-
-        {isLoading ? (
-          <>
-              <Spinner thickness='3px' speed='0.5s' color='blue.500' size='xl' />
-              Loading
-            </>
+          {isLoading ? (
+              <Spin indicator={<AiOutlineLoading3Quarters style={{ color: '#1980da', fontSize: '60px' }}spin />} />
           ) : (
             <>
 
-              <TableContainer  w='80%' >
-                
-                <Table variant='simple' color='black' bg='#a0a0a0' borderRadius='10px'>
-                  <Thead>
-                    <Tr>
-                      <Th isNumeric>ID</Th>
-                      <Th>Acronimo</Th>
-                      <Th>Nombre</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
+              <Table 
+                style={{width: '90%'}}
+                pagination={false}
+                columns={columnas} 
+                dataSource={datosTabla} 
+              />
 
-                    <Tr>
-                      <Td isNumeric>12264</Td>
-                      <Td>sapcod</Td>
-                      <Td>SISTEMA AUTOMATIZADO DE PREVENCION Y CONTROL DE DERRAMES</Td>
-                    </Tr>
-
-                    <Tr>
-                      <Td isNumeric>21003</Td>
-                      <Td>savi</Td>
-                      <Td>SISTEMA AUTOMATIZADO DE </Td>
-                    </Tr>
-
-                    <Tr>
-                      <Td isNumeric>11650</Td>
-                      <Td>sap</Td>
-                      <Td>SISTEMA AUTOMATIZADO DE </Td>
-                    </Tr>
-                  </Tbody>
-                </Table>
-              </TableContainer>
+              {/*usuarios.map((item) => (
+                <div key={item.id}>
+                  <h3>{item.id}</h3>
+                  <p>{item.indicador}</p>
+                  <p>{item.password}</p>
+                  <p>{item.rol}</p>
+                </div>
+              ))*/}
 
             </>
           )}
 
-          <div></div>
+            <div></div>
+
+        </div>
         
-      </Flex>
+      </Container>
 
     );
 }
 
 export default Contenido;
+
+const Container = styled.nav`
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+
+    .content{
+      width: 100%;
+      height: 100vh;
+      padding: 128px 0 0 220px;
+      margin: 0;
+      background: "#c2c2c2";
+      display: flex;
+      justify-content: flex-start;
+      flex-direction: column;
+      align-items: center;
+      gap: 64px;
+    }
+`;
