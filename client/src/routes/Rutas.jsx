@@ -13,8 +13,6 @@ function Rutas() {
           <Route path="/basedatos" element={<BaseDatos />} />
           <Route path="/servidores" element={<Servidores />} />
 
-          <Route path='/' element={<Dashboard />} />
-
       </Routes>
     );
 }

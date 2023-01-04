@@ -21,7 +21,6 @@ function Login() {
       localStorage.setItem("user", JSON.stringify({indicador,rol}));
       clearForm();
       navigate("/dashboard");
-      window.location.reload();
     }
   }
 
