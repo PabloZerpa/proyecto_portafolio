@@ -4,7 +4,7 @@ import authHeader from './header.service';
 
 const baseUrl = "http://localhost:3001/api/";
 
-class UserService {
+class Usuarios {
 
     obtenerDatosUsuario() {
         return axios.get(`${baseUrl}user`, { headers: authHeader() });
@@ -15,4 +15,4 @@ class UserService {
     }
 }
 
-export default new UserService();
+export default new Usuarios();

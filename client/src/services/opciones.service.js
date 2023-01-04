@@ -68,3 +68,18 @@ export const datosTabla = [
     nombre: 'SISTEMA AUTOMATIZADO ',
   },
 ];
+
+// -------------------- CONTENIDO INTERNO DROPDOWN --------------------
+
+// export function opcionesHeader (key,icon,label,path) {
+//   return {
+//     key: key,
+//     icon: icon,
+//     label: <Link to={path}>{label}</Link>,
+//   }
+// };
+
+// const datosHeader = [
+//   opcionesHeader('0', <FaCog />, 'Configuracion', '/dashboard'),
+//   opcionesHeader('1', <FaPowerOff />, 'Cerrar Sesion', '/'),
+// ];

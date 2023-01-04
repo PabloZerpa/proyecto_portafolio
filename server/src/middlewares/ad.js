@@ -56,8 +56,8 @@ const buscarUser = (req, res, next) => {
             return;
         }
 
-        if (!user) console.log('User: ' + indicador + ' not found.');
-        else console.log(JSON.stringify(user));
+        if (!users) console.log('User: ' + indicador + ' not found.');
+        else console.log(JSON.stringify(users));
     });
 }
 

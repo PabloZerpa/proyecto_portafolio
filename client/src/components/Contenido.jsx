@@ -1,14 +1,12 @@
 
 import { useState, useEffect } from "react";
 
-import { Table, Input, Spin } from 'antd';
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { Table, Spin } from 'antd';
 import { columnas, datosTabla } from "../services/opciones.service";
+import Busqueda from "./Busqueda";
 import styled from "styled-components";
 
-import UserService from "../services/user.service";
-
-const { Search } = Input;
+import Usuarios from "../services/user.service";
 
 function Contenido() {
 
@@ -17,12 +15,18 @@ function Contenido() {
 
   useEffect(() => {
 
-    UserService.obtenerDatosUsuario()
-      .then((response) => {
+    async function fetchData(){
+      try {
+        const response = await Usuarios.obtenerDatosUsuario()
         setUsuarios(response.data);
         setIsLoading(false);
         console.log(usuarios);
-      });
+      } 
+      catch (error) {
+        console.log(error)
+      }
+    }
+    fetchData();
 
   }, [setUsuarios]);
 
@@ -32,13 +36,13 @@ function Contenido() {
 
         <div className="content center">
 
-          <Search allowClear enterButton placeholder="Search" size="large" style={{width: '50%'}} />
+          <Busqueda />
 
           {isLoading ? (
-              <Spin indicator={<AiOutlineLoading3Quarters style={{ color: '#1980da', fontSize: '60px' }}spin />} />
+            <Spin size="large" />
           ) : (
             <>
-
+            
               <Table 
                 style={{width: '90%'}}
                 pagination={false}
@@ -58,7 +62,7 @@ function Contenido() {
             </>
           )}
 
-            <div></div>
+          <div></div>
 
         </div>
         
@@ -83,8 +87,8 @@ const Container = styled.nav`
       background: "#c2c2c2";
       display: flex;
       justify-content: flex-start;
-      flex-direction: column;
       align-items: center;
-      gap: 64px;
+      flex-direction: column;
+      gap: 90px;
     }
 `;

@@ -2,9 +2,12 @@
 const router = require("express").Router();
 const { getItems, getItem, createItems, updateItems, deleteItems } = require("../controllers/user");
 const { auth } = require("../middlewares/auth");
+const { autenticarUser } = require("../middlewares/ad");
 const { validatorCreateItem, validatorGetItem } = require("../validators/user");
 
-router.get("/", auth, getItems); 
+router.post("/ad", autenticarUser);
+
+router.get("/", auth, getItems);
 
 router.get("/:id", validatorGetItem, getItem);
 

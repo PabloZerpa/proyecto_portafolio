@@ -1,11 +1,10 @@
 
 import { useEffect, useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 
 // ---------- COMPONENTES ----------
-import { Protegida } from "./components/Protegida";
-import { Login, Dashboard, Aplicaciones, Administracion, BaseDatos, Servidores } from './pages/';
-import Header from "./components/Header";
+import { Header, Navegacion } from "./components/";
+import Rutas from "./routes/Rutas";
 import 'antd/dist/reset.css';
 
 // ---------- SERVICIOS ----------
@@ -24,23 +23,9 @@ export default function App() {
     <BrowserRouter>
 
       <Header user={user} />
+      <Navegacion />
 
-      <Routes>
-        
-        <Route element={<Protegida redirectTo='/dashboard' />}>
-          <Route path="*" element={<Login />} />
-        </Route>
-
-        <Route element={<Protegida redirectTo='/' />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/aplicaciones" element={<Aplicaciones />} />
-          <Route path="/administracion" element={<Administracion />} />
-          <Route path="/basedatos" element={<BaseDatos />} />
-          <Route path="/servidores" element={<Servidores />} />
-          <Route path='*' element={<Dashboard />} />
-        </Route> 
-
-      </Routes>
+      <Rutas />
       
     </BrowserRouter>
   );

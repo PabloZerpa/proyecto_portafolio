@@ -6,14 +6,13 @@ import { Button, Checkbox, Form, Input, Select } from 'antd';
 import { FaUserCircle } from 'react-icons/fa';
 import styled from "styled-components";
 
-import AuthService from '../services/auth.service';
+import Autorizacion from '../services/auth.service';
 
 function Login() {
   
   const [password, setPassword] = useState('');
   const [indicador, setIndicador] = useState('');
   const [rol, setRol] = useState('');
-
   const navigate = useNavigate();
   const clearForm = () => document.getElementById("loginForm").reset();
 
@@ -21,19 +20,20 @@ function Login() {
   async function handleLogin() {
     
     try {
-      await AuthService.login(indicador,password,rol);
+      await Autorizacion.login(indicador,password,rol);
       clearForm();
       navigate("/dashboard");
       window.location.reload();
     } 
     catch (error) {
+      error();
       console.error(error);
     }
   }
 
   return (
     <Container>
-      
+
       <Form id='loginForm' className='form' method='POST' >
 
         <FaUserCircle style={{ color: '#1980da', fontSize: '64px', marginBottom: '16px' }} />
@@ -81,6 +81,8 @@ function Login() {
         </Form.Item>
 
       </Form>
+
+
     </Container>
 
   );
@@ -95,16 +97,19 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
 
   .form{
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    background: #ffffff;
     font-weight: 500;
     margin-top: 120px;
-
+    padding: 16px 54px 16px 54px;
+    border-radius: 10px;
+    box-shadow: 3px 3px 10px #9c9c9c;
+    
     .input{
       width: 200px;
     }

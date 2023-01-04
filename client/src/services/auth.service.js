@@ -2,7 +2,7 @@
 import axios from 'axios';
 const baseUrl = "http://localhost:3001/api/";
 
-class AuthService {
+class Autorizacion {
 
     // ---------------- LOGIN ------------------
     async login(indicador, password, rol) {
@@ -31,4 +31,4 @@ class AuthService {
 
 }
 
-export default new AuthService();
+export default new Autorizacion();

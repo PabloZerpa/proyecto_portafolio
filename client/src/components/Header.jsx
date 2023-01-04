@@ -4,7 +4,7 @@ import { Dropdown } from 'antd';
 import { FaUserCircle, FaPowerOff, FaCog, FaChevronDown } from 'react-icons/fa';
 import styled from "styled-components";
 import axios from "axios";
-import AuthService from '../services/auth.service';
+import Autorizacion from '../services/auth.service';
 
 const baseURL = "http://localhost:3001/api/logout";
 
@@ -25,7 +25,7 @@ const items = [
 // -------------------- FUNCION PARA CERRAR SESION --------------------
 async function handleLogin() {
 
-  AuthService.logout();
+  Autorizacion.logout();
   window.location.reload();
   try {
     await axios.get(baseURL);
@@ -38,12 +38,14 @@ function Header({ user }) {
   return (
     
     <Container>
+
       <Link className="linkNav" to="/">
         <img src="https://logodownload.org/wp-content/uploads/2019/03/pdvsa-logo.png" alt="logo" className="logo" />
       </Link>
+
       <div className="title">Repositorio de Infraestructura y Aplicaciones</div>
 
-      {AuthService.obtenerUsuario() == null ? (
+      {Autorizacion.obtenerUsuario() == null ? (
         <div></div>
       ) : (
         <div className="perfilUsuario">
@@ -54,12 +56,16 @@ function Header({ user }) {
                 style={{background: '#1980da'}}
             >
                 <a href='/' className="center" style={{ marginRight: '32px' }} onClick={(e) => e.preventDefault()}>
+
                   <FaUserCircle style={{ color: '#1980da', fontSize: '42px', cursor: "pointer" }} />
+
                   <div className="perfil center" >
-                    <div style={{fontSize: '18px'}} >{user.indicador}</div>
-                    <div style={{fontSize: '14px', color: '#707070'}} >{user.rol}</div>
+                    <div className="indicador" style={{fontSize: '18px'}} >{user.indicador}</div>
+                    <div className="rol" style={{fontSize: '14px', color: '#707070'}} >{user.rol}</div>
                   </div>
+
                   <FaChevronDown style={{fontSize: '12px'}} />
+                  
                 </a>
             </Dropdown>
         </div>
@@ -72,11 +78,11 @@ function Header({ user }) {
 export default Header;
 
 const Container = styled.nav`
-  width: 100%;
-  height: 80px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+  height: 80px;
   background: #ffffff;
   position: fixed;
   box-shadow: 1px 1px 10px #696969;
@@ -98,6 +104,7 @@ const Container = styled.nav`
     font-weight: bold;
     color: #000;
     text-align: center;
+    margin-right: 120px;
   }
 
   a{

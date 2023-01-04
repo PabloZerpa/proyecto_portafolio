@@ -1,5 +1,5 @@
 
-const { verificarToken } = require('../middlewares/token');
+const { verificarToken } = require('../helpers/token');
 
 const auth = async (req, res, next) => {
 

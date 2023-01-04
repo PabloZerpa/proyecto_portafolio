@@ -1,7 +1,7 @@
 
 const pool = require('../config');
 const { matchedData } = require("express-validator");
-const { generarToken } = require('../middlewares/token');
+const { generarToken } = require('../helpers/token');
 
 // *************** LOGEAR USUARIO ***************
 const login = async (req, res) => { 
