@@ -1,13 +1,14 @@
 
-import Navegacion from "../components/Navegacion";
-import Contenido from "../components/Contenido";
 import styled from "styled-components";
+import { Header, Navegacion, Contenido } from "../components";
 
 function Dashboard() {
 
   return (
       <Container>
-    
+        
+        <Header login={true} />
+
         <Navegacion />
         
         <Contenido />

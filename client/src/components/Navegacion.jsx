@@ -3,15 +3,8 @@ import React from "react";
 import { barraItems } from "../services/opciones.service";
 import { Menu } from 'antd';
 import styled from "styled-components";
-import Autorizacion from '../services/auth.service';
 
 function Navegacion() {
-
-    if (Autorizacion.obtenerUsuario() === null) {
-        return (
-            <div></div>
-        )
-    }
 
     return (
         <Container>

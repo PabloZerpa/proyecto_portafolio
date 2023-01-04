@@ -1,35 +1,13 @@
 
-import { useState, useEffect } from "react";
-
+import { useState } from "react";
 import { Table, Spin } from 'antd';
 import { columnas, datosTabla } from "../services/opciones.service";
 import Busqueda from "./Busqueda";
 import styled from "styled-components";
 
-import Usuarios from "../services/user.service";
-
 function Contenido() {
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [usuarios, setUsuarios] = useState([]);
-
-  useEffect(() => {
-
-    async function fetchData(){
-      try {
-        const response = await Usuarios.obtenerDatosUsuario()
-        setUsuarios(response.data);
-        setIsLoading(false);
-        console.log(usuarios);
-      } 
-      catch (error) {
-        console.log(error)
-      }
-    }
-    fetchData();
-
-  }, [setUsuarios]);
-
+  const [isLoading, setIsLoading] = useState(false);
 
     return (
       <Container>
@@ -49,15 +27,6 @@ function Contenido() {
                 columns={columnas} 
                 dataSource={datosTabla} 
               />
-
-              {/*usuarios.map((item) => (
-                <div key={item.id}>
-                  <h3>{item.id}</h3>
-                  <p>{item.indicador}</p>
-                  <p>{item.password}</p>
-                  <p>{item.rol}</p>
-                </div>
-              ))*/}
 
             </>
           )}

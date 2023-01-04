@@ -6,8 +6,6 @@ import { Button, Checkbox, Form, Input, Select } from 'antd';
 import { FaUserCircle } from 'react-icons/fa';
 import styled from "styled-components";
 
-import Autorizacion from '../services/auth.service';
-
 function Login() {
   
   const [password, setPassword] = useState('');
@@ -18,16 +16,12 @@ function Login() {
 
   // -------------------- FUNCION PARA INICIAR SESION --------------------
   async function handleLogin() {
-    
-    try {
-      await Autorizacion.login(indicador,password,rol);
+    if(password.length > 7 && indicador.length !== '' && rol.length !== ''){
+
+      localStorage.setItem("user", JSON.stringify({indicador,rol}));
       clearForm();
       navigate("/dashboard");
       window.location.reload();
-    } 
-    catch (error) {
-      error();
-      console.error(error);
     }
   }
 

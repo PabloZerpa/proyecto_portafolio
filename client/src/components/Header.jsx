@@ -3,10 +3,8 @@ import { Link } from "react-router-dom";
 import { Dropdown } from 'antd';
 import { FaUserCircle, FaPowerOff, FaCog, FaChevronDown } from 'react-icons/fa';
 import styled from "styled-components";
-import axios from "axios";
-import Autorizacion from '../services/auth.service';
-
-const baseURL = "http://localhost:3001/api/logout";
+import { useState } from "react";
+import { useEffect } from "react";
 
 // -------------------- CONTENIDO INTERNO DROPDOWN --------------------
 const items = [
@@ -18,22 +16,24 @@ const items = [
   {
     key: '1',
     icon: <FaPowerOff />,
-    label: <Link className="linkNav" onClick={handleLogin} to="/" >Cerrar Sesion</Link>
+    label: <Link className="linkNav" onClick={handleLogout} to="/" >Cerrar Sesion</Link>
   },
 ];
 
 // -------------------- FUNCION PARA CERRAR SESION --------------------
-async function handleLogin() {
-
-  Autorizacion.logout();
-  window.location.reload();
-  try {
-    await axios.get(baseURL);
-  } catch (error) {console.log(error);}
+async function handleLogout() {
+  localStorage.removeItem("user");
 }
 
 // -------------------- NAVEGACION --------------------
-function Header({ user }) {
+function Header({ login }) {
+
+  const [user, setUser] = useState('');
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem('user')));
+    console.log(user);
+  }, [])
 
   return (
     
@@ -45,7 +45,7 @@ function Header({ user }) {
 
       <div className="title">Repositorio de Infraestructura y Aplicaciones</div>
 
-      {Autorizacion.obtenerUsuario() == null ? (
+      {!login ? (
         <div></div>
       ) : (
         <div className="perfilUsuario">
@@ -60,8 +60,10 @@ function Header({ user }) {
                   <FaUserCircle style={{ color: '#1980da', fontSize: '42px', cursor: "pointer" }} />
 
                   <div className="perfil center" >
+
                     <div className="indicador" style={{fontSize: '18px'}} >{user.indicador}</div>
                     <div className="rol" style={{fontSize: '14px', color: '#707070'}} >{user.rol}</div>
+
                   </div>
 
                   <FaChevronDown style={{fontSize: '12px'}} />
