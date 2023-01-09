@@ -14,19 +14,19 @@ const login = async (req, res) => {
         // ********** VERIFICA QUE EL USUARIO EXISTA **********
         if(!user){
             console.log('USUARIO NO EXISTE');
-            return;
+            return res.status(401).json({ message: 'USUARIO INCORRECTO' });
         }
 
         // ********** VERIFICA QUE LA CONTRASEÑA SEA CORRECTA **********
         if(password != user.password){
             console.log('CONTRASEÑA INCORRECTA');
-            return;
+            return res.status(401).json({ message: 'CONTRASEÑA INCORRECTA' });
         }
 
         // ********** VERIFICA QUE EN ROL SEA CORRECTO **********
         if(rol != user.rol){
             console.log('ROL INCORRECTO');
-            return;
+            return res.status(401).json({ message: 'ROL INCORRECTO' });
         }
 
         // ********** GENERA EL TOKEN DEL USUARIO **********
@@ -38,11 +38,12 @@ const login = async (req, res) => {
             token
         }
 
-        res.send(datos);
+        console.log('LOGIN COMPLETADO');
+        res.status(200).json(datos);
 
     }
     catch(e){
-        return console.error(e);
+        return res.status(401).json(e);
     }
 }
 

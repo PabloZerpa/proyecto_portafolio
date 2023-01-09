@@ -6,17 +6,15 @@ class Autorizacion {
 
     // ---------------- LOGIN ------------------
     async login(indicador, password, rol) {
+        
+        return axios.post(`${baseUrl}login`, {indicador,password,rol})
+        .then(response => {
+            if (response.data.token)
+                localStorage.setItem("user", JSON.stringify(response.data));
 
-        if(password.length > 7 && indicador.length !== '' && rol.length !== ''){
-
-            return axios.post(`${baseUrl}login`, {indicador,password,rol})
-            .then(response => {
-                if (response.data.token) {
-                    localStorage.setItem("user", JSON.stringify(response.data));
-                }
-                return response.data;
-            });
-        }
+            return response.data;
+        });
+        
     }
 
     // ---------------- LOGOUT ------------------

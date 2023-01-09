@@ -1,9 +1,9 @@
 import Header from './Header';
 import Navegacion from './Navegacion';
-import Contenido from './Contenido';
+import Busqueda from './Busqueda';
 
 export {
     Header,
     Navegacion,
-    Contenido,
+    Busqueda,
 };

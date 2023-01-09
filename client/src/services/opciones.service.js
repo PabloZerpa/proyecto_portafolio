@@ -1,85 +1,131 @@
 import { Link } from "react-router-dom";
-import { FaHome, FaRegListAlt, FaServer, FaCode, FaDatabase, FaFileAlt, FaEnvelopeOpenText } from "react-icons/fa";
+import { 
+  FaHome, 
+  FaRegListAlt, 
+  FaServer, 
+  FaCode, 
+  FaDatabase, 
+  FaFileAlt, 
+  FaEnvelopeOpenText, 
+  FaEdit, 
+  FaEye } from "react-icons/fa";
 
 // -------------------- FUNCION PARA GENERAR LAS OPCIONES DE LA BARRA LATERAL --------------------
 function opciones(label, key, icon, children, type) {
     return { key, icon, children, label, type };
 }
 
-export const barraItems = [
-    opciones(<Link className="linkNav" to="/dashboard" >Inicio</Link>, 'sub1', <FaHome />),
+export const opcionesNav = [
+    opciones(<Link to="/dashboard" >Inicio</Link>, 'sub1', <FaHome />),
     opciones('Aplicaciones', 'sub2', <FaCode />, [
-        opciones(<Link className="linkNav" to="/" >Opcion</Link>, '1'),
-        opciones(<Link className="linkNav" to="/" >Opcion</Link>, '2'),
+        opciones(<Link to="/aplicaciones" >Actualizacion</Link>),
+        opciones(<Link to="/dashboard" >Software</Link>),
+        opciones(<Link to="/dashboard" >Documentos</Link>),
+        opciones(<Link to="/dashboard" >Interfaces</Link>),
     ]),
     opciones('Administracion', 'sub3', <FaRegListAlt />, [
-        opciones(<Link className="linkNav" to="/" >Opcion</Link>, '3'),
-        opciones(<Link className="linkNav" to="/" >Opcion</Link>, '4'),
+        opciones(<Link to="/dashboard" >Opcion</Link>, '3'),
+        opciones(<Link to="/dashboard" >Opcion</Link>, '4'),
     ]),
     opciones('Base de datos', 'sub4', <FaDatabase />, [
-        opciones(<Link className="linkNav" to="/" >Opcion</Link>, '5'),
-        opciones(<Link className="linkNav" to="/" >Opcion</Link>, '6'),
+        opciones(<Link to="/" >Opcion</Link>, '5'),
+        opciones(<Link to="/" >Opcion</Link>, '6'),
     ]),
     opciones('Servidores', 'sub5', <FaServer />, [
-        opciones(<Link className="linkNav" to="/" >Opcion</Link>, '7'),
-        opciones(<Link className="linkNav" to="/" >Opcion</Link>, '8'),
+        opciones(<Link to="/dashboard" >Opcion</Link>, '7'),
+        opciones(<Link to="/dashboard" >Opcion</Link>, '8'),
     ]),
-    opciones(<Link className="linkNav" to="/dashboard" >Documentacion</Link>, 'sub6', <FaFileAlt />),
-    opciones(<Link className="linkNav" to="/dashboard" >Solicitudes</Link>, 'sub7', <FaEnvelopeOpenText />),
+    opciones(<Link to="/dashboard" >Documentacion</Link>, 'sub6', <FaFileAlt />),
+    opciones(<Link to="/dashboard" >Solicitudes</Link>, 'sub7', <FaEnvelopeOpenText />),
 ];
 
 
 // -------------------- FUNCION PARA GENERAR LAS COLUMNAS DE LA BARRA LATERAL --------------------
+
+function estructura(title, dataIndex) {
+  return { 
+    title: title, 
+    dataIndex: dataIndex, 
+    key: dataIndex,
+  };
+}
+
+function operaciones(title, dataIndex, fixed, width){
+  return{
+    title: title,
+    key: dataIndex,
+    fixed: fixed,
+    width: width,
+    render: () => 
+      <>
+        <Link to="/aplicaciones" style={{margin: '0 10px 0 10px', fontSize: '18px'}} ><FaEye /></Link>
+        <Link to="/aplicaciones" style={{margin: '0 10px 0 10px', fontSize: '18px'}} ><FaEdit /></Link>
+      </>
+  }
+}
+
 export const columnas = [
-  {
-    title: 'ID',
-    dataIndex: 'id',
-    key: 'id',
-  },
-  {
-    title: 'Acronimo',
-    dataIndex: 'acronimo',
-    key: 'acronimo',
-  },
-  {
-    title: 'Nombre',
-    dataIndex: 'nombre',
-    key: 'nombre',
-  },
+
+  operaciones('Operaciones', 'operaciones', 'left', 100),
+  estructura('ID', 'id'),
+  estructura('Acronimo', 'acronimo'),
+  estructura('Nombre', 'nombre'),
+  estructura('Region', 'region'),
+  estructura('Responsable', 'responsable'),
+  estructura('Prioridad', 'prioridad'),
+  estructura('Ultima Actualizacion', 'ultima'),
+
 ];
   
 export const datosTabla = [
   {
     key: '1',
-    id: 12264,
-    acronimo: 'sapcod',
-    nombre: 'SISTEMA AUTOMATIZADO DE PREVENCION Y CONTROL DE DERRAMES',
+    id: 100,
+    acronimo: 'Acronimo de la aplicacion',
+    nombre: 'Nombre de la aplicacion',
+    region: 'Oriente Sur',
+    responsable: 'Nombre del responsable',
+    prioridad: 'Alta',
+    ultima: '5/11/2022',
   },
   {
     key: '2',
-    id: 36520,
-    acronimo: 'savi',
-    nombre: 'SISTEMA AUTOMATIZADO ',
+    id: 200,
+    acronimo: 'Acronimo de la aplicacion',
+    nombre: 'Nombre de la aplicacion',
+    region: 'Oriente Norte',
+    responsable: 'Nombre del responsable',
+    prioridad: 'Media',
+    ultima: '12/08/2022',
   },
   {
     key: '3',
-    id: 21304,
-    acronimo: 'sap',
-    nombre: 'SISTEMA AUTOMATIZADO ',
+    id: 300,
+    acronimo: 'Acronimo de la aplicacion',
+    nombre: 'Nombre de la aplicacion',
+    region: 'Centro',
+    responsable: 'Nombre del responsable',
+    prioridad: 'Baja',
+    ultima: '27/03/2021',
+  },
+  {
+    key: '4',
+    id: 400,
+    acronimo: 'Acronimo de la aplicacion',
+    nombre: 'Nombre de la aplicacion',
+    region: 'Corporativo',
+    responsable: 'Nombre del responsable',
+    prioridad: 'Media',
+    ultima: '03/10/2020',
+  },
+  {
+    key: '5',
+    id: 500,
+    acronimo: 'Acronimo de la aplicacion',
+    nombre: 'Nombre de la aplicacion',
+    region: 'Faja',
+    responsable: 'Nombre del responsable',
+    prioridad: 'Baja',
+    ultima: '16/04/2019',
   },
 ];
-
-// -------------------- CONTENIDO INTERNO DROPDOWN --------------------
-
-// export function opcionesHeader (key,icon,label,path) {
-//   return {
-//     key: key,
-//     icon: icon,
-//     label: <Link to={path}>{label}</Link>,
-//   }
-// };
-
-// const datosHeader = [
-//   opcionesHeader('0', <FaCog />, 'Configuracion', '/dashboard'),
-//   opcionesHeader('1', <FaPowerOff />, 'Cerrar Sesion', '/'),
-// ];

@@ -1,30 +1,39 @@
 
-import React from "react";
-import { barraItems } from "../services/opciones.service";
-import { Menu } from 'antd';
-import styled from "styled-components";
+import { useState } from "react";
+import { Menu, Button } from 'antd';
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { Nav } from "../styles/Navegacion.styles";
+
+import { opcionesNav } from "../services/opciones.service";
+import Autorizacion from '../services/auth.service';
 
 function Navegacion() {
 
+    const [collapsed, setCollapsed] = useState(false);
+    const toggleCollapsed = () => setCollapsed(!collapsed);
+    
+
+    if (Autorizacion.obtenerUsuario() === null)
+        return <div></div>
+
     return (
-        <Container>
-            <Menu mode="inline" className="menu" items={barraItems} />
-        </Container>
+        <Nav>
+
+            <div onClick={toggleCollapsed} className="menuButton">
+                {collapsed ? <FaChevronRight /> : <FaChevronLeft />}
+            </div>
+
+            <Menu 
+                mode="inline" 
+                className="menu" 
+                inlineCollapsed={collapsed} 
+                style={collapsed ? {width: '80px'} : {width: '190px'} } 
+                items={opcionesNav} 
+            />
+
+        </Nav>
     );
 }
 
 export default Navegacion;
 
-const Container = styled.nav`
-    margin: 0;
-    padding: 0;
-
-    .menu{
-        height: 100vh;
-        width: 220px;
-        position: fixed;
-        margin-top: 80px;
-        padding-top: 50px;
-        box-shadow: 1px 10px 10px #696969;
-    }
-`;

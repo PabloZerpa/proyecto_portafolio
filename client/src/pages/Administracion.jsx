@@ -1,5 +1,5 @@
 
-import styled from "styled-components";
+import { Container } from "../styles/Container.styles";
 
 function Administracion() {
 
@@ -11,9 +11,3 @@ function Administracion() {
 };
 
 export default Administracion;
-
-const Container = styled.div`
-  margin: 0;
-  padding: 0;
-  display: flex;
-`;

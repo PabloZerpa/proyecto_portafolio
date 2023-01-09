@@ -1,10 +1,11 @@
 
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Dropdown } from 'antd';
 import { FaUserCircle, FaPowerOff, FaCog, FaChevronDown } from 'react-icons/fa';
-import styled from "styled-components";
-import { useState } from "react";
-import { useEffect } from "react";
+import { Container } from "../styles/Header.styles";
+import axios from "axios";
+import Autorizacion from '../services/auth.service';
 
 // -------------------- CONTENIDO INTERNO DROPDOWN --------------------
 const items = [
@@ -16,24 +17,27 @@ const items = [
   {
     key: '1',
     icon: <FaPowerOff />,
-    label: <Link className="linkNav" onClick={handleLogout} to="/" >Cerrar Sesion</Link>
+    label: <Link className="linkNav" onClick={handleLogin} to="/" >Cerrar Sesion</Link>
   },
 ];
 
 // -------------------- FUNCION PARA CERRAR SESION --------------------
-async function handleLogout() {
-  localStorage.removeItem("user");
+async function handleLogin() {
+
+  Autorizacion.logout();
+  window.location.reload();
+  try {
+    await axios.get('http://localhost:3001/api/logout');
+  } catch (error) {console.log(error);}
 }
 
 // -------------------- NAVEGACION --------------------
-function Header({ login }) {
+function Header() {
 
   const [user, setUser] = useState('');
-
   useEffect(() => {
-    setUser(JSON.parse(localStorage.getItem('user')));
-    console.log(user);
-  }, [])
+    setUser(Autorizacion.obtenerUsuario());
+  }, []);
 
   return (
     
@@ -45,7 +49,7 @@ function Header({ login }) {
 
       <div className="title">Repositorio de Infraestructura y Aplicaciones</div>
 
-      {!login ? (
+      {Autorizacion.obtenerUsuario() == null ? (
         <div></div>
       ) : (
         <div className="perfilUsuario">
@@ -60,10 +64,8 @@ function Header({ login }) {
                   <FaUserCircle style={{ color: '#1980da', fontSize: '42px', cursor: "pointer" }} />
 
                   <div className="perfil center" >
-
-                    <div className="indicador" style={{fontSize: '18px'}} >{user.indicador}</div>
-                    <div className="rol" style={{fontSize: '14px', color: '#707070'}} >{user.rol}</div>
-
+                    <div style={{fontSize: '18px'}} >{user.indicador}</div>
+                    <div style={{fontSize: '14px', color: '#707070'}} >{user.rol}</div>
                   </div>
 
                   <FaChevronDown style={{fontSize: '12px'}} />
@@ -78,44 +80,3 @@ function Header({ login }) {
 } 
 
 export default Header;
-
-const Container = styled.nav`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  height: 80px;
-  background: #ffffff;
-  position: fixed;
-  box-shadow: 1px 1px 10px #696969;
-
-  .center{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .logo{
-    width: 120px;
-    margin-left: 32px;
-  }
-
-  .title{
-    font-size: 18px;
-    font-weight: bold;
-    color: #000;
-    text-align: center;
-    margin-right: 120px;
-  }
-
-  a{
-    text-decoration: none;
-    color: #000;
-  }
-
-  .perfil{
-    flex-direction: column;
-    gap: 0px;
-  }
-`;

@@ -1,10 +1,10 @@
 
 import { BrowserRouter } from "react-router-dom";
-
 // ---------- COMPONENTES ----------
-import { Header } from "./components/";
+import { Header, Navegacion } from "./components/";
 import Rutas from "./routes/Rutas";
 import 'antd/dist/reset.css';
+
 
  
 export default function App() {
@@ -12,8 +12,8 @@ export default function App() {
   return (
     <BrowserRouter>
 
-      <Header login={false} user={null} />
-
+      <Header />
+      <Navegacion />
       <Rutas />
       
     </BrowserRouter>

@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Input, Checkbox } from 'antd';
-import styled from "styled-components";
+import { SearchArea } from "../styles/Container.styles";
 
 const { Search } = Input;
 const CheckboxGroup = Checkbox.Group;
@@ -25,7 +25,7 @@ function Busqueda() {
     };
 
     return (
-        <Container>
+        <SearchArea>
             <div>
                 <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
                     Todos
@@ -35,16 +35,8 @@ function Busqueda() {
 
             <Search allowClear enterButton placeholder="Search" size="large" style={{width: '600px'}} />
 
-        </Container>
+        </SearchArea>
     );
 }
 
 export default Busqueda;
-
-const Container = styled.nav`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    gap: 16px;
-`;

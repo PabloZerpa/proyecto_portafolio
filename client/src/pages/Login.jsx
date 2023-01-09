@@ -1,10 +1,11 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Button, Checkbox, Form, Input, Select, notification } from 'antd';
+import { FaUserCircle, FaUser, FaLock } from 'react-icons/fa';
+import { Container } from '../styles/Login.style';
 
-import { Button, Checkbox, Form, Input, Select } from 'antd';
-import { FaUserCircle } from 'react-icons/fa';
-import styled from "styled-components";
+import Autorizacion from '../services/auth.service';
 
 function Login() {
   
@@ -12,50 +13,81 @@ function Login() {
   const [indicador, setIndicador] = useState('');
   const [rol, setRol] = useState('');
   const navigate = useNavigate();
-  const clearForm = () => document.getElementById("loginForm").reset();
+  const clearStates = () => {
+    setIndicador('');
+    setPassword('');
+    setRol('');
+  }
+
+  const [api, contextHolder] = notification.useNotification();
+  const openNotification = (tipo, msj, desc) => {
+    api[tipo]({
+      message: msj,
+      description: desc,
+      placement: 'top',
+      duration: 2,
+    });
+  };
 
   // -------------------- FUNCION PARA INICIAR SESION --------------------
-  async function handleLogin() {
-    if(password.length > 7 && indicador.length !== '' && rol.length !== ''){
+  async function handleLogin(e) {
 
-      localStorage.setItem("user", JSON.stringify({indicador,rol}));
-      clearForm();
-      navigate("/dashboard");
+    e.preventDefault();
+
+    if(password.length > 7 && indicador !== '' && rol !== ''){
+
+      try {
+        await Autorizacion.login(indicador,password,rol);
+        clearStates();
+        openNotification('success', 'Login Completado', `Bienvenido ${indicador}`);
+        
+        setTimeout(() => {
+          navigate("/dashboard");
+          window.location.reload();
+        }, "2000")
+      } 
+      catch (error) {
+        if(error.response)
+          openNotification('error', 'Login Fallido', error.response.data.message);
+        else
+          openNotification('error', 'Login Fallido', 'No responde el servidor');
+      }
     }
+
   }
 
   return (
     <Container>
+      {contextHolder}
 
-      <Form id='loginForm' className='form' method='POST' >
+      <Form className='form' onSubmitCapture={handleLogin} >
 
         <FaUserCircle style={{ color: '#1980da', fontSize: '64px', marginBottom: '16px' }} />
 
-        <Form.Item label="Indicador" name="indicador" rules={[{ required: true, message: 'Porfavor ingrese su indicador',},]} >
+        <Form.Item className='formItem' name="indicador" rules={[{ required: true, message: 'Porfavor ingrese su indicador',},]} >
           <Input 
             size="large" 
+            prefix={<FaUser />}
             placeholder="Indicador"
-            className='input'
             onChange={(e) => {setIndicador(e.target.value)}}
           />
         </Form.Item>
 
-        <Form.Item label="Password" name="password" rules={[{ required: true, message: 'Porfavor ingrese su contraseña',},]} >
+        <Form.Item className='formItem' name="password" rules={[{ required: true, message: 'Porfavor ingrese su contraseña',},]} >
           <Input.Password 
             size="large" 
+            prefix={<FaLock />}
             placeholder="Contraseña"
-            className='input'
+            minLength={8} maxLength={20}
             onChange={(e) => {setPassword(e.target.value)}}
           />
         </Form.Item>
 
-        <Form.Item name="rol" label="Rol" rules={[{ required: true }]}>
+        <Form.Item className='formItem' name="rol" rules={[{ required: true, message: 'Porfavor ingrese su Rol', }]}>
           <Select
             size="large"
-            placeholder="Seleccione"
-            className='input'
+            placeholder="Rol"
             onChange={(e) => {setRol(e)}}
-            style={{ marginLeft: '38px' }}
             options={[
               { value: 'user', label: 'User' },
               { value: 'admin', label: 'Admin' }
@@ -67,14 +99,13 @@ function Login() {
           <Checkbox>Recordar</Checkbox>
         </Form.Item>
 
-        <Form.Item >
-          <Button type="primary" htmlType="submit" onClick={handleLogin} >
+        <Form.Item className='formItem' >
+          <Button type="primary" htmlType="submit" >
             Login
           </Button>
         </Form.Item>
 
       </Form>
-
 
     </Container>
 
@@ -82,34 +113,3 @@ function Login() {
 }
 
 export default Login;
-
-const Container = styled.div`
-  width: 100%;
-  height: 720px;
-  background: #c2c2c2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  .form{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    background: #ffffff;
-    font-weight: 500;
-    margin-top: 120px;
-    padding: 16px 54px 16px 54px;
-    border-radius: 10px;
-    box-shadow: 3px 3px 10px #9c9c9c;
-    
-    .input{
-      width: 200px;
-    }
-  }
-  
-  button{
-    width: 100px;
-    height: 40px;
-  }
-`;
