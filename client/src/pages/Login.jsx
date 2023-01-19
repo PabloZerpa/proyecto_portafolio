@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Checkbox, Form, Input, Select, notification } from 'antd';
 import { FaUserCircle, FaUser, FaLock } from 'react-icons/fa';
 import { Container } from '../styles/Login.style';
-
 import Autorizacion from '../services/auth.service';
 
 function Login() {
@@ -13,12 +12,15 @@ function Login() {
   const [indicador, setIndicador] = useState('');
   const [rol, setRol] = useState('');
   const navigate = useNavigate();
+
+  // ---------- FUNCION PARA LIMPIAR LOS STATES ----------
   const clearStates = () => {
     setIndicador('');
     setPassword('');
     setRol('');
   }
 
+  // ---------- FUNCION PARA MOSTRAR STATUS DEL LOGIN ----------
   const [api, contextHolder] = notification.useNotification();
   const openNotification = (tipo, msj, desc) => {
     api[tipo]({
@@ -31,7 +33,6 @@ function Login() {
 
   // -------------------- FUNCION PARA INICIAR SESION --------------------
   async function handleLogin(e) {
-
     e.preventDefault();
 
     if(password.length > 7 && indicador !== '' && rol !== ''){
@@ -63,7 +64,7 @@ function Login() {
       <Form className='form' onSubmitCapture={handleLogin} >
 
         <FaUserCircle style={{ color: '#1980da', fontSize: '64px', marginBottom: '16px' }} />
-
+        
         <Form.Item className='formItem' name="indicador" rules={[{ required: true, message: 'Porfavor ingrese su indicador',},]} >
           <Input 
             size="large" 

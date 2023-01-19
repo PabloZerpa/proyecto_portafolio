@@ -61,6 +61,16 @@ export const Container = styled.div`
 
 `;
 
+export const Grid = styled.div`
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 12px;
+    background: #919191;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 3px 3px 10px #9c9c9c;
+`;
+
 export const FormContainer = styled.div`
     display: flex;
     justify-content: center;

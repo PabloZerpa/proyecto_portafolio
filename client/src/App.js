@@ -5,10 +5,7 @@ import { Header, Navegacion } from "./components/";
 import Rutas from "./routes/Rutas";
 import 'antd/dist/reset.css';
 
-
- 
 export default function App() {
-
   return (
     <BrowserRouter>
 

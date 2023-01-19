@@ -31,13 +31,26 @@ export const Container = styled.header`
     margin-right: 120px;
   }
 
-  a{
-    text-decoration: none;
-    color: #000;
-  }
+`;
+
+export const PerfilContainer = styled.div`
 
   .perfil{
     flex-direction: column;
     gap: 0px;
   }
+
+  a{
+    text-decoration: none;
+    color: #000;
+  }
+
+  .center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+
+
 `;

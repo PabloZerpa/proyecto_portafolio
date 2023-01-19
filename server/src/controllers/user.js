@@ -5,10 +5,10 @@ const { matchedData } = require('express-validator');
 // *************** OBTENER TODOS LOS DATOS ***************
 const getItems = async (req,res) => {
     try {
-        const data = await pool.query(`SELECT * FROM usuarios`);
+        const data = await pool.query(`SELECT * FROM aplicaciones`);
         res.send(data[0]);
     } catch (error) {
-        console.log("ERROR_GET_ITEMS");
+        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
     }
 };
 
@@ -17,7 +17,7 @@ const getItem = async (req,res) => {
     try {
         const body = matchedData(req);
         const {id} = body;
-        const [rows] = await pool.query('SELECT * FROM usuarios WHERE id = ?', [req.params]);
+        const [rows] = await pool.query('SELECT * FROM aplicaciones WHERE id = ?', [req.params]);
         res.send({ id: rows.insertId });
     } catch (error) {
         console.log("ERROR_CREATE_ITEMS");
@@ -29,7 +29,7 @@ const createItems = async (req,res) => {
     try {
         const body = matchedData(req);
         const {indicador, password, rol} = body;
-        const [rows] = await pool.query('INSERT INTO usuarios (indicador, password, rol) VALUES (?,?,?)', [indicador,password,rol]);
+        const [rows] = await pool.query('INSERT INTO aplicaciones (indicador, password, rol) VALUES (?,?,?)', [indicador,password,rol]);
         res.send({
             id: rows.insertId,
             indicador,
@@ -47,7 +47,7 @@ const updateItems = async (req,res) => {
     try {
         const body = matchedData(req);
         const {indicador, password, rol} = body;
-        const [rows] = await pool.query('UPDATE usuarios SET indicador = IFNULL(?), password = IFNULL(?), rol = IFNULL(?) WHERE id = ? ', [indicador, password, rol]);
+        const [rows] = await pool.query('UPDATE aplicaciones SET indicador = IFNULL(?), password = IFNULL(?), rol = IFNULL(?) WHERE id = ? ', [indicador, password, rol]);
         res.send({
             id: rows.insertId,
             indicador,
@@ -62,7 +62,7 @@ const updateItems = async (req,res) => {
 // *************** ELIMINAR USUARIO ***************
 const deleteItems = async (req,res) => {
     try {
-        const [result] = await pool.query('DELETE FROM usuarios WHERE id = ?', [req.params.id]);
+        const [result] = await pool.query('DELETE FROM aplicaciones WHERE id = ?', [req.params.id]);
         res.sendStatus(204);
     } catch (error) {
         console.log("ERROR_DELETE_ITEMS");
