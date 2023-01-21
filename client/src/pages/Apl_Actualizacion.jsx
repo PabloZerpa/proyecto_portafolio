@@ -21,51 +21,69 @@ function Actualizacion() {
   if(valor === null) return <Navigate to='/' />
 
   return (
-      <Container>
-        <Form className="aplicaciones start" layout="vertical">
+    <Container>
+        <Form className="aplicaciones start" layout="vertical"
+          fields={[
+              { name: ["acronimo"], value: valor.acronimo, },
+              { name: ["estatus"], value: valor.estatus, },
+              { name: ["nombre"], value: valor.nombre, },
+              { name: ["descripcion"], value: valor.descripcion, },
+              { name: ["prioridad"], value: valor.prioridad, },
+              { name: ["tipo"], value: valor.tipo, },
+              { name: ["mantenido"], value: valor.responsable, },
+              { name: ["desarrollado"], value: valor.responsable, },
+              { name: ["clientes"], value: valor.clientes, },
+              { name: ["plataforma"], value: valor.plataforma, },
+              { name: ["alcance"], value: valor.alcance, },
+              { name: ["codigofuente"], value: valor.codigo, },
+              { name: ["programafuente"], value: valor.fuente, },
+              { name: ["servidor"], value: valor.servidor, },
+              { name: ["region"], value: valor.region, },
+          ]}
+        >
 
-          <Title level={3}>Informacion Basica</Title>
+        <Title level={3}>Informacion Basica</Title>
 
-          <Grid>
+        <Grid>
 
-            <Formulario label="Acronimo" name="acronimo" tipo="input" datos={valor.acronimo} />
+          <Formulario label="Acronimo" name="acronimo" tipo="input" datos={valor.acronimo} />
               
-              <Formulario label="Estatus" name="estatus" tipo="select" 
-                  opciones={[
-                    { value: "desarrollo", label: "Desarrollo" },
-                    { value: "activo", label: "Activo" },
-                    { value: "inactivo", label: "Inactivo" }
-                  ]}
-                />
+          <Formulario label="Estatus" name="estatus" tipo="select" 
+            opciones={[
+              { value: "desarrollo", label: "Desarrollo" },
+              { value: "activo", label: "Activo" },
+              { value: "inactivo", label: "Inactivo" }
+            ]}
+          />
             
-              <Formulario label="Nombre" name="nombre" tipo="area" datos={valor.nombre} />
+          <Formulario label="Nombre" name="nombre" tipo="area" datos={valor.nombre} />
               
-              <Formulario label="Descripcion" name="descripcion" tipo="area" datos={valor.descripcion} />
+          <Formulario label="Descripcion" name="descripcion" tipo="area" datos={valor.descripcion} />
 
-              <Formulario label="Criticidad" name="criticidad" tipo="select" datos={valor.prioridad}
-                    opciones={[
-                    { value: "alta", label: "Alta" },
-                    { value: "medio", label: "Medio" },
-                    { value: "baja", label: "Baja" }
-                ]} 
-              />
+          <Formulario label="Prioridad" name="prioridad" tipo="select" datos={valor.prioridad}
+            opciones={[
+              { value: "alta", label: "Alta" },
+              { value: "medio", label: "Medio" },
+              { value: "baja", label: "Baja" }
+            ]} 
+          />
 
-              <Formulario label="Tipo de Aplicacion" name="tipo" tipo="select" 
-                    opciones={[
-                    { value: "administrativo", label: "Administrativo" },
-                    { value: "tecnico", label: "Tecnico" }
-                ]} 
-              />
-
-            
-              <Formulario label="Mantenido" name="mantenido" tipo="input" datos={valor.responsable} />
-
-              <Formulario label="Desarrollado" name="desarrollado" tipo="input" datos={valor.responsable} />
+          <Formulario label="Tipo de Aplicacion" name="tipo" tipo="select" 
+            opciones={[
+              { value: "administrativo", label: "Administrativo" },
+              { value: "tecnico", label: "Tecnico" }
+            ]} 
+          />
 
             
-              <Formulario label="Datos Clientes" name="clientes" tipo="input" datos={valor.clientes} />
+          <Formulario label="Mantenido" name="mantenido" tipo="input" datos={valor.responsable} />
 
-              <Formulario label="Plataforma" name="plataforma" tipo="input" datos={valor.plataforma} />
+          <Formulario label="Desarrollado" name="desarrollado" tipo="input" datos={valor.responsable} />
+
+            
+          <Formulario label="Datos Clientes" name="clientes" tipo="input" datos={valor.clientes} />
+
+          <Formulario label="Plataforma" name="plataforma" tipo="input" datos={valor.plataforma} />
 
           </Grid>
 
@@ -74,10 +92,10 @@ function Actualizacion() {
 
           <Grid>
 
-            <Formulario label="Alcance/Impacto" name="alcance/impacto" tipo="select" 
+            <Formulario label="Alcance" name="alcance" tipo="select" 
               opciones={[
-                  { value: "corporativo", label: "Corporativo" },
-                  { value: "alto", label: "Alto" }
+                { value: "corporativo", label: "Corporativo" },
+                { value: "alto", label: "Alto" }
               ]} 
             />
 
@@ -95,7 +113,7 @@ function Actualizacion() {
               ]} 
             />
 
-            <Formulario label="Fecha de implantacion" name="implantacion" tipo="date" />
+            <Formulario label="Ultima modificacion" name="fecha" tipo="date" />
 
           </Grid>
 
@@ -104,14 +122,14 @@ function Actualizacion() {
 
             <Grid>
               <Formulario label="Region Responsable" name="region" tipo="select" 
-                  opciones={[
+                opciones={[
                   { value: "oriente", label: "Oriente" },
                   { value: "centro", label: "Centro" },
                   { value: "andes", label: "Andes" }
                 ]} 
               />
 
-              <Formulario label="Servidores" name="servidores" tipo="input" datos={valor.servidores} />
+              <Formulario label="Servidores" name="servidor" tipo="input" datos={valor.servidores} />
             </Grid>
 
           <Divider />
@@ -124,7 +142,6 @@ function Actualizacion() {
         </Form>
           
       </Container>
-        
   )
 };
 

@@ -7,11 +7,11 @@ const auth = async (req, res, next) => {
     if(!authorization) return res.status(401);
 
     const token = await verificarToken(authorization);
-    console.log(token);
+    
     if(token)
         next();
     else 
-        return res.send('NO AUTORIZADO');
+        return res.status(401).send('NO AUTORIZADO');
         
 };
 

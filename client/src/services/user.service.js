@@ -1,6 +1,6 @@
 
 import axios from 'axios';
-//import authHeader from './cabecera.service';
+import Authorization from './auth.service';
 const baseUrl = "http://localhost:3001/api/";
 
 class Usuarios {
@@ -12,8 +12,15 @@ class Usuarios {
         else return {};
     }
 
-    obtenerDatosUsuario() {
-        return axios.get(`${baseUrl}user`, { headers: this.authHeader() });
+    async obtenerDatosUsuario() {
+        try {
+            const respuesta = await axios.get(`${baseUrl}user`, { headers: this.authHeader() });
+            return respuesta;
+        } catch (error) {
+            Authorization.logout();
+            window.location.reload();
+        }
+        //return axios.get(`${baseUrl}user`, { headers: this.authHeader() });
     }
 
     obtenerDatosAdmin() {

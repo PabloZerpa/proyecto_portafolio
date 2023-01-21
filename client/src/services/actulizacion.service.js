@@ -63,3 +63,21 @@ export const labels3 = [
 //       datos={valor.name}
 //     />
 //   ))}
+
+/*export const fields = [
+    { name: ["acronimo"], value: valor.acronimo, },
+    { name: ["estatus"], value: valor.estatus, },
+    { name: ["nombre"], value: valor.nombre, },
+    { name: ["descripcion"], value: valor.descripcion, },
+    { name: ["prioridad"], value: valor.prioridad, },
+    { name: ["tipo"], value: valor.tipo, },
+    { name: ["mantenido"], value: valor.responsable, },
+    { name: ["desarrollado"], value: valor.responsable, },
+    { name: ["clientes"], value: valor.clientes, },
+    { name: ["plataforma"], value: valor.plataforma, },
+    { name: ["alcance"], value: valor.alcance, },
+    { name: ["codigofuente"], value: valor.codigo, },
+    { name: ["programafuente"], value: valor.fuente, },
+    { name: ["servidor"], value: valor.servidor, },
+    { name: ["region"], value: valor.region, },
+];*/

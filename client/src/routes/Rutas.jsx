@@ -13,7 +13,7 @@ function Rutas() {
 
           <Route element={<Protegida redirectTo='/' />}>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/aplicaciones" element={<Aplicaciones />} />
+            <Route path="/aplicaciones/:id" element={<Aplicaciones />} />
             <Route path="/aplicaciones/actualizacion/:id" element={<Actualizacion />} />
             <Route path="/administracion" element={<Administracion />} />
             <Route path="/basedatos" element={<BaseDatos />} />
