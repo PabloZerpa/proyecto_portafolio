@@ -17,9 +17,23 @@ class Autorizacion {
         
     }
 
+    // ---------------- UPDATE ------------------
+    async actualizarDatos(acronimo,nombre,region,responsable,prioridad,ultima,id) {
+        try {
+            console.log(acronimo,nombre,region,responsable,prioridad,ultima);
+            return axios.put(`${baseUrl}user/${id}`, {acronimo,nombre,region,responsable,prioridad,ultima});
+        } catch (error) {
+            console.log('ERROR AL ACTUALIZAR auth.service');
+        }
+    }    
+
     // ---------------- LOGOUT ------------------
-    logout() {
+    async logout() {
         localStorage.removeItem("user");
+        window.location.reload();
+        try {
+            await axios.get('http://localhost:3001/api/logout');
+          } catch (error) {console.log(error);}
     }
 
     // ---------------- OBTENER USUARIO ------------------

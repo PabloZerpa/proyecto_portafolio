@@ -4,7 +4,6 @@ import { Dropdown } from 'antd';
 import { FaUserCircle, FaPowerOff, FaCog, FaChevronDown } from 'react-icons/fa';
 import { PerfilContainer } from "../styles/Header.styles";
 import Autorizacion from '../services/auth.service';
-import axios from "axios";
 
 function Perfil({ user }) {
   
@@ -18,19 +17,9 @@ function Perfil({ user }) {
     {
       key: '1',
       icon: <FaPowerOff />,
-      label: <Link className="linkNav" onClick={handleLogin} to="/" >Cerrar Sesion</Link>
+      label: <Link className="linkNav" onClick={Autorizacion.logout} to="/" >Cerrar Sesion</Link>
     },
   ];
-
-  // -------------------- FUNCION PARA CERRAR SESION --------------------
-  async function handleLogin() {
-
-    Autorizacion.logout();
-    window.location.reload();
-    try {
-      await axios.get('http://localhost:3001/api/logout');
-    } catch (error) {console.log(error);}
-  }
   
   return (
     <PerfilContainer>

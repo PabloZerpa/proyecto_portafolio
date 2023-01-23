@@ -5,22 +5,22 @@ const { TextArea } = Input;
 
 function Formulario({ label, name, tipo, opciones, datos }) {
 
-    /*return(
-        <FormContainer>
-            <Form.Item className="formItem" label={label} name={name} >
-                {tipo === 'input' ? ( <Input allowClear className="input" placeholder={label} value={datos} /> ) : ( null )}
-                {tipo === 'area' ? ( <TextArea allowClear className="input" rows={3} placeholder={label} /> ) : ( null )}
-                {tipo === 'date' ? ( <DatePicker className="input" /> ) : ( null )}
-                {tipo === 'select' ? (  <Select style={{ width: 200,}} placeholder={label} options={opciones} className="select" /> ) : ( null )}
-            </Form.Item>
-        </FormContainer>
-    );*/
+    // return(
+    //     <FormContainer>
+    //         <Form.Item className="formItem" label={label} name={name} >
+    //             {tipo === 'input' ? ( <Input allowClear className="input" placeholder={label} defaultValue={datos} /> ) : ( null )}
+    //             {tipo === 'area' ? ( <TextArea allowClear className="input" rows={3} placeholder={label} defaultValue={datos} /> ) : ( null )}
+    //             {tipo === 'date' ? ( <DatePicker className="input" /> ) : ( null )}
+    //             {tipo === 'select' ? (  <Select style={{ width: 200,}} placeholder={label} defaultValue={datos} options={opciones} className="select" /> ) : ( null )}
+    //         </Form.Item>
+    //     </FormContainer>
+    // );
 
     if(tipo === 'input'){
         return(
             <FormContainer>
                 <Form.Item className="formItem" label={label} name={name}>
-                    <Input allowClear className="input" placeholder={label} value={datos} /> 
+                    <Input allowClear className="input" placeholder={label} defaultValue={datos} /> 
                 </Form.Item>
             </FormContainer>
         );

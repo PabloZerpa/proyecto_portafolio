@@ -1,131 +1,104 @@
 
-import { useState, useEffect } from 'react';
-import { useLocation, useParams, useNavigate, Navigate } from 'react-router-dom';
-import { Form, Button, Typography, Divider } from "antd";
-import { Container, Grid } from "../styles/Container.styles";
-import Formulario from "../components/Formulario";
-const { Title } = Typography;
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { FaEdit, FaEye } from "react-icons/fa";
+import { Table } from 'antd';
+import { Busqueda } from "../components";
+import { Container } from "../styles/Container.styles";
+import Usuarios from "../services/user.service";
 
 function Aplicaciones() {
 
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [valor, setValor] = useState("");
-  const { paramsId } = useParams();
+  const [isLoading, setIsLoading] = useState(true);
+    const [datos, setDatos] = useState([]);
+    const [selectApp, setSelectApp] = useState('');
   
-  useEffect(() => {
-    console.log(location.state);
-    setValor(location.state);
-  }, [paramsId]);
+    useEffect(() => {
+      async function fetchData(){
+        try {
+          const response = await Usuarios.obtenerDatosUsuario()
+          setDatos(response.data);
+          setIsLoading(false);
+        } 
+        catch (error) {
+          console.log(error)
+        }
+      }
+      fetchData();
+    }, []);
+  
+  
+    function estructura(title, dataIndex, fixed, width) {
+      if(fixed !== 'left'){
+        return { 
+          title: title, 
+          dataIndex: dataIndex,
+          key: dataIndex,
+        };
+      }
+      else{
+        return{
+          title: title,
+          dataIndex: dataIndex,
+          key: dataIndex,
+          fixed: fixed,
+          width: width,
+          render: () => 
+            <>
+              <Link to={selectApp ? `/aplicaciones/${selectApp.id}` : `/aplicaciones`} style={{margin: '0 10px 0 10px', fontSize: '18px'}}
+                state={selectApp} >
+                <FaEye />
+              </Link>
+              <Link to={selectApp ? `/aplicaciones/actualizacion/${selectApp.id}` : `/aplicaciones`} style={{margin: '0 10px 0 10px', fontSize: '18px'}}
+                  state={selectApp} >
+                <FaEdit />
+              </Link>
+            </>
+        }
+      }
+    }
+    
+    const columnas = [
+      estructura('Operaciones', 'operaciones', 'left', 100),
+      estructura('ID', 'id'),
+      estructura('Acronimo', 'acronimo'),
+      estructura('Nombre', 'nombre'),
+      estructura('Region', 'region'),
+      estructura('Responsable', 'responsable'),
+      estructura('Prioridad', 'prioridad'),
+      estructura('Ultima Actualizacion', 'ultima'),
+    ];
 
-  if(valor === null) return <Navigate to='/' />
+  return (
+    <Container>
+      <div className="dashboard start" >
 
-    return (
-      <Container>
-        <Form className="aplicaciones start" layout="vertical">
+        <Busqueda />
 
-        <Title level={3}>Informacion Basica</Title>
+        <Table 
+            size="small"
+            style={{width: '1000px'}}
+            loading={isLoading}
+            pagination={false}
+            columns={columnas}
+            dataSource={datos}
+            //dataSource={datosTabla}
+            onRow={(record, rowIndex) => {
+                return{
+                onClickCapture: event => {
+                    console.log(record);
+                    setSelectApp(record);
+                }
+                }
+            }}
+        />
 
-        <Grid>
+        <div></div>
 
-          <Formulario label="Acronimo" name="acronimo" tipo="input" datos={valor.acronimo} />
-              
-          <Formulario label="Estatus" name="estatus" tipo="select" 
-            opciones={[
-              { value: "desarrollo", label: "Desarrollo" },
-              { value: "activo", label: "Activo" },
-              { value: "inactivo", label: "Inactivo" }
-            ]}
-          />
-            
-          <Formulario label="Nombre" name="nombre" tipo="area" datos={valor.nombre} />
-              
-          <Formulario label="Descripcion" name="descripcion" tipo="area" datos={valor.descripcion} />
-
-          <Formulario label="Prioridad" name="prioridad" tipo="select" datos={valor.prioridad}
-            opciones={[
-              { value: "alta", label: "Alta" },
-              { value: "medio", label: "Medio" },
-              { value: "baja", label: "Baja" }
-            ]} 
-          />
-
-          <Formulario label="Tipo de Aplicacion" name="tipo" tipo="select" 
-            opciones={[
-              { value: "administrativo", label: "Administrativo" },
-              { value: "tecnico", label: "Tecnico" }
-            ]} 
-          />
-
-            
-          <Formulario label="Mantenido" name="mantenido" tipo="input" datos={valor.responsable} />
-
-          <Formulario label="Desarrollado" name="desarrollado" tipo="input" datos={valor.responsable} />
-
-            
-          <Formulario label="Datos Clientes" name="clientes" tipo="input" datos={valor.clientes} />
-
-          <Formulario label="Plataforma" name="plataforma" tipo="input" datos={valor.plataforma} />
-
-          </Grid>
-
-          <Divider />
-          <Title level={3}>Caracteristicas de la Aplicaciones</Title>
-
-          <Grid>
-
-            <Formulario label="Alcance" name="alcance" tipo="select" 
-              opciones={[
-                { value: "corporativo", label: "Corporativo" },
-                { value: "alto", label: "Alto" }
-              ]} 
-            />
-
-            <Formulario label="Codigo fuente" name="codigofuente" tipo="select" 
-              opciones={[
-                { value: "si", label: "SI" },
-                { value: "no", label: "NO" }
-              ]} 
-            />
-
-            <Formulario label="Programa fuente" name="programafuente" tipo="select" 
-              opciones={[
-                { value: "propoio", label: "Propio" },
-                { value: "terceros", label: "Terceros" }
-              ]} 
-            />
-
-            <Formulario label="Ultima modificacion" name="fecha" tipo="date" />
-
-          </Grid>
-
-          <Divider />
-          <Title level={3}>Informacion de Gestion de la Plataforma</Title>
-
-            <Grid>
-              <Formulario label="Region Responsable" name="region" tipo="select" 
-                opciones={[
-                  { value: "oriente", label: "Oriente" },
-                  { value: "centro", label: "Centro" },
-                  { value: "andes", label: "Andes" }
-                ]} 
-              />
-
-              <Formulario label="Servidores" name="servidor" tipo="input" datos={valor.servidores} />
-            </Grid>
-
-          <Divider />
-          <div className="buttonGroup">
-            <Button type="primary" danger onClick={() => navigate(-1)}>Cancelar</Button>
-
-            <Button type="primary" htmlType="submit" >Guardar</Button>
-          </div>
-
-        </Form>
-          
-      </Container>
-          
-    )
+      </div>
+      
+    </Container>
+  )
 };
 
 export default Aplicaciones;

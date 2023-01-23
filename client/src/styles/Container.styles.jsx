@@ -27,7 +27,7 @@ export const Container = styled.div`
         height: 100vh;
         margin: 0;
         background: "#c2c2c2";
-        gap: 90px;
+        gap: 60px;
     }
 
     .aplicaciones{
@@ -57,6 +57,7 @@ export const Container = styled.div`
                 width: 120px;
             }
         }
+        
     }
 
 `;
@@ -64,7 +65,7 @@ export const Container = styled.div`
 export const Grid = styled.div`
     display: grid;
     grid-template-columns: auto auto;
-    gap: 12px;
+    gap: 24px;
     background: #919191;
     padding: 20px;
     border-radius: 10px;
@@ -85,28 +86,39 @@ export const FormContainer = styled.div`
     }
 `;
 
-
-export const GridContainer = styled.div`
-    width: 100%;
-    border: solid 2px #ac2f09;
-
-    .rows {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-    }
-    .cols {
-        * {
-        width: 400px;
-        }
-    }
-`;
-
 export const SearchArea = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    gap: 16px;
+    width: 1000px;
+    padding-bottom: 16px;
+    background: #aaaaaa;
+    border-radius: 5px;
+    //border: 1px solid blue;
+
+    .filtros{
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        width: 100%;
+        padding: 16px 16px 0 16px;
+        //border: 1px solid red;
+
+        .formItem{
+            margin: 0;
+            padding: 0;
+        }
+
+        .rows{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            //border: 1px solid gold;
+            
+        }
+
+    }
 
 `;

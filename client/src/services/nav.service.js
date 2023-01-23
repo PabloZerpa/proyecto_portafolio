@@ -17,7 +17,7 @@ function opciones(label, key, icon, children, type) {
 export const opcionesNav = [
     opciones(<Link to="/dashboard" >Inicio</Link>, 'sub1', <FaHome />),
     opciones('Aplicaciones', 'sub2', <FaCode />, [
-        opciones(<Link to="/aplicaciones/actualizacion" >Actualizacion</Link>),
+        opciones(<Link to="/aplicaciones" >Actualizacion</Link>),
         opciones(<Link to="/aplicaciones" >Software</Link>),
         opciones(<Link to="/aplicaciones" >Documentos</Link>),
         opciones(<Link to="/aplicaciones" >Interfaces</Link>),

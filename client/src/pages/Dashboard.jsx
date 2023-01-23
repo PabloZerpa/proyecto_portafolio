@@ -1,25 +1,25 @@
 
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { FaEye } from "react-icons/fa";
 import { Table } from 'antd';
-//import { columnas, datosTabla } from "../services/tabla.service";
-import { Busqueda } from "../components/";
 import { Container } from "../styles/Container.styles";
 import Usuarios from "../services/user.service";
 
-import { Link } from "react-router-dom";
-import { FaEdit, FaEye } from "react-icons/fa";
-
-
 function Dashboard() {
+  
   const [isLoading, setIsLoading] = useState(true);
-  const [datos, setDatos] = useState([]);
+  const [datosModificacion, setDatosModificacion] = useState([]);
+  const [datosCreacion, setDatosCreacion] = useState([]);
   const [selectApp, setSelectApp] = useState('');
 
   useEffect(() => {
     async function fetchData(){
       try {
-        const response = await Usuarios.obtenerDatosUsuario()
-        setDatos(response.data);
+        const porModificacion = await Usuarios.obtenerPorModificacion();
+        const porCreacion = await Usuarios.obtenerPorCreacion();
+        setDatosModificacion(porModificacion.data);
+        setDatosCreacion(porCreacion.data);
         setIsLoading(false);
       } 
       catch (error) {
@@ -28,6 +28,7 @@ function Dashboard() {
     }
     fetchData();
   }, []);
+
 
   function estructura(title, dataIndex, fixed, width) {
     if(fixed !== 'left'){
@@ -46,14 +47,9 @@ function Dashboard() {
         width: width,
         render: () => 
           <>
-            <Link to={selectApp ? `/aplicaciones/${selectApp.id}` : `/dashboard`} style={{margin: '0 10px 0 10px', fontSize: '18px'}}
+            <Link to={selectApp ? `/aplicaciones/${selectApp.id}` : `/dashboard`} style={{marginLeft: '30px', fontSize: '18px'}}
               state={selectApp} >
               <FaEye />
-            </Link>
-            <Link to={selectApp ? `/aplicaciones/actualizacion/${selectApp.id}` : `/dashboard`} style={{margin: '0 10px 0 10px', fontSize: '18px'}}
-                // onClick={(e) => { console.log(e.target) }}
-                state={selectApp} >
-              <FaEdit />
             </Link>
           </>
       }
@@ -61,7 +57,7 @@ function Dashboard() {
   }
   
   const columnas = [
-    estructura('Operaciones', 'operaciones', 'left', 100),
+    estructura('Operaciones', 'operaciones', 'left', 40),
     estructura('ID', 'id'),
     estructura('Acronimo', 'acronimo'),
     estructura('Nombre', 'nombre'),
@@ -72,10 +68,8 @@ function Dashboard() {
   ];
 
   return (
-      <Container>
+    <Container>
         <div className="dashboard start" >
-
-          <Busqueda />
 
           <Table 
               size="small"
@@ -83,23 +77,41 @@ function Dashboard() {
               loading={isLoading}
               pagination={false}
               columns={columnas}
-              dataSource={datos}
-              //dataSource={datosTabla}
+              dataSource={datosModificacion}
+              title={() => <h3>Ultimas Modificadas</h3>}
               onRow={(record, rowIndex) => {
-                return{
-                  onClick: event => {
-                    console.log(record);
-                    setSelectApp(record);
+              return{
+                  onClickCapture: event => {
+                  console.log(record);
+                  setSelectApp(record);
                   }
-                }
+              }
+              }}
+          />
+
+          <Table 
+              size="small"
+              style={{width: '1000px'}}
+              loading={isLoading}
+              pagination={false}
+              columns={columnas}
+              dataSource={datosCreacion}
+              title={() => <h3>Ultimas Agregadas</h3>}
+              onRow={(record, rowIndex) => {
+              return{
+                  onClickCapture: event => {
+                  console.log(record);
+                  setSelectApp(record);
+                  }
+              }
               }}
           />
 
           <div></div>
 
         </div>
-          
-      </Container>
+        
+    </Container>
   )
 };
 

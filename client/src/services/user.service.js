@@ -23,9 +23,42 @@ class Usuarios {
         //return axios.get(`${baseUrl}user`, { headers: this.authHeader() });
     }
 
-    obtenerDatosAdmin() {
-        return axios.get(`${baseUrl}user`, { headers: this.authHeader() });
+    async obtenerDato(id) {
+        try {
+            const respuesta = await axios.get(`${baseUrl}user/${id}`, { headers: this.authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log('Error al obtener dato');
+        }
     }
+
+    async obtenerPorModificacion() {
+        try {
+            const respuesta = await axios.get(`${baseUrl}user/u`, { headers: this.authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log('Error al obtener dato');
+        }
+    }
+
+    async obtenerPorCreacion() {
+        try {
+            const respuesta = await axios.get(`${baseUrl}user/c`, { headers: this.authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log('Error al obtener dato');
+        }
+    }
+
+    async obtenerPorTermino(term) {
+        try {
+            console.log(term);
+            return axios.post(`${baseUrl}user/term`, {term});
+        } catch (error) {
+            console.log('Error al obtener dato');
+        }
+    }
+
 }
 
 export default new Usuarios();

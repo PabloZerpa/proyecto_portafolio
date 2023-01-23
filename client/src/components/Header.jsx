@@ -9,7 +9,6 @@ const logo = "https://logodownload.org/wp-content/uploads/2019/03/pdvsa-logo.png
 
 // -------------------- NAVEGACION --------------------
 function Header() {
-
   const [user, setUser] = useState('');
   
   useEffect(() => {

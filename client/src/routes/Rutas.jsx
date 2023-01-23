@@ -2,6 +2,7 @@
 import { Routes, Route } from "react-router-dom";
 import { Protegida } from "./Protegida";
 import { Login, Dashboard, Aplicaciones, Actualizacion, Administracion, BaseDatos, Servidores } from '../pages';
+import Vista from "../pages/Apl_Vista";
 
 function Rutas() {
     return (
@@ -13,7 +14,8 @@ function Rutas() {
 
           <Route element={<Protegida redirectTo='/' />}>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/aplicaciones/:id" element={<Aplicaciones />} />
+            <Route path="/aplicaciones/" element={<Aplicaciones />} />
+            <Route path="/aplicaciones/:id" element={<Vista />} />
             <Route path="/aplicaciones/actualizacion/:id" element={<Actualizacion />} />
             <Route path="/administracion" element={<Administracion />} />
             <Route path="/basedatos" element={<BaseDatos />} />
