@@ -1,20 +1,36 @@
 
-import { useState } from 'react';
-import { Input, InputNumber, Select, DatePicker, Form, Button, Radio, Divider } from 'antd';
+import { useState, useEffect } from 'react';
+import { Input, InputNumber, Select, DatePicker, Form, Button, Radio, Divider, Table } from 'antd';
 import { SearchArea } from "../styles/Container.styles";
+import {useDebounce} from 'use-debounce';
 import Usuarios from "../services/user.service";
-
 const { Search } = Input;
 
-function Busqueda() {
+function Busqueda({manejarBusqueda}) {
 
+    const [isLoading, setIsLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
     const [resultados, setResultados] = useState([]);
+    const [debounceValue] = useDebounce(searchTerm,500);
+
+    useEffect(() =>{
+		if (debounceValue) {
+            onSearch(debounceValue);
+            setIsLoading(false);
+        } else {
+            setResultados(null);
+            setIsLoading(true);
+        }
+	}, [debounceValue]);
 
     const onSearch = async (value) => {
         try {
-            console.log(value);
+            console.log(`Valor a buscar: ${value}`);
+
             const datos = await Usuarios.obtenerPorTermino(value);
-            setResultados(datos);
+            setResultados(datos.data);
+            manejarBusqueda(datos.data);
+
             console.log(resultados);
         } catch (error) {
             console.log('ERROR AL BUSCAR DATOS');
@@ -96,8 +112,25 @@ function Busqueda() {
                 enterButton 
                 placeholder="Buscar" 
                 style={{width: '600px'}}
-                onSearch={onSearch} 
+                onChangeCapture={(e) => setSearchTerm(e.target.value)}
+                //onChange={onSearch} 
             />
+
+            {/* <Table 
+                size="small"
+                style={{width: '1000px'}}
+                pagination={false}
+                columns={columnas}
+                dataSource={resultados ? resultados : null}
+                onRow={(record, rowIndex) => {
+                    return{
+                        onClickCapture: event => {
+                            console.log(record);
+                            setSelectApp(record);
+                        }
+                    }
+                }}
+            /> */}
 
         </SearchArea>
     );

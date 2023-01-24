@@ -19,7 +19,7 @@ export const Container = styled.div`
         justify-content: flex-start;
         align-items: center;
         flex-direction: column;
-        padding: 128px 0 0 220px;
+        padding: 180px 0 0 220px;
     }
 
     .dashboard{
@@ -55,6 +55,7 @@ export const Container = styled.div`
 
             button{
                 width: 120px;
+                color: #fff;
             }
         }
         

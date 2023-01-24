@@ -43,8 +43,8 @@ function Login() {
         openNotification('success', 'Login Completado', `Bienvenido ${indicador}`);
         
         setTimeout(() => {
-          navigate("/dashboard");
           window.location.reload();
+          navigate("/dashboard");
         }, "2000")
       } 
       catch (error) {

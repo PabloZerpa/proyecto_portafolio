@@ -73,12 +73,12 @@ function Dashboard() {
 
           <Table 
               size="small"
-              style={{width: '1000px'}}
+              style={{width: '800px'}}
               loading={isLoading}
               pagination={false}
               columns={columnas}
               dataSource={datosModificacion}
-              title={() => <h3>Ultimas Modificadas</h3>}
+              title={() => <h3>Modificadas Recientemente</h3>}
               onRow={(record, rowIndex) => {
               return{
                   onClickCapture: event => {
@@ -91,12 +91,12 @@ function Dashboard() {
 
           <Table 
               size="small"
-              style={{width: '1000px'}}
+              style={{width: '800px'}}
               loading={isLoading}
               pagination={false}
               columns={columnas}
               dataSource={datosCreacion}
-              title={() => <h3>Ultimas Agregadas</h3>}
+              title={() => <h3>Agregadas Recientemente</h3>}
               onRow={(record, rowIndex) => {
               return{
                   onClickCapture: event => {

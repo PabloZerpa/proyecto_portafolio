@@ -36,7 +36,10 @@ function Vista() {
       <Container>
         <Form className="aplicaciones start" layout="vertical">
           <div className="buttonGroup">
-            <Link to={`/aplicaciones/actualizacion/${valor.id}`} state={valor}>Actualizar</Link>
+
+            <Button type="primary" size='small' >
+              <Link to={`/aplicaciones/actualizacion/${valor.id}`} style={{color: '#fff'}} state={valor}>Actualizar</Link>
+            </Button>
 
             <Button type="primary" size='small' >Descargar</Button>
           </div>

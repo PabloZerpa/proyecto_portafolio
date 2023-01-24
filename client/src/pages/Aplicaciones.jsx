@@ -9,9 +9,12 @@ import Usuarios from "../services/user.service";
 
 function Aplicaciones() {
 
-  const [isLoading, setIsLoading] = useState(true);
-    const [datos, setDatos] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [selectApp, setSelectApp] = useState('');
+    const [datos, setDatos] = useState([]);
+
+    const [resultado, setResultado] = useState('');
+    const obtenerResultado = (respuesta) => {setResultado(respuesta)};
   
     useEffect(() => {
       async function fetchData(){
@@ -73,7 +76,7 @@ function Aplicaciones() {
     <Container>
       <div className="dashboard start" >
 
-        <Busqueda />
+        <Busqueda manejarBusqueda={obtenerResultado} />
 
         <Table 
             size="small"
@@ -81,7 +84,7 @@ function Aplicaciones() {
             loading={isLoading}
             pagination={false}
             columns={columnas}
-            dataSource={datos}
+            dataSource={resultado}
             //dataSource={datosTabla}
             onRow={(record, rowIndex) => {
                 return{

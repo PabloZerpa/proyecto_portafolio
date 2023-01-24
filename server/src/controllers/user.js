@@ -25,7 +25,7 @@ const getByUpdateDate = async (req,res) => {
 // *************** OBTENER TODOS LOS DATOS POR FECHA DE CREACION ***************
 const getByCreateDate = async (req,res) => {
     try {
-        const data = await pool.query(`SELECT * FROM aplicaciones ORDER BY ultima ASC`);
+        const data = await pool.query(`SELECT * FROM aplicaciones ORDER BY created_at ASC`);
         res.send(data[0]);
     } catch (error) {
         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
