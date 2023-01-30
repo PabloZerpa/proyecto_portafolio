@@ -33,32 +33,19 @@ export const Container = styled.div`
     .aplicaciones{
         gap: 16px;
         width: 100%;
-        height: 1650px;
-
-        border: solid 2px #05741d;
-
-        .cuadricula{
-            display: grid;
-            grid-template-columns: auto auto;
-            gap: 12px;
-            background: #919191;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 3px 3px 10px #9c9c9c;
-        }
-
+        
         .buttonGroup{
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 24px;
+            padding-bottom: 24px;
 
             button{
                 width: 120px;
                 color: #fff;
             }
         }
-        
     }
 
 `;
@@ -66,11 +53,14 @@ export const Container = styled.div`
 export const Grid = styled.div`
     display: grid;
     grid-template-columns: auto auto;
-    gap: 24px;
-    background: #919191;
+    width: 80%;
+    gap: 12px;
     padding: 20px;
+    background: #919191;
     border-radius: 10px;
     box-shadow: 3px 3px 10px #9c9c9c;
+
+    border: 1px green solid;
 `;
 
 export const FormContainer = styled.div`
@@ -83,7 +73,7 @@ export const FormContainer = styled.div`
 
     .formItem{
         width: 100%;
-        height: 80px;
+        height: 60px;
     }
 `;
 

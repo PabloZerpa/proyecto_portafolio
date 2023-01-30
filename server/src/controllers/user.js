@@ -35,22 +35,59 @@ const getByCreateDate = async (req,res) => {
 // *************** OBTENER TODOS LOS DATOS POR FECHA DE CREACION ***************
 const getByTerm = async (req,res) => {
     try {
-        const { term } = req.body;
+        const { term, estatus,region,depart,fecha,prioridad,order } = req.body;
         const termino = '%' + term + '%';
-        console.log(termino);
+        let data;
 
         if (term === undefined || null)
             return res.status(404).json({ message: "Error al recibir consulta" });
 
-        const data = await pool.query(
-            `SELECT * FROM aplicaciones WHERE 
-                id LIKE ? OR 
-                nombre LIKE ? OR 
-                acronimo LIKE ? OR 
-                prioridad LIKE ? OR 
-                responsable LIKE ? OR 
-                region LIKE ?`, 
-            [termino,termino,termino,termino,termino,termino]);
+
+        if(region){
+            if(prioridad){
+                data = await pool.query(
+                    `SELECT * FROM aplicaciones WHERE 
+                        (id LIKE ? OR 
+                        nombre LIKE ? OR 
+                        acronimo LIKE ? OR 
+                        responsable LIKE ? ) AND 
+                        prioridad = ? AND region = ?`, 
+                    [termino,termino,termino,termino,prioridad,region]);
+            }
+            else{
+                data = await pool.query(
+                    `SELECT * FROM aplicaciones WHERE 
+                        (id LIKE ? OR 
+                        nombre LIKE ? OR 
+                        acronimo LIKE ? OR 
+                        prioridad LIKE ? OR 
+                        responsable LIKE ? ) AND 
+                        region = ?`, 
+                    [termino,termino,termino,termino,termino,region]);
+            }
+        }
+        else if(prioridad){
+            data = await pool.query(
+                `SELECT * FROM aplicaciones WHERE 
+                    (id LIKE ? OR 
+                    nombre LIKE ? OR 
+                    acronimo LIKE ? OR 
+                    responsable LIKE ? OR 
+                    region LIKE ? ) AND 
+                    prioridad = ?`,
+                [termino,termino,termino,termino,termino,prioridad]);
+        }
+        else{
+            data = await pool.query(
+                `SELECT * FROM aplicaciones WHERE 
+                    (id LIKE ? OR 
+                    nombre LIKE ? OR 
+                    acronimo LIKE ? OR 
+                    prioridad LIKE ? OR 
+                    responsable LIKE ? OR 
+                    region LIKE ?) ORDER BY id DESC`, 
+                [termino,termino,termino,termino,termino,termino]);
+        }
 
         if (data.affectedRows === 0)
             return res.status(404).json({ message: "Sin coincidencias" });

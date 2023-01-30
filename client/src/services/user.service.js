@@ -1,8 +1,8 @@
 
 import axios from 'axios';
 import Authorization from './auth.service';
-//const baseUrl = "http://localhost:3001/api/";
-const baseUrl = "https://proyecto-portafolio-server.onrender.com/api/";
+const baseUrl = "http://localhost:3001/api/";
+//const baseUrl = "https://proyecto-portafolio-server.onrender.com/api/";
 
 class Usuarios {
 
@@ -51,10 +51,10 @@ class Usuarios {
         }
     }
 
-    async obtenerPorTermino(term) {
+    async obtenerPorTermino(term, id,region,depart,fecha,prioridad,order) {
         try {
             console.log(term);
-            return axios.post(`${baseUrl}user/term`, {term});
+            return axios.post(`${baseUrl}user/term`, {term, id,region,depart,fecha,prioridad,order});
         } catch (error) {
             console.log('Error al obtener dato');
         }

@@ -2,8 +2,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Checkbox, Form, Input, Select, notification } from 'antd';
-import { FaUserCircle, FaUser, FaLock } from 'react-icons/fa';
-import { Container } from '../styles/Login.style';
+import { FaUserCircle, FaUser, FaLock, FaHardHat } from 'react-icons/fa';
 import Autorizacion from '../services/auth.service';
 
 function Login() {
@@ -35,6 +34,8 @@ function Login() {
   async function handleLogin(e) {
     e.preventDefault();
 
+    console.log(indicador, password, rol);
+
     if(password.length > 7 && indicador !== '' && rol !== ''){
 
       try {
@@ -58,25 +59,94 @@ function Login() {
   }
 
   return (
-    <Container>
+    <div className='w-full h-screen bg-zinc-300 flex justify-center items-center'>
+      
       {contextHolder}
 
-      <Form className='form' onSubmitCapture={handleLogin} >
+      <form
+        className='flex justify-center items-center flex-col gap-6 w-96 bg-gray-50 
+        font-medium list-none mt-15 px-13 py-4 rounded-lg drop-shadow-md' 
+        method="post" onSubmitCapture={handleLogin}
+      >
 
-        <FaUserCircle style={{ color: '#1980da', fontSize: '64px', marginBottom: '16px' }} />
+        <FaUserCircle className='text-blue-500 text-6xl' />
+
+        <li className='w-72 relative'>
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <FaUser />
+          </div>
+          <input 
+            type="text" 
+            name="indicador" 
+            placeholder="Indicador"
+            className='w-full h-10 pl-8 p-2 border-solid border-gray-400 outline-blue-500 rounded' 
+            onChange={(e) => {setIndicador(e.target.value)}}
+            required
+          />
+        </li>
+
+        <li className='w-72 relative'>
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <FaLock />
+          </div>
+          <input 
+            type="password" 
+            name="password" 
+            placeholder="Password"
+            className='w-full h-10 pl-8 p-2 border-solid border-gray-400 outline-blue-500 rounded' 
+            onChange={(e) => {setPassword(e.target.value)}}
+            required
+          />
+        </li>
+
+        <li className='w-72 relative'>
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <FaHardHat />
+          </div>
+          <select 
+          name="rol" 
+          placeholder='Rol'
+          className='w-full h-10 pl-8 p-2 border-solid border-gray-400 outline-blue-500 rounded'
+          onChange={(e) => {setRol(e.target.value)}}>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+        </li>
+
+        <li>
+          <div className='flex gap-2 items-center text-sm font-bold'>
+            <input type="checkbox" className='bg-gray-400 rounded' name="recordar" value="Recordar" />
+            <span>Recordar</span>
+          </div>
+        </li>
+
+        <li className='w-72'>
+          <input className='w-full h-10 bg-blue-500 text-white border-none outline-none rounded cursor-pointer hover:bg-blue-400' type='submit' value='Login' />
+        </li>
+
+      </form>
+
+      {/* <Form 
+        className='flex justify-center items-center flex-col w-96 bg-gray-50 
+        font-medium mt-15 px-13 py-4 rounded-lg drop-shadow-md' 
+        onSubmitCapture={handleLogin} >
+
+        <FaUserCircle className='text-blue-500 text-6xl mb-4' />
         
-        <Form.Item className='formItem' name="indicador" rules={[{ required: true, message: 'Porfavor ingrese su indicador',},]} >
+        <Form.Item className='w-72' name="indicador" rules={[{ required: true, message: 'Porfavor ingrese su indicador',},]} >
           <Input 
             size="large" 
+            className='w-full'
             prefix={<FaUser />}
             placeholder="Indicador"
             onChange={(e) => {setIndicador(e.target.value)}}
           />
         </Form.Item>
 
-        <Form.Item className='formItem' name="password" rules={[{ required: true, message: 'Porfavor ingrese su contraseña',},]} >
+        <Form.Item className='w-72' name="password" rules={[{ required: true, message: 'Porfavor ingrese su contraseña',},]} >
           <Input.Password 
             size="large" 
+            className='w-full'
             prefix={<FaLock />}
             placeholder="Contraseña"
             minLength={8} maxLength={20}
@@ -84,9 +154,10 @@ function Login() {
           />
         </Form.Item>
 
-        <Form.Item className='formItem' name="rol" rules={[{ required: true, message: 'Porfavor ingrese su Rol', }]}>
+        <Form.Item className='w-72' name="rol" rules={[{ required: true, message: 'Porfavor ingrese su Rol', }]}>
           <Select
             size="large"
+            className='w-full'
             placeholder="Rol"
             onChange={(e) => {setRol(e)}}
             options={[
@@ -100,16 +171,14 @@ function Login() {
           <Checkbox>Recordar</Checkbox>
         </Form.Item>
 
-        <Form.Item className='formItem' >
-          <Button type="primary" htmlType="submit" >
+        <Form.Item className='w-72' >
+          <Button className='w-full h-10' type="primary" htmlType="submit" >
             Login
           </Button>
         </Form.Item>
 
-      </Form>
-
-    </Container>
-
+      </Form> */}
+    </div>
   );
 }
 

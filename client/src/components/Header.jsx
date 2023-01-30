@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Container } from "../styles/Header.styles";
 import { Perfil } from "./";
 import Autorizacion from '../services/auth.service';
 
@@ -17,21 +16,25 @@ function Header() {
 
   return (
     
-    <Container>
-
+    <div className="flex flex-row justify-between items-center w-full h-20 bg-gray-200 fixed z-50 drop-shadow-md" >
+      
       <Link className="linkNav" to="/">
-        <img src={logo} alt="logo" className="logo" />
+        <img src={logo} alt="logo" className="ml-8 w-28" />
       </Link>
 
-      <div className="title">Repositorio de Infraestructura y Aplicaciones</div>
-
       {user == null ? (
-        <div></div>
+        <>
+          <div className="text-xl font-bold">Repositorio de Infraestructura y Aplicaciones</div>
+          <div className="mr-16 pr-14"></div>
+        </>
       ) : ( 
-        <Perfil user={user} />
+        <>
+          <div className="pl-14 text-xl font-bold">Repositorio de Infraestructura y Aplicaciones</div>
+          <Perfil user={user} />
+        </>
       )}
 
-    </Container>
+    </div>
   );
 } 
 

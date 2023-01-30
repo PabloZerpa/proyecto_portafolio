@@ -7,5 +7,5 @@ export {
     Header,
     Navegacion,
     Busqueda,
-    Perfil,
+    Perfil
 };

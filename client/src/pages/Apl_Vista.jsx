@@ -1,11 +1,9 @@
 
 import { useState, useEffect } from 'react';
 import { useLocation, useParams, useNavigate, Navigate, Link } from 'react-router-dom';
-import { Form, Button, Typography, Divider, Alert } from "antd";
-import { Container, Grid } from "../styles/Container.styles";
-import Formulario from "../components/Formulario";
+import { Form, button, Typography, Divider, Alert } from "antd";
 import Usuarios from '../services/user.service';
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 
 function Vista() {
@@ -22,115 +20,136 @@ function Vista() {
       try {
         const response = await Usuarios.obtenerDato(location.state.id)
         setValor(response.data);
-      } 
-      catch (error) {
+      }catch (error) {
         console.log(error)
       }
     }
     fetchData();
   }, [paramsId]);
 
-  if(valor === null) return <Navigate to='/' />
+  if(location.state === null) return <Navigate to='/' />
 
     return (
-      <Container>
-        <Form className="aplicaciones start" layout="vertical">
-          <div className="buttonGroup">
+      <div className='flex w-full h-screen bg-zinc-300 m-0 p-0'>
+        
+        <form className="w-full gap-4 flex flex-col justify-start items-center pt-44 pl-56" >
 
-            <Button type="primary" size='small' >
-              <Link to={`/aplicaciones/actualizacion/${valor.id}`} style={{color: '#fff'}} state={valor}>Actualizar</Link>
-            </Button>
+          <div className="flex justify-center items-center gap-6 pb-6">
 
-            <Button type="primary" size='small' >Descargar</Button>
+            <button className='w-32 h-8 text-sm bg-blue-500 text-white border-none outline-none rounded cursor-pointer hover:bg-blue-400' size='small' >
+              <Link 
+              className='no-underline text-white'
+                to={`/aplicaciones/actualizacion/${valor.id}`} state={valor}>Actualizar</Link>
+            </button>
+
+            <button className='w-32 h-8 text-sm bg-blue-500 text-white border-none outline-none rounded cursor-pointer hover:bg-blue-400' size='small' >Descargar</button>
           </div>
 
-        <Title level={3}>Informacion Basica</Title>
+        <h2 className='font-bold'>Informacion Basica</h2>
 
-        <Grid>
+        <div className='grid grid-cols-2 w-4/5 gap-6 g-3 p-5 bg-zinc-400 drop-shadow-md rounded'>
 
-          <Form.Item className="formItem" label="Acronimo" name="acronimo">
-            <Alert type="info" style={{width: '320px', background: 'white', border: 'none', borderRadius: '5px'}} message={valor.acronimo} />
-          </Form.Item>
-              
-          <Form.Item className="formItem" label="Estatus" name="Estatus">
-            <Alert type="info" style={{width: '320px', background: 'white', border: 'none', borderRadius: '5px'}} message="Estatus" />
-          </Form.Item>
-            
-          <Form.Item className="formItem" label="Nombre" name="nombre">
-            <Alert type="info" style={{width: '320px', background: 'white', border: 'none', borderRadius: '5px'}} message={valor.nombre} />
-          </Form.Item>
-              
-          <Form.Item className="formItem" label="Descripcion" name="Descripcion">
-            <Alert type="info" style={{width: '320px', background: 'white', border: 'none', borderRadius: '5px'}} message="Descripcion" />
-          </Form.Item>
+          <div className='flex flex-col gap-2 text-sm'>
+            <label className="w-full h-15">Acronimo</label>
+            <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value={valor.acronimo} />
+          </div>
 
-          <Form.Item className="formItem" label="Prioridad" name="prioridad">
-            <Alert type="info" style={{width: '320px', background: 'white', border: 'none', borderRadius: '5px'}} message={valor.prioridad} />
-          </Form.Item>
+          <div className='flex flex-col gap-2 text-sm'>
+            <label className="w-full h-15">Estatus</label>
+            <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value='Estatus' />
+          </div>
 
-          <Form.Item className="formItem" label="Tipo" name="tipo">
-            <Alert type="info" style={{width: '320px', background: 'white', border: 'none', borderRadius: '5px'}} message="Tipo" />
-          </Form.Item>
-            
-          <Form.Item className="formItem" label="Mantenido" name="mantenido">
-            <Alert type="info" style={{width: '320px', background: 'white', border: 'none', borderRadius: '5px'}} message={valor.responsable} />
-          </Form.Item>
+          <div className='flex flex-col gap-2 text-sm'>
+            <label className="w-full h-15">Nombre</label>
+            <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value={valor.nombre} />
+          </div>
 
-          <Form.Item className="formItem" label="Desarrollado" name="desarrollado">
-            <Alert type="info" style={{width: '320px', background: 'white', border: 'none', borderRadius: '5px'}} message={valor.responsable} />
-          </Form.Item>
+          <div className='flex flex-col gap-2 text-sm'>
+            <label className="w-full h-15">Descripcion</label>
+            <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value='Descripcion' />
+          </div>
+
+          <div className='flex flex-col gap-2 text-sm'>
+            <label className="w-full h-15">Prioridad</label>
+            <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value={valor.prioridad} />
+          </div>
+
+          <div className='flex flex-col gap-2 text-sm'>
+            <label className="w-full h-15">Tipo</label>
+            <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value='Tipo' />
+          </div>
+
+          <div className='flex flex-col gap-2 text-sm'>
+            <label className="w-full h-15">Mantenido</label>
+            <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value={valor.responsable} />
+          </div>
+
+          <div className='flex flex-col gap-2 text-sm'>
+            <label className="w-full h-15">Desarrollado</label>
+            <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value={valor.responsable} />
+          </div>
+
+          <div className='flex flex-col gap-2 text-sm'>
+            <label className="w-full h-15">Departamento</label>
+            <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value='Departamento' />
+          </div>
+
+          <div className='flex flex-col gap-2 text-sm'>
+            <label className="w-full h-15">Numero de usuarios</label>
+            <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value='N° Usuarios' />
+          </div>
+
+          <div className='flex flex-col gap-2 text-sm'>
+            <label className="w-full h-15">Plataforma</label>
+            <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value='Plataforma' />
+          </div>
+
+        </div>
+
+          <h2 className='font-bold'>Caracteristicas de la Aplicaciones</h2>
+
+          <div className='grid grid-cols-2 w-4/5 gap-6 g-3 p-5 bg-zinc-400 drop-shadow-md rounded'>
+
+            <div className='flex flex-col gap-2 text-sm'>
+              <label className="w-full h-15">Alcance</label>
+              <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value='Alcance' />
+            </div>
+
+            <div className='flex flex-col gap-2 text-sm'>
+              <label className="w-full h-15">Codigo</label>
+              <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value='Codigo' />
+            </div>
+
+            <div className='flex flex-col gap-2 text-sm'>
+              <label className="w-full h-15">Programa</label>
+              <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value='Programa' />
+            </div>
+
+            <div className='flex flex-col gap-2 text-sm'>
+              <label className="w-full h-15">Fecha</label>
+              <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value={valor.ultima} />
+            </div>
+
+          </div>
+
+          <h2 className='font-bold'>Informacion de Gestion de la Plataforma</h2>
           
-          <Form.Item className="formItem" label="Clientes" name="Clientes">
-            <Alert type="info" style={{width: '320px', background: 'white', border: 'none', borderRadius: '5px'}} message="Clientes" />
-          </Form.Item>
+            <div className='grid grid-cols-2 w-4/5 gap-6 g-3 p-5 bg-zinc-400 drop-shadow-md rounded'>
 
-          <Form.Item className="formItem" label="Plataforma" name="Plataforma">
-            <Alert type="info" style={{width: '320px', background: 'white', border: 'none', borderRadius: '5px'}} message="Plataforma" />
-          </Form.Item>
+              <div className='flex flex-col gap-2 text-sm'>
+                <label className="w-full h-15">Region</label>
+                <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value={valor.region} />
+              </div>
+              
+              <div className='flex flex-col gap-2 text-sm'>
+                <label className="w-full h-15">Servidor</label>
+                <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value='Servidor' />
+              </div>
+              
+            </div>
 
-          </Grid>
-
-          <Divider />
-          <Title level={3}>Caracteristicas de la Aplicaciones</Title>
-
-          <Grid>
-
-            <Form.Item className="formItem" label="Alcance" name="Alcance">
-              <Alert type="info" style={{width: '320px', background: 'white', border: 'none', borderRadius: '5px'}} message="Alcance" />
-            </Form.Item>
-
-            <Form.Item className="formItem" label="Codigo fuente" name="Codigo fuente">
-              <Alert type="info" style={{width: '320px', background: 'white', border: 'none', borderRadius: '5px'}} message="Codigo fuente" />
-            </Form.Item>
-
-            <Form.Item className="formItem" label="Programa fuente" name="Programa fuente">
-              <Alert type="info" style={{width: '320px', background: 'white', border: 'none', borderRadius: '5px'}} message="Programa fuente" />
-            </Form.Item>
-
-            <Form.Item className="formItem" label="Ultima" name="ultima">
-              <Alert type="info" size="small" style={{width: '320px', background: 'white', border: 'none', borderRadius: '5px'}} message={valor.ultima} />
-            </Form.Item>
-
-          </Grid>
-
-          <Divider />
-          <Title level={3}>Informacion de Gestion de la Plataforma</Title>
-
-            <Grid>
-              <Form.Item className="formItem" label="Region" name="region">
-                <Alert type="info" style={{width: '320px', background: 'white', border: 'none', borderRadius: '5px'}} message={valor.region} />
-              </Form.Item>
-
-              <Form.Item className="formItem" label="Servidor" name="Servidor">
-                <Alert type="info" style={{width: '320px', background: 'white', border: 'none', borderRadius: '5px'}} message="Servidor" />
-              </Form.Item>
-            </Grid>
-
-          <Divider />
-
-        </Form>
-          
-      </Container>
+        </form>
+      </div>
           
     )
 };

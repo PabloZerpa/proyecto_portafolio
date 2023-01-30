@@ -1,21 +1,29 @@
 
 import { useState, useEffect } from 'react';
-import { Input, InputNumber, Select, DatePicker, Form, Button, Radio, Divider, Table } from 'antd';
-import { SearchArea } from "../styles/Container.styles";
-import {useDebounce} from 'use-debounce';
+import { Input, InputNumber, Select, DatePicker, Form, Button, Radio, Divider } from 'antd';
+import { useDebounce } from 'use-debounce';
 import Usuarios from "../services/user.service";
+import { FaSearch } from 'react-icons/fa';
 const { Search } = Input;
 
 function Busqueda({manejarBusqueda}) {
+    
+    const [id, setId] = useState("");
+    const [estatus, setEstatus] = useState("");
+    const [region, setRegion] = useState("");
+    const [depart, setDepart] = useState("");
+    const [fecha, setFecha] = useState("");
+    const [prioridad, setPrioridad] = useState("");
+    const [order, setOrder] = useState("");
 
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [resultados, setResultados] = useState([]);
     const [debounceValue] = useDebounce(searchTerm,500);
 
     useEffect(() =>{
 		if (debounceValue) {
-            onSearch(debounceValue);
+            onSearch(debounceValue, estatus, region, depart, fecha, prioridad, order);
             setIsLoading(false);
         } else {
             setResultados(null);
@@ -23,11 +31,17 @@ function Busqueda({manejarBusqueda}) {
         }
 	}, [debounceValue]);
 
-    const onSearch = async (value) => {
+    const onSearch = async (value, estatus, region, depart, fecha, prioridad, order) => {
         try {
             console.log(`Valor a buscar: ${value}`);
+            console.log(`POR Estatus: ${estatus}`);
+            console.log(`POR REGION: ${region}`);
+            console.log(`POR DEPARTAMENTO: ${depart}`);
+            console.log(`POR FECHA: ${fecha}`);
+            console.log(`POR PRIORIDAD: ${prioridad}`);
+            console.log(`POR ORDEN: ${order}`);
 
-            const datos = await Usuarios.obtenerPorTermino(value);
+            const datos = await Usuarios.obtenerPorTermino(value,estatus,region,depart,fecha,prioridad,order);
             setResultados(datos.data);
             manejarBusqueda(datos.data);
 
@@ -38,31 +52,66 @@ function Busqueda({manejarBusqueda}) {
     }
 
     return (
-        <SearchArea>
+        <form className='flex justify-center items-center flex-col pb-4 px-20 bg-zinc-400 rounded'>
 
-            <div className='filtros'>
+            <div className='flex flex-col gap-4 w-full py-4 pr-4'>
 
                 <div className="selectArea">
-                    <div className="rows">
+                    <div className="flex justify-center items-center gap-4">
 
-                        <Form.Item className="formItem" label="ID" name="id">
-                            <InputNumber size='small' placeholder='ID' min={1} />
-                        </Form.Item>
+                        {/* <Form.Item className="m-0 p-0" label="ID" name="id">
+                            <InputNumber size='small' placeholder='ID' min={1}
+                                onChange={(e) => setId(e)}
+                            />
+                        </Form.Item> */}
 
-                        <Form.Item className="formItem" label="Region" name="region">
-                            <Select style={{ width: 160,}} placeholder="Region" size='small'
-                            options={[
-                                { value: "Centro", label: "Centro" },
-                                { value: "Oriente", label: "Oriente" },
-                                { value: "Andes", label: "Andes" }
-                            ]}
-                            className="select"
-                        /> 
-                        </Form.Item>
+                        <div className='flex text-sm'>
+                            <label className="pr-1">Estatus:</label>
+                            <select 
+                                name="estatus" 
+                                placeholder='Estatus'
+                                onChange={(e) => {setEstatus(e.target.value)}}
+                                className='w-36 h-8 text-sm border-none outline-none rounded'>
+                                    <option value={null}>Todas</option>
+                                    <option value="Desarrollo">Desarrollo</option>
+                                    <option value="Activo">Activo</option>
+                                    <option value="Inactivo">Inactivo</option>
+                            </select>
+                        </div>
+
+                        <div className='flex text-sm'>
+                            <label className="pr-1">Region:</label>
+                            <select 
+                                name="region" 
+                                placeholder='Region'
+                                onChange={(e) => {setRegion(e.target.value)}}
+                                className='w-36 h-8 text-sm border-none outline-none rounded'>
+                                    <option value={null}>Todas</option>
+                                    <option value="Centro">Centro</option>
+                                    <option value="Oriente">Oriente</option>
+                                    <option value="Andes">Andes</option>
+                            </select>
+                        </div>
+
+                        <div className='flex text-sm'>
+                            <label className="pr-1">Departamento:</label>
+                            <select 
+                                name="departamento" 
+                                placeholder='Departamento'
+                                onChange={(e) => {setDepart(e.target.value)}}
+                                className='w-36 h-8 text-sm border-none outline-none rounded'>
+                                    <option value={null}>Todas</option>
+                                    <option value="Informatica">Informatica</option>
+                                    <option value="Telecomunicaciones">Telecomunicaciones</option>
+                                    <option value="Automatizacion">Automatizacion</option>
+                            </select>
+                        </div>
                     
-                        <Form.Item className="formItem" label="Depart" name="departamento">
-                            <Select style={{ width: 160,}} placeholder="Departamento" size='small'
+                        {/* <Form.Item className="m-0 p-0" label="Depart" name="departamento">
+                            <Select style={{ width: 160,}} placeholder="Departamento" size='small' defaultValue='Todos'
+                            onChange={(e) => {setDepart(e)}}
                             options={[
+                                { value: null, label: "Todos" },
                                 { value: "Informatica", label: "Informatica" },
                                 { value: "Telecomunicaciones", label: "Telecomunicaciones" },
                                 { value: "Servidores", label: "Servidores" },
@@ -70,69 +119,77 @@ function Busqueda({manejarBusqueda}) {
                             ]}
                             className="select"
                         /> 
-                        </Form.Item>
+                        </Form.Item> */}
 
-                        <Form.Item className="formItem" label="Año" name="año">
-                            <DatePicker size='small' placeholder='Año' picker="year" /> 
-                        </Form.Item>
+                        <div className='flex text-sm'>
+                            <label className="pr-1">Fecha:</label>
+                            <input type='number'min="2000" max="2100" step="1" value="2023"
+                                className='w-36 h-8 p-3 text-sm bg-white border-none outline-none rounded' 
+                                placeholder="Fecha" 
+                                onChange={(e) => {setFecha(e.target.value)}} />
+                        </div>
+
+                        {/* <Form.Item className="m-0 p-0" label="Año" name="año">
+                            <DatePicker size='small' placeholder='Año' picker="year"
+                            onChange={(e) => setFecha(e.$y)} /> 
+                        </Form.Item> */}
 
                     </div>
                 </div>
                 
                 <div className="radioArea">
-                    <div className="rows">
+                    <div className="flex justify-center items-center">
 
-                        <div className="rows">
-                            <Form.Item className="formItem" label="Prioridad" initialValue='todo' />
-                            <Radio.Group defaultValue='todo'>
-                                <Radio value='todo'>Todas</Radio>
+                        <div className="flex justify-center items-center gap-4">
+                            <Form.Item className="m-0 p-0" label="Prioridad" initialValue='todo' />
+                            <Radio.Group defaultValue={null} onChange={(e) => {setPrioridad(e.target.value)}}>
+                                <Radio value={null}>Todas</Radio>
                                 <Radio value='alta'>Alta</Radio>
                                 <Radio value='medio'>Media</Radio>
                                 <Radio value='baja'>Baja</Radio>
                             </Radio.Group>
                         </div>
 
-                        <div className="rows">
-                            <Form.Item className="formItem" label="Orden" />
-                            <Radio.Group defaultValue='ASC'>
+                        <div className="flex justify-center items-center gap-4">
+                            <Form.Item className="m-0 p-0" label="Orden" />
+                            <Radio.Group defaultValue='ASC' onChange={(e) => {setOrder(e.target.value)}}>
                                     <Radio value='ASC'>Ascendente</Radio>
-                                    <Radio value='DESC'>Descendete</Radio>
+                                    <Radio value='DESC'>Descendente</Radio>
                             </Radio.Group>
                         </div>
-
-                        <Button type="primary" >Restablecer</Button>
+                        
+                        <button 
+                            onClick={(e) => {e.preventDefault()}}
+                            className='w-28 h-8 text-sm bg-blue-500 text-white border-none outline-none rounded-md cursor-pointer hover:bg-blue-400' size='small' >
+                            Restablecer
+                        </button>
                     </div>
                 </div>
             </div>
 
             <Divider />
 
-            <Search 
+            <div class="relative w-96">
+                <input 
+                    type="search" 
+                    onChangeCapture={(e) => setSearchTerm(e.target.value)}
+                    class="block p-2 w-96 text-sm text-black bg-white rounded-lg border-none outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Buscar" />
+                <button type="submit" class="absolute top-0 right-0 w-14 p-2 text-sm font-medium text-white bg-blue-500 rounded-r-lg border-none outline-none hover:bg-blue-400 cursor-pointer focus:ring-4 focus:outline-none focus:ring-blue-300">
+                <FaSearch />
+            </button>
+
+        </div>
+
+            {/* <Search 
                 allowClear 
                 enterButton 
                 placeholder="Buscar" 
                 style={{width: '600px'}}
                 onChangeCapture={(e) => setSearchTerm(e.target.value)}
                 //onChange={onSearch} 
-            />
-
-            {/* <Table 
-                size="small"
-                style={{width: '1000px'}}
-                pagination={false}
-                columns={columnas}
-                dataSource={resultados ? resultados : null}
-                onRow={(record, rowIndex) => {
-                    return{
-                        onClickCapture: event => {
-                            console.log(record);
-                            setSelectApp(record);
-                        }
-                    }
-                }}
             /> */}
 
-        </SearchArea>
+        </form>
     );
 }
 
