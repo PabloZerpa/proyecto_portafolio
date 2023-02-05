@@ -5,7 +5,7 @@ const { matchedData } = require('express-validator');
 // *************** OBTENER TODOS LOS DATOS ***************
 const getItems = async (req,res) => {
     try {
-        const data = await pool.query(`SELECT * FROM aplicaciones`);
+        const data = await pool.query(`SELECT * FROM apps`);
         res.send(data[0]);
     } catch (error) {
         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
@@ -39,54 +39,60 @@ const getByTerm = async (req,res) => {
         const termino = '%' + term + '%';
         let data;
 
+        console.log(term,region,prioridad);
+
         if (term === undefined || null)
             return res.status(404).json({ message: "Error al recibir consulta" });
 
-
+            
         if(region){
             if(prioridad){
                 data = await pool.query(
-                    `SELECT * FROM aplicaciones WHERE 
+                    `SELECT * FROM apps WHERE 
                         (id LIKE ? OR 
                         nombre LIKE ? OR 
-                        acronimo LIKE ? OR 
-                        responsable LIKE ? ) AND 
+                        acronimo LIKE ? OR
+                        responsablef LIKE ? OR 
+                        responsablet LIKE ? ) AND 
                         prioridad = ? AND region = ?`, 
-                    [termino,termino,termino,termino,prioridad,region]);
+                    [termino,termino,termino,termino,termino,prioridad,region]);
             }
             else{
                 data = await pool.query(
-                    `SELECT * FROM aplicaciones WHERE 
+                    `SELECT * FROM apps WHERE 
                         (id LIKE ? OR 
                         nombre LIKE ? OR 
                         acronimo LIKE ? OR 
                         prioridad LIKE ? OR 
-                        responsable LIKE ? ) AND 
+                        responsablef LIKE ? OR 
+                        responsablet LIKE ? ) AND 
                         region = ?`, 
-                    [termino,termino,termino,termino,termino,region]);
+                    [termino,termino,termino,termino,termino,termino,region]);
             }
         }
         else if(prioridad){
             data = await pool.query(
-                `SELECT * FROM aplicaciones WHERE 
+                `SELECT * FROM apps WHERE 
                     (id LIKE ? OR 
                     nombre LIKE ? OR 
                     acronimo LIKE ? OR 
-                    responsable LIKE ? OR 
+                    responsablef LIKE ? OR 
+                    responsablet LIKE ? OR 
                     region LIKE ? ) AND 
                     prioridad = ?`,
-                [termino,termino,termino,termino,termino,prioridad]);
+                [termino,termino,termino,termino,termino,termino,prioridad]);
         }
         else{
             data = await pool.query(
-                `SELECT * FROM aplicaciones WHERE 
+                `SELECT * FROM apps WHERE 
                     (id LIKE ? OR 
                     nombre LIKE ? OR 
                     acronimo LIKE ? OR 
                     prioridad LIKE ? OR 
-                    responsable LIKE ? OR 
-                    region LIKE ?) ORDER BY id DESC`, 
-                [termino,termino,termino,termino,termino,termino]);
+                    responsablef LIKE ? OR 
+                    responsablet LIKE ? OR 
+                    region LIKE ?) ORDER BY id ASC`, 
+                [termino,termino,termino,termino,termino,termino,termino]);
         }
 
         if (data.affectedRows === 0)
@@ -104,7 +110,7 @@ const getItem = async (req,res) => {
     try {
         //const body = matchedData(req);
         const { id } = req.params;
-        const [rows] = await pool.query('SELECT * FROM aplicaciones WHERE id = ?', [id]);
+        const [rows] = await pool.query('SELECT * FROM apps WHERE id = ?', [id]);
         console.log(rows[0]);
         res.send(rows[0]);
     } catch (error) {

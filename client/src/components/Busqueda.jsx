@@ -1,10 +1,9 @@
 
 import { useState, useEffect } from 'react';
-import { Input, InputNumber, Select, DatePicker, Form, Button, Radio, Divider } from 'antd';
+import { Form, Radio } from 'antd';
 import { useDebounce } from 'use-debounce';
-import Usuarios from "../services/user.service";
 import { FaSearch } from 'react-icons/fa';
-const { Search } = Input;
+import Usuarios from "../services/user.service";
 
 function Busqueda({manejarBusqueda}) {
     
@@ -16,18 +15,15 @@ function Busqueda({manejarBusqueda}) {
     const [prioridad, setPrioridad] = useState("");
     const [order, setOrder] = useState("");
 
-    const [isLoading, setIsLoading] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [resultados, setResultados] = useState([]);
     const [debounceValue] = useDebounce(searchTerm,500);
 
-    useEffect(() =>{
+    useEffect(() => {
 		if (debounceValue) {
             onSearch(debounceValue, estatus, region, depart, fecha, prioridad, order);
-            setIsLoading(false);
         } else {
             setResultados(null);
-            setIsLoading(true);
         }
 	}, [debounceValue]);
 
@@ -53,86 +49,75 @@ function Busqueda({manejarBusqueda}) {
 
     return (
         <form className='flex justify-center items-center flex-col pb-4 px-20 bg-zinc-400 rounded'>
-
             <div className='flex flex-col gap-4 w-full py-4 pr-4'>
 
                 <div className="selectArea">
                     <div className="flex justify-center items-center gap-4">
 
-                        {/* <Form.Item className="m-0 p-0" label="ID" name="id">
-                            <InputNumber size='small' placeholder='ID' min={1}
-                                onChange={(e) => setId(e)}
-                            />
-                        </Form.Item> */}
-
-                        <div className='flex text-sm'>
+                        <div className='flex items-center text-sm'>
                             <label className="pr-1">Estatus:</label>
                             <select 
                                 name="estatus" 
                                 placeholder='Estatus'
                                 onChange={(e) => {setEstatus(e.target.value)}}
-                                className='w-36 h-8 text-sm border-none outline-none rounded'>
-                                    <option value={null}>Todas</option>
+                                className="block w-40 p-2 text-gray-900 border border-gray-300 rounded bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500">
+                                    <option value='Todas'>Todas</option>
                                     <option value="Desarrollo">Desarrollo</option>
                                     <option value="Activo">Activo</option>
                                     <option value="Inactivo">Inactivo</option>
                             </select>
                         </div>
 
-                        <div className='flex text-sm'>
+                        <div className='flex items-center text-sm'>
                             <label className="pr-1">Region:</label>
                             <select 
                                 name="region" 
                                 placeholder='Region'
                                 onChange={(e) => {setRegion(e.target.value)}}
-                                className='w-36 h-8 text-sm border-none outline-none rounded'>
-                                    <option value={null}>Todas</option>
+                                className='block w-40 p-2 text-gray-900 border border-gray-300 rounded bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500'>
+                                    <option value='Todas'>Todas</option>
                                     <option value="Centro">Centro</option>
                                     <option value="Oriente">Oriente</option>
                                     <option value="Andes">Andes</option>
                             </select>
                         </div>
 
-                        <div className='flex text-sm'>
+                        <div className='flex items-center text-sm'>
                             <label className="pr-1">Departamento:</label>
                             <select 
                                 name="departamento" 
                                 placeholder='Departamento'
                                 onChange={(e) => {setDepart(e.target.value)}}
-                                className='w-36 h-8 text-sm border-none outline-none rounded'>
-                                    <option value={null}>Todas</option>
+                                className='block w-40 p-2 text-gray-900 border border-gray-300 rounded bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500'>
+                                    <option value='Todas'>Todas</option>
                                     <option value="Informatica">Informatica</option>
                                     <option value="Telecomunicaciones">Telecomunicaciones</option>
                                     <option value="Automatizacion">Automatizacion</option>
                             </select>
                         </div>
-                    
-                        {/* <Form.Item className="m-0 p-0" label="Depart" name="departamento">
-                            <Select style={{ width: 160,}} placeholder="Departamento" size='small' defaultValue='Todos'
-                            onChange={(e) => {setDepart(e)}}
-                            options={[
-                                { value: null, label: "Todos" },
-                                { value: "Informatica", label: "Informatica" },
-                                { value: "Telecomunicaciones", label: "Telecomunicaciones" },
-                                { value: "Servidores", label: "Servidores" },
-                                { value: "Automatizacion", label: "Automatizacion" },
-                            ]}
-                            className="select"
-                        /> 
-                        </Form.Item> */}
 
-                        <div className='flex text-sm'>
-                            <label className="pr-1">Fecha:</label>
-                            <input type='number'min="2000" max="2100" step="1" value="2023"
-                                className='w-36 h-8 p-3 text-sm bg-white border-none outline-none rounded' 
-                                placeholder="Fecha" 
-                                onChange={(e) => {setFecha(e.target.value)}} />
+                        <div className='flex items-center text-sm'>
+                            <label className="pr-1">Resultados:</label>
+                            <select 
+                                name="departamento" 
+                                placeholder='Departamento'
+                                onChange={(e) => {setDepart(e.target.value)}}
+                                className='block w-40 p-2 text-gray-900 border border-gray-300 rounded bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500'>
+                                    <option value={10}>10</option>
+                                    <option value={20}>20</option>
+                                    <option value={30}>30</option>
+                                    <option value={40}>40</option>
+                                    <option value={50}>50</option>
+                            </select>
                         </div>
 
-                        {/* <Form.Item className="m-0 p-0" label="Año" name="año">
-                            <DatePicker size='small' placeholder='Año' picker="year"
-                            onChange={(e) => setFecha(e.$y)} /> 
-                        </Form.Item> */}
+                        {/* <div className='flex items-center text-sm'>
+                            <label className="pr-1">Fecha:</label>
+                            <input type='number'min="2000" max="2100" step="1" value=""
+                                className='block w-40 p-2 text-gray-900 border-none outline-none rounded bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500' 
+                                placeholder="Fecha" 
+                                onChange={(e) => {setFecha(e.target.value)}} />
+                        </div> */}
 
                     </div>
                 </div>
@@ -142,8 +127,8 @@ function Busqueda({manejarBusqueda}) {
 
                         <div className="flex justify-center items-center gap-4">
                             <Form.Item className="m-0 p-0" label="Prioridad" initialValue='todo' />
-                            <Radio.Group defaultValue={null} onChange={(e) => {setPrioridad(e.target.value)}}>
-                                <Radio value={null}>Todas</Radio>
+                            <Radio.Group defaultValue='Todas' onChange={(e) => {setPrioridad(e.target.value)}}>
+                                <Radio value='Todas'>Todas</Radio>
                                 <Radio value='alta'>Alta</Radio>
                                 <Radio value='medio'>Media</Radio>
                                 <Radio value='baja'>Baja</Radio>
@@ -160,35 +145,29 @@ function Busqueda({manejarBusqueda}) {
                         
                         <button 
                             onClick={(e) => {e.preventDefault()}}
-                            className='w-28 h-8 text-sm bg-blue-500 text-white border-none outline-none rounded-md cursor-pointer hover:bg-blue-400' size='small' >
+                            className='w-28 h-8 text-sm bg-blue-600 text-white border-none outline-none rounded-md cursor-pointer hover:bg-blue-500' size='small' >
                             Restablecer
                         </button>
                     </div>
                 </div>
             </div>
 
-            <Divider />
+            <br /><br />
 
             <div class="relative w-96">
                 <input 
                     type="search" 
                     onChangeCapture={(e) => setSearchTerm(e.target.value)}
-                    class="block p-2 w-96 text-sm text-black bg-white rounded-lg border-none outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Buscar" />
-                <button type="submit" class="absolute top-0 right-0 w-14 p-2 text-sm font-medium text-white bg-blue-500 rounded-r-lg border-none outline-none hover:bg-blue-400 cursor-pointer focus:ring-4 focus:outline-none focus:ring-blue-300">
-                <FaSearch />
-            </button>
+                    class="block p-2 w-96 text-sm text-black bg-white rounded-lg border-none outline-none" placeholder="Buscar" />
+                <button 
+                    type="submit" 
+                    onClick={(e) => {e.preventDefault(); onSearch(debounceValue, estatus, region, depart, fecha, prioridad, order)}}
+                    class="absolute top-0 right-0 w-14 p-2 text-sm font-medium text-white bg-blue-600 rounded-r-lg border-none outline-none cursor-pointer">
+                    
+                    <FaSearch />
+                </button>
 
-        </div>
-
-            {/* <Search 
-                allowClear 
-                enterButton 
-                placeholder="Buscar" 
-                style={{width: '600px'}}
-                onChangeCapture={(e) => setSearchTerm(e.target.value)}
-                //onChange={onSearch} 
-            /> */}
-
+            </div>
         </form>
     );
 }

@@ -2,7 +2,7 @@
 import axios from 'axios';
 import Authorization from './auth.service';
 const baseUrl = "http://localhost:3001/api/";
-//const baseUrl = "https://proyecto-portafolio-server.onrender.com/api/";
+// const baseUrl = "https://proyecto-portafolio-server.onrender.com/api/";
 
 class Usuarios {
 
@@ -35,7 +35,7 @@ class Usuarios {
 
     async obtenerPorModificacion() {
         try {
-            const respuesta = await axios.get(`${baseUrl}user/u`, { headers: this.authHeader() });
+            const respuesta = await axios.get(`${baseUrl}user/ultimosModificados`, { headers: this.authHeader() });
             return respuesta;
         } catch (error) {
             console.log('Error al obtener dato');
@@ -44,7 +44,7 @@ class Usuarios {
 
     async obtenerPorCreacion() {
         try {
-            const respuesta = await axios.get(`${baseUrl}user/c`, { headers: this.authHeader() });
+            const respuesta = await axios.get(`${baseUrl}user/ultimosAgregados`, { headers: this.authHeader() });
             return respuesta;
         } catch (error) {
             console.log('Error al obtener dato');

@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
 import { 
-  FaHome, 
-  FaRegListAlt, 
-  FaServer, 
-  FaCode, 
-  FaDatabase, 
-  FaFileAlt, 
-  FaEnvelopeOpenText,
- } from "react-icons/fa";
+    FaHome, 
+    FaRegListAlt, 
+    FaServer, 
+    FaCode, 
+    FaDatabase, 
+    FaFileAlt, 
+    FaEnvelopeOpenText,
+    } from "react-icons/fa";
 
 // -------------------- FUNCION PARA GENERAR LAS OPCIONES DE LA BARRA LATERAL --------------------
 function opciones(label, key, icon, children, type) {

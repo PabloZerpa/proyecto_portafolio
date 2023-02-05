@@ -1,8 +1,8 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Checkbox, Form, Input, Select, notification } from 'antd';
-import { FaUserCircle, FaUser, FaLock, FaHardHat } from 'react-icons/fa';
+import { FaUserCircle, FaUser, FaLock, FaHardHat, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { Notificacion } from '../components/';
 import Autorizacion from '../services/auth.service';
 
 function Login() {
@@ -10,68 +10,65 @@ function Login() {
   const [password, setPassword] = useState('');
   const [indicador, setIndicador] = useState('');
   const [rol, setRol] = useState('');
+  const [showPass, setShowPass] = useState(false);
+  
+  const [show, setShow] = useState(false);
+  const [opcion, setOpcion] = useState('error');
+  const [mensaje, setMensaje] = useState('error');
+
   const navigate = useNavigate();
+  const handlePass = () => {setShowPass(!showPass)}
 
-  // ---------- FUNCION PARA LIMPIAR LOS STATES ----------
-  const clearStates = () => {
-    setIndicador('');
-    setPassword('');
-    setRol('');
-  }
+  useEffect(() => {
+    if(show){
+        setTimeout(() => { setShow(!show) }, "2000");
+    }
+  }, [show])
 
-  // ---------- FUNCION PARA MOSTRAR STATUS DEL LOGIN ----------
-  const [api, contextHolder] = notification.useNotification();
-  const openNotification = (tipo, msj, desc) => {
-    api[tipo]({
-      message: msj,
-      description: desc,
-      placement: 'top',
-      duration: 2,
-    });
-  };
 
   // -------------------- FUNCION PARA INICIAR SESION --------------------
   async function handleLogin(e) {
     e.preventDefault();
 
-    console.log(indicador, password, rol);
-
     if(password.length > 7 && indicador !== '' && rol !== ''){
-
       try {
         await Autorizacion.login(indicador,password,rol);
-        clearStates();
-        openNotification('success', 'Login Completado', `Bienvenido ${indicador}`);
+        setOpcion('exito');
+        setMensaje(indicador);
+        setShow(true);
         
         setTimeout(() => {
           window.location.reload();
           navigate("/dashboard");
-        }, "2000")
+        }, "2000");
       } 
       catch (error) {
         if(error.response)
-          openNotification('error', 'Login Fallido', error.response.data.message);
+          setMensaje(error.response.data.message);
         else
-          openNotification('error', 'Login Fallido', 'No responde el servidor');
+          setMensaje('No responde el servidor');
+        setOpcion('error');
+        setShow(true);
       }
     }
-
-  }
+  } 
 
   return (
-    <div className='w-full h-screen bg-zinc-300 flex justify-center items-center'>
-      
-      {contextHolder}
+    <div className='relative flex flex-col justify-center items-center w-full h-screen bg-zinc-300'>
+
+      <div style={show ? {display: 'block'} : {display: 'none'}} className='absolute top-24' >
+        <Notificacion opcion={opcion} mensaje={mensaje} />
+      </div>
 
       <form
-        className='flex justify-center items-center flex-col gap-6 w-96 bg-gray-50 
-        font-medium list-none mt-15 px-13 py-4 rounded-lg drop-shadow-md' 
+        className='flex justify-center items-center flex-col gap-6 w-96 mt-20 px-13 py-4 
+        bg-zinc-100 font-medium list-none rounded-lg drop-shadow-md' 
         method="post" onSubmitCapture={handleLogin}
       >
 
-        <FaUserCircle className='text-blue-500 text-6xl' />
+        <FaUserCircle className='text-6xl text-blue-500' />
 
-        <li className='w-72 relative'>
+        <li className='relative w-72'>
           <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <FaUser />
           </div>
@@ -85,29 +82,40 @@ function Login() {
           />
         </li>
 
-        <li className='w-72 relative'>
-          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+        <li className="w-72 relative">
+
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <FaLock />
           </div>
+
           <input 
-            type="password" 
+            type={showPass ? 'text' : 'password' } 
+            className="w-full h-10 pl-8 p-2 border-solid border-gray-400 outline-blue-500 rounded" 
             name="password" 
-            placeholder="Password"
-            className='w-full h-10 pl-8 p-2 border-solid border-gray-400 outline-blue-500 rounded' 
+            placeholder="Password" 
             onChange={(e) => {setPassword(e.target.value)}}
-            required
+            required 
           />
+
+          <div 
+            className="text-black absolute inset-y-0 right-5 flex items-center bg-trasparent cursor-pointer "
+            onClick={handlePass} >
+            { showPass ? <FaEye/> : <FaEyeSlash /> }
+          </div>
         </li>
+
 
         <li className='w-72 relative'>
           <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <FaHardHat />
           </div>
+
           <select 
-          name="rol" 
-          placeholder='Rol'
-          className='w-full h-10 pl-8 p-2 border-solid border-gray-400 outline-blue-500 rounded'
-          onChange={(e) => {setRol(e.target.value)}}>
+            name="rol" 
+            placeholder='Rol'
+            className='w-full h-10 pl-8 p-2 border-solid border-gray-400 outline-blue-500 rounded'
+            onChange={(e) => {setRol(e.target.value)}} >
+            <option disabled selected>Rol</option>
             <option value="user">User</option>
             <option value="admin">Admin</option>
           </select>
@@ -125,59 +133,6 @@ function Login() {
         </li>
 
       </form>
-
-      {/* <Form 
-        className='flex justify-center items-center flex-col w-96 bg-gray-50 
-        font-medium mt-15 px-13 py-4 rounded-lg drop-shadow-md' 
-        onSubmitCapture={handleLogin} >
-
-        <FaUserCircle className='text-blue-500 text-6xl mb-4' />
-        
-        <Form.Item className='w-72' name="indicador" rules={[{ required: true, message: 'Porfavor ingrese su indicador',},]} >
-          <Input 
-            size="large" 
-            className='w-full'
-            prefix={<FaUser />}
-            placeholder="Indicador"
-            onChange={(e) => {setIndicador(e.target.value)}}
-          />
-        </Form.Item>
-
-        <Form.Item className='w-72' name="password" rules={[{ required: true, message: 'Porfavor ingrese su contraseña',},]} >
-          <Input.Password 
-            size="large" 
-            className='w-full'
-            prefix={<FaLock />}
-            placeholder="Contraseña"
-            minLength={8} maxLength={20}
-            onChange={(e) => {setPassword(e.target.value)}}
-          />
-        </Form.Item>
-
-        <Form.Item className='w-72' name="rol" rules={[{ required: true, message: 'Porfavor ingrese su Rol', }]}>
-          <Select
-            size="large"
-            className='w-full'
-            placeholder="Rol"
-            onChange={(e) => {setRol(e)}}
-            options={[
-              { value: 'user', label: 'User' },
-              { value: 'admin', label: 'Admin' }
-            ]}
-          />
-        </Form.Item>
-
-        <Form.Item name="remember" valuePropName="unchecked" >
-          <Checkbox>Recordar</Checkbox>
-        </Form.Item>
-
-        <Form.Item className='w-72' >
-          <Button className='w-full h-10' type="primary" htmlType="submit" >
-            Login
-          </Button>
-        </Form.Item>
-
-      </Form> */}
     </div>
   );
 }

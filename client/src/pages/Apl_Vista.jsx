@@ -1,17 +1,27 @@
 
 import { useState, useEffect } from 'react';
-import { useLocation, useParams, useNavigate, Navigate, Link } from 'react-router-dom';
-import { Form, button, Typography, Divider, Alert } from "antd";
+import { useLocation, useParams, Navigate, Link } from 'react-router-dom';
+import Button from '../components/Button';
+import Input from '../components/Input';
 import Usuarios from '../services/user.service';
-const { Title } = Typography;
 
+const campos1 = ['Acronimo','Estatus','Nombre','Descripcion','Prioridad',
+'Tipo','Responsable Funcional','Responsable Tecnico','Departamento',
+'Numero de usuarios','Plataforma'];
+const campos2 = ['Alcance','Codigo Fuente','Propiedad','Fecha'];
+const campos3 = ['Region','Servidor'];
 
 function Vista() {
   
   const location = useLocation();
-  const navigate = useNavigate();
-  const [valor, setValor] = useState("");
+  const [valor, setValor] = useState(location.state);
+  const [valorArray, setValorArray] = useState([]);
   const { paramsId } = useParams();
+
+  const [valorDevuelto, setValorDevuelto] = useState(false);
+  const obtencionDeEstado = (parametroDevuelto) => {setValorDevuelto(parametroDevuelto)};
+  const [valorDevuelto2, setValorDevuelto2] = useState(false);
+  const obtencionDeEstado2 = (parametroDevuelto) => {setValorDevuelto2(parametroDevuelto)};
   
   useEffect(() => {
     console.log(location.state);
@@ -20,6 +30,7 @@ function Vista() {
       try {
         const response = await Usuarios.obtenerDato(location.state.id)
         setValor(response.data);
+        setValorArray(Object.values(response.data));
       }catch (error) {
         console.log(error)
       }
@@ -27,130 +38,92 @@ function Vista() {
     fetchData();
   }, [paramsId]);
 
-  if(location.state === null) return <Navigate to='/' />
-
+  if(location.state === null) 
+    return <Navigate to='/' />
+    
     return (
-      <div className='flex w-full h-screen bg-zinc-300 m-0 p-0'>
-        
-        <form className="w-full gap-4 flex flex-col justify-start items-center pt-44 pl-56" >
+      <div className="flex w-full bg-zinc-300 m-0 p-0">
+        <div className="w-full flex flex-col justify-start items-center gap-8 pt-44 pl-56" >
 
-          <div className="flex justify-center items-center gap-6 pb-6">
-
-            <button className='w-32 h-8 text-sm bg-blue-500 text-white border-none outline-none rounded cursor-pointer hover:bg-blue-400' size='small' >
-              <Link 
-              className='no-underline text-white'
-                to={`/aplicaciones/actualizacion/${valor.id}`} state={valor}>Actualizar</Link>
-            </button>
-
-            <button className='w-32 h-8 text-sm bg-blue-500 text-white border-none outline-none rounded cursor-pointer hover:bg-blue-400' size='small' >Descargar</button>
+          <div className='flex gap-8'>
+            <Button color='blue' width={32} >
+              <Link className='no-underline text-white' to={`/aplicaciones/actualizacion/${valor.id}`} state={valor}>
+                  Actualizar
+              </Link>
+            </Button>
+            <Button color='blue' width={32} >Descargar</Button>
+            <Button color='blue' width={32} >Notificar</Button>
           </div>
 
-        <h2 className='font-bold'>Informacion Basica</h2>
+          <h2 className='font-bold'>Informacion Basica</h2>
+          
+          <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
+            <div className='grid gap-6 mb-6 md:grid-cols-2'>
+              <Input campo={'Acronimo'} propiedad={valor.acronimo} />
+              <Input campo={'Estatus'} propiedad={valor.estatus} />
+            </div>
 
-        <div className='grid grid-cols-2 w-4/5 gap-6 g-3 p-5 bg-zinc-400 drop-shadow-md rounded'>
+            <div className='flex flex-col gap-2 text-sm font-medium text-gray-900 mb-6'>
+              <Input campo={'Nombre'} propiedad={valor.nombre} />
+              <Input campo={'Descripcion'} propiedad={valor.descripcion} />
+            </div>
 
-          <div className='flex flex-col gap-2 text-sm'>
-            <label className="w-full h-15">Acronimo</label>
-            <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value={valor.acronimo} />
+            <div className='grid gap-6 mb-6 md:grid-cols-2'>
+              <Input campo={'Prioridad'} propiedad={valor.prioridad} />
+              <Input campo={'Tipo'} propiedad={valor.tipo} />
+              <Input campo={'Responsable Funcional'} propiedad={valor.responsablef} detalles={true} peticionEstado={obtencionDeEstado} />
+              <Input campo={'Responsable Tecnico'} propiedad={valor.responsablet} />
+              
+              <div style={valorDevuelto ? {display: 'block'} : {display: 'none'}} className='ml-4 bg-blue-500 w-64' >
+                <Input campo={'Indicador'} propiedad={valor.responsablef_ind} />
+                <Input campo={'Telefono'} propiedad={valor.responsablef_tlf} />
+                <Input campo={'Correo'} propiedad={valor.responsablef_cor} />
+              </div>
+
+              <div style={valorDevuelto ? {display: 'block'} : {display: 'none'}} className='ml-4 bg-blue-500 w-64' >
+                <Input campo={'Indicador'} propiedad={valor.responsablet_ind} />
+                <Input campo={'Telefono'} propiedad={valor.responsablet_tlf} />
+                <Input campo={'Correo'} propiedad={valor.responsablet_cor} />
+              </div>
+
+              <Input campo={'Departamento'} propiedad={valor.departamento} />
+              <Input campo={'Numero de usuarios'} propiedad={valor.cantidad_user} />
+              <Input campo={'Plataforma'} propiedad={valor.plataforma} />
+            </div>
+        </form>
+
+
+        <h2 className='font-bold'>Caracteristicas de la Aplicaciones</h2>
+
+        <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
+          <div className='grid gap-6 mb-6 md:grid-cols-2'>
+            <Input campo={'Codigo Fuente'} propiedad={valor.codigo_fuente} detalles={true} peticionEstado={obtencionDeEstado2} />
+            <Input campo={'Alcance'} propiedad={valor.alcance} />
+
+            <div style={valorDevuelto2 ? {display: 'block'} : {display: 'none'}} className='ml-4 bg-blue-500 w-64' >
+              <Input campo={'Lenguaje'} propiedad={valor.lenguaje} />
+              <Input campo={'Base de datos'} propiedad={valor.base_datos} />
+            </div>
+
+            <Input campo={'Direccion'} propiedad={valor.direccion} />
+            <Input campo={'Propiedad'} propiedad={valor.propiedad} />
+            <Input campo={'Fecha'} propiedad={valor.ultima} />
           </div>
+        </form>
 
-          <div className='flex flex-col gap-2 text-sm'>
-            <label className="w-full h-15">Estatus</label>
-            <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value='Estatus' />
-          </div>
+        <h2 className='font-bold'>Informacion de Gestion de la Plataforma</h2>
 
-          <div className='flex flex-col gap-2 text-sm'>
-            <label className="w-full h-15">Nombre</label>
-            <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value={valor.nombre} />
+        <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
+          <div className='grid gap-6 mb-6 md:grid-cols-2'>
+            <Input campo={'Region'} propiedad={valor.region} />
+            <Input campo={'Servidor'} propiedad={valor.servidor} />
+            <Input campo={'Frecuencia de Mantenimiento'} propiedad={valor.frecuencia} />
+            <Input campo={'Horas Promedio de Mantenimiento'} propiedad={valor.frecuencia_hr} />
           </div>
-
-          <div className='flex flex-col gap-2 text-sm'>
-            <label className="w-full h-15">Descripcion</label>
-            <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value='Descripcion' />
-          </div>
-
-          <div className='flex flex-col gap-2 text-sm'>
-            <label className="w-full h-15">Prioridad</label>
-            <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value={valor.prioridad} />
-          </div>
-
-          <div className='flex flex-col gap-2 text-sm'>
-            <label className="w-full h-15">Tipo</label>
-            <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value='Tipo' />
-          </div>
-
-          <div className='flex flex-col gap-2 text-sm'>
-            <label className="w-full h-15">Mantenido</label>
-            <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value={valor.responsable} />
-          </div>
-
-          <div className='flex flex-col gap-2 text-sm'>
-            <label className="w-full h-15">Desarrollado</label>
-            <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value={valor.responsable} />
-          </div>
-
-          <div className='flex flex-col gap-2 text-sm'>
-            <label className="w-full h-15">Departamento</label>
-            <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value='Departamento' />
-          </div>
-
-          <div className='flex flex-col gap-2 text-sm'>
-            <label className="w-full h-15">Numero de usuarios</label>
-            <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value='N° Usuarios' />
-          </div>
-
-          <div className='flex flex-col gap-2 text-sm'>
-            <label className="w-full h-15">Plataforma</label>
-            <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value='Plataforma' />
-          </div>
+        </form>
 
         </div>
-
-          <h2 className='font-bold'>Caracteristicas de la Aplicaciones</h2>
-
-          <div className='grid grid-cols-2 w-4/5 gap-6 g-3 p-5 bg-zinc-400 drop-shadow-md rounded'>
-
-            <div className='flex flex-col gap-2 text-sm'>
-              <label className="w-full h-15">Alcance</label>
-              <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value='Alcance' />
-            </div>
-
-            <div className='flex flex-col gap-2 text-sm'>
-              <label className="w-full h-15">Codigo</label>
-              <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value='Codigo' />
-            </div>
-
-            <div className='flex flex-col gap-2 text-sm'>
-              <label className="w-full h-15">Programa</label>
-              <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value='Programa' />
-            </div>
-
-            <div className='flex flex-col gap-2 text-sm'>
-              <label className="w-full h-15">Fecha</label>
-              <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value={valor.ultima} />
-            </div>
-
-          </div>
-
-          <h2 className='font-bold'>Informacion de Gestion de la Plataforma</h2>
-          
-            <div className='grid grid-cols-2 w-4/5 gap-6 g-3 p-5 bg-zinc-400 drop-shadow-md rounded'>
-
-              <div className='flex flex-col gap-2 text-sm'>
-                <label className="w-full h-15">Region</label>
-                <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value={valor.region} />
-              </div>
-              
-              <div className='flex flex-col gap-2 text-sm'>
-                <label className="w-full h-15">Servidor</label>
-                <input readOnly className='w-80 h-10 p-3 bg-white border-none outline-none rounded' value='Servidor' />
-              </div>
-              
-            </div>
-
-        </form>
       </div>
-          
     )
 };
 

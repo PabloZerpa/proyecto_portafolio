@@ -1,113 +1,113 @@
 
 import { useState } from "react";
-import { Menu } from 'antd';
-import { 
-    FaChevronDown, 
-    FaChevronLeft, 
-    FaChevronRight, 
-    FaHome, 
-    FaRegListAlt, 
-    FaServer, 
-    FaCode, 
-    FaDatabase, 
-    FaFileAlt, 
-    FaEnvelopeOpenText, } from "react-icons/fa";
-import { opcionesNav } from "../services/nav.service";
-import Autorizacion from '../services/auth.service';
+import { FaHome, FaRegListAlt, FaCode,FaDatabase, FaChevronDown, FaChevronRight, FaChevronUp } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import Autorizacion from '../services/auth.service';
+
 
 function Navegacion() {
 
-    const [collapsed, setCollapsed] = useState(false);
-    const toggleCollapsed = () => setCollapsed(!collapsed);
+    const [open1, setOpen1] = useState(false);
+    const [open2, setOpen2] = useState(false);
+    const [open3, setOpen3] = useState(false);
+    const openMenu1 = () => setOpen1(!open1);
+    const openMenu2 = () => setOpen2(!open2);
+    const openMenu3 = () => setOpen3(!open3);
 
     if (Autorizacion.obtenerUsuario() === null)
-        return <div></div>
+        return null
 
     return (
         <nav className="m-0 p-0 z-60 fixed drop-shadow-md">
 
-            <aside 
-                id="sidebar-multi-level-sidebar" 
-                class="mt-20 top-0 left-0 w-64 h-screen transition-transform" 
-                aria-label="Sidebar">
+            <aside className="mt-20 top-0 left-0 w-64 h-screen transition-transform" >
                 
-                <div class="w-48 h-full px-5 pt-20 overflow-y-auto bg-gray-200 text-black">
-                    <ul class="list-none p-0 m-0 flex flex-col gap-3">
+                <div className="w-56 h-full px-5 pt-20 overflow-y-auto bg-gray-200 text-black" >
+                    <ul className="list-none p-0 m-0 flex flex-col gap-4">
                         <li>
-                            <Link to="/dashboard" class="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-100">
+                            <Link to="/dashboard" className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100">
                                 <FaHome />
-                                <span class="ml-2">Inicio</span>
+                                <span className="ml-2">Inicio</span>
                             </Link>
                         </li>
                         <li>
-                            <div
-                                class="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-100" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
-                                <FaCode />
-                                <span class="flex-1 ml-3 text-left whitespace-nowrap" sidebar-toggle-item>Aplicaciones</span>
-                                <FaChevronDown />
+                            <div className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg cursor-pointer hover:bg-gray-800 hover:text-gray-100" 
+                                onClick={openMenu1}>
+                                <FaCode/>
+                                <span className="px-2">Aplicaciones</span>
+                                {open1 ? <FaChevronUp /> : <FaChevronDown />}
                             </div>
-                            <ul id="dropdown-example" class="hidden py-2 space-y-2">
-                                <li>
-                                    <Link to="/aplicacion/" class="flex items-center w-full p-2 text-sm font-normal text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100">Actualizacion</Link>
-                                </li>
-                                <li>
-                                    <Link to="/aplicacion/" class="flex items-center w-full p-2 text-sm font-normal text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100">Software</Link>
-                                </li>
-                                <li>
-                                    <Link to="/aplicacion/" class="flex items-center w-full p-2 text-sm font-normal text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100">Interfaces</Link>
-                                </li>
-                            </ul>
+
+                            <div style={open1 ? {display: 'block'} : {display: 'none'}} className='pl-4'>
+                                <Link to="/aplicaciones" 
+                                    className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
+                                    Busqueda
+                                </Link>
+                                <Link to="/aplicaciones" 
+                                    className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
+                                    Visualizacion
+                                </Link>
+                                <Link to="/aplicaciones" 
+                                    className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
+                                    Otros
+                                </Link>
+                            </div>
                         </li>
                         <li>
-                            <Link to="/aplicaciones" class="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-100">
-                                <FaRegListAlt />
-                                <span class="flex-1 ml-3 whitespace-nowrap">Administracion</span>
-                            </Link>
+                            <div className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg cursor-pointer hover:bg-gray-800 hover:text-gray-100" 
+                            onClick={openMenu2}>
+                                <FaRegListAlt/>
+                                <span className="px-2">Administracion</span>
+                                {open2 ? <FaChevronUp /> : <FaChevronDown />}
+                            </div>
+
+                            <div style={open2 ? {display: 'block'} : {display: 'none'}} className='pl-4'>
+                                <Link to="/administracion" 
+                                    className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
+                                        Actualizacion
+                                </Link>
+                                <Link to="/administracion/agregar" 
+                                    className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
+                                        Agregar
+                                </Link>
+                                <Link to="/administracion" 
+                                    className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
+                                        Reportes
+                                </Link>
+                            </div>
                         </li>
                         <li>
-                            <Link to="/dashboard" class="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-100">
+                            <div className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg cursor-pointer hover:bg-gray-800 hover:text-gray-100" 
+                                onClick={openMenu3}>
                                 <FaDatabase />
-                                <span class="flex-1 ml-3 whitespace-nowrap">Base de datos</span>
-                            </Link>
+                                <span className="px-2">Base de datos</span>
+                                {open3 ? <FaChevronUp /> : <FaChevronDown />}
+                            </div>
+
+                            <div style={open3 ? {display: 'block'} : {display: 'none'}} className='pl-4'>
+                                <Link to="/basedatos" 
+                                    className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
+                                    Busqueda
+                                </Link>
+                                <Link to="/basedatos" 
+                                    className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
+                                    Visualizacion
+                                </Link>
+                                <Link to="/basedatos" 
+                                    className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
+                                    Actualizacion
+                                </Link>
+                                <Link to="/basedatos" 
+                                    className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
+                                    Otros
+                                </Link>
+                            </div>
                         </li>
-                        <li>
-                            <Link to="/dashboard" class="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-100">
-                                <FaServer />
-                                <span class="flex-1 ml-3 whitespace-nowrap">Servidores</span>
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/dashboard" class="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-100">
-                                <FaFileAlt />
-                                <span class="flex-1 ml-3 whitespace-nowrap">Documentacion</span>
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/dashboard" class="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-100">
-                                <FaEnvelopeOpenText />
-                                <span class="flex-1 ml-3 whitespace-nowrap">Solicitudes</span>
-                            </Link>
-                        </li>
-                        
                     </ul>
+                    
                 </div>
             </aside>
-
-            {/* <div 
-                onClick={toggleCollapsed} 
-                className="text-stone-900 pointer absolute left-8 top-20">
-                {collapsed ? <FaChevronRight /> : <FaChevronLeft />}
-            </div>
-
-            <Menu 
-                mode="inline" 
-                className="h-full fixed mt-20 pt-20 bg-gray-200 drop-shadow-md" 
-                inlineCollapsed={collapsed} 
-                style={collapsed ? {width: '80px'} : {width: '190px'} } 
-                items={opcionesNav} 
-            /> */}
-
+            
         </nav>
     );
 }

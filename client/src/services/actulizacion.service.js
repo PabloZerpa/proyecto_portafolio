@@ -54,7 +54,7 @@ export const labels3 = [
 ];
 
 // {labels1.map((item) => (
-              
+
 //     <Formulario 
 //       key={item.id}
 //       label={item.label}
