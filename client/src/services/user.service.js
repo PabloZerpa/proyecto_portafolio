@@ -1,8 +1,8 @@
 
 import axios from 'axios';
 import Authorization from './auth.service';
-const baseUrl = "http://localhost:3001/api/";
-// const baseUrl = "https://proyecto-portafolio-server.onrender.com/api/";
+// const baseUrl = "http://localhost:3001/api/";
+const baseUrl = "https://proyecto-portafolio-server.onrender.com/api/";
 
 class Usuarios {
 
@@ -51,14 +51,31 @@ class Usuarios {
         }
     }
 
-    async obtenerPorTermino(term, id,region,depart,fecha,prioridad,order) {
+    async obtenerPorTermino(term,region,prioridad,count) {
         try {
             console.log(term);
-            return axios.post(`${baseUrl}user/term`, {term, id,region,depart,fecha,prioridad,order});
+            return axios.post(`${baseUrl}user/term`, {term,region,prioridad,count});
         } catch (error) {
             console.log('Error al obtener dato');
         }
     }
+
+    
+    // getPublicContent() {
+    //   return axios.get(API_URL + 'all');
+    // }
+  
+    // getUserBoard() {
+    //   return axios.get(API_URL + 'user', { headers: authHeader() });
+    // }
+  
+    // getModeratorBoard() {
+    //   return axios.get(API_URL + 'mod', { headers: authHeader() });
+    // }
+  
+    // getAdminBoard() {
+    //   return axios.get(API_URL + 'admin', { headers: authHeader() });
+    // }
 
 }
 

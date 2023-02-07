@@ -7,6 +7,8 @@ const auth = async (req, res, next) => {
     if(!authorization) return res.status(401);
 
     const token = await verificarToken(authorization);
+    // console.log('Token Verificado');
+    // console.log(token);
     
     if(token)
         next();

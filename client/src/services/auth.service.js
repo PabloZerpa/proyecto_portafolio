@@ -1,10 +1,17 @@
 
 import axios from 'axios';
-const baseUrl = "http://localhost:3001/api/";
-// const baseUrl = "https://proyecto-portafolio-server.onrender.com/api/"
+// const baseUrl = "http://localhost:3001/api/";
+const baseUrl = "https://proyecto-portafolio-server.onrender.com/api/"
 
 
 class Autorizacion {
+    
+    authHeader() {
+        const user = JSON.parse(localStorage.getItem('user'));
+
+        if (user && user.token) return { 'Authorization': user.token };
+        else return {};
+    }
 
     // ---------------- LOGIN ------------------
     async login(indicador, password, rol) {
@@ -19,37 +26,20 @@ class Autorizacion {
     }
 
     // ---------------- UPDATE ------------------
-    async actualizarDatos(
-        acronimo,estatus,nombre,descripcion,region,responsable,prioridad,tipo,
-        departamento,cantidad,alcance,propiedad,plataforma,codigo,servidor,ultima,id) {
+    async actualizarDatos(id, datosModificacion) {
         try {
-            console.log(acronimo,nombre,region,responsable,prioridad,ultima);
-            return axios.put(`${baseUrl}user/${id}`, {
-                acronimo,estatus,nombre,descripcion,region,responsable,prioridad,tipo,
-                departamento,cantidad,alcance,propiedad,plataforma,codigo,servidor,ultima
-            });
+            const respuesta = await axios.put(`${baseUrl}user/${id}`, datosModificacion, { headers: this.authHeader() });
+            return respuesta;
         } catch (error) {
             console.log('ERROR AL ACTUALIZAR auth.service');
         }
     }
     
     // ---------------- CREATE ------------------
-    async crearDatos(
-        acronimo,nombre,descripcion,estatus,region,responsablef,responsablef_ind,responsablef_tlf,responsablef_cor,
-        responsablet,responsablet_ind,responsablet_tlf,responsablet_cor,prioridad,tipo,departamento,
-        cantidad_user,plataforma,codigo_fuente,lenguaje,base_datos,alcance,propiedad,servidor,ultima) {
+    async crearDatos(datosRegistro) {
         try {
-
-            console.log(
-                acronimo,nombre,descripcion,estatus,region,responsablef,responsablef_ind,responsablef_tlf,responsablef_cor,
-                responsablet,responsablet_ind,responsablet_tlf,responsablet_cor,prioridad,tipo,departamento,
-                cantidad_user,plataforma,codigo_fuente,lenguaje,base_datos,alcance,propiedad,servidor,ultima);
-            
-            return axios.post(`${baseUrl}user/`, {
-                acronimo,nombre,descripcion,estatus,region,responsablef,responsablef_ind,responsablef_tlf,responsablef_cor,
-                responsablet,responsablet_ind,responsablet_tlf,responsablet_cor,prioridad,tipo,departamento,
-                cantidad_user,plataforma,codigo_fuente,lenguaje,base_datos,alcance,propiedad,servidor,ultima
-            });
+            const respuesta = await axios.post(`${baseUrl}user/`, datosRegistro, { headers: this.authHeader() });
+            return respuesta;
         } catch (error) {
             console.log('ERROR AL ACTUALIZAR auth.service');
         }

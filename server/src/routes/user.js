@@ -22,11 +22,13 @@ router.post("/term", getByTerm);
 
 
 // *************** RUTA PARA OBTENER LOS DATOS POR ID *************** 
-router.get("/:id", getItem);
+router.get("/:id", auth, getItem);
 
+// *************** RUTA PARA OBTENER LOS DATOS POR ID *************** 
+router.post("/", auth, createItems);
 
 // *************** RUTA PARA ACTUALIZAR LOS DATOS POR ID *************** 
-router.put("/:id", updateItems);
+router.put("/:id", auth, updateItems);
 
 
 // *************** RUTA PARA ELIMINAR DATOS POR ID *************** 

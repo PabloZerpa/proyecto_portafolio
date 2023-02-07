@@ -11,6 +11,7 @@ function Busqueda({manejarBusqueda}) {
     const [estatus, setEstatus] = useState("");
     const [region, setRegion] = useState("");
     const [depart, setDepart] = useState("");
+    const [count, setCount] = useState(10);
     const [fecha, setFecha] = useState("");
     const [prioridad, setPrioridad] = useState("");
     const [order, setOrder] = useState("");
@@ -21,13 +22,13 @@ function Busqueda({manejarBusqueda}) {
 
     useEffect(() => {
 		if (debounceValue) {
-            onSearch(debounceValue, estatus, region, depart, fecha, prioridad, order);
+            onSearch(debounceValue, region, prioridad, count);
         } else {
             setResultados(null);
         }
 	}, [debounceValue]);
 
-    const onSearch = async (value, estatus, region, depart, fecha, prioridad, order) => {
+    const onSearch = async (value, region, prioridad, count) => {
         try {
             console.log(`Valor a buscar: ${value}`);
             console.log(`POR Estatus: ${estatus}`);
@@ -36,8 +37,9 @@ function Busqueda({manejarBusqueda}) {
             console.log(`POR FECHA: ${fecha}`);
             console.log(`POR PRIORIDAD: ${prioridad}`);
             console.log(`POR ORDEN: ${order}`);
+            console.log(`POR COUNT: ${count}`);
 
-            const datos = await Usuarios.obtenerPorTermino(value,estatus,region,depart,fecha,prioridad,order);
+            const datos = await Usuarios.obtenerPorTermino(value,region,prioridad,count);
             setResultados(datos.data);
             manejarBusqueda(datos.data);
 
@@ -61,7 +63,7 @@ function Busqueda({manejarBusqueda}) {
                                 placeholder='Estatus'
                                 onChange={(e) => {setEstatus(e.target.value)}}
                                 className="block w-40 p-2 text-gray-900 border border-gray-300 rounded bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500">
-                                    <option value='Todas'>Todas</option>
+                                    <option value=''>Todas</option>
                                     <option value="Desarrollo">Desarrollo</option>
                                     <option value="Activo">Activo</option>
                                     <option value="Inactivo">Inactivo</option>
@@ -75,33 +77,33 @@ function Busqueda({manejarBusqueda}) {
                                 placeholder='Region'
                                 onChange={(e) => {setRegion(e.target.value)}}
                                 className='block w-40 p-2 text-gray-900 border border-gray-300 rounded bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500'>
-                                    <option value='Todas'>Todas</option>
+                                    <option value=''>Todas</option>
                                     <option value="Centro">Centro</option>
                                     <option value="Oriente">Oriente</option>
                                     <option value="Andes">Andes</option>
                             </select>
                         </div>
 
-                        <div className='flex items-center text-sm'>
+                        {/* <div className='flex items-center text-sm'>
                             <label className="pr-1">Departamento:</label>
                             <select 
                                 name="departamento" 
                                 placeholder='Departamento'
                                 onChange={(e) => {setDepart(e.target.value)}}
                                 className='block w-40 p-2 text-gray-900 border border-gray-300 rounded bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500'>
-                                    <option value='Todas'>Todas</option>
+                                    <option value=''>Todas</option>
                                     <option value="Informatica">Informatica</option>
                                     <option value="Telecomunicaciones">Telecomunicaciones</option>
                                     <option value="Automatizacion">Automatizacion</option>
                             </select>
-                        </div>
+                        </div> */}
 
                         <div className='flex items-center text-sm'>
                             <label className="pr-1">Resultados:</label>
                             <select 
-                                name="departamento" 
-                                placeholder='Departamento'
-                                onChange={(e) => {setDepart(e.target.value)}}
+                                name="count" 
+                                placeholder='Count'
+                                onChange={(e) => {setCount(parseInt(e.target.value)); console.log(count)}}
                                 className='block w-40 p-2 text-gray-900 border border-gray-300 rounded bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500'>
                                     <option value={10}>10</option>
                                     <option value={20}>20</option>
@@ -128,7 +130,7 @@ function Busqueda({manejarBusqueda}) {
                         <div className="flex justify-center items-center gap-4">
                             <Form.Item className="m-0 p-0" label="Prioridad" initialValue='todo' />
                             <Radio.Group defaultValue='Todas' onChange={(e) => {setPrioridad(e.target.value)}}>
-                                <Radio value='Todas'>Todas</Radio>
+                                <Radio value=''>Todas</Radio>
                                 <Radio value='alta'>Alta</Radio>
                                 <Radio value='medio'>Media</Radio>
                                 <Radio value='baja'>Baja</Radio>
@@ -161,7 +163,7 @@ function Busqueda({manejarBusqueda}) {
                     class="block p-2 w-96 text-sm text-black bg-white rounded-lg border-none outline-none" placeholder="Buscar" />
                 <button 
                     type="submit" 
-                    onClick={(e) => {e.preventDefault(); onSearch(debounceValue, estatus, region, depart, fecha, prioridad, order)}}
+                    onClick={(e) => {e.preventDefault(); onSearch(debounceValue, estatus, region, depart, fecha, prioridad, order, count)}}
                     class="absolute top-0 right-0 w-14 p-2 text-sm font-medium text-white bg-blue-600 rounded-r-lg border-none outline-none cursor-pointer">
                     
                     <FaSearch />

@@ -5,13 +5,16 @@ import { BiLoaderAlt } from "react-icons/bi";
 import Usuarios from "../services/user.service";
 
 function Dashboard() {
-  
+
   const [datosModificacion, setDatosModificacion] = useState([]);
   const [datosCreacion, setDatosCreacion] = useState([]);
   const [datos, setDatos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [user, setUser] = useState('');
+
   useEffect(() => {
+
     async function fetchData(){
       try {
         const porModificacion = await Usuarios.obtenerPorModificacion();
