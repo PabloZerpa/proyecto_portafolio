@@ -30,7 +30,7 @@ const login = async (req, res) => {
         }
 
         // ********** GENERA EL TOKEN DEL USUARIO **********
-        const token = await generarToken(indicador);
+        const token = await generarToken(indicador,rol);
         
         const datos = {
             indicador,
@@ -39,6 +39,8 @@ const login = async (req, res) => {
         }
 
         console.log('LOGIN COMPLETADO');
+        console.log(datos);
+        console.log('Token: ' + token);
         res.status(200).json(datos);
 
     }

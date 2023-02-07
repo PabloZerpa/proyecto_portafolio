@@ -2,8 +2,8 @@
 const pool = require('../config');
 const jwt = require('jsonwebtoken');
 
-const generarToken = async (indicador) => {
-    return token = jwt.sign({indicador}, 'SECRETO#123', {expiresIn: '2h'}); 
+const generarToken = async (indicador,rol) => {
+    return token = jwt.sign({indicador,rol}, 'SECRETO#123', {expiresIn: '2h'}); 
 };
 
 // *************** VERIFICAR EL TOKEN PARA EL LOGIN ***************
