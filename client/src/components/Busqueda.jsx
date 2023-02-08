@@ -22,24 +22,24 @@ function Busqueda({manejarBusqueda}) {
 
     useEffect(() => {
 		if (debounceValue) {
-            onSearch(debounceValue, region, prioridad, count);
+            onSearch(debounceValue,estatus,region,prioridad,order,count);
         } else {
             setResultados(null);
         }
 	}, [debounceValue]);
 
-    const onSearch = async (value, region, prioridad, count) => {
+    const onSearch = async (value,estatus,region,prioridad,order,count) => {
         try {
-            console.log(`Valor a buscar: ${value}`);
-            console.log(`POR Estatus: ${estatus}`);
-            console.log(`POR REGION: ${region}`);
-            console.log(`POR DEPARTAMENTO: ${depart}`);
-            console.log(`POR FECHA: ${fecha}`);
-            console.log(`POR PRIORIDAD: ${prioridad}`);
-            console.log(`POR ORDEN: ${order}`);
-            console.log(`POR COUNT: ${count}`);
+            // console.log(`Valor a buscar: ${value}`);
+            // console.log(`POR Estatus: ${estatus}`);
+            // console.log(`POR REGION: ${region}`);
+            // console.log(`POR DEPARTAMENTO: ${depart}`);
+            // console.log(`POR FECHA: ${fecha}`);
+            // console.log(`POR PRIORIDAD: ${prioridad}`);
+            // console.log(`POR ORDEN: ${order}`);
+            // console.log(`POR COUNT: ${count}`);
 
-            const datos = await Usuarios.obtenerPorTermino(value,region,prioridad,count);
+            const datos = await Usuarios.obtenerPorTermino(value,estatus,region,prioridad,order,count);
             setResultados(datos.data);
             manejarBusqueda(datos.data);
 
@@ -103,7 +103,7 @@ function Busqueda({manejarBusqueda}) {
                             <select 
                                 name="count" 
                                 placeholder='Count'
-                                onChange={(e) => {setCount(parseInt(e.target.value)); console.log(count)}}
+                                onChange={(e) => {setCount(parseInt(e.target.value))}}
                                 className='block w-40 p-2 text-gray-900 border border-gray-300 rounded bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500'>
                                     <option value={10}>10</option>
                                     <option value={20}>20</option>
@@ -115,10 +115,10 @@ function Busqueda({manejarBusqueda}) {
 
                         {/* <div className='flex items-center text-sm'>
                             <label className="pr-1">Fecha:</label>
-                            <input type='number'min="2000" max="2100" step="1" value=""
+                            <input type='date' value="2018-07-22"
                                 className='block w-40 p-2 text-gray-900 border-none outline-none rounded bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500' 
                                 placeholder="Fecha" 
-                                onChange={(e) => {setFecha(e.target.value)}} />
+                                onChange={(e) => {setFecha(e.target.value); console.log(fecha)}} />
                         </div> */}
 
                     </div>
@@ -129,7 +129,7 @@ function Busqueda({manejarBusqueda}) {
 
                         <div className="flex justify-center items-center gap-4">
                             <Form.Item className="m-0 p-0" label="Prioridad" initialValue='todo' />
-                            <Radio.Group defaultValue='Todas' onChange={(e) => {setPrioridad(e.target.value)}}>
+                            <Radio.Group defaultValue='' onChange={(e) => {setPrioridad(e.target.value)}}>
                                 <Radio value=''>Todas</Radio>
                                 <Radio value='alta'>Alta</Radio>
                                 <Radio value='medio'>Media</Radio>

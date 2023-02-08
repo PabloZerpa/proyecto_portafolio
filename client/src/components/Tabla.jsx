@@ -3,16 +3,16 @@ import { Link } from "react-router-dom";
 import { FaEye, FaEdit } from "react-icons/fa";
 
 const columnas = ['ID','Acronimo','Nombre','Estatus','Region','Responsable Funcional',
-    'Responsable Tecnico','Prioridad','Tipo','Ultima'
+    'Responsable Tecnico','Prioridad','Tipo'
 ];
 const columnasOpc = ['ID','Acronimo','Nombre','Estatus','Region','Responsable Funcional',
-    'Responsable Tecnico','Prioridad','Tipo','Ultima',''
+    'Responsable Tecnico','Prioridad','Tipo',''
 ];
 
 function Tabla({datos, opciones}) {
     
     return (
-        <div className="relative overflow-x-auto mr-6 shadow-md sm:rounded-lg">
+        <div className="relative overflow-x-auto mx-8 shadow-md sm:rounded-lg">
             <table className="w-full text-sm text-center text-gray-700">
                 <thead className="text-xs text-gray-700 font-bold bg-zinc-200 uppercase">
                     
@@ -38,7 +38,6 @@ function Tabla({datos, opciones}) {
                             <td className="px-2 py-2">{dato.responsablet}</td>
                             <td className="px-2 py-2">{dato.prioridad}</td>
                             <td className="px-2 py-2">{dato.tipo}</td>
-                            <td className="px-2 py-2">{dato.ultima}</td>
                             {opciones ? (
                                 <td className="px-2 py-2 flex">
                                     <Link to={dato.id ? `/aplicaciones/${dato.id}` : `/dashboard`} className='text-lg' state={dato} >
