@@ -5,7 +5,7 @@ const { matchedData } = require('express-validator');
 // *************** OBTENER TODOS LOS DATOS ***************
 const getItems = async (req,res) => {
     try {
-        const data = await pool.query(`SELECT * FROM apps`);
+        const data = await pool.query(`SELECT * FROM apps LIMIT 6`);
         res.send(data[0]);
     } catch (error) {
         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
@@ -35,27 +35,40 @@ const getByCreateDate = async (req,res) => {
 // *************** OBTENER TODOS LOS DATOS POR FECHA DE CREACION ***************
 const getByTerm = async (req,res) => {
     try { 
-        const { term,region,prioridad,count } = req.body;
+        const { term,estatus,region,prioridad,order,count } = req.body;
         const termino = '%' + term + '%';
         let data;
 
-        console.log(term,region,prioridad,count);
+        console.log(term,estatus,region,prioridad,order,count);
 
         if (term === undefined || null)
             return res.status(404).json({ message: "Error al recibir consulta" });
-
-
+            
+        if(estatus){
+            data = await pool.query(
+                `SELECT * FROM apps WHERE 
+                (id LIKE ? OR 
+                nombre LIKE ? OR 
+                acronimo LIKE ? OR 
+                prioridad LIKE ? OR  
+                region LIKE ? OR  
+                responsablef LIKE ? OR 
+                responsablet LIKE ? ) AND 
+                estatus = ?`, 
+            [termino,termino,termino,termino,termino,termino,termino,estatus]);
+        }
         if(region){
             data = await pool.query(
                 `SELECT * FROM apps WHERE 
                     (id LIKE ? OR 
                     nombre LIKE ? OR 
                     acronimo LIKE ? OR 
+                    estatus LIKE ? OR 
                     prioridad LIKE ? OR  
                     responsablef LIKE ? OR 
                     responsablet LIKE ? ) AND 
                     region = ?`, 
-                [termino,termino,termino,termino,termino,termino,region]);
+                [termino,termino,termino,termino,termino,termino,termino,region]);
         }
         else if(prioridad){
             data = await pool.query(
@@ -63,11 +76,12 @@ const getByTerm = async (req,res) => {
                     (id LIKE ? OR 
                     nombre LIKE ? OR 
                     acronimo LIKE ? OR 
+                    estatus LIKE ? OR 
                     responsablef LIKE ? OR 
                     responsablet LIKE ? OR 
                     region LIKE ? ) AND 
                     prioridad = ?`,
-                [termino,termino,termino,termino,termino,termino,prioridad]);
+                [termino,termino,termino,termino,termino,termino,termino,prioridad]);
         }
         else{
             data = await pool.query(
@@ -75,11 +89,12 @@ const getByTerm = async (req,res) => {
                     (id LIKE ? OR 
                     nombre LIKE ? OR 
                     acronimo LIKE ? OR 
+                    estatus LIKE ? OR 
                     prioridad LIKE ? OR 
                     responsablef LIKE ? OR 
                     responsablet LIKE ? OR 
-                    region LIKE ?) ORDER BY id ASC LIMIT ?`, 
-                [termino,termino,termino,termino,termino,termino,termino,count]);
+                    region LIKE ?) ORDER BY id ${order} LIMIT ?`, 
+                [termino,termino,termino,termino,termino,termino,termino,termino,count]);
         }
 
         if (data.affectedRows === 0)
@@ -114,25 +129,31 @@ const createItems = async (req,res) => {
             responsablet,responsablet_ind,responsablet_tlf,responsablet_cor,prioridad,tipo,departamento,
             cantidad_user,plataforma,codigo_fuente,lenguaje,base_datos,alcance,propiedad,servidor,ultima
         } = req.body;
+
+        const query = await pool.query('SELECT * FROM apps WHERE acronimo = ? OR nombre = ?', [acronimo,nombre]);
+        const app = query[0][0];
         
-        console.log(acronimo,nombre,descripcion,estatus,region,responsablef,responsablef_ind,responsablef_tlf,responsablef_cor,
-            responsablet,responsablet_ind,responsablet_tlf,responsablet_cor,prioridad,tipo,departamento,
-            cantidad_user,plataforma,codigo_fuente,lenguaje,base_datos,alcance,propiedad,servidor,ultima);
+        // ********** VERIFICA QUE LA APLICACION NO EXISTA **********
+        if(app){
+            console.log('ERROR, APLICACION YA EXISTE');
+            return res.status(401).json({ message: 'ERROR, APLICACION YA EXISTE' });
+        }
+        else{
+            const [rows] = await pool.query(
+                `INSERT INTO apps 
+                    (acronimo,nombre,descripcion,estatus,region,responsablef,responsablef_ind,responsablef_tlf,responsablef_cor,
+                    responsablet,responsablet_ind,responsablet_tlf,responsablet_cor,prioridad,tipo,departamento,
+                    cantidad_user,plataforma,codigo_fuente,lenguaje,base_datos,alcance,propiedad,servidor,ultima) 
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
+                [
+                    acronimo,nombre,descripcion,estatus,region,responsablef,responsablef_ind,responsablef_tlf,responsablef_cor,
+                    responsablet,responsablet_ind,responsablet_tlf,responsablet_cor,prioridad,tipo,departamento,
+                    cantidad_user,plataforma,codigo_fuente,lenguaje,base_datos,alcance,propiedad,servidor,ultima
+                ]
+            );
 
-        const [rows] = await pool.query(
-            `INSERT INTO apps 
-                (acronimo,nombre,descripcion,estatus,region,responsablef,responsablef_ind,responsablef_tlf,responsablef_cor,
-                responsablet,responsablet_ind,responsablet_tlf,responsablet_cor,prioridad,tipo,departamento,
-                cantidad_user,plataforma,codigo_fuente,lenguaje,base_datos,alcance,propiedad,servidor,ultima) 
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
-        [
-            acronimo,nombre,descripcion,estatus,region,responsablef,responsablef_ind,responsablef_tlf,responsablef_cor,
-            responsablet,responsablet_ind,responsablet_tlf,responsablet_cor,prioridad,tipo,departamento,
-            cantidad_user,plataforma,codigo_fuente,lenguaje,base_datos,alcance,propiedad,servidor,ultima
-        ]
-        );
-
-        res.send('Creacion completa');
+            res.send('Creacion completa');
+        }
 
     } catch (error) {
         console.log("ERROR_CREATE_ITEMS");
@@ -149,10 +170,6 @@ const updateItems = async (req,res) => {
             responsablet,responsablet_ind,responsablet_tlf,responsablet_cor,prioridad,tipo,departamento,
             cantidad_user,plataforma,codigo_fuente,lenguaje,base_datos,alcance,propiedad,servidor,ultima
         } = req.body;
-
-        console.log(acronimo,nombre,descripcion,estatus,region,responsablef,responsablef_ind,responsablef_tlf,responsablef_cor,
-            responsablet,responsablet_ind,responsablet_tlf,responsablet_cor,prioridad,tipo,departamento,
-            cantidad_user,plataforma,codigo_fuente,lenguaje,base_datos,alcance,propiedad,servidor,ultima);
 
         const [result] = await pool.query(
             `UPDATE 

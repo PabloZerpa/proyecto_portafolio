@@ -1,7 +1,7 @@
 
 const router = require("express").Router();
 const { getItems, getItem, createItems, updateItems, deleteItems, getByUpdateDate, getByCreateDate, getByTerm } = require("../controllers/user");
-const { auth } = require("../middlewares/auth");
+const { auth, authAdmin } = require("../middlewares/auth");
 const { autenticarUser } = require("../middlewares/ad");
 const { validatorCreateItem, validatorGetItem } = require("../validators/user");
 
@@ -24,11 +24,12 @@ router.post("/term", getByTerm);
 // *************** RUTA PARA OBTENER LOS DATOS POR ID *************** 
 router.get("/:id", auth, getItem);
 
+
 // *************** RUTA PARA OBTENER LOS DATOS POR ID *************** 
-router.post("/", auth, createItems);
+router.post("/", authAdmin, createItems);
 
 // *************** RUTA PARA ACTUALIZAR LOS DATOS POR ID *************** 
-router.put("/:id", auth, updateItems);
+router.put("/:id", authAdmin, updateItems);
 
 
 // *************** RUTA PARA ELIMINAR DATOS POR ID *************** 
