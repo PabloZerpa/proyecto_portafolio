@@ -1,15 +1,23 @@
 import Login from './Login';
 import Dashboard from './Dashboard';
-import Aplicaciones from './Aplicaciones';
-import Actualizacion from './Adm_Actualizacion';
-import Administracion from './Administracion';
-import BaseDatos from './BaseDatos';
+import Administracion from './Administracion/Administracion';
+import Actualizacion from './Administracion/Actualizacion';
+import Agregar from './Administracion/Agregar';
+import Solicitudes from './Administracion/Solicitudes';
+import Aplicaciones from './Aplicaciones/Aplicaciones';
+import Vista from './Aplicaciones/Vista';
+import Diagramas from './Aplicaciones/Diagramas';
+import BaseDatos from './BaseDatos/BaseDatos';
 
 export {
     Login, 
     Dashboard,
-    Aplicaciones,
-    Actualizacion,
     Administracion,
+    Actualizacion,
+    Agregar,
+    Solicitudes,
+    Aplicaciones,
+    Vista,
+    Diagramas,
     BaseDatos,
 };

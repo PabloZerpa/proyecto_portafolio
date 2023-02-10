@@ -1,10 +1,8 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
-import Button from '../components/Button';
-import Input from '../components/Input';
-import Select from '../components/Select';
-import Autorizacion from '../services/auth.service';
+import { Button, Container, Input, Select } from '../../components/';
+import Autorizacion from '../../services/auth.service';
 
 function Agregar() {
 
@@ -95,8 +93,7 @@ function Agregar() {
         return <Navigate to='/' />
     
     return (
-        <div className="flex w-full bg-zinc-300 m-0 p-0">
-            <div className="w-full flex flex-col justify-start items-center gap-8 pt-44 pl-56" >
+        <Container>
 
             <h2 className='font-bold'>Registro de Aplicacion</h2>
 
@@ -150,8 +147,7 @@ function Agregar() {
 
             </form>
 
-        </div>
-    </div>
+        </Container>
     )
 };
 

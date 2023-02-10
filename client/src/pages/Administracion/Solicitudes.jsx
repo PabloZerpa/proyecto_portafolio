@@ -1,16 +1,15 @@
+
 import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
 import { FaCheckCircle, FaTimes, FaGripLinesVertical, FaPaperclip, FaMapMarkerAlt, FaImage, FaCode, FaSmile, FaBars, FaCog, FaRegCalendarMinus, FaDownload } from "react-icons/fa";
+import { Container } from "../../components/";
 
-
-function BaseDatos() {
-
+function Solicitudes() {
+    
     return(
-        <div className="flex w-full h-screen bg-zinc-300 m-0 p-0">
-            <div className="w-full flex flex-col justify-start items-center gap-14 pt-44 pl-56" >
-              
-                {/* <form>
+        <Container>
+            {/* <form>
                 <div className="w-full mb-4 border border-gray-200 rounded-lg bg-gray-200">
                     <div className="flex items-center justify-between px-3 py-2 border-b">
                         <div className="flex flex-wrap items-center divide-gray-200 sm:divide-x">
@@ -60,19 +59,16 @@ function BaseDatos() {
                         </div>
                     </div>
                     <div className="px-4 py-2 bg-white rounded-b-lg">
-                        <label for="editor" className="sr-only">Publish post</label>
+                        <label for="editor" className="sr-only">Enviar</label>
                         <textarea id="editor" rows="8" className="block w-full px-0 text-sm text-gray-800 bg-white border-0" placeholder="Write an article..." required></textarea>
                     </div>
                 </div>
                 <button type="submit" className="inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 hover:bg-blue-800">
                     Publish post
                 </button>
-                </form> */}
+            </form> */}
+        </Container>
+    );
+}
 
-            </div>
-        </div>
-
-    )
-};
-
-export default BaseDatos;
+export default Solicitudes;

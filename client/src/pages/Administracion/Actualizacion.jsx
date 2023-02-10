@@ -1,11 +1,9 @@
 
 import { useState, useEffect } from 'react';
 import { useLocation, useParams, useNavigate, Navigate } from 'react-router-dom';
-import Button from '../components/Button';
-import Input from '../components/Input';
-import Select from '../components/Select';
-import Autorizacion from '../services/auth.service';
-import Usuarios from '../services/user.service';
+import { Button, Container, Input, Select } from '../../components';
+import Autorizacion from '../../services/auth.service';
+import Usuarios from '../../services/user.service';
 
 const campos1 = ['Acronimo','Estatus','Nombre','Descripcion','Prioridad',
 'Tipo','Responsable Funcional','Responsable Tecnico','Departamento',
@@ -119,7 +117,6 @@ function Actualizacion() {
       console.log('TRY DEL UPDATE');
       
       if(rol === 'admin'){
-
         const datosModificacion = {
           acronimo,nombre,descripcion,estatus,region,responsablef,responsablef_ind,responsablef_tlf,responsablef_cor,
           responsablet,responsablet_ind,responsablet_tlf,responsablet_cor,prioridad,tipo,departamento,
@@ -140,8 +137,7 @@ function Actualizacion() {
     return <Navigate to='/' />
 
   return (
-    <div className="flex w-full bg-zinc-300 m-0 p-0">
-      <div className="w-full flex flex-col justify-start items-center gap-8 pt-44 pl-56" >
+    <Container>
 
       <h2 className='font-bold'>Actualizacion de Aplicacion</h2>
 
@@ -199,8 +195,7 @@ function Actualizacion() {
 
         </form>
 
-      </div>
-    </div>
+    </Container>
   )
 };
 

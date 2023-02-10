@@ -1,9 +1,8 @@
 
 import { useState, useEffect } from 'react';
 import { useLocation, useParams, Navigate, Link } from 'react-router-dom';
-import Button from '../components/Button';
-import Input from '../components/Input';
-import Usuarios from '../services/user.service';
+import { Button, Container, Input } from '../../components';
+import Usuarios from '../../services/user.service';
 
 const campos1 = ['Acronimo','Estatus','Nombre','Descripcion','Prioridad',
 'Tipo','Responsable Funcional','Responsable Tecnico','Departamento',
@@ -42,8 +41,7 @@ function Vista() {
     return <Navigate to='/' />
     
     return (
-      <div className="flex w-full bg-zinc-300 m-0 p-0">
-        <div className="w-full flex flex-col justify-start items-center gap-8 pt-44 pl-56" >
+      <Container>
 
           <div className='flex gap-8'>
             <Button color='blue' width={32} >
@@ -122,8 +120,7 @@ function Vista() {
           </div>
         </form>
 
-        </div>
-      </div>
+      </Container>
     )
 };
 

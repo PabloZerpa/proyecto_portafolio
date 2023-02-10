@@ -2,7 +2,11 @@
 import { useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 
-function Select({campo, name, opciones, manejador}) {
+function Select({campo, name, width='full', opciones, manejador}) {
+
+    const [clase, setClase] = useState(
+        `w-${width} p-2.5 bg-gray-50 border-none text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500`
+    )
 
     const onHandle = (valor) => {
         manejador(valor);
@@ -15,7 +19,7 @@ function Select({campo, name, opciones, manejador}) {
                 name={name}
                 placeholder={campo}
                 onChange={(e) => {onHandle(e.target.value)}}
-                className='w-full p-2.5 bg-gray-50 border-none text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500'>
+                className={clase}>
                     {opciones.map((opcion) => {
                         return <option value={opcion}>{opcion}</option>
                     })}

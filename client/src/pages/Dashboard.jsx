@@ -4,36 +4,83 @@ import { Tabla } from "../components";
 import { BiLoaderAlt } from "react-icons/bi";
 import Usuarios from "../services/user.service";
 
-import { CartesianGrid, XAxis, YAxis, Tooltip, Bar, BarChart, Legend, PieChart, Pie, Cell} from 'recharts';
-  
-  const dataRegion = [
-    {name: 'Centro', cantidad: 123, amt: 440},
-    {name: 'Andes', cantidad: 45, amt: 440},
-    {name: 'Oriente', cantidad: 72, amt: 440},
-    {name: 'Carabobo', cantidad: 36, amt: 440},
-    {name: 'Faja', cantidad: 52, amt: 440},
-  ];
-  
-  const dataPrioridad = [
-    { name: 'Alta', value: 92 },
-    { name: 'Media', value: 196 },
-    { name: 'Baja', value: 125 },
-    { name: 'Indeterminado', value: 15 },
-  ];
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-const RADIAN = Math.PI / 180;
+import { CartesianGrid, XAxis, YAxis, Tooltip, Line, LineChart, Legend } from 'recharts';
+import Container from "../components/Container";
 
-const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
-const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-const x = cx + radius * Math.cos(-midAngle * RADIAN);
-const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-return (
-  <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
-    {`${(percent * 100).toFixed(0)}%`}
-  </text>
-);
-};
+const data = [
+  {
+    "name": "Enero",
+    "uv": 4000,
+    "Modificaciones": 10,
+    "amt": 2400
+  },
+  {
+    "name": "Febrero",
+    "uv": 3000,
+    "Modificaciones": 5,
+    "amt": 2210
+  },
+  {
+    "name": "Marzo",
+    "uv": 2000,
+    "Modificaciones": 23,
+    "amt": 2290
+  },
+  {
+    "name": "Abril",
+    "uv": 2780,
+    "Modificaciones": 11,
+    "amt": 2000
+  },
+  {
+    "name": "Mayo",
+    "uv": 1890,
+    "Modificaciones": 3,
+    "amt": 2181
+  },
+  {
+    "name": "Junio",
+    "uv": 2390,
+    "Modificaciones": 8,
+    "amt": 2500
+  },
+  {
+    "name": "Julio",
+    "uv": 3490,
+    "Modificaciones": 28,
+    "amt": 2100
+  },
+  {
+    "name": "Agosto",
+    "uv": 2000,
+    "Modificaciones": 2,
+    "amt": 2290
+  },
+  {
+    "name": "Septiembre",
+    "uv": 2780,
+    "Modificaciones": 15,
+    "amt": 2000
+  },
+  {
+    "name": "Octubre",
+    "uv": 1890,
+    "Modificaciones": 6,
+    "amt": 2181
+  },
+  {
+    "name": "Noviembre",
+    "uv": 2390,
+    "Modificaciones": 15,
+    "amt": 2500
+  },
+  {
+    "name": "Diciembre",
+    "uv": 3490,
+    "Modificaciones": 26,
+    "amt": 2100
+  }
+]
 
 function Dashboard() {
 
@@ -65,50 +112,35 @@ function Dashboard() {
   }, []);
 
   return (
-    <div className="flex w-full bg-transparent m-0 p-0">
-      <div className="w-full m-0 flex flex-col justify-start items-center gap-10 pt-44 pl-56" >
+    <Container>
 
         {isLoading ? (
             <BiLoaderAlt className='text-6xl text-blue-500 animate-spin' />
         ) : (
           <>
-            {/* <Tabla datos={datosCreacion} opciones={false} /> */}
+
             <h3 className='font-bold'>Modificaciones Recientes</h3>
             <Tabla datos={datos} opciones={false} />
 
-            <h3 className='font-bold'>N° de Aplicaciones por region</h3>
-            <BarChart width={730} height={250} data={dataRegion}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="cantidad" fill="#d19755" />
-            </BarChart>
+            <div className="w-2/3 flex flex-col justify-around items-center p-6 bg-zinc-200 rounded shadow-md">
+              <h3 className='font-bold'>Historial de Modificaciones</h3>
+              <LineChart width={730} height={250} data={data}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend iconType="square" />
+                <Line type="monotone" dataKey="Modificaciones" stroke="#8884d8" />
+                {/* <Line type="monotone" dataKey="uv" stroke="#82ca9d" /> */}
+              </LineChart>
+            </div>
 
-            <h3 className='font-bold'>Porcentaje de aplicaciones por prioridad</h3>
-            <PieChart width={400} height={400}>
-              <Pie
-                data={dataPrioridad}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={renderCustomizedLabel}
-                outerRadius={120}
-                dataKey="value"
-              >
-                {dataPrioridad.map((entry, index) => (
-                  <Cell className="opacity-70 cursor-pointer hover:opacity-100" key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Legend />
-            </PieChart>
           </>
         )
       }
 
-      </div>
-    </div>
+    </Container>
   )
 };
 

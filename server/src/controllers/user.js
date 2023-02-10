@@ -35,11 +35,11 @@ const getByCreateDate = async (req,res) => {
 // *************** OBTENER TODOS LOS DATOS POR FECHA DE CREACION ***************
 const getByTerm = async (req,res) => {
     try { 
-        const { term,estatus,region,prioridad,order,count } = req.body;
+        const { term,estatus,region,prioridad,tipo,order,count } = req.body;
         const termino = '%' + term + '%';
         let data;
 
-        console.log(term,estatus,region,prioridad,order,count);
+        console.log(term,estatus,region,prioridad,tipo,order,count);
 
         if (term === undefined || null)
             return res.status(404).json({ message: "Error al recibir consulta" });
@@ -51,11 +51,12 @@ const getByTerm = async (req,res) => {
                 nombre LIKE ? OR 
                 acronimo LIKE ? OR 
                 prioridad LIKE ? OR  
+                tipo LIKE ? OR
                 region LIKE ? OR  
                 responsablef LIKE ? OR 
                 responsablet LIKE ? ) AND 
                 estatus = ?`, 
-            [termino,termino,termino,termino,termino,termino,termino,estatus]);
+            [termino,termino,termino,termino,termino,termino,termino,termino,estatus]);
         }
         if(region){
             data = await pool.query(
@@ -64,11 +65,12 @@ const getByTerm = async (req,res) => {
                     nombre LIKE ? OR 
                     acronimo LIKE ? OR 
                     estatus LIKE ? OR 
+                    tipo LIKE ? OR
                     prioridad LIKE ? OR  
                     responsablef LIKE ? OR 
                     responsablet LIKE ? ) AND 
                     region = ?`, 
-                [termino,termino,termino,termino,termino,termino,termino,region]);
+                [termino,termino,termino,termino,termino,termino,termino,termino,region]);
         }
         else if(prioridad){
             data = await pool.query(
@@ -77,11 +79,12 @@ const getByTerm = async (req,res) => {
                     nombre LIKE ? OR 
                     acronimo LIKE ? OR 
                     estatus LIKE ? OR 
+                    tipo LIKE ? OR
                     responsablef LIKE ? OR 
                     responsablet LIKE ? OR 
                     region LIKE ? ) AND 
                     prioridad = ?`,
-                [termino,termino,termino,termino,termino,termino,termino,prioridad]);
+                [termino,termino,termino,termino,termino,termino,termino,termino,prioridad]);
         }
         else{
             data = await pool.query(
@@ -91,10 +94,11 @@ const getByTerm = async (req,res) => {
                     acronimo LIKE ? OR 
                     estatus LIKE ? OR 
                     prioridad LIKE ? OR 
+                    tipo LIKE ? OR
                     responsablef LIKE ? OR 
                     responsablet LIKE ? OR 
                     region LIKE ?) ORDER BY id ${order} LIMIT ?`, 
-                [termino,termino,termino,termino,termino,termino,termino,termino,count]);
+                [termino,termino,termino,termino,termino,termino,termino,termino,termino,count]);
         }
 
         if (data.affectedRows === 0)

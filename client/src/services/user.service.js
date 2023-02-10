@@ -51,9 +51,9 @@ class Usuarios {
         }
     }
 
-    async obtenerPorTermino(term,estatus,region,prioridad,order,count) {
+    async obtenerPorTermino(term,estatus,region,prioridad,tipo,order,count) {
         try {
-            return axios.post(`${baseUrl}user/term`, {term,estatus,region,prioridad,order,count});
+            return axios.post(`${baseUrl}user/term`, {term,estatus,region,prioridad,tipo,order,count});
         } catch (error) {
             console.log('Error al obtener dato');
         }
