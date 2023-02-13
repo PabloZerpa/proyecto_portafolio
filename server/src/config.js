@@ -19,5 +19,5 @@ const pool = mysql.createPool({
     ssl: { rejectUnauthorized: false }
 }, console.log('Conexion Correcta'));
 
-
+ 
 module.exports = pool; 
