@@ -57,7 +57,7 @@ function Tabla({datos, opciones}) {
                 </tbody>
             </table>
             
-            {opciones ? (
+            {/* {opciones ? (
                 <nav className="flex items-center justify-between pt-4">
                     <span className="text-sm font-normal text-gray-500">Showing <span className="font-semibold text-gray-900">1-10</span> of <span className="font-semibold text-gray-900">1000</span></span>
                     <ul className="list-none inline-flex items-center -space-x-px">
@@ -90,7 +90,7 @@ function Tabla({datos, opciones}) {
                         </li>
                     </ul>
                 </nav>
-            ) : (null)}
+            ) : (null)} */}
             
 
         </div>

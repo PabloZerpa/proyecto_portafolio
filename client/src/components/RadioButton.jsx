@@ -1,6 +1,8 @@
 
 
-function RadioButton({label, opciones}) {
+function RadioButton({label, opciones, manejador}) {
+
+    const onHandle = (valor) => { manejador(valor) }
 
     return(
         <div className="flex flex-col text-sm">
@@ -10,7 +12,13 @@ function RadioButton({label, opciones}) {
                     return(
                         <li className="w-full">
                             <div className="flex items-center gap-1">
-                                <input type="radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500" />
+                                <input
+                                    type="radio" 
+                                    name={label}
+                                    value={opcion==='Todas' ? null : opcion}
+                                    onChange={(e) => {onHandle(e.target.value)}} 
+                                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500" 
+                                />
                                 <label className="w-full text-sm font-medium text-gray-900">{opcion}</label>
                             </div>
                         </li>

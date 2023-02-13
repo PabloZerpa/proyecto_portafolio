@@ -40,7 +40,7 @@ const getByTerm = async (req,res) => {
         let data;
 
         console.log(term,estatus,region,prioridad,tipo,order,count);
-
+ 
         if (term === undefined || null)
             return res.status(404).json({ message: "Error al recibir consulta" });
             
@@ -86,6 +86,20 @@ const getByTerm = async (req,res) => {
                     prioridad = ?`,
                 [termino,termino,termino,termino,termino,termino,termino,termino,prioridad]);
         }
+        else if(tipo){
+            data = await pool.query(
+                `SELECT * FROM apps WHERE 
+                    (id LIKE ? OR 
+                    nombre LIKE ? OR 
+                    acronimo LIKE ? OR 
+                    estatus LIKE ? OR 
+                    prioridad LIKE ? OR
+                    responsablef LIKE ? OR 
+                    responsablet LIKE ? OR 
+                    region LIKE ? ) AND 
+                    tipo = ?`,
+                [termino,termino,termino,termino,termino,termino,termino,termino,tipo]);
+        }
         else{
             data = await pool.query(
                 `SELECT * FROM apps WHERE 
@@ -98,7 +112,7 @@ const getByTerm = async (req,res) => {
                     responsablef LIKE ? OR 
                     responsablet LIKE ? OR 
                     region LIKE ?) ORDER BY id ${order} LIMIT ?`, 
-                [termino,termino,termino,termino,termino,termino,termino,termino,termino,count]);
+                [termino,termino,termino,termino,termino,termino,termino,termino,termino,parseInt(count)]);
         }
 
         if (data.affectedRows === 0)
