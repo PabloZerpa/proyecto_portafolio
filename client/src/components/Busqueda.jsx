@@ -67,10 +67,6 @@ function Busqueda({manejarBusqueda}) {
         }
 	}, [debounceValue]);
 
-    // useEffect(() => {
-    //     console.log(region);
-    // }, [obtenerRegion])
-
     const onSearch = async (value,estatus,region,prioridad,tipo,order,count) => {
         try {
             const datos = await Usuarios.obtenerPorTermino(value,estatus,region,prioridad,tipo,order,count);
@@ -92,23 +88,19 @@ function Busqueda({manejarBusqueda}) {
 
                 <div className="selectArea border-solid">
                     <div className="flex justify-center items-center gap-4">
-
                         <Select campo='Estatus' name='estatus' busqueda={true} opciones={opcionEstatus} manejador={obtenerEstatus} />
                         <Select campo='Region' name='region' busqueda={true} opciones={opcionRegion} manejador={obtenerRegion} />
                         <Select campo='Resultados' name='count' busqueda={true} opciones={opcionCount} manejador={obtenerCount} />
                         <Select campo='Tipo' name='tipo' busqueda={true} opciones={opcionTipo} manejador={obtenerTipo} />
-
                     </div>
                 </div>
 
                 <div style={avanzados ? {display: 'block'} : {display: 'none'}} className="selectArea">
                     <div className="flex flex-wrap justify-center items-center gap-4">
-
                         <Select campo='Plataforma' name='plataforma' busqueda={true} opciones={opcionPlataforma} manejador={obtenerPlataforma} />
                         <Select campo='Alcance' name='alcance' busqueda={true} opciones={opcionAlcance} manejador={obtenerAlcance} />
                         <Select campo='Mantenimiento' name='mantenimiento' busqueda={true} opciones={opcionMantenimiento} manejador={obtenerMantenimiento} />
                         <Select campo='Fecha' name='fecha' busqueda={true} opciones={['2023','2022','2021','2020','2019','2018']} />
-
                     </div>
                 </div>
                 
@@ -127,35 +119,36 @@ function Busqueda({manejarBusqueda}) {
                         <RadioButton label='Servidor' opciones={['Si', 'No']} manejador={obtenerServidor} /> */}
                     </div>
 
-                    <div className='mt-4 ml-96 pl-24 flex justify-center items-center'>
+                    <div className='mt-8 flex justify-center items-center gap-4'>
+
+                        <div className="relative w-96">
+                            <input 
+                                type="search" 
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="block p-2 pr-12 w-96 text-sm text-black bg-white rounded border-none outline-none" placeholder="Buscar" />
+                            <button 
+                                type="submit" 
+                                onClick={(e) => {e.preventDefault(); onSearch(debounceValue, estatus, region, fecha, prioridad, tipo, order, count)}}
+                                className="absolute top-0 right-0 p-2.5 text-sm font-medium text-white bg-blue-600 rounded-r border border-blue-700 hover:bg-blue-700">
+                                <FaSearch />
+                            </button>
+                        </div>
+                        
+                        <div>
+                            <input className='mx-2 rounded' type="checkbox" onChange={(e) => setAvanzados(e.target.checked)} /> 
+                            <label className='text-sm' >Avanzados</label>
+                        </div>
+
                         <input type='reset' value='Restablecer' 
                             onClick={(e) => {e.preventDefault()}}
-                            className='w-24 h-8 text-xs bg-blue-600 text-white border-none outline-none rounded cursor-pointer hover:bg-blue-500' size='small' 
+                            className='w-20 h-8 text-xs bg-blue-600 text-white border-none outline-none rounded cursor-pointer hover:bg-blue-500' size='small' 
                         />
 
-                        <input className='mx-2 rounded' type="checkbox" onChange={(e) => setAvanzados(e.target.checked)} /> 
-                        <label className='text-sm' >Avanzados</label>
                     </div>
 
                 </div>
             </div>
-
-            <br /><br />
-
-            <div className="relative w-96">
-                <input 
-                    type="search" 
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="block p-2 pr-12 w-96 text-sm text-black bg-white rounded border-none outline-none" placeholder="Buscar" />
-                <button 
-                    type="submit" 
-                    onClick={(e) => {e.preventDefault(); onSearch(debounceValue, estatus, region, fecha, prioridad, tipo, order, count)}}
-                    className="absolute top-0 right-0 p-2.5 text-sm font-medium text-white bg-blue-600 rounded-r border border-blue-700 hover:bg-blue-700">
-                    
-                    <FaSearch />
-                </button>
-            </div>
-
+            
         </form>
     );
 }

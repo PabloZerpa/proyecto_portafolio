@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 
-function Select({campo, name, busqueda=false, opciones, manejador}) {
+function Select({campo, name, propiedad=null, busqueda=false, opciones, manejador}) {
 
     const [clase, setClase] = useState(
         `w-full p-2.5 text-gray-900 bg-gray-50 border-none text-sm rounded-md focus:ring-blue-500 focus:border-blue-500`
@@ -18,11 +18,20 @@ function Select({campo, name, busqueda=false, opciones, manejador}) {
             <select 
                 name={name}
                 placeholder={campo}
+                defaultValue={propiedad}
                 onChange={(e) => {onHandle(e.target.value)}}
-                className={busqueda ? clase2 : clase}>
-                    {opciones.map((opcion) => {
+                className={busqueda ? clase2 : clase}
+            >
+
+                {opciones.map((opcion, index) => {
+                    if(opcion == propiedad){
+                        return <option selected value={opcion}>{opcion}</option>
+                    }
+                    else{
                         return <option value={opcion}>{opcion}</option>
-                    })}
+                    }
+                })}
+
             </select>
         </div>
     );

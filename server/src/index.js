@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3001;
 app.use(cors()); 
 app.use(express.json());
 app.use(express.urlencoded({ extended:false })); 
- 
+
 // ---------- ROUTE ----------
 app.use("/api/login", require("./routes/login"));
 app.use("/api/logout", require("./routes/logout"));

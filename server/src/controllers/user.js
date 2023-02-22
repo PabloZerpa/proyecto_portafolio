@@ -12,26 +12,6 @@ const getItems = async (req,res) => {
     }
 };
 
-// *************** OBTENER TODOS LOS DATOS POR FECHA DE MODIFICACION ***************
-const getByUpdateDate = async (req,res) => {
-    try {
-        const data = await pool.query(`SELECT * FROM aplicaciones ORDER BY ultima DESC`);
-        res.send(data[0]);
-    } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
-    }
-};
-
-// *************** OBTENER TODOS LOS DATOS POR FECHA DE CREACION ***************
-const getByCreateDate = async (req,res) => {
-    try {
-        const data = await pool.query(`SELECT * FROM aplicaciones ORDER BY created_at ASC`);
-        res.send(data[0]);
-    } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
-    }
-};
-
 // *************** OBTENER TODOS LOS DATOS POR FECHA DE CREACION ***************
 const getByTerm = async (req,res) => {
     try { 
@@ -55,8 +35,8 @@ const getByTerm = async (req,res) => {
                 region LIKE ? OR  
                 responsablef LIKE ? OR 
                 responsablet LIKE ? ) AND 
-                estatus = ?`, 
-            [termino,termino,termino,termino,termino,termino,termino,termino,estatus]);
+                estatus = ? ORDER BY id ${order} LIMIT ?`, 
+            [termino,termino,termino,termino,termino,termino,termino,termino,estatus,parseInt(count)]);
         }
         if(region){
             data = await pool.query(
@@ -69,8 +49,8 @@ const getByTerm = async (req,res) => {
                     prioridad LIKE ? OR  
                     responsablef LIKE ? OR 
                     responsablet LIKE ? ) AND 
-                    region = ?`, 
-                [termino,termino,termino,termino,termino,termino,termino,termino,region]);
+                    region = ? ORDER BY id ${order} LIMIT ?`, 
+                [termino,termino,termino,termino,termino,termino,termino,termino,region,parseInt(count)]);
         }
         else if(prioridad){
             data = await pool.query(
@@ -83,8 +63,8 @@ const getByTerm = async (req,res) => {
                     responsablef LIKE ? OR 
                     responsablet LIKE ? OR 
                     region LIKE ? ) AND 
-                    prioridad = ?`,
-                [termino,termino,termino,termino,termino,termino,termino,termino,prioridad]);
+                    prioridad = ? ORDER BY id ${order} LIMIT ?`,
+                [termino,termino,termino,termino,termino,termino,termino,termino,prioridad,parseInt(count)]);
         }
         else if(tipo){
             data = await pool.query(
@@ -97,8 +77,8 @@ const getByTerm = async (req,res) => {
                     responsablef LIKE ? OR 
                     responsablet LIKE ? OR 
                     region LIKE ? ) AND 
-                    tipo = ?`,
-                [termino,termino,termino,termino,termino,termino,termino,termino,tipo]);
+                    tipo = ? ORDER BY id ${order} LIMIT ?`,
+                [termino,termino,termino,termino,termino,termino,termino,termino,tipo,parseInt(count)]);
         }
         else{
             data = await pool.query(
@@ -114,6 +94,70 @@ const getByTerm = async (req,res) => {
                     region LIKE ?) ORDER BY id ${order} LIMIT ?`, 
                 [termino,termino,termino,termino,termino,termino,termino,termino,termino,parseInt(count)]);
         }
+
+        if (data.affectedRows === 0)
+            return res.status(404).json({ message: "Sin coincidencias" });
+
+        res.json(data[0]);
+        
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+    }
+};
+
+// *************** OBTENER TODOS LOS DATOS POR FECHA DE CREACION ***************
+const getByCampo = async (req,res) => {
+    try { 
+        const { term, campo } = req.body;
+        const termino = '%' + term + '%';
+
+        console.log(term,campo);
+ 
+        if (term === undefined || null)
+            return res.status(404).json({ message: "Error al recibir consulta" });
+
+        const data = await pool.query(
+            `SELECT id,acronimo,nombre,${campo} FROM apps WHERE
+                ${campo} LIKE ? 
+                ORDER BY id ASC LIMIT 10`, 
+                [termino]
+        );
+
+        if (data.affectedRows === 0)
+            return res.status(404).json({ message: "Sin coincidencias" });
+
+        res.json(data[0]);
+        
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+    }
+};
+
+// *************** OBTENER TODOS LOS DATOS POR FECHA DE CREACION ***************
+const getByGrafico = async (req,res) => {
+    try { 
+        const { categoria, sub } = req.body;
+        let regiones = '';
+        let cantidad = [];
+
+        console.log(categoria,sub);
+ 
+        if (categoria === undefined || null)
+            return res.status(404).json({ message: "Error al recibir consulta" });
+         
+        const query = await pool.query( `SELECT ${categoria} FROM apps`);
+        regiones = query[0];
+
+        for(let i=0; i<10; i++){
+            console.log(regiones[i].region);
+
+            const data = await pool.query( `SELECT ${categoria} FROM apps WHERE region = ?`, [regiones[i].region]);
+
+            console.log(data[0]);
+            console.log(data[0].length);
+            cantidad.push(data[0].length)
+        }
+        console.log(cantidad);
 
         if (data.affectedRows === 0)
             return res.status(404).json({ message: "Sin coincidencias" });
@@ -148,6 +192,10 @@ const createItems = async (req,res) => {
             cantidad_user,plataforma,codigo_fuente,lenguaje,base_datos,alcance,propiedad,servidor,ultima
         } = req.body;
 
+        console.log(acronimo,nombre,descripcion,estatus,region,responsablef,responsablef_ind,responsablef_tlf,responsablef_cor,
+            responsablet,responsablet_ind,responsablet_tlf,responsablet_cor,prioridad,tipo,departamento,
+            cantidad_user,plataforma,codigo_fuente,lenguaje,base_datos,alcance,propiedad,servidor,ultima)
+
         const query = await pool.query('SELECT * FROM apps WHERE acronimo = ? OR nombre = ?', [acronimo,nombre]);
         const app = query[0][0];
         
@@ -169,7 +217,6 @@ const createItems = async (req,res) => {
                     cantidad_user,plataforma,codigo_fuente,lenguaje,base_datos,alcance,propiedad,servidor,ultima
                 ]
             );
-
             res.send('Creacion completa');
         }
 
@@ -182,35 +229,37 @@ const createItems = async (req,res) => {
 // *************** ACTUALIZAR USUARIO ***************
 const updateItems = async (req,res) => {
     try {
+        console.log('EN EN UPDATE DEL SERVER');
         const { id } = req.params;
         const {
-            acronimo,nombre,descripcion,estatus,region,responsablef,responsablef_ind,responsablef_tlf,responsablef_cor,
-            responsablet,responsablet_ind,responsablet_tlf,responsablet_cor,prioridad,tipo,departamento,
+            acronimo,nombre,descripcion,estatus,region,responsablef,responsablef_ind,responsablef_tlf,
+            responsablet,responsablet_ind,responsablet_tlf,prioridad,tipo,departamento,
             cantidad_user,plataforma,codigo_fuente,lenguaje,base_datos,alcance,propiedad,servidor,ultima
         } = req.body;
 
+        console.log(acronimo,nombre,descripcion,estatus,region,responsablef,responsablef_ind,responsablef_tlf,
+            responsablet,responsablet_ind,responsablet_tlf,prioridad,tipo,departamento,
+            cantidad_user,plataforma,codigo_fuente,lenguaje,base_datos,alcance,propiedad,servidor,ultima); 
+
         const [result] = await pool.query(
-            `UPDATE 
-                apps 
-            SET 
+            `UPDATE apps  SET 
                 acronimo = ?,nombre = ?,descripcion = ?,estatus = ?,region = ?,responsablef = ?,responsablef_ind = ?,
-                responsablef_tlf = ?,responsablef_cor = ?,responsablet = ?,responsablet_ind = ?,responsablet_tlf = ?,
-                responsablet_cor = ?,prioridad = ?,tipo = ?,departamento = ?,cantidad_user = ?,plataforma = ?,
+                responsablef_tlf = ?,responsablet = ?,responsablet_ind = ?,responsablet_tlf = ?,
+                prioridad = ?,tipo = ?,departamento = ?,cantidad_user = ?,plataforma = ?,
                 codigo_fuente = ?,lenguaje = ?,base_datos = ?,alcance = ?,propiedad = ?,servidor = ?,ultima = ?
             WHERE 
                 id = ?`,
             [
-                acronimo,nombre,descripcion,estatus,region,responsablef,responsablef_ind,responsablef_tlf,responsablef_cor,
-                responsablet,responsablet_ind,responsablet_tlf,responsablet_cor,prioridad,tipo,departamento,
+                acronimo,nombre,descripcion,estatus,region,responsablef,responsablef_ind,responsablef_tlf,
+                responsablet,responsablet_ind,responsablet_tlf,prioridad,tipo,departamento,
                 cantidad_user,plataforma,codigo_fuente,lenguaje,base_datos,alcance,propiedad,servidor,ultima,id
             ]
         );
 
         if (result.affectedRows === 0)
             return res.status(404).json({ message: "Name not found" });
-
+            
         const [rows] = await pool.query("SELECT * FROM apps WHERE id = ?", [id]);
-
         res.json(rows[0]);
 
     } catch (error) {
@@ -218,7 +267,37 @@ const updateItems = async (req,res) => {
         console.error(error);
     }
 };
- 
+
+// *************** ACTUALIZAR POR CAMPO ESPECIFICO ***************
+const updateByCampo = async (req,res) => {
+    try {
+        const { id } = req.params;
+        const { campo, valor } = req.body;
+
+        console.log(campo,valor); 
+
+        const [result] = await pool.query(
+            `UPDATE 
+                apps 
+            SET 
+                ${campo} = ?
+            WHERE 
+                id = ?`,
+            [valor,id]
+        );
+
+        if (result.affectedRows === 0)
+            return res.status(404).json({ message: "Name not found" });
+            
+        const [rows] = await pool.query("SELECT * FROM apps WHERE id = ?", [id]);
+        res.json(rows[0]);
+
+    } catch (error) {
+        console.log("ERROR_UPDATE_ITEMS");
+        console.error(error);
+    }
+};
+
 // *************** ELIMINAR USUARIO ***************
 const deleteItems = async (req,res) => {
     try {
@@ -236,7 +315,8 @@ module.exports = {
     getItem, 
     createItems, 
     updateItems, 
-    deleteItems, 
-    getByUpdateDate, 
-    getByCreateDate,
-    getByTerm };
+    deleteItems,
+    getByTerm,
+    getByCampo,
+    getByGrafico,
+    updateByCampo };

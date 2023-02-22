@@ -4,9 +4,8 @@ import { FaHome, FaRegListAlt, FaCode,FaDatabase, FaChevronDown, FaChevronRight,
 import { Link } from "react-router-dom";
 import Autorizacion from '../services/auth.service';
 
-
 function Navegacion() {
-
+    
     const [open1, setOpen1] = useState(false);
     const [open2, setOpen2] = useState(false);
     const [open3, setOpen3] = useState(false);
@@ -30,28 +29,32 @@ function Navegacion() {
                                 <span className="ml-2">Inicio</span>
                             </Link>
                         </li>
-                        <li>
-                            <div className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg cursor-pointer hover:bg-gray-800 hover:text-gray-100" 
-                            onClick={openMenu2}>
+                        <li style={Autorizacion.obtenerUsuario().rol!=='admin' ? {pointerEvents: 'none'} : {pointerEvents: 'auto'} } >
+                            <div className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg cursor-pointer hover:bg-gray-800 hover:text-gray-100" onClick={openMenu2}>
                                 <FaRegListAlt/>
                                 <span className="px-2">Administracion</span>
                                 {open2 ? <FaChevronUp /> : <FaChevronDown />}
                             </div>
+                            
+                            {Autorizacion.obtenerUsuario().rol!=='admin' ? (
+                                <div></div>
+                            ) : (
+                                <div style={open2 ? {display: 'block'} : {display: 'none'}} className='pl-4'>
+                                    <Link to="/administracion" 
+                                        className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
+                                            Actualizacion
+                                    </Link>
+                                    <Link to="/administracion/agregar" 
+                                        className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
+                                            Agregar
+                                    </Link>
+                                    <Link to="/administracion/solicitudes" 
+                                        className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
+                                            Solicitudes
+                                    </Link>
+                                </div>
+                            )}
 
-                            <div style={open2 ? {display: 'block'} : {display: 'none'}} className='pl-4'>
-                                <Link to="/administracion/agregar" 
-                                    className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
-                                        Agregar
-                                </Link>
-                                <Link to="/administracion" 
-                                    className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
-                                        Actualizacion
-                                </Link>
-                                <Link to="/administracion/solicitudes" 
-                                    className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
-                                        Solicitudes
-                                </Link>
-                            </div>
                         </li>
                         <li>
                             <div className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg cursor-pointer hover:bg-gray-800 hover:text-gray-100" 

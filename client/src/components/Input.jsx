@@ -20,7 +20,7 @@ function Input({campo, name, propiedad=null, detalles=false, peticionEstado, edi
                     <input
                         className='w-full p-2.5 bg-gray-50 border-none text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500' 
                         value={propiedad} 
-                        readOnly  
+                        disabled  
                     />
                     <span className='text-xs cursor-pointer' onClick={handleDetalles}>
                         Detalles <FaChevronDown />

@@ -1,95 +1,78 @@
+
 import { useState, useEffect } from "react";
-import { Tabla, Container } from "../../components";
+import { Barra, Circulo, Container, RadioButton, Button, Select } from "../../components";
 import { BiLoaderAlt } from "react-icons/bi";
+import { useDebounce } from "use-debounce";
 import Usuarios from "../../services/user.service";
-import { CartesianGrid, XAxis, YAxis, Tooltip, Bar, BarChart, Legend, PieChart, Pie, Cell} from 'recharts';
-  
-  const dataRegion = [
-    {name: 'Centro', cantidad: 123, amt: 440},
-    {name: 'Andes', cantidad: 45, amt: 440},
-    {name: 'Oriente', cantidad: 72, amt: 440},
-    {name: 'Carabobo', cantidad: 36, amt: 440},
-    {name: 'Faja', cantidad: 52, amt: 440},
-  ];
-  
-  const dataPrioridad = [
-    { name: 'Alta', value: 92 },
-    { name: 'Media', value: 196 },
-    { name: 'Baja', value: 125 },
-    { name: 'Indeterminado', value: 15 },
-  ];
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-const RADIAN = Math.PI / 180;
 
-const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
-const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-const x = cx + radius * Math.cos(-midAngle * RADIAN);
-const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-return (
-  <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
-    {`${(percent * 100).toFixed(0)}%`}
-  </text>
-);
-};
+const opcionCategoria = ['Tipo', 'Region', 'Estatus', 'Prioridad', 'Registro', 'Modificacion'];
+const opcionOrden = ['Porcentaje', 'Cantidad', 'Tiempo', 'Interrelacion'];
+/*const opcionEstatus = ['Todas', 'Desarrollo', 'Mantenimiento', 'Desincorporada', 'Estabilizacion',
+    'Sin Uso', 'Anulado', 'Visaulizacion', 'Prueba'];
+const opcionRegion = ['Todas', 'Centro', 'Centro Norte', 'Centro Sur', 'Oriente',
+    'Oriente Norte', 'Oriente Sur', 'Occidente Norte', 'Occidente Sur', 'Carabobo', 
+    'Andes', 'Metropolitana','Faja','Exterior','Por Determinar'];
+const opcionTipo = ['Todas', 'Web', 'Escritorio', 'Mobil', 'Servidor', 'Mixta'];*/
 
 function Diagramas() {
 
-    const [datos, setDatos] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [resultados, setResultados] = useState([]);
+    const [debounceValue] = useDebounce(searchTerm, 500);
+
+    const [categoria, setCategoria] = useState('region');
+    const obtenerCategoria = (respuesta) => { setCategoria(respuesta) };
+    const [orden, setOrden] = useState('porcentaje');
+    const obtenerOrden = (respuesta) => { setOrden(respuesta) };
 
     useEffect(() => {
-
-        async function fetchData(){
-        try {
-            const allData = await Usuarios.obtenerDatosUsuarios();
-            setIsLoading(false);
-            setDatos(allData.data);
-        }
-        catch (error) {
-            console.log(error)
-        }
-        }
-        fetchData();
+        setIsLoading(false);
     }, []);
 
+    const handleSearch = (e) => {
+        e.preventDefault();
+        onSearch(categoria,orden);
+    }
+
+    const onSearch = async (categoria,orden) => {
+      try {
+        const datos = await Usuarios.datosGraficos(categoria,orden);
+        console.log(Object.keys(datos.data).length);
+        console.log(categoria,orden);
+  
+        setResultados(datos.data);
+        console.log(resultados); 
+      } catch (error) { console.log('ERROR AL BUSCAR DATOS') }
+    }
+      
     return (
         <Container>
+            
+            <h2 className='font-bold'>Generar graficos</h2>
+
+            <form className='grid gap-2 grid-cols-1 p-4 bg-zinc-400 border-solid rounded'>
+                <RadioButton label='Categoria' opciones={opcionCategoria} manejador={obtenerCategoria} />
+                <RadioButton label='Ordernar' opciones={opcionOrden} manejador={obtenerOrden} />
+                <button onClick={handleSearch}>Generar</button>
+                {/* <Button color='blue'>Generar</Button> */}
+
+                {/*<div className='grid grid-cols-3' >
+                    <Select campo='Region' name='region' busqueda={true} opciones={opcionRegion} />
+                    <Select campo='Estatus' name='estatus' busqueda={true} opciones={opcionEstatus} />
+                    <Select campo='Tipo' name='tipo' busqueda={true} opciones={opcionTipo} />
+                    <Select campo='Prioridad' name='prioridad' busqueda={true} opciones={['Alta','Media','Baja']} />
+                    <Select campo='Periodo' name='periodo' busqueda={true} opciones={['2023','2022','2021','2020','2019','2018']} />
+                </div>*/}
+            </form>
 
             {isLoading ? (
                 <BiLoaderAlt className='text-6xl text-blue-500 animate-spin' />
             ) : (
             <>
-              <div className="w-2/3 flex flex-col justify-around items-center p-6 bg-zinc-200 rounded shadow-md">
-                <h3 className='font-bold'>N° de Aplicaciones por region</h3>
-                <BarChart width={730} height={250} data={dataRegion}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="cantidad" fill="#459ad3" />
-                </BarChart>
-              </div>
+              <Barra />
 
-              <div className="w-2/3 flex flex-col justify-around items-center p-6 bg-zinc-200 rounded shadow-md">
-                <h3 className='font-bold'>Porcentaje de aplicaciones por prioridad</h3>
-                <PieChart width={300} height={300}>
-                <Pie
-                  data={dataPrioridad}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={renderCustomizedLabel}
-                  outerRadius={120}
-                  dataKey="value" >
-                    {dataPrioridad.map((entry, index) => (
-                    <Cell className="opacity-70 cursor-pointer hover:opacity-100" key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                </Pie>
-                <Legend />
-                </PieChart>
-              </div>
+              <Circulo />
             </>
                 )
             }

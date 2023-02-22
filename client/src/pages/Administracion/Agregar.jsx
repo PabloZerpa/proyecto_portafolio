@@ -68,6 +68,7 @@ function Agregar() {
         setRol(Autorizacion.obtenerUsuario().rol);
         console.log(rol);
     }, [obtenerAcronimo])
+    
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
     async function createData(e) {
         e.preventDefault();
@@ -76,6 +77,7 @@ function Agregar() {
           console.log('TRY DEL CREATE');
           if(rol === 'admin'){
 
+            console.log('DENTRO DEL TRY CREATE');
             const datosRegistro = {
                 acronimo,nombre,descripcion,estatus,region,responsablef,responsablef_ind,responsablef_tlf,responsablef_cor,
                 responsablet,responsablet_ind,responsablet_tlf,responsablet_cor,prioridad,tipo,departamento,
@@ -106,7 +108,7 @@ function Agregar() {
                 <Input campo='Nombre' name='nombre' editable={true} area={true} manejador={obtenerNombre} />
                 <Input campo='Descripcion' name='descripcion' editable={true} area={true} manejador={obtenerDescripcion} />
 
-                <div className="grid gap-6 mb-6 md:grid-cols-2">
+                <div className="relative grid gap-6 mb-6 md:grid-cols-2">
                     <Select campo='Prioridad' opciones={['Alta','Media','Baja',]} manejador={obtenerPrioridad} />
                     <Select campo='Tipo de Aplicacion' opciones={['Tecnico','Administrativo']} manejador={obtenerTipo} />
 
@@ -135,7 +137,7 @@ function Agregar() {
                     <Select campo='Base de Datos' name='base_datos' opciones={['Si','No']} manejador={obtenerBaseDatos} />
                     <Select campo='Alcance' name='alcance' opciones={['Alto','Corporativo']} manejador={obtenerAlcance} />
 
-                    {/* <div className='absolute bottom-52 w-full border-dashed border-gray-500'></div> */}
+                    <div className='absolute top-0 left-0 w-full border-dashed border-gray-500'></div>
                     <Select campo='Propiedad' name='propiedad' opciones={['Propio','Tercero']} manejador={obtenerPropiedad} />
                     <Input campo='Fecha de Creacion' name='ultima' editable={true} manejador={obtenerUltima} />
                     <Select campo='Region' name='region' opciones={['Oriente','Centro','Andes']} manejador={obtenerRegion} />
@@ -143,7 +145,8 @@ function Agregar() {
                     
                 </div>
                 
-                <Button color='blue' >Agregar</Button>
+                {/* <Button color='blue' width={32} >Agregar</Button> */}
+                <button type='submit'>Agregar</button>
 
             </form>
 

@@ -5,12 +5,6 @@ import { Button, Container, Input, Select } from '../../components';
 import Autorizacion from '../../services/auth.service';
 import Usuarios from '../../services/user.service';
 
-const campos1 = ['Acronimo','Estatus','Nombre','Descripcion','Prioridad',
-'Tipo','Responsable Funcional','Responsable Tecnico','Departamento',
-'Numero de usuarios','Plataforma'];
-const campos2 = ['Alcance','Codigo Fuente','Propiedad','Fecha'];
-const campos3 = ['Region','Servidor'];
-
 function Actualizacion() {
 
     const location = useLocation();
@@ -112,6 +106,7 @@ function Actualizacion() {
   async function updateData(e) {
     
     e.preventDefault();
+    console.log('DENTRO DEL UPDATE DE ACTUALIZACION')
 
     try {
       console.log('TRY DEL UPDATE');
@@ -133,9 +128,6 @@ function Actualizacion() {
   if(valor === null) 
     return <Navigate to='/' />
 
-  if(Autorizacion.obtenerUsuario().rol !== 'admin') 
-    return <Navigate to='/' />
-
   return (
     <Container>
 
@@ -145,56 +137,55 @@ function Actualizacion() {
 
             <div className="grid gap-6 mb-6 md:grid-cols-2">
                 <Input campo='Acronimo' name='acronimo' propiedad={valor.acronimo} editable={true} manejador={obtenerAcronimo} />
-                <Select campo='Estatus' name='estatus' opciones={['Desarrollo','Activo','Inactivo',]} manejador={obtenerEstatus} />
+                <Select campo='Estatus' name='estatus' propiedad={valor.estatus} opciones={['DESARROLLO','ACTIVO','INACTIVO',]} manejador={obtenerEstatus} />
             </div>
 
             <Input campo='Nombre' name='nombre' propiedad={valor.nombre} editable={true} area={true} manejador={obtenerNombre} />
             <Input campo='Descripcion' name='descripcion' propiedad={valor.descripcion} editable={true} area={true} manejador={obtenerDescripcion} />
 
-            
             <div className="relative grid gap-6 mb-6 md:grid-cols-2">
-                <Select campo='Prioridad'name='prioridad' opciones={['Alta','Media','Baja',]} manejador={obtenerPrioridad} />
-                <Select campo='Tipo de Aplicacion'name='tipo' opciones={['Tecnico','Administrativo']} manejador={obtenerTipo} />
+              <Select campo='Prioridad'name='prioridad' propiedad={valor.prioridad} opciones={['ALTA','MEDIA','BAJA',]} manejador={obtenerPrioridad} />
+              <Select campo='Tipo de Aplicacion'name='tipo' propiedad={valor.tipo} opciones={['TECNICO','ADMINISTRACION']} manejador={obtenerTipo} />
 
-                <div className='flex flex-col'>
-                    <Input campo='Responsable Funcional' name='responsablef' propiedad={valor.responsablef} editable={true} manejador={obtenerResponsablef} />
-                    <Input campo='Indicador' name='responsablef_ind' propiedad={valor.responsablef_ind} editable={true} manejador={obtenerResponsablef_ind} />
-                    <Input campo='Telefono' name='responsablef_tlf' propiedad={valor.responsablef_tlf} editable={true} manejador={obtenerResponsablef_tlf} />
-                    <Input campo='Correo' name='responsablef_cor' propiedad={valor.responsablef_cor} editable={true} manejador={obtenerResponsablef_cor} />
-                </div>
+              <div className='flex flex-col'>
+                <Input campo='Responsable Funcional' name='responsablef' propiedad={valor.responsablef} editable={true} manejador={obtenerResponsablef} />
+                <Input campo='Indicador' name='responsablef_ind' propiedad={valor.responsablef_ind} editable={true} manejador={obtenerResponsablef_ind} />
+                <Input campo='Telefono' name='responsablef_tlf' propiedad={valor.responsablef_tlf} editable={true} manejador={obtenerResponsablef_tlf} />
+                <Input campo='Correo' name='responsablef_cor' propiedad={valor.responsablef_cor} editable={true} manejador={obtenerResponsablef_cor} />
+              </div>
 
-                <div className='relative flex flex-col'>
-                    <div className='absolute -left-4 top-4 w-1 h-80 border-2 border-dashed border-gray-500'></div>
-                    <Input campo='Responsable Tecnico' name='responsablet' propiedad={valor.responsablet} editable={true} manejador={obtenerResponsablet} />
-                    <Input campo='Indicador' name='responsablet_ind' propiedad={valor.responsablet_ind} editable={true} manejador={obtenerResponsablet_ind} />
-                    <Input campo='Telefono' name='responsablet_tlf' propiedad={valor.responsablet_tlf} editable={true} manejador={obtenerResponsablet_tlf} />
-                    <Input campo='Correo' name='responsablet_cor' propiedad={valor.responsablet_cor} editable={true} manejador={obtenerResponsablet_cor} />
-                </div>
+              <div className='relative flex flex-col'>
+                <div className='absolute -left-4 top-4 w-1 h-80 border-2 border-dashed border-gray-500'></div>
+                <Input campo='Responsable Tecnico' name='responsablet' propiedad={valor.responsablet} editable={true} manejador={obtenerResponsablet} />
+                <Input campo='Indicador' name='responsablet_ind' propiedad={valor.responsablet_ind} editable={true} manejador={obtenerResponsablet_ind} />
+                <Input campo='Telefono' name='responsablet_tlf' propiedad={valor.responsablet_tlf} editable={true} manejador={obtenerResponsablet_tlf} />
+                <Input campo='Correo' name='responsablet_cor' propiedad={valor.responsablet_cor} editable={true} manejador={obtenerResponsablet_cor} />
+              </div>
 
-                <Input campo='Departamento' name='departamento' propiedad={valor.departamento} editable={true} manejador={obtenerDepartamento} />
-                <Input campo='N° de Usuarios' name='cantidad_user' propiedad={valor.cantidad_user} editable={true} manejador={obtenerCantidad} />
-                <Input campo='Plataforma' name='plataforma' propiedad={valor.plataforma} editable={true} manejador={obtenerPlataforma} />
-                <Input campo='Direccion' name='direccion' propiedad={valor.direccion} editable={true} />
+              <Input campo='Departamento' name='departamento' propiedad={valor.departamento} editable={true} manejador={obtenerDepartamento} />
+              <Input campo='N° de Usuarios' name='cantidad_user' propiedad={valor.cantidad_user} editable={true} manejador={obtenerCantidad} />
+              <Input campo='Plataforma' name='plataforma' propiedad={valor.plataforma} editable={true} manejador={obtenerPlataforma} />
+              <Input campo='Direccion' name='direccion' propiedad={valor.direccion} editable={true} />
                 
-                <Select campo='Codigo Fuente' name='codigo_fuente' opciones={['Si','No']} manejador={obtenerCodigo} />
-                <Input campo='Lenguaje' name='lenguaje' propiedad={valor.lenguaje} editable={true} manejador={obtenerLenguaje} />
-                <Select campo='Base de Datos' name='base_datos' opciones={['Si','No']} manejador={obtenerBaseDatos} />
-                <Select campo='Alcance' name='alcance' opciones={['Alto','Corporativo']} manejador={obtenerAlcance} />
+              <Select campo='Codigo Fuente' name='codigo_fuente' propiedad={valor.codigo_fuente} opciones={['SI','NO']} manejador={obtenerCodigo} />
+              <Input campo='Lenguaje' name='lenguaje' propiedad={valor.lenguaje} editable={true} manejador={obtenerLenguaje} />
+              <Select campo='Base de Datos' name='base_datos' propiedad={valor.base_datos} opciones={['SI','NO']} manejador={obtenerBaseDatos} />
+              <Select campo='Alcance' name='alcance' propiedad={valor.alcance} opciones={['ALTO','CORPOTATIVO']} manejador={obtenerAlcance} />
 
-                {/* <div className='absolute bottom-52 w-full border-dashed border-gray-500'></div> */}
-                <Select campo='Propiedad' name='propiedad' opciones={['Propio','Tercero']} manejador={obtenerPropiedad} />
-                <Input campo='Fecha de Creacion' name='ultima' propiedad={valor.ultima} editable={true} manejador={obtenerUltima} />
-                <Select campo='Region' name='region' opciones={['Oriente','Centro','Andes']} manejador={obtenerRegion} />
-                <Input campo='Servidor' name='servidor' propiedad={valor.servidor} editable={true} manejador={obtenerServidor} />
-          </div>
+              {/* <div className='absolute bottom-52 w-full border-dashed border-gray-500'></div> */}
+              <Select campo='Propiedad' name='propiedad' propiedad={valor.propiedad} opciones={['PROPIO','TERCERO']} manejador={obtenerPropiedad} />
+              <Input campo='Fecha de Creacion' name='ultima' propiedad={valor.ultima} editable={true} manejador={obtenerUltima} />
+              <Select campo='Region' name='region' propiedad={valor.region} opciones={['ORIENTE','CENTRO','ANDES']} manejador={obtenerRegion} />
+              <Input campo='Servidor' name='servidor' propiedad={valor.servidor} editable={true} manejador={obtenerServidor} />
+            </div>
 
-          <div className="flex justify-center items-center gap-20 py-2">
-            <Button color='red' onClick={() => navigate('/aplicaciones')} >Cancelar</Button>
-            <Button color='blue' >Guardar</Button>
-          </div>
+            <div className="flex justify-center items-center gap-20 py-2">
+              <Button color='red' width={32} onClick={() => navigate('/aplicaciones')} >Cancelar</Button>
+              {/* <Button color='blue' width={32} >Guardar</Button> */}
+              <button type='submit' >Guardar</button>
+            </div>
 
         </form>
-
     </Container>
   )
 };

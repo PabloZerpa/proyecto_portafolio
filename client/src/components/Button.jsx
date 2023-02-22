@@ -7,7 +7,7 @@ function Button({children, color, width=24}) {
     )
 
     return(
-        <button className={clase} size='small' >
+        <button className={clase} onClick={(e) => e.preventDefault()} size='small' >
             {children}
         </button>
     );

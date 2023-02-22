@@ -23,7 +23,7 @@ function Notificacion({ opcion, mensaje }) {
             </div>
           </div>
           <div className="p-2 text-lg bg-green-500 rounded-b-lg break-words text-white">
-            <p>Bienvenido {mensaje}</p>
+            <p>Bienvenido/a {mensaje}</p>
           </div>
         </div>
       )

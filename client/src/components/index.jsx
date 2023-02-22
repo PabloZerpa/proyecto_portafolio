@@ -8,6 +8,10 @@ import Container from './Container';
 import Button from './Button';
 import Input from './Input';
 import Select from './Select';
+import RadioButton from './RadioButton';
+import Barra from './Barra';
+import Circulo from './Circulo';
+import Linea from './Linea'
 
 export {
     Header,
@@ -19,5 +23,9 @@ export {
     Button,
     Select,
     Input,
-    Container
+    Container,
+    RadioButton,
+    Barra,
+    Circulo,
+    Linea
 };

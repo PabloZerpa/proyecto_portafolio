@@ -4,12 +4,6 @@ import { useLocation, useParams, Navigate, Link } from 'react-router-dom';
 import { Button, Container, Input } from '../../components';
 import Usuarios from '../../services/user.service';
 
-const campos1 = ['Acronimo','Estatus','Nombre','Descripcion','Prioridad',
-'Tipo','Responsable Funcional','Responsable Tecnico','Departamento',
-'Numero de usuarios','Plataforma'];
-const campos2 = ['Alcance','Codigo Fuente','Propiedad','Fecha'];
-const campos3 = ['Region','Servidor'];
-
 function Vista() {
   
   const location = useLocation();
@@ -37,7 +31,7 @@ function Vista() {
     fetchData();
   }, [paramsId]);
 
-  if(location.state === null) 
+  if(valor === null) 
     return <Navigate to='/' />
     
     return (
@@ -50,7 +44,7 @@ function Vista() {
               </Link>
             </Button>
             <Button color='blue' width={32} >Descargar</Button>
-            <Button color='blue' width={32} >Notificar</Button>
+            <Button color='blue' width={32} >Solicitudes</Button>
           </div>
 
           <h2 className='font-bold'>Informacion Basica</h2>

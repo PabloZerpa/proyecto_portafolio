@@ -1,8 +1,6 @@
 
-import axios from "axios";
-import { useEffect } from "react";
-import { useState } from "react";
 import { FaCheckCircle, FaTimes, FaGripLinesVertical, FaPaperclip, FaMapMarkerAlt, FaImage, FaCode, FaSmile, FaBars, FaCog, FaRegCalendarMinus, FaDownload } from "react-icons/fa";
+import { HiPaperAirplane } from 'react-icons/hi';
 import { Container } from "../../components/";
 
 function Solicitudes() {
@@ -10,10 +8,10 @@ function Solicitudes() {
     return(
         <Container>
             {/* <form>
-                <div className="w-full mb-4 border border-gray-200 rounded-lg bg-gray-200">
-                    <div className="flex items-center justify-between px-3 py-2 border-b">
-                        <div className="flex flex-wrap items-center divide-gray-200 sm:divide-x">
-                            <div className="flex items-center text-base space-x-1 sm:pr-4">
+                <div className="w-96 mb-4 border border-gray-200 rounded bg-gray-200">
+                    <div className="flex items-center justify-center p-2 border-b">
+                        <div className="flex flex-wrap items-center">
+                            <div className="flex items-center text-base space-x-1">
                                 <div className="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100">
                                     <FaPaperclip />
                                     <span className="sr-only">Attach file</span>
@@ -63,8 +61,8 @@ function Solicitudes() {
                         <textarea id="editor" rows="8" className="block w-full px-0 text-sm text-gray-800 bg-white border-0" placeholder="Write an article..." required></textarea>
                     </div>
                 </div>
-                <button type="submit" className="inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 hover:bg-blue-800">
-                    Publish post
+                <button type="submit" className="inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded focus:ring-4 focus:ring-blue-200 hover:bg-blue-800">
+                    Enviar <HiPaperAirplane className='text-base' />
                 </button>
             </form> */}
         </Container>

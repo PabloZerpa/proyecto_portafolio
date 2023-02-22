@@ -1,6 +1,7 @@
 
 import { Routes, Route } from "react-router-dom";
 import { Protegida } from "./Protegida";
+import { ProtegidaAdm } from "./ProtegidaAdm";
 import { 
   Login, 
   Dashboard,
@@ -27,10 +28,12 @@ function Rutas() {
             <Route path='*' element={<Dashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
 
-            <Route path="/administracion" element={<Administracion />} />
-            <Route path="/administracion/actualizacion/:id" element={<Actualizacion />} />
-            <Route path="/administracion/agregar" element={<Agregar />} />
-            <Route path="/administracion/solicitudes" element={<Solicitudes />} />
+            <Route element={<ProtegidaAdm />} >
+              <Route path="/administracion" element={<Administracion />} />
+              <Route path="/administracion/actualizacion/:id" element={<Actualizacion />} />
+              <Route path="/administracion/agregar" element={<Agregar />} />
+              <Route path="/administracion/solicitudes" element={<Solicitudes />} />
+            </Route>
             
             <Route path="/aplicaciones/" element={<Aplicaciones />} />
             <Route path="/aplicaciones/:id" element={<Vista />} />
