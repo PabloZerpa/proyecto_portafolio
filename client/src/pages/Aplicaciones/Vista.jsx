@@ -1,15 +1,13 @@
 
 import { useState, useEffect } from 'react';
-import { useLocation, useParams, Navigate, Link } from 'react-router-dom';
+import { useParams, Navigate, Link } from 'react-router-dom';
 import { Button, Container, Input } from '../../components';
 import Usuarios from '../../services/user.service';
 
 function Vista() {
   
-  const location = useLocation();
-  const [valor, setValor] = useState(location.state);
-  const [valorArray, setValorArray] = useState([]);
-  const { paramsId } = useParams();
+  const { id } = useParams();
+  const [valor, setValor] = useState(null);
 
   const [valorDevuelto, setValorDevuelto] = useState(false);
   const obtencionDeEstado = (parametroDevuelto) => {setValorDevuelto(parametroDevuelto)};
@@ -17,19 +15,18 @@ function Vista() {
   const obtencionDeEstado2 = (parametroDevuelto) => {setValorDevuelto2(parametroDevuelto)};
   
   useEffect(() => {
-    console.log(location.state);
 
     async function fetchData(){
+      
       try {
-        const response = await Usuarios.obtenerDato(location.state.id)
+        const response = await Usuarios.obtenerDato(id)
         setValor(response.data);
-        setValorArray(Object.values(response.data));
       }catch (error) {
         console.log(error)
       }
     }
     fetchData();
-  }, [paramsId]);
+  }, [id]);
 
   if(valor === null) 
     return <Navigate to='/' />
@@ -67,23 +64,24 @@ function Vista() {
               <Input campo={'Responsable Tecnico'} propiedad={valor.responsablet} />
               
               <div style={valorDevuelto ? {display: 'block'} : {display: 'none'}} className='ml-4 bg-blue-500 w-64' >
+                <Input campo={'Nombre'} propiedad={valor.responsablef} />
+                <Input campo={'Apellido'} propiedad={valor.responsablef_cor} />
                 <Input campo={'Indicador'} propiedad={valor.responsablef_ind} />
                 <Input campo={'Telefono'} propiedad={valor.responsablef_tlf} />
-                <Input campo={'Correo'} propiedad={valor.responsablef_cor} />
               </div>
 
               <div style={valorDevuelto ? {display: 'block'} : {display: 'none'}} className='ml-4 bg-blue-500 w-64' >
+                <Input campo={'Nombre'} propiedad={valor.responsablet} />
+                <Input campo={'Apellido'} propiedad={valor.responsablet_cor} />
                 <Input campo={'Indicador'} propiedad={valor.responsablet_ind} />
                 <Input campo={'Telefono'} propiedad={valor.responsablet_tlf} />
-                <Input campo={'Correo'} propiedad={valor.responsablet_cor} />
               </div>
 
-              <Input campo={'Departamento'} propiedad={valor.departamento} />
+              <Input campo={'Negocio'} propiedad={valor.departamento} />
               <Input campo={'Numero de usuarios'} propiedad={valor.cantidad_user} />
               <Input campo={'Plataforma'} propiedad={valor.plataforma} />
             </div>
         </form>
-
 
         <h2 className='font-bold'>Caracteristicas de la Aplicaciones</h2>
 

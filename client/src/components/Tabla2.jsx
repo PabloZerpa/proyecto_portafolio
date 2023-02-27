@@ -6,8 +6,8 @@ import Autorizacion from '../services/auth.service';
 function Tabla2({columnas, datos, campo}) {
 
     const [valor, setValor] = useState('');
-    const [edicion, setEdicion] = useState(false);
-    const habilitar = () => {setEdicion(!edicion)}
+    const [edicion, setEdicion] = useState(null);
+    const habilitar = (id) => {setEdicion(id)}
 
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
     async function updateData(e) {
@@ -55,24 +55,24 @@ function Tabla2({columnas, datos, campo}) {
                             <td className="px-2 py-2">{valor[1]}</td>
                             <td className="px-2 py-2">{valor[2]}</td>
                             <td className="px-2 py-2">
-                                {edicion ? (
+                                {edicion!==dato.id ? (
+                                    <input type='text' defaultValue={valor[3]} disabled
+                                    className="w-full p-2.5 bg-gray-50 border-none text-gray-900 text-sm text-center rounded-md" />
+                                ) : (
                                     <input type='text' defaultValue={valor[3]}
                                     onChange={(e) => {setValor(e.target.value)}}
                                     className="w-full p-2.5 bg-gray-50 border border-solid border-blue-500 text-gray-900 text-sm text-center rounded-md" />
-                                ) : (
-                                    <input type='text' defaultValue={valor[3]} disabled
-                                    className="w-full p-2.5 bg-gray-50 border-none text-gray-900 text-sm text-center rounded-md" />
                                 )}
                                 </td>
                             <td className="px-2 py-2">
 
-                                {edicion ? 
+                                {edicion===dato.id ? 
                                     <FaCheckCircle 
                                         onClick={updateData}
                                         className="ml-3 text-green-500 text-lg cursor-pointer"/>
                                     :
                                     <FaEdit 
-                                        onClick={habilitar}
+                                        onClick={(e) => habilitar(dato.id)}
                                         className="ml-3 text-blue-500 text-lg cursor-pointer" />
                                 }
 

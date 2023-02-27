@@ -1,7 +1,7 @@
 
 import axios from 'axios';
-//const baseUrl = "http://localhost:3001/api/";
-const baseUrl = "https://proyecto-portafolio-server.onrender.com/api/"
+const baseUrl = "http://localhost:3001/api/";
+//const baseUrl = "https://proyecto-portafolio-server.onrender.com/api/"
 
 class Autorizacion {
     

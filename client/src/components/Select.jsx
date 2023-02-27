@@ -20,10 +20,12 @@ function Select({campo, name, propiedad=null, busqueda=false, opciones, manejado
                 placeholder={campo}
                 defaultValue={propiedad}
                 onChange={(e) => {onHandle(e.target.value)}}
-                className={busqueda ? clase2 : clase}
+                className={busqueda ? clase2 : clase} 
             >
 
                 {opciones.map((opcion, index) => {
+                    if(opcion=='TODAS') opcion=null
+
                     if(opcion == propiedad){
                         return <option selected value={opcion}>{opcion}</option>
                     }

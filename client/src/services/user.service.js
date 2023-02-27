@@ -1,8 +1,8 @@
 
 import axios from 'axios';
 import Authorization from './auth.service';
-//const baseUrl = "http://localhost:3001/api/";
-const baseUrl = "https://proyecto-portafolio-server.onrender.com/api/";
+const baseUrl = "http://localhost:3001/api/";
+//const baseUrl = "https://proyecto-portafolio-server.onrender.com/api/";
 
 class Usuarios {
 

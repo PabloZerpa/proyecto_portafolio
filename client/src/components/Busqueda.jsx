@@ -6,17 +6,17 @@ import Select from './Select';
 import RadioButton from './RadioButton';
 import Usuarios from "../services/user.service";
 
-const opcionEstatus = ['Todas', 'Desarrollo', 'Mantenimiento', 'Desincorporada', 'Estabilizacion',
-    'Sin Uso', 'Anulado', 'Visaulizacion', 'Prueba'];
-const opcionRegion = ['Todas', 'Centro', 'Centro Norte', 'Centro Sur', 'Oriente',
-    'Oriente Norte', 'Oriente Sur', 'Occidente Norte', 'Occidente Sur', 'Carabobo', 
-    'Andes', 'Metropolitana','Faja','Exterior','Por Determinar'];
 const opcionCount = [10,20,30,40,50];
-const opcionTipo = ['Todas', 'Web', 'Escritorio', 'Mobil', 'Servidor', 'Mixta'];
-const opcionPlataforma = ['Todas', 'Web', 'Cliente-Servidor', 'Stand Alone', 'Mini', 'MainFrame'];
-const opcionAlcance = ['Todas', 'Personal', 'Funcional', 'Departamental', 'Interdepartamental', 'Corporativo'];
-const opcionMantenimiento = ['Todas', 'Diario', 'Semanal', 'Quincenal', 'Mensual',
-    'Bimensual', 'Trimestral', 'Semestral', 'Anual', 'No Aplica'];
+const opcionEstatus = ['TODAS', 'DESARROLLO', 'MANTENIMIENTO', 'DESINCORPORADA', 'ESTABILIZACION',
+    'SIN USO', 'VISAULIZACION', 'PRUEBA'];
+const opcionRegion = ['TODAS', 'CENTRO', 'CENTRO SUR', 'CENTRO OCCIDENTE','ORIENTE NORTE', 
+'ORIENTE SUR', 'OCCIDENTE','FAJA','METROPOLITANA',];
+const opcionTipo = ['TODAS', 'WEB', 'ESCRITORIO', 'MOVIL', 'SERVIDOR', 'MIXTA'];
+const opcionPlataforma = ['TODAS', 'WEB', 'ESCRITORIO', 'MOVIL', 'CLIENTE-SERVIDOR', 'STAND ALONE', 'MINI', 'MAINFRAME'];
+const opcionAlcance = ['TODAS', 'LOCAL', 'REGIONAL', 'CORPORATIVO'];
+const opcionMantenimiento = ['TODAS', 'DIARIO', 'SEMANAL', 'QUINCENAL', 'MENSUAL',
+    'BIMENSUAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL', 'NO APLICA'];
+
 
 function Busqueda({manejarBusqueda}) {
     
@@ -128,7 +128,7 @@ function Busqueda({manejarBusqueda}) {
                                 className="block p-2 pr-12 w-96 text-sm text-black bg-white rounded border-none outline-none" placeholder="Buscar" />
                             <button 
                                 type="submit" 
-                                onClick={(e) => {e.preventDefault(); onSearch(debounceValue, estatus, region, fecha, prioridad, tipo, order, count)}}
+                                onClick={(e) => {e.preventDefault(); onSearch(debounceValue,estatus,region,prioridad,tipo,order,count)}}
                                 className="absolute top-0 right-0 p-2.5 text-sm font-medium text-white bg-blue-600 rounded-r border border-blue-700 hover:bg-blue-700">
                                 <FaSearch />
                             </button>

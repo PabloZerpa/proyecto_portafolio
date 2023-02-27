@@ -58,6 +58,7 @@ function Administracion() {
               className="block p-2 pr-12 w-96 text-sm text-black bg-white rounded border-none outline-none" placeholder="Buscar" />
             <button 
               type="submit" 
+              onClick={(e) => {e.preventDefault(); onSearch(debounceValue,campo)}}
               className="absolute top-0 right-0 p-2.5 text-sm font-medium text-white bg-blue-600 rounded-r border border-blue-700 hover:bg-blue-700">          
               <FaSearch />
             </button>
