@@ -19,10 +19,11 @@ function Tabla2({columnas, datos, campo}) {
             console.log('TRY DEL UPDATE');
             
             if(Autorizacion.obtenerUsuario().rol === 'admin'){
+
                 const datoModificacion = { campo,valor };
-                console.log(campo,valor);
+                console.log(edicion, campo, valor);
                 
-                await Autorizacion.actualizarDato(datos[0].id, datoModificacion); 
+                await Autorizacion.actualizarDato(edicion, datoModificacion); 
                 habilitar();
             }
         }

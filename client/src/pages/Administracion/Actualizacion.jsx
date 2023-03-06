@@ -1,9 +1,14 @@
-
 import { useState, useEffect } from 'react';
 import { useLocation, useParams, useNavigate, Navigate } from 'react-router-dom';
 import { Button, Container, Input, Select } from '../../components';
 import Autorizacion from '../../services/auth.service';
 import Usuarios from '../../services/user.service';
+
+const campos1 = ['Acronimo','Estatus','Nombre','Descripcion','Prioridad',
+'Tipo','Responsable Funcional','Responsable Tecnico','Departamento',
+'Numero de usuarios','Plataforma'];
+const campos2 = ['Alcance','Codigo Fuente','Propiedad','Fecha'];
+const campos3 = ['Region','Servidor'];
 
 const opcionEstatus = ['TODAS', 'DESARROLLO', 'MANTENIMIENTO', 'DESINCORPORADA', 'ESTABILIZACION',
     'SIN USO', 'VISAULIZACION', 'PRUEBA'];
@@ -17,13 +22,6 @@ const opcionMantenimiento = ['TODAS', 'DIARIO', 'SEMANAL', 'QUINCENAL', 'MENSUAL
 
 function Actualizacion() {
 
-    const location = useLocation();
-    const { id } = useParams();
-    const [rol, setRol] = useState('');
-    const [valor, setValor] = useState("");
-    const [valorArray, setValorArray] = useState([]);
-    const navigate = useNavigate();
-
     // const [datosApp, setDatosApp] = useState({
     //   acronimo: '', nombre: '', descripcion: '', estatus: '', region: '',
     //   responsablef: '', responsablef_ind: '', responsablef_tlf: '', responsablef_cor: '',
@@ -32,6 +30,13 @@ function Actualizacion() {
     //   baseDatos: '', alcance: '', propiedad: '', servidor: '', ultima: '', 
     // });
     // const obtenerDatosApp = (respuesta) => {setDatoApp(respuesta)};
+    
+    const location = useLocation();
+    const navigate = useNavigate();
+    const [valor, setValor] = useState("");
+    const [valorArray, setValorArray] = useState([]);
+    const { paramsId } = useParams();
+    const [rol, setRol] = useState('');
     
     const [acronimo, setAcronimo] = useState('');
     const obtenerAcronimo = (respuesta) => {setAcronimo(respuesta)};
@@ -84,119 +89,118 @@ function Actualizacion() {
     const [ultima, setUltima] = useState('29/2/2024');
     const obtenerUltima = (respuesta) => {setUltima(respuesta)};
   
-  useEffect(() => {
-    console.log(location.state);
-    setRol(Autorizacion.obtenerUsuario().rol);
-
-    async function fetchData(){
+    useEffect(() => {
+      console.log(location.state);
+      setRol(Autorizacion.obtenerUsuario().rol);
+      async function fetchData(){
+        try {
+          // const response = await Usuarios.obtenerDato(location.state.id)
+          // setValor(response.data);
+          // setValorArray(Object.values(response.data));
+          
+          setAcronimo(location.state.acronimo);
+          setEstatus(location.state.estatus);
+          setNombre(location.state.nombre);
+          setDescripcion(location.state.descripcion);
+          setRegion(location.state.region);
+          setResponsableF(location.state.responsablef);
+          setPrioridad(location.state.prioridad);
+          setCodigo(location.state.codigo_fuente);
+          setLenguaje(location.state.lenguaje);
+          setBaseDatos(location.state.base_datos);
+          setPropiedad(location.state.propiedad);
+          setPlataforma(location.state.plataforma);
+          setServidor(location.state.servidor);
+          setAlcance(location.state.alcance);
+          setTipo(location.state.tipo);
+          setCantidad(location.state.cantidad_user);
+          setDepartamento(location.state.departamento);
+        } 
+        catch (error) {
+          console.log(error)
+        }
+      }
+      fetchData();
+    }, [paramsId]);
+    // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
+    async function updateData(e) {
+  
+      e.preventDefault();
+      console.log('DENTRO DEL UPDATE DE ACTUALIZACION')
+  
       try {
-        const response = await Usuarios.obtenerDato(location.state.id)
-        setValor(response.data);
-        setValorArray(Object.values(response.data));
+        console.log('TRY DEL UPDATE');
         
-        setAcronimo(location.state.acronimo);
-        setEstatus(location.state.estatus);
-        setNombre(location.state.nombre);
-        setDescripcion(location.state.descripcion);
-        setRegion(location.state.region);
-        setResponsableF(location.state.responsablef);
-        setPrioridad(location.state.prioridad);
-        setCodigo(location.state.codigo_fuente);
-        setLenguaje(location.state.lenguaje);
-        setBaseDatos(location.state.base_datos);
-        setPropiedad(location.state.propiedad);
-        setPlataforma(location.state.plataforma);
-        setServidor(location.state.servidor);
-        setAlcance(location.state.alcance);
-        setTipo(location.state.tipo);
-        setCantidad(location.state.cantidad_user);
-        setDepartamento(location.state.departamento);
-      } 
-      catch (error) {
-        console.log(error)
+        if(rol === 'admin'){
+          const datosModificacion = {
+            acronimo,nombre,descripcion,estatus,region,responsablef,responsablef_ind,responsablef_tlf,responsablef_cor,
+            responsablet,responsablet_ind,responsablet_tlf,responsablet_cor,prioridad,tipo,departamento,
+            cantidad,plataforma,codigo,lenguaje,baseDatos,alcance,propiedad,servidor,ultima
+          };
+          
+          await Autorizacion.actualizarDatos(location.state.id, datosModificacion); 
+          navigate("/dashboard");
+        }
       }
+      catch (error) { console.log('ERROR AL ACTUALIZAR APL_ACT'); }
     }
-    fetchData();
-
-  }, [id]);
-
-  // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
-  async function updateData(e) {
-    
-    e.preventDefault();
-    console.log('DENTRO DEL UPDATE DE ACTUALIZACION')
-
-    try {
-      console.log('TRY DEL UPDATE');
-      
-      if(rol === 'admin'){
-        const datosModificacion = {
-          acronimo,nombre,descripcion,estatus,region,responsablef,responsablef_ind,responsablef_tlf,responsablef_cor,
-          responsablet,responsablet_ind,responsablet_tlf,responsablet_cor,prioridad,tipo,departamento,
-          cantidad,plataforma,codigo,lenguaje,baseDatos,alcance,propiedad,servidor,ultima
-        };
-        
-        await Autorizacion.actualizarDatos(location.state.id, datosModificacion); 
-        navigate("/dashboard");
-      }
-    }
-    catch (error) { console.log('ERROR AL ACTUALIZAR APL_ACT'); }
-  }
-
-  if(valor === null) 
-    return <Navigate to='/' />
+    // if(valor === null) 
+    //   return <Navigate to='/' />
+  
+    if(Autorizacion.obtenerUsuario().rol !== 'admin') 
+      return <Navigate to='/' />
 
   return (
     <Container>
 
-      <h2 className='font-bold'>Actualizacion de Aplicacion</h2>
+      <h2 className='font-bold text-lg'>Actualizacion de Aplicacion</h2>
 
       <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" onSubmitCapture={updateData} >
 
             <div className="grid gap-6 mb-6 md:grid-cols-2">
-                <Input campo='Acronimo' name='acronimo' propiedad={valor.acronimo} editable={true} manejador={obtenerAcronimo} />
-                <Select campo='Estatus' name='estatus' propiedad={valor.estatus} opciones={opcionEstatus} manejador={obtenerEstatus} />
+                <Input campo='Acronimo' name='acronimo' propiedad={acronimo} editable={true} manejador={obtenerAcronimo} />
+                <Select campo='Estatus' name='estatus' propiedad={estatus} opciones={opcionEstatus} manejador={obtenerEstatus} />
             </div>
 
-            <Input campo='Nombre' name='nombre' propiedad={valor.nombre} editable={true} area={true} manejador={obtenerNombre} />
-            <Input campo='Descripcion' name='descripcion' propiedad={valor.descripcion} editable={true} area={true} manejador={obtenerDescripcion} />
+            <Input campo='Nombre' name='nombre' propiedad={nombre} editable={true} area={true} manejador={obtenerNombre} />
+            <Input campo='Descripcion' name='descripcion' propiedad={descripcion} editable={true} area={true} manejador={obtenerDescripcion} />
 
             <div className="relative grid gap-6 mb-6 md:grid-cols-2">
-              <Select campo='Prioridad'name='prioridad' propiedad={valor.prioridad} opciones={['ALTA','MEDIA','BAJA',]} manejador={obtenerPrioridad} />
-              <Select campo='Tipo de Aplicacion'name='tipo' propiedad={valor.tipo} opciones={opcionTipo} manejador={obtenerTipo} />
+              <Select campo='Prioridad'name='prioridad' propiedad={prioridad} opciones={['ALTA','MEDIA','BAJA',]} manejador={obtenerPrioridad} />
+              <Select campo='Tipo de Aplicacion'name='tipo' propiedad={tipo} opciones={opcionTipo} manejador={obtenerTipo} />
 
               <div className='flex flex-col'>
                 <p className='ml-32'>Responsable Funcional</p>
-                <Input campo='Nombre' name='responsablef' propiedad={valor.responsablef} editable={true} manejador={obtenerResponsablef} />
-                <Input campo='Apellido' name='responsablef_cor' propiedad={valor.responsablef_cor} editable={true} manejador={obtenerResponsablef_cor} />
-                <Input campo='Indicador' name='responsablef_ind' propiedad={valor.responsablef_ind} editable={true} manejador={obtenerResponsablef_ind} />
-                <Input campo='Telefono' name='responsablef_tlf' propiedad={valor.responsablef_tlf} editable={true} manejador={obtenerResponsablef_tlf} />
+                <Input campo='Nombre' name='responsablef' propiedad={responsablef} editable={true} manejador={obtenerResponsablef} />
+                <Input campo='Apellido' name='responsablef_cor' propiedad={responsablef_cor} editable={true} manejador={obtenerResponsablef_cor} />
+                <Input campo='Indicador' name='responsablef_ind' propiedad={responsablef_ind} editable={true} manejador={obtenerResponsablef_ind} />
+                <Input campo='Telefono' name='responsablef_tlf' propiedad={responsablef_tlf} editable={true} manejador={obtenerResponsablef_tlf} />
               </div>
 
               <div className='relative flex flex-col'>
                 <div className='absolute -left-4 top-4 w-1 h-96 border-2 border-dashed border-gray-500'></div>
                 <p className='ml-32'>Responsable Tecnico</p>
-                <Input campo='Nombre' name='responsablet' propiedad={valor.responsablet} editable={true} manejador={obtenerResponsablet} />
-                <Input campo='Apellido' name='responsablet_cor' propiedad={valor.responsablet_cor} editable={true} manejador={obtenerResponsablet_cor} />
-                <Input campo='Indicador' name='responsablet_ind' propiedad={valor.responsablet_ind} editable={true} manejador={obtenerResponsablet_ind} />
-                <Input campo='Telefono' name='responsablet_tlf' propiedad={valor.responsablet_tlf} editable={true} manejador={obtenerResponsablet_tlf} />
+                <Input campo='Nombre' name='responsablet' propiedad={responsablet} editable={true} manejador={obtenerResponsablet} />
+                <Input campo='Apellido' name='responsablet_cor' propiedad={responsablet_cor} editable={true} manejador={obtenerResponsablet_cor} />
+                <Input campo='Indicador' name='responsablet_ind' propiedad={responsablet_ind} editable={true} manejador={obtenerResponsablet_ind} />
+                <Input campo='Telefono' name='responsablet_tlf' propiedad={responsablet_tlf} editable={true} manejador={obtenerResponsablet_tlf} />
               </div>
 
-              <Input campo='Negocio' name='departamento' propiedad={valor.departamento} editable={true} manejador={obtenerDepartamento} />
-              <Input campo='N° de Usuarios' name='cantidad_user' propiedad={valor.cantidad_user} editable={true} manejador={obtenerCantidad} />
-              <Select campo='Plataforma' name='plataforma' propiedad={valor.plataforma} opciones={opcionPlataforma} editable={true} manejador={obtenerPlataforma} />
-              <Input campo='Direccion' name='direccion' propiedad={valor.direccion} editable={true} />
+              <Input campo='Negocio' name='departamento' propiedad={departamento} editable={true} manejador={obtenerDepartamento} />
+              <Input campo='N° de Usuarios' name='cantidad_user' propiedad={cantidad} editable={true} manejador={obtenerCantidad} />
+              <Select campo='Plataforma' name='plataforma' propiedad={plataforma} opciones={opcionPlataforma} editable={true} manejador={obtenerPlataforma} />
+              <Input campo='Direccion' name='direccion' editable={true} />
                 
-              <Select campo='Codigo Fuente' name='codigo_fuente' propiedad={valor.codigo_fuente} opciones={['SI','NO']} manejador={obtenerCodigo} />
-              <Input campo='Lenguaje' name='lenguaje' propiedad={valor.lenguaje} editable={true} manejador={obtenerLenguaje} />
-              <Select campo='Base de Datos' name='base_datos' propiedad={valor.base_datos} opciones={['SI','NO']} manejador={obtenerBaseDatos} />
-              <Select campo='Alcance' name='alcance' propiedad={valor.alcance} opciones={opcionAlcance} manejador={obtenerAlcance} />
+              <Select campo='Codigo Fuente' name='codigo_fuente' propiedad={codigo} opciones={['SI','NO']} manejador={obtenerCodigo} />
+              <Input campo='Lenguaje' name='lenguaje' propiedad={lenguaje} editable={true} manejador={obtenerLenguaje} />
+              <Select campo='Base de Datos' name='base_datos' propiedad={baseDatos} opciones={['SI','NO']} manejador={obtenerBaseDatos} />
+              <Select campo='Alcance' name='alcance' propiedad={alcance} opciones={opcionAlcance} manejador={obtenerAlcance} />
 
               {/* <div className='absolute bottom-52 w-full border-dashed border-gray-500'></div> */}
-              <Select campo='Propiedad' name='propiedad' propiedad={valor.propiedad} opciones={['PROPIO','TERCERO','COMBINADO']} manejador={obtenerPropiedad} />
-              <Input campo='Fecha de Creacion' name='ultima' propiedad={valor.ultima} editable={true} manejador={obtenerUltima} />
-              <Select campo='Region' name='region' propiedad={valor.region} opciones={opcionRegion} manejador={obtenerRegion} />
-              <Select campo='Servidor' name='servidor' propiedad={valor.servidor} opciones={['SI','NO']} manejador={obtenerServidor} />
+              <Select campo='Propiedad' name='propiedad' propiedad={propiedad} opciones={['PROPIO','TERCERO','COMBINADO']} manejador={obtenerPropiedad} />
+              <Input campo='Fecha de Creacion' name='ultima' propiedad={ultima} editable={true} manejador={obtenerUltima} />
+              <Select campo='Region' name='region' propiedad={region} opciones={opcionRegion} manejador={obtenerRegion} />
+              <Select campo='Servidor' name='servidor' propiedad={servidor} opciones={['SI','NO']} manejador={obtenerServidor} />
               {/* <Input campo='Servidor' name='servidor' propiedad={valor.servidor} editable={true} manejador={obtenerServidor} /> */}
             </div>
 

@@ -24,7 +24,7 @@ router.post("/grafico", getByGrafico);
 // *************** RUTA PARA OBTENER LOS DATOS POR ID *************** 
 router.get("/:id", auth, getItem);
 
-
+ 
 // *************** RUTA PARA OBTENER LOS DATOS POR ID *************** 
 router.post("/", createItems);
 
@@ -32,7 +32,8 @@ router.post("/", createItems);
 // *************** RUTA PARA ACTUALIZAR LOS DATOS POR ID *************** 
 router.put("/:id", authAdmin, updateItems);
 
-// *************** RUTA PARA ACTUALIZAR LOS DATOS POR ID *************** 
+
+// *************** RUTA PARA ACTUALIZAR LOS DATOS POR CAMPO *************** 
 router.patch("/:id", authAdmin, updateByCampo);
 
 

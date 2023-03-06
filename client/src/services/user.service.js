@@ -1,23 +1,16 @@
 
 import axios from 'axios';
+import authHeader from './header.service';
 import Authorization from './auth.service';
-const baseUrl = "http://localhost:3001/api/";
-//const baseUrl = "https://proyecto-portafolio-server.onrender.com/api/";
+//const baseUrl = "http://localhost:3001/api/";
+const baseUrl = "https://proyecto-portafolio-server.onrender.com/api/";
 
 class Usuarios {
-
-    // =============== OBTIENE EL TOKEN DE LA CABECERA DEL CLIENTE ===============
-    authHeader() {
-        const user = JSON.parse(localStorage.getItem('user'));
-
-        if (user && user.token) return { 'Authorization': user.token };
-        else return {};
-    }
 
     // =============== OBTIENE TODOS LOS DATOS DE LAS APPS ===============
     async obtenerDatosUsuarios() {
         try {
-            const respuesta = await axios.get(`${baseUrl}user`, { headers: this.authHeader() });
+            const respuesta = await axios.get(`${baseUrl}user`, { headers: authHeader() });
             return respuesta;
         } catch (error) {
             Authorization.logout();
@@ -29,7 +22,7 @@ class Usuarios {
     // =============== OBTIENE EL DATO DE UNA APP POR SU ID ===============
     async obtenerDato(id) {
         try {
-            const respuesta = await axios.get(`${baseUrl}user/${id}`, { headers: this.authHeader() });
+            const respuesta = await axios.get(`${baseUrl}user/${id}`, { headers: authHeader() });
             return respuesta;
         } catch (error) {
             console.log('Error al obtener dato');

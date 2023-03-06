@@ -4,6 +4,7 @@ import { Barra, Circulo, Container, RadioButton, Button, Select } from "../../co
 import { BiLoaderAlt } from "react-icons/bi";
 import { useDebounce } from "use-debounce";
 import Usuarios from "../../services/user.service";
+import Radio from "../../components/Radio";
 
 const opcionCategoria = ['Tipo', 'Region', 'Estatus', 'Prioridad', 'Registro', 'Modificacion'];
 const opcionOrden = ['Porcentaje', 'Cantidad', 'Tiempo', 'Interrelacion'];
@@ -49,11 +50,11 @@ function Diagramas() {
     return (
         <Container>
             
-            <h2 className='font-bold'>Generar graficos</h2>
+            <h2 className='font-bold text-lg'>Generar graficos</h2>
 
             <form className='grid gap-2 grid-cols-1 p-4 bg-zinc-400 border-solid rounded'>
-                <RadioButton label='Categoria' opciones={opcionCategoria} manejador={obtenerCategoria} />
-                <RadioButton label='Ordernar' opciones={opcionOrden} manejador={obtenerOrden} />
+                <Radio label='Categoria' opciones={opcionCategoria} manejador={obtenerCategoria} size='big' />
+                <Radio label='Ordernar' opciones={opcionOrden} manejador={obtenerOrden} size='big' />
                 <button onClick={handleSearch}>Generar</button>
                 {/* <Button color='blue'>Generar</Button> */}
 

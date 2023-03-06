@@ -1,12 +1,37 @@
 
+import { useState } from "react";
 import { FaCheckCircle, FaTimes, FaGripLinesVertical, FaPaperclip, FaMapMarkerAlt, FaImage, FaCode, FaSmile, FaBars, FaCog, FaRegCalendarMinus, FaDownload } from "react-icons/fa";
 import { HiPaperAirplane } from 'react-icons/hi';
-import { Container } from "../../components/";
+import { Container,Input,Select } from "../../components/";
+import Radio from "../../components/Radio";
 
 function Solicitudes() {
-    
+
+    const [datos, setDatos] = useState({
+        acronimo: '',
+        estatus: '',
+        nombre: '',
+        prioridad: '',
+    });
+
+    const handleInputChange = (e) => {
+        console.log(e.target.name)
+        console.log(e.target.value)
+        setDatos({
+            ...datos,
+            [e.target.name] : e.target.value
+        })
+    }
+
     return(
         <Container>
+
+            {/* <form >
+                <input type="text" placeholder="Nombre" className="form-control" onChange={handleInputChange} name="nombre"></input>
+                <input type="text" placeholder="Acronimo" className="form-control" onChange={handleInputChange} name="acronimo"></input>
+                <button type='submit'>Enviar</button>
+            </form> */}
+
             {/* <form>
                 <div className="w-96 mb-4 border border-gray-200 rounded bg-gray-200">
                     <div className="flex items-center justify-center p-2 border-b">
@@ -65,6 +90,7 @@ function Solicitudes() {
                     Enviar <HiPaperAirplane className='text-base' />
                 </button>
             </form> */}
+
         </Container>
     );
 }

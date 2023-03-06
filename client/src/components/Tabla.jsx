@@ -4,11 +4,9 @@ import { Link } from "react-router-dom";
 import { FaEye, FaEdit } from "react-icons/fa";
 
 const columnasUser = ['ID','Acronimo','Nombre','Estatus','Region','Responsable Funcional',
-    'Responsable Tecnico','Prioridad','Tipo','Ver'
-];
+    'Responsable Tecnico','Prioridad','Tipo','Ver'];
 const columnasAdmin = ['ID','Acronimo','Nombre','Estatus','Region','Responsable Funcional',
-    'Responsable Tecnico','Prioridad','Tipo','Ver','Editar'
-];
+    'Responsable Tecnico','Prioridad','Tipo','Ver','Editar'];
 
 function Tabla({datos, opciones, campo=null}) {
 
@@ -28,9 +26,9 @@ function Tabla({datos, opciones, campo=null}) {
                     
                     <tr className="bg-zinc-200 border-b hover:bg-zinc-300">
                         {opciones ? (
-                            columnasAdmin.map(dato => { return  <td scope="col" className="px-2 py-2">{dato}</td> })
+                            columnasAdmin.map(dato => { return  <td key={dato.id} scope="col" className="px-2 py-2">{dato}</td> })
                         ) : (
-                            columnasUser.map(dato => { return  <td scope="col" className="px-2 py-2">{dato}</td> })
+                            columnasUser.map(dato => { return  <td key={dato.id} scope="col" className="px-2 py-2">{dato}</td> })
                         )}    
                     </tr>
                     

@@ -3,19 +3,18 @@ import { useState, useEffect } from 'react';
 import { useDebounce } from 'use-debounce';
 import { FaSearch } from 'react-icons/fa';
 import Select from './Select';
-import RadioButton from './RadioButton';
 import Usuarios from "../services/user.service";
+import Radio from './Radio';
 
 const opcionCount = [10,20,30,40,50];
 const opcionEstatus = ['TODAS', 'DESARROLLO', 'MANTENIMIENTO', 'DESINCORPORADA', 'ESTABILIZACION',
-    'SIN USO', 'VISAULIZACION', 'PRUEBA'];
-const opcionRegion = ['TODAS', 'CENTRO', 'CENTRO SUR', 'CENTRO OCCIDENTE','ORIENTE NORTE', 
+'SIN USO', 'VISAULIZACION', 'PRUEBA'];
+const opcionalcance = ['TODAS', 'CENTRO', 'CENTRO SUR', 'CENTRO OCCIDENTE','ORIENTE NORTE', 
 'ORIENTE SUR', 'OCCIDENTE','FAJA','METROPOLITANA',];
-const opcionTipo = ['TODAS', 'WEB', 'ESCRITORIO', 'MOVIL', 'SERVIDOR', 'MIXTA'];
 const opcionPlataforma = ['TODAS', 'WEB', 'ESCRITORIO', 'MOVIL', 'CLIENTE-SERVIDOR', 'STAND ALONE', 'MINI', 'MAINFRAME'];
-const opcionAlcance = ['TODAS', 'LOCAL', 'REGIONAL', 'CORPORATIVO'];
+const opcionAlcance = ['TODAS', 'LOCAL', 'alcanceAL', 'CORPORATIVO'];
 const opcionMantenimiento = ['TODAS', 'DIARIO', 'SEMANAL', 'QUINCENAL', 'MENSUAL',
-    'BIMENSUAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL', 'NO APLICA'];
+'BIMENSUAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL', 'NO APLICA'];
 
 
 function Busqueda({manejarBusqueda}) {
@@ -25,56 +24,52 @@ function Busqueda({manejarBusqueda}) {
     const [debounceValue] = useDebounce(searchTerm, 500);
 
     const [avanzados, setAvanzados] = useState(false);
-    const [id, setId] = useState("");
-    const [estatus, setEstatus] = useState(null);
-    const [region, setRegion] = useState(null);
-    const [tipo, setTipo] = useState(null);
-    const [fecha, setFecha] = useState("");
-    const [prioridad, setPrioridad] = useState(null);
-    const [count, setCount] = useState(10);
-    const [order, setOrder] = useState("ASC");
-    const [critico, setCritico] = useState("");
-    const [licencia, setLicencia] = useState("");
-    const [codigo, setCodigo] = useState("");
-    const [impacto, setImpacto] = useState("");
-    const [basedatos, setBasedatos] = useState("");
-    const [servidor, setServidor] = useState("");
-    const [plataforma, setPlataforma] = useState("");
-    const [alcance, setAlcance] = useState("");
-    const [mantenimiento, setMantenimiento] = useState("");
+    const [datos, setDatos] = useState({
+        estatus: '',
+        plataforma: '',
+        prioridad: '',
+        alcance: '',
+        mantenimiento: '',
+        fecha: '',
+        basedatos: '',
+        servidor: '',
+        critico: '',
+        codigo: '',
+        registros: 10,
+        orden: 'ASC',
+    });
 
-    const obtenerCount = (respuesta) => { setCount(respuesta) };
-    const obtenerOrder = (respuesta) => { setOrder(respuesta) };
-    const obtenerPrioridad = (respuesta) => { setPrioridad(respuesta) };
-    const obtenerTipo = (respuesta) => { setTipo(respuesta) };
-    const obtenerRegion = (respuesta) => { setRegion(respuesta) };
-    const obtenerEstatus = (respuesta) => { setEstatus(respuesta) };
-    const obtenerCritico = (respuesta) => { setCritico(respuesta) };
-    const obtenerLicencia = (respuesta) => { setLicencia(respuesta) };
-    const obtenerCodigo = (respuesta) => { setCodigo(respuesta) };
-    const obtenerImpacto = (respuesta) => { setImpacto(respuesta) };
-    const obtenerBasedatos = (respuesta) => { setBasedatos(respuesta) };
-    const obtenerServidor = (respuesta) => { setServidor(respuesta) };
-    const obtenerPlataforma = (respuesta) => { setCodigo(respuesta) };
-    const obtenerAlcance = (respuesta) => { setImpacto(respuesta) };
-    const obtenerMantenimiento = (respuesta) => { setBasedatos(respuesta) };
+    const handleInputChange = (e) => {
+        if(e.target.value === 'TODAS')
+            setDatos({ ...datos, [e.target.name] : null })
+        else
+            setDatos({ ...datos, [e.target.name] : e.target.value })
+    }
 
     useEffect(() => {
 		if (debounceValue) {
-            onSearch(debounceValue,estatus,region,prioridad,tipo,order,count);
+            onSearch(debounceValue);
         } else {
             setResultados(null);
         }
 	}, [debounceValue]);
 
-    const onSearch = async (value,estatus,region,prioridad,tipo,order,count) => {
+    const onSearch = async (value) => {
         try {
-            const datos = await Usuarios.obtenerPorTermino(value,estatus,region,prioridad,tipo,order,count);
-            console.log(estatus,region,prioridad,tipo,order,count);
-            console.log(Object.keys(datos.data).length);
+            // let alcance2,estatus2,tipo2,prioridad2;
+            // (alcance=='TODAS') ? alcance2 = null : alcance2 = alcance;
+            // (estatus=='TODAS') ? estatus2 = null : estatus2 = estatus;
+            // (tipo=='TODAS') ? tipo2 = null : tipo2 = tipo;
+            // (prioridad=='TODAS') ? prioridad2 = null : prioridad2 = prioridad;
 
-            setResultados(datos.data);
-            manejarBusqueda(datos.data);
+            const { estatus,alcance,plataforma,prioridad,registros,orden } = datos;
+
+            const respuesta = await Usuarios.obtenerPorTermino(value,estatus,alcance,prioridad,plataforma,orden,registros);
+            console.log(estatus,alcance,prioridad,plataforma,orden,registros);
+            console.log(Object.keys(respuesta.data).length);
+
+            setResultados(respuesta.data);
+            manejarBusqueda(respuesta.data);
             console.log(resultados);
             
         } catch (error) {
@@ -88,35 +83,33 @@ function Busqueda({manejarBusqueda}) {
 
                 <div className="selectArea border-solid">
                     <div className="flex justify-center items-center gap-4">
-                        <Select campo='Estatus' name='estatus' busqueda={true} opciones={opcionEstatus} manejador={obtenerEstatus} />
-                        <Select campo='Region' name='region' busqueda={true} opciones={opcionRegion} manejador={obtenerRegion} />
-                        <Select campo='Resultados' name='count' busqueda={true} opciones={opcionCount} manejador={obtenerCount} />
-                        <Select campo='Tipo' name='tipo' busqueda={true} opciones={opcionTipo} manejador={obtenerTipo} />
+                        <Select campo='Estatus' name='estatus' busqueda={true} opciones={opcionEstatus} manejador={handleInputChange} />
+                        <Select campo='alcance' name='alcance' busqueda={true} opciones={opcionalcance} manejador={handleInputChange} />
+                        <Select campo='Plataforma' name='plataforma' busqueda={true} opciones={opcionPlataforma} manejador={handleInputChange} />
+                        <Select campo='Registros' name='registros' busqueda={true} opciones={opcionCount} manejador={handleInputChange} />
                     </div>
                 </div>
 
                 <div style={avanzados ? {display: 'block'} : {display: 'none'}} className="selectArea">
                     <div className="flex flex-wrap justify-center items-center gap-4">
-                        <Select campo='Plataforma' name='plataforma' busqueda={true} opciones={opcionPlataforma} manejador={obtenerPlataforma} />
-                        <Select campo='Alcance' name='alcance' busqueda={true} opciones={opcionAlcance} manejador={obtenerAlcance} />
-                        <Select campo='Mantenimiento' name='mantenimiento' busqueda={true} opciones={opcionMantenimiento} manejador={obtenerMantenimiento} />
+                        <Select campo='Alcance' name='alcance' busqueda={true} opciones={opcionAlcance} manejador={handleInputChange} />
+                        <Select campo='Mantenimiento' name='mantenimiento' busqueda={true} opciones={opcionMantenimiento} manejador={handleInputChange} />
                         <Select campo='Fecha' name='fecha' busqueda={true} opciones={['2023','2022','2021','2020','2019','2018']} />
                     </div>
                 </div>
                 
                 <div className="radioArea">
                     <div className="flex flex-wrap justify-center items-center">
-                        <RadioButton label='Orden' opciones={['ASC', 'DESC']} manejador={obtenerOrder} />
-                        <RadioButton label='Prioridad' opciones={['Todas', 'Alta', 'Media', 'Baja']} manejador={obtenerPrioridad} />
-                        <RadioButton label='Criticidad' opciones={['Todas','Critica', 'Ninguna']} manejador={obtenerCritico} />
+                        <Radio label='Orden' name='orden' opciones={['ASC', 'DESC']} manejador={handleInputChange} />
+                        <Radio label='Prioridad' name='prioridad' opciones={['TODAS', 'ALTA', 'MEDIA', 'BAJA']} manejador={handleInputChange} />
+                        <Radio label='Critica' name='critica' opciones={['SI','NO']} manejador={handleInputChange} />
                     </div>
                     
                     <div style={avanzados ? {display: 'flex'} : {display: 'none'}} className="flex flex-wrap justify-center items-center">
-                        <RadioButton label='Codigo' opciones={['Mixto','Si', 'No']} manejador={obtenerCodigo} />
-                        <RadioButton label='Licencia' opciones={['Ninguna', 'Logica', 'Fisica']} manejador={obtenerLicencia} />
-                        <RadioButton label='Impacto' opciones={['Ninguno','Si', 'No']} manejador={obtenerImpacto} />
-                        {/* <RadioButton label='BaseDatos' opciones={['Si', 'No']} manejador={obtenerBasedatos} />
-                        <RadioButton label='Servidor' opciones={['Si', 'No']} manejador={obtenerServidor} /> */}
+                        <Radio label='Codigo Fuente' name='codigo' opciones={['SI', 'NO']} manejador={handleInputChange} />
+                        <Radio label='Licencia' name='licencia' opciones={['NO', 'LOGICA', 'FISICA']} manejador={handleInputChange} />
+                        <Radio label='Base de Datos' name='basedatos' opciones={['SI', 'NO']} manejador={handleInputChange} />
+                        <Radio label='Servidor' name='servidor' opciones={['SI', 'NO']} manejador={handleInputChange} />
                     </div>
 
                     <div className='mt-8 flex justify-center items-center gap-4'>
@@ -128,7 +121,7 @@ function Busqueda({manejarBusqueda}) {
                                 className="block p-2 pr-12 w-96 text-sm text-black bg-white rounded border-none outline-none" placeholder="Buscar" />
                             <button 
                                 type="submit" 
-                                onClick={(e) => {e.preventDefault(); onSearch(debounceValue,estatus,region,prioridad,tipo,order,count)}}
+                                onClick={(e) => {e.preventDefault(); onSearch(debounceValue)}}
                                 className="absolute top-0 right-0 p-2.5 text-sm font-medium text-white bg-blue-600 rounded-r border border-blue-700 hover:bg-blue-700">
                                 <FaSearch />
                             </button>

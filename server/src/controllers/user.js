@@ -14,7 +14,7 @@ const getItems = async (req,res) => {
 
 // *************** OBTENER TODOS LOS DATOS POR FECHA DE CREACION ***************
 const getByTerm = async (req,res) => {
-    try { 
+    try {  
         const { term,estatus,region,prioridad,tipo,order,count } = req.body;
         const termino = '%' + term + '%';
         let data;
