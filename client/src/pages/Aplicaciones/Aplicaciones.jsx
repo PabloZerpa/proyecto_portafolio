@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
-import { Busqueda, Tabla, Container } from "../../components";
+import { Tabla, Container } from "../../components";
+import { Busqueda } from "../../container"
 import Usuarios from "../../services/user.service";
 import Autorizacion from "../../services/auth.service";
 
@@ -32,7 +33,7 @@ function Aplicaciones() {
         <Busqueda manejarBusqueda={obtenerResultado} />
 
         {resultado ? (
-          <Tabla datos={resultado} opciones={(rol==='admin') ? true : false} />
+          <Tabla datos={resultado} opciones={(rol==='admin') ? true : false} paginacion={true} />
         ) : (
           <div></div>
         )}

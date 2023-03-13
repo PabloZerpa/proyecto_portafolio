@@ -2,8 +2,9 @@
 import { useState,useEffect } from "react";
 import { FaEdit, FaCheckCircle } from "react-icons/fa";
 import Autorizacion from '../services/auth.service';
+import Paginacion from "./Paginacion";
 
-function Tabla2({columnas, datos, campo}) {
+function Tabla2({columnas, datos, paginacion=false, campo}) {
 
     const [valor, setValor] = useState('');
     const [edicion, setEdicion] = useState(null);
@@ -37,8 +38,9 @@ function Tabla2({columnas, datos, campo}) {
 	}, []);
 
     return (
-        <div className="relative mx-8 mb-4 shadow-md sm:rounded">
-            <table className="table-auto border-separate w-full text-sm text-center text-gray-700">
+        <div className="relative mx-8 mb-4 sm:rounded">
+
+            <table className="table-auto border-separate w-full text-xs text-center text-gray-700 shadow-md ">
                 <thead className="text-xs text-gray-700 font-bold bg-zinc-200 uppercase">
                     
                     <tr className="bg-zinc-200 border-b hover:bg-zinc-300">
@@ -49,20 +51,21 @@ function Tabla2({columnas, datos, campo}) {
                 <tbody>
 
                     {datos.map((dato, index) => { 
+                        console.log(dato);
                         const valor = Object.values(dato);
                         return (
                         <tr key={dato.id} className="bg-white border-b hover:bg-gray-100">
-                            <td className="px-2 py-2">{valor[0]}</td>
-                            <td className="px-2 py-2">{valor[1]}</td>
-                            <td className="px-2 py-2">{valor[2]}</td>
-                            <td className="px-2 py-2">
+                            <td className="px-1 py-1">{valor[0]}</td>
+                            <td className="px-1 py-1">{valor[1]}</td>
+                            <td className="px-1 py-1">{valor[2]}</td>
+                            <td className="px-1 py-1">
                                 {edicion!==dato.id ? (
                                     <input type='text' defaultValue={valor[3]} disabled
-                                    className="w-full p-2.5 bg-gray-50 border-none text-gray-900 text-sm text-center rounded-md" />
+                                    className="w-full p-2 bg-gray-50 border-none text-gray-900 text-xs text-center rounded-md" />
                                 ) : (
                                     <input type='text' defaultValue={valor[3]}
                                     onChange={(e) => {setValor(e.target.value)}}
-                                    className="w-full p-2.5 bg-gray-50 border border-solid border-blue-500 text-gray-900 text-sm text-center rounded-md" />
+                                    className="w-full p-2 bg-gray-50 border border-solid border-blue-500 text-gray-900 text-xs text-center rounded-md" />
                                 )}
                                 </td>
                             <td className="px-2 py-2">
@@ -85,6 +88,8 @@ function Tabla2({columnas, datos, campo}) {
                 </tbody>
             </table>
 
+            {paginacion ? ( <Paginacion />) : (null)}
+            
         </div>
     );
 }

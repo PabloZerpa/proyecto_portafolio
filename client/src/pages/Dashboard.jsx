@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Tabla, Container } from "../components";
 import { BiLoaderAlt } from "react-icons/bi";
 import Usuarios from "../services/user.service";
-import Linea from "../components/Linea";
+import Linea from "../chart/Linea";
 
 function Dashboard() {
   
@@ -32,7 +32,7 @@ function Dashboard() {
             <BiLoaderAlt className='text-6xl text-blue-500 animate-spin' />
         ) : (
           <>
-            <h3 className='font-bold'>Modificaciones Recientes</h3>
+            <h3 className='font-bold text-lg'>Modificaciones Recientes</h3>
             <Tabla datos={datos} opciones={false} />
             
             <Linea />

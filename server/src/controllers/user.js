@@ -136,33 +136,47 @@ const getByCampo = async (req,res) => {
 // *************** OBTENER TODOS LOS DATOS POR FECHA DE CREACION ***************
 const getByGrafico = async (req,res) => {
     try { 
-        const { categoria, sub } = req.body;
+        const opcionRegion = ['CARABOBO NORTE', 'CENTRO', 'CENTRO SUR', 'CORPORATIVO','ORIENTE NORTE', 
+        'ORIENTE SUR', 'OCCIDENTE','ANDES',''];
+        const { categoria, orden } = req.body;
         let regiones = '';
+        //let cantidad = {orienteNorte: ''};
         let cantidad = [];
 
-        console.log(categoria,sub);
+        console.log(categoria,orden);
  
         if (categoria === undefined || null)
             return res.status(404).json({ message: "Error al recibir consulta" });
          
         const query = await pool.query( `SELECT ${categoria} FROM apps`);
-        regiones = query[0];
+        regiones = query[0]; 
+        console.log(regiones);
+        console.log(regiones.length);
 
-        for(let i=0; i<10; i++){
-            console.log(regiones[i].region);
+        //          (POSICION_ARREGLO/CANTIDAD_TOTAL)*100
+        // console.log(regiones[5].region);
+        // const data = await pool.query( `SELECT ${categoria} FROM apps WHERE region = ?`, [regiones[5].region]);
+        // console.log(data[0]);
+        // console.log(data[0].length);
+        // cantidad.orienteNorte = data[0].length
+        // //cantidad.push(data[0].length)
+        // console.log(cantidad);
 
-            const data = await pool.query( `SELECT ${categoria} FROM apps WHERE region = ?`, [regiones[i].region]);
+        for(let i=0; i < opcionRegion.length; i++){
+            console.log(opcionRegion[i]);
+
+            const data = await pool.query( `SELECT ${categoria} FROM apps WHERE region = ?`, [opcionRegion[i]]);
 
             console.log(data[0]);
             console.log(data[0].length);
             cantidad.push(data[0].length)
+            console.log(cantidad); 
         }
-        console.log(cantidad);
 
-        if (data.affectedRows === 0)
-            return res.status(404).json({ message: "Sin coincidencias" });
+        // if (data.affectedRows === 0)
+        //     return res.status(404).json({ message: "Sin coincidencias" });
 
-        res.json(data[0]);
+        // res.json(data[0]);
         
     } catch (error) {
         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });

@@ -144,8 +144,10 @@ function Actualizacion() {
       }
       catch (error) { console.log('ERROR AL ACTUALIZAR APL_ACT'); }
     }
-    // if(valor === null) 
-    //   return <Navigate to='/' />
+
+    function navegar(){
+      navigate(-1);
+    }
   
     if(Autorizacion.obtenerUsuario().rol !== 'admin') 
       return <Navigate to='/' />
@@ -161,66 +163,90 @@ function Actualizacion() {
                 <Input campo='Acronimo' name='acronimo' propiedad={acronimo} editable={true} manejador={obtenerAcronimo} />
                 <Select campo='Estatus' name='estatus' propiedad={estatus} opciones={opcionEstatus} manejador={obtenerEstatus} />
             </div>
-
+            
             <Input campo='Nombre' name='nombre' propiedad={nombre} editable={true} area={true} manejador={obtenerNombre} />
             <Input campo='Descripcion' name='descripcion' propiedad={descripcion} editable={true} area={true} manejador={obtenerDescripcion} />
 
             <div className="relative grid gap-6 mb-6 md:grid-cols-2">
               <Select campo='Prioridad'name='prioridad' propiedad={prioridad} opciones={['ALTA','MEDIA','BAJA',]} manejador={obtenerPrioridad} />
-              <Select campo='Tipo de Aplicacion'name='tipo' propiedad={tipo} opciones={opcionTipo} manejador={obtenerTipo} />
+              <Select campo='Alcance' name='alcance' propiedad={alcance} opciones={opcionAlcance} manejador={obtenerAlcance} />
 
+              {/* ========== RESPONSABLE FUNCIONAL ========== */}
               <div className='flex flex-col'>
                 <p className='ml-32'>Responsable Funcional</p>
                 <Input campo='Nombre' name='responsablef' propiedad={responsablef} editable={true} manejador={obtenerResponsablef} />
                 <Input campo='Apellido' name='responsablef_cor' propiedad={responsablef_cor} editable={true} manejador={obtenerResponsablef_cor} />
                 <Input campo='Indicador' name='responsablef_ind' propiedad={responsablef_ind} editable={true} manejador={obtenerResponsablef_ind} />
                 <Input campo='Telefono' name='responsablef_tlf' propiedad={responsablef_tlf} editable={true} manejador={obtenerResponsablef_tlf} />
+                <Input campo='Cedula' name='responsablef_ced' propiedad={responsablef_tlf} editable={true} manejador={obtenerResponsablef_tlf} />
+                <Input campo='Region' name='responsablef_tlf' propiedad={responsablef_tlf} editable={true} manejador={obtenerResponsablef_tlf} />
+                <Input campo='Localidad' name='responsablef_tlf' propiedad={responsablef_tlf} editable={true} manejador={obtenerResponsablef_tlf} />
               </div>
 
+              {/* ========== RESPONSABLE TECNICO ========== */}
               <div className='relative flex flex-col'>
-                <div className='absolute -left-4 top-4 w-1 h-96 border-2 border-dashed border-gray-500'></div>
+                <div className='absolute -left-4 top-6 w-1 h-96 border-2 border-dashed border-gray-500'></div>
+                <div className='absolute -left-4 top-96 w-1 h-64 border-2 border-dashed border-gray-500'></div>
                 <p className='ml-32'>Responsable Tecnico</p>
                 <Input campo='Nombre' name='responsablet' propiedad={responsablet} editable={true} manejador={obtenerResponsablet} />
                 <Input campo='Apellido' name='responsablet_cor' propiedad={responsablet_cor} editable={true} manejador={obtenerResponsablet_cor} />
                 <Input campo='Indicador' name='responsablet_ind' propiedad={responsablet_ind} editable={true} manejador={obtenerResponsablet_ind} />
                 <Input campo='Telefono' name='responsablet_tlf' propiedad={responsablet_tlf} editable={true} manejador={obtenerResponsablet_tlf} />
+                <Input campo='Cedula' name='responsablef_ced' propiedad={responsablef_tlf} editable={true} manejador={obtenerResponsablef_tlf} />
+                <Input campo='Region' name='responsablef_tlf' propiedad={responsablef_tlf} editable={true} manejador={obtenerResponsablef_tlf} />
+                <Input campo='Localidad' name='responsablef_tlf' propiedad={responsablef_tlf} editable={true} manejador={obtenerResponsablef_tlf} />
               </div>
 
+              {/* ========== CLIENTE ========== */}
               <Input campo='Negocio' name='departamento' propiedad={departamento} editable={true} manejador={obtenerDepartamento} />
+              <Input campo='Cliente' name='cliente' propiedad={departamento} editable={true} manejador={obtenerDepartamento} />
               <Input campo='N° de Usuarios' name='cantidad_user' propiedad={cantidad} editable={true} manejador={obtenerCantidad} />
-              <Select campo='Plataforma' name='plataforma' propiedad={plataforma} opciones={opcionPlataforma} editable={true} manejador={obtenerPlataforma} />
-              <Input campo='Direccion' name='direccion' editable={true} />
+              <Select campo='Ubicacion Cliente' name='ubicacionCliente' propiedad={plataforma} opciones={opcionPlataforma} editable={true} manejador={obtenerPlataforma} />
                 
+              {/* ========== TECNOLOGIA ========== */}
               <Select campo='Codigo Fuente' name='codigo_fuente' propiedad={codigo} opciones={['SI','NO']} manejador={obtenerCodigo} />
+              <Select campo='Plataforma' name='plataforma' propiedad={plataforma} opciones={opcionPlataforma} editable={true} manejador={obtenerPlataforma} />
               <Input campo='Lenguaje' name='lenguaje' propiedad={lenguaje} editable={true} manejador={obtenerLenguaje} />
-              <Select campo='Base de Datos' name='base_datos' propiedad={baseDatos} opciones={['SI','NO']} manejador={obtenerBaseDatos} />
-              <Select campo='Alcance' name='alcance' propiedad={alcance} opciones={opcionAlcance} manejador={obtenerAlcance} />
+              <Input campo='Framework' name='framework' propiedad={lenguaje} editable={true} manejador={obtenerLenguaje} />
+              <Input campo='Direccion' name='direccion' editable={true} />
+              
+              {/* ========== BASE DE DATOS ========== */}
+              <Select campo='Base de Datos' name='baseDatos' propiedad={baseDatos} opciones={['SI','NO']} manejador={obtenerBaseDatos} />
+              <Input campo='Nombre Base de Datos' name='nombreBase' propiedad={baseDatos} editable={true} manejador={obtenerBaseDatos} />
+              <Select campo='Estatus Base de Datos' name='estatusBase' propiedad={baseDatos} opciones={['SI','NO']} manejador={obtenerBaseDatos} />
+              <Select campo='Tipo Base de Datos' name='tipoBase' propiedad={baseDatos} opciones={['SI','NO']} manejador={obtenerBaseDatos} />
+              <Select campo='Manejador Base de Datos' name='manejadorBase' propiedad={baseDatos} opciones={['SI','NO']} manejador={obtenerBaseDatos} />
+              <Input campo='Direccion Base de Datos' name='direccionBase' propiedad={baseDatos} editable={true} manejador={obtenerBaseDatos} />
+
+              {/* ========== SERVIDOR ========== */}
+              <Select campo='Servidor' name='servidor' propiedad={baseDatos} opciones={['SI','NO']} manejador={obtenerBaseDatos} />
+              <Input campo='Nombre Servidor' name='nombreServidor' propiedad={baseDatos} editable={true} manejador={obtenerBaseDatos} />
+              <Select campo='Estatus Servidor' name='estatusServidor' propiedad={baseDatos} opciones={['SI','NO']} manejador={obtenerBaseDatos} />
+              <Select campo='Ubicacion Servidor' name='ubicacionServidor' propiedad={baseDatos} opciones={['SI','NO']} manejador={obtenerBaseDatos} />
+              <Input campo='Direccion Servidor' name='direccionServidor' propiedad={baseDatos} editable={true} manejador={obtenerBaseDatos} />
+              
+              {/* ========== DOCUMENTACION ========== */}
+              <Select campo='Documentacion' name='documentacion' propiedad={baseDatos} opciones={['SI','NO']} manejador={obtenerBaseDatos} />
+              <Input campo='Descripcion' name='descripcionDoc' propiedad={baseDatos} editable={true} manejador={obtenerBaseDatos} />
+              <Select campo='Tipo' name='tipoDoc' propiedad={baseDatos} opciones={['SI','NO']} manejador={obtenerBaseDatos} />
+              <Input campo='Direccion' name='direccionDoc' propiedad={baseDatos} editable={true} manejador={obtenerBaseDatos} />
+
+              {/* ========== MANTENIMIENTO ========== */}
+              <Select campo='Frecuencia de Mantenimiento' name='frecuencia' propiedad={baseDatos} opciones={['SI','NO']} manejador={obtenerBaseDatos} />
+              <Select campo='Horas Promedio de Mantenimiento' name='horasProm' propiedad={baseDatos} opciones={['SI','NO']} manejador={obtenerBaseDatos} />
+              <Select campo='Tipo de Mantenimiento' name='tipoMan' propiedad={baseDatos} opciones={['SI','NO']} manejador={obtenerBaseDatos} />
+              <Select campo='Horas Anuales de Mantenimiento' name='horasAnuales' propiedad={baseDatos} opciones={['SI','NO']} manejador={obtenerBaseDatos} />
 
               {/* <div className='absolute bottom-52 w-full border-dashed border-gray-500'></div> */}
-              <Select campo='Propiedad' name='propiedad' propiedad={propiedad} opciones={['PROPIO','TERCERO','COMBINADO']} manejador={obtenerPropiedad} />
-              <Input campo='Fecha de Creacion' name='ultima' propiedad={ultima} editable={true} manejador={obtenerUltima} />
               <Select campo='Region' name='region' propiedad={region} opciones={opcionRegion} manejador={obtenerRegion} />
-              <Select campo='Servidor' name='servidor' propiedad={servidor} opciones={['SI','NO']} manejador={obtenerServidor} />
-              {/* <Input campo='Servidor' name='servidor' propiedad={valor.servidor} editable={true} manejador={obtenerServidor} /> */}
+              <Select campo='Localidad' name='localidad' propiedad={region} opciones={opcionRegion} manejador={obtenerRegion} />
+              <Select campo='Propiedad' name='propiedad' propiedad={propiedad} opciones={['PROPIO','TERCERO','COMBINADO']} manejador={obtenerPropiedad} />
+              <Select campo='Propiedad' name='propiedad' propiedad={propiedad} opciones={['PROPIO','TERCERO','COMBINADO']} manejador={obtenerPropiedad} />
             </div>
 
             <div className="flex justify-center items-center gap-20 py-2">
-              {/* <Button color='red' width={32} onClick={() => navigate('/aplicaciones')} >Cancelar</Button> */}
-              {/* <Button color='blue' width={32} >Guardar</Button> */}
-              <button 
-                onClick={() => navigate('/aplicaciones')}
-                className='w-32 h-8 text-sm bg-red-600 text-white border-none outline-none rounded cursor-pointer hover:bg-red-500'
-              >
-                Cancelar
-              </button>
-              
-              <button 
-                type='submit' 
-                className='w-32 h-8 text-sm bg-blue-600 text-white border-none outline-none rounded cursor-pointer hover:bg-blue-500'
-              >
-                Guardar
-              </button>
-
+              <Button color='red' width={32} accion={navegar} >Cancelar</Button>
+              <Button color='blue' width={32} >Guardar</Button>
             </div>
 
         </form>

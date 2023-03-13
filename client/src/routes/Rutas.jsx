@@ -7,8 +7,10 @@ import {
   Dashboard,
   Administracion,
   Actualizacion,
-  Agregar,
+  Registro,
   Solicitudes,
+  Solicitud,
+  CrearSolicitud,
   Aplicaciones,
   Vista,
   Diagramas,
@@ -31,8 +33,10 @@ function Rutas() {
             <Route element={<ProtegidaAdm />} >
               <Route path="/administracion" element={<Administracion />} />
               <Route path="/administracion/actualizacion/:id" element={<Actualizacion />} />
-              <Route path="/administracion/agregar" element={<Agregar />} />
+              <Route path="/administracion/registro" element={<Registro />} />
               <Route path="/administracion/solicitudes" element={<Solicitudes />} />
+              <Route path="/administracion/solicitudes/:id" element={<Solicitud />} />
+              <Route path="/administracion/crearsolicitud" element={<CrearSolicitud />} />
             </Route>
             
             <Route path="/aplicaciones/" element={<Aplicaciones />} />

@@ -2,8 +2,8 @@
 import axios from 'axios';
 import authHeader from './header.service';
 import Authorization from './auth.service';
-//const baseUrl = "http://localhost:3001/api/";
-const baseUrl = "https://proyecto-portafolio-server.onrender.com/api/";
+const baseUrl = "http://localhost:3001/api/";
+// const baseUrl = "https://proyecto-portafolio-server.onrender.com/api/";
 
 class Usuarios {
 
@@ -48,9 +48,11 @@ class Usuarios {
     }
 
     // =============== OBTIENE LOS DATOS PARA GENERAR LOS GRAFICOS ===============
-    async datosGraficos(categoria,sub) {
+    async datosGraficos(categoria,orden) {
+        console.log(categoria);
+        console.log(orden);
         try {
-            return axios.post(`${baseUrl}user/grafico`, {categoria,sub});
+            return axios.post(`${baseUrl}user/grafico`, {categoria,orden});
         } catch (error) {
             console.log('Error al obtener dato');
         }

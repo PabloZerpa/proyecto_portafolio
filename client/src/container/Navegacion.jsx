@@ -44,9 +44,9 @@ function Navegacion() {
                                         className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                             Actualizacion
                                     </Link>
-                                    <Link to="/administracion/agregar" 
+                                    <Link to="/administracion/registro" 
                                         className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
-                                            Agregar
+                                            Registro
                                     </Link>
                                     <Link to="/administracion/solicitudes" 
                                         className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >

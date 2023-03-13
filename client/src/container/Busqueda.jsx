@@ -2,17 +2,16 @@
 import { useState, useEffect } from 'react';
 import { useDebounce } from 'use-debounce';
 import { FaSearch } from 'react-icons/fa';
-import Select from './Select';
+import { Select, Radio } from '../components';
 import Usuarios from "../services/user.service";
-import Radio from './Radio';
 
 const opcionCount = [10,20,30,40,50];
 const opcionEstatus = ['TODAS', 'DESARROLLO', 'MANTENIMIENTO', 'DESINCORPORADA', 'ESTABILIZACION',
 'SIN USO', 'VISAULIZACION', 'PRUEBA'];
-const opcionalcance = ['TODAS', 'CENTRO', 'CENTRO SUR', 'CENTRO OCCIDENTE','ORIENTE NORTE', 
+const opcionRegion = ['TODAS', 'CENTRO', 'CENTRO SUR', 'CENTRO OCCIDENTE','ORIENTE NORTE', 
 'ORIENTE SUR', 'OCCIDENTE','FAJA','METROPOLITANA',];
 const opcionPlataforma = ['TODAS', 'WEB', 'ESCRITORIO', 'MOVIL', 'CLIENTE-SERVIDOR', 'STAND ALONE', 'MINI', 'MAINFRAME'];
-const opcionAlcance = ['TODAS', 'LOCAL', 'alcanceAL', 'CORPORATIVO'];
+const opcionAlcance = ['TODAS', 'LOCAL', 'DEPARTAMENTAL', 'CORPORATIVO'];
 const opcionMantenimiento = ['TODAS', 'DIARIO', 'SEMANAL', 'QUINCENAL', 'MENSUAL',
 'BIMENSUAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL', 'NO APLICA'];
 
@@ -84,7 +83,7 @@ function Busqueda({manejarBusqueda}) {
                 <div className="selectArea border-solid">
                     <div className="flex justify-center items-center gap-4">
                         <Select campo='Estatus' name='estatus' busqueda={true} opciones={opcionEstatus} manejador={handleInputChange} />
-                        <Select campo='alcance' name='alcance' busqueda={true} opciones={opcionalcance} manejador={handleInputChange} />
+                        <Select campo='Region' name='region' busqueda={true} opciones={opcionRegion} manejador={handleInputChange} />
                         <Select campo='Plataforma' name='plataforma' busqueda={true} opciones={opcionPlataforma} manejador={handleInputChange} />
                         <Select campo='Registros' name='registros' busqueda={true} opciones={opcionCount} manejador={handleInputChange} />
                     </div>

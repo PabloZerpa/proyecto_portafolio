@@ -1,21 +1,15 @@
 
-import { useEffect, useState } from "react";
-
 function Radio({label, name=label, opciones, manejador, size='small'}) {
 
-    const onHandle = (e) => { 
-        manejador(e);
-    }
+    const largo = opciones.length;
+    const small = `flex items-center justify-center w-14 h-8 p-2 text-gray-500 bg-white border border-gray-100 cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100`;
+    const smallLeft = `flex items-center justify-center w-14 h-8 p-2 text-gray-500 bg-white border border-gray-100 rounded-l cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100`;
+    const smallRight = `flex items-center justify-center w-14 h-8 p-2 text-gray-500 bg-white border border-gray-100 rounded-r cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100`;
+    const big = `flex items-center justify-center w-28 h-10 p-2 text-gray-500 bg-white border border-gray-100 cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100`;
+    const bigLeft = `flex items-center justify-center w-28 h-10 p-2 text-gray-500 bg-white border border-gray-100 rounded-l cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100`;
+    const bigRight = `flex items-center justify-center w-28 h-10 p-2 text-gray-500 bg-white border border-gray-100 rounded-r cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100`;
 
-    const [largo, setLargo] = useState(opciones.length);
-
-    const [small, setSmall] = useState(`flex items-center justify-center w-14 h-8 p-2 text-gray-500 bg-white border border-gray-100 cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100`);
-    const [smallLeft, setLeftSmall] = useState(`flex items-center justify-center w-14 h-8 p-2 text-gray-500 bg-white border border-gray-100 rounded-l cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100`);
-    const [smallRight, setRightSmall] = useState(`flex items-center justify-center w-14 h-8 p-2 text-gray-500 bg-white border border-gray-100 rounded-r cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100`);
-
-    const [big, setBig] = useState(`flex items-center justify-center w-28 h-10 p-2 text-gray-500 bg-white border border-gray-100 cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100`);
-    const [bigLeft, setLeftBig] = useState(`flex items-center justify-center w-28 h-10 p-2 text-gray-500 bg-white border border-gray-100 rounded-l cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100`);
-    const [bigRight, setRightBig] = useState(`flex items-center justify-center w-28 h-10 p-2 text-gray-500 bg-white border border-gray-100 rounded-r cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100`);
+    const onHandle = (e) => manejador(e);
 
     return(
         <div className="flex flex-col items-center justify-center text-sm font-medium">

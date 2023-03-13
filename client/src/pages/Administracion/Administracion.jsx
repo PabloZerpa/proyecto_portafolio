@@ -45,7 +45,7 @@ function Administracion() {
     return (
       <Container>
 
-        <h2 className='font-bold'>Actualizacion por Campo</h2>
+        <h2 className='font-bold text-lg'>Actualizacion por Campo</h2>
 
         <form className='flex justify-center items-center flex-row gap-4 p-4 bg-zinc-400 border-solid rounded'>
 
@@ -53,20 +53,20 @@ function Administracion() {
             <input 
               type="search"
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="block p-2 pr-12 w-96 text-sm text-black bg-white rounded border-none outline-none" placeholder="Buscar" />
+              className="block p-2 pr-12 w-96 text-xs text-black bg-white rounded border-none outline-none" placeholder="Buscar" />
             <button 
               type="submit" 
-              className="absolute top-0 right-0 p-2.5 text-sm font-medium text-white bg-blue-600 rounded-r border border-blue-700 hover:bg-blue-700">          
+              className="absolute top-0 right-0 p-2 h-8 text-xs font-medium text-white bg-blue-600 rounded-r border border-blue-700 hover:bg-blue-700">          
               <FaSearch />
             </button>
           </div>
 
-          <Select name='campos' busqueda={true} opciones={campos} manejador={handleInputChange} />
+          <Select name='campos' direccion="row" busqueda={true} opciones={campos} manejador={handleInputChange} />
         </form>
 
         {resultados ? (
           // <Tabla datos={resultados} opciones={(rol==='admin') ? true : false} />
-          <Tabla2 columnas={['ID','Acronimo','Nombre',campo, 'Editar']} datos={resultados} campo={campo} />
+          <Tabla2 columnas={['ID','Acronimo','Nombre',campo, 'Editar']} datos={resultados} paginacion={true} campo={campo} />
         ) : (
           <div></div>
         )}
