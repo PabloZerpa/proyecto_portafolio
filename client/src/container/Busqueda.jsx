@@ -27,6 +27,7 @@ function Busqueda({manejarBusqueda}) {
         estatus: '',
         plataforma: '',
         prioridad: '',
+        region: '',
         alcance: '',
         mantenimiento: '',
         fecha: '',
@@ -51,16 +52,10 @@ function Busqueda({manejarBusqueda}) {
         } else {
             setResultados(null);
         }
-	}, [debounceValue]);
+	}, [debounceValue, datos]);
 
     const onSearch = async (value) => {
         try {
-            // let alcance2,estatus2,tipo2,prioridad2;
-            // (alcance=='TODAS') ? alcance2 = null : alcance2 = alcance;
-            // (estatus=='TODAS') ? estatus2 = null : estatus2 = estatus;
-            // (tipo=='TODAS') ? tipo2 = null : tipo2 = tipo;
-            // (prioridad=='TODAS') ? prioridad2 = null : prioridad2 = prioridad;
-
             const { estatus,alcance,plataforma,prioridad,registros,orden } = datos;
 
             const respuesta = await Usuarios.obtenerPorTermino(value,estatus,alcance,prioridad,plataforma,orden,registros);
@@ -137,7 +132,6 @@ function Busqueda({manejarBusqueda}) {
                         />
 
                     </div>
-
                 </div>
             </div>
             
@@ -146,17 +140,3 @@ function Busqueda({manejarBusqueda}) {
 }
 
 export default Busqueda;
-
-
-{/* <div className="flex flex-wrap justify-center items-center">
-                        <RadioButton label='Orden' opciones={['Ascendente', 'Descendente']} />
-                        <RadioButton label='Prioridad' opciones={['Todas', 'Alta','Media', 'Baja']} />
-                        <RadioButton label='Criticidad' opciones={['Critica', 'No Critica']} />
-                    </div>
-                    <div style={avanzados ? {display: 'flex'} : {display: 'none'}} className="flex flex-wrap justify-center items-center">
-                        <RadioButton label='Codigo' opciones={['Si', 'No', 'Mixto']} />
-                        <RadioButton label='Licencia' opciones={['Ninguna', 'Logica', 'Fisica']} />
-                        <RadioButton label='Impacto' opciones={['Ninguna', 'Si', 'No']} />
-                        <RadioButton label='BaseDatos' opciones={['Si', 'No']} />
-                        <RadioButton label='Servidor' opciones={['Si', 'No']} />
-                    </div> */}

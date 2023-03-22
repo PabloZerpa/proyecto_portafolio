@@ -9,17 +9,17 @@ const columnas = ['ID','Tipo','Objetivo','Estatus','Descripcion','Fecha','Ver'];
 const resultados = [
     {id:'10',tipo:'CREACION',objetivo:'APLICACION',estatus:'APROBADA',descripcion:'aaaaaaaaaaaaaa',fecha:'11/5/2020',
         editar:
-        <Link to={`/administracion/solicitudes/${1}`}>
+        <Link to={`/solicitudes/${1}`}>
             <FaEye className="text-base text-blue-500 cursor-pointer ml-4" />
         </Link>},
     {id:'24',tipo:'MODIFICACION',objetivo:'APLICACION',estatus:'REVISION',descripcion:'bbbbbbbbbbbbbbbbbbbbbb',fecha:'6/8/2014',
         editar:
-        <Link to={`/administracion/solicitudes/${2}`}>
+        <Link to={`/solicitudes/${2}`}>
             <FaEye className="text-base text-blue-500 cursor-pointer ml-4" />
         </Link>},
     {id:'38',tipo:'DESINCORPORACION',objetivo:'BASE DE DATOS',estatus:'RECHAZADA',descripcion:'cccc',fecha:'21/4/2022',
         editar:
-        <Link to={`/administracion/solicitudes/${3}`}>
+        <Link to={`/solicitudes/${3}`}>
             <FaEye className="text-base text-blue-500 cursor-pointer ml-4" />
         </Link>},
 ];
@@ -47,9 +47,9 @@ function Solicitudes() {
 
             <h2 className='font-bold text-lg'>Lista de Solicitudes</h2>
 
-            <form className="w-3/4 bg-zinc-400 p-4 mb-4 rounded drop-shadow-md" >
+            <form className="w-1/2 bg-zinc-400 p-4 mb-4 rounded drop-shadow-md" >
 
-                <div className='flex justify-between items-center flex-row gap-2 py-4 bg-zinc-400 border-solid rounded'>
+                <div className='flex justify-center items-center flex-row gap-2 py-4 bg-zinc-400 border-solid rounded'>
                     <div className="flex gap-4">
 
                         <div className="relative w-96">
@@ -71,10 +71,6 @@ function Solicitudes() {
                             manejador={handleInputChange} 
                         />
                     </div>
-                        
-                    <Link to={`/administracion/crearsolicitud`} className='text-lg' >
-                        <Button>Crear</Button>
-                    </Link>
                 </div>
             </form>
 

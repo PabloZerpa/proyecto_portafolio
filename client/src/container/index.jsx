@@ -1,11 +1,11 @@
 import Header from '../container/Header';
 import Navegacion from '../container/Navegacion';
 import Busqueda from '../container/Busqueda';
-import Perfil from '../container/Perfil';
+import Dropdown from '../container/Dropdown';
 
 export {
     Header,
     Navegacion,
     Busqueda,
-    Perfil,
+    Dropdown,
 };

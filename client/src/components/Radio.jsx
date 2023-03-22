@@ -18,19 +18,20 @@ function Radio({label, name=label, opciones, manejador, size='small'}) {
             <ul className="flex text-sm m-0 p-2 mr-1">
 
                 {opciones.map((opcion, index) => {
+                    const labelId = `${label}${index}`;
                     if(index===0){
                         return(
                             <li>
                                 <input 
                                     type="radio" 
-                                    id={label}
+                                    id={labelId}
                                     name={name}
                                     value={opcion}
                                     className="hidden peer" 
                                     defaultChecked
                                     onChange={(e) => {onHandle(e)}}
                                 />
-                                <label for={label} className={size==='small' ? smallLeft : bigLeft} >                           
+                                <label for={labelId} className={size==='small' ? smallLeft : bigLeft} >                           
                                     <div className="text-sm font-semibold">{opcion}</div>
                                 </label>
                             </li>
@@ -41,13 +42,13 @@ function Radio({label, name=label, opciones, manejador, size='small'}) {
                             <li>
                                 <input 
                                     type="radio" 
-                                    id={opcion}
+                                    id={labelId}
                                     name={name}
                                     value={opcion}
                                     className="hidden peer" 
                                     onChange={(e) => {onHandle(e)}}
                                 />
-                                <label for={opcion} className={size==='small' ? smallRight : bigRight} >                           
+                                <label for={labelId} className={size==='small' ? smallRight : bigRight} >                           
                                     <div className="text-sm font-semibold">{opcion}</div>
                                 </label>
                             </li>
@@ -58,13 +59,13 @@ function Radio({label, name=label, opciones, manejador, size='small'}) {
                             <li>
                                 <input 
                                     type="radio" 
-                                    id={opcion}
+                                    id={labelId}
                                     name={name}
                                     value={opcion}
                                     className="hidden peer" 
                                     onChange={(e) => {onHandle(e)}}
                                 />
-                                <label for={opcion} className={size==='small' ? small : big} >                           
+                                <label for={labelId} className={size==='small' ? small : big} >                           
                                     <div className="text-sm font-semibold">{opcion}</div>
                                 </label>
                             </li>

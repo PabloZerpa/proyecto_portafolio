@@ -9,7 +9,7 @@ function Tabla3({columnas, datos, paginacion=false}) {
                 <thead className="text-xs text-gray-700 font-bold bg-zinc-200 uppercase">
                     
                     <tr className="bg-zinc-200 border-b hover:bg-zinc-300">
-                        {columnas.map((columna) => { return  <td scope="col" className="px-2 py-2">{columna}</td> }) }
+                        {columnas.map((columna,index) => { return  <td key={index} scope="col" className="px-2 py-2">{columna}</td> }) }
                     </tr> 
                     
                 </thead>
@@ -20,7 +20,7 @@ function Tabla3({columnas, datos, paginacion=false}) {
                         return (
                             <tr key={index} className="bg-white border-b hover:bg-gray-100">
                                 {valor.map((valor, index) => {
-                                    return ( <td className="px-2 py-2">{valor}</td> )
+                                    return ( <td key={index} className="px-2 py-2">{valor}</td> )
                                 })}
                             </tr>
                         );

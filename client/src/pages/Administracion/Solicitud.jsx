@@ -40,7 +40,7 @@ function Solicitud() {
             <div className="flex flex-col w-3/4 justify-start gap-4 border-2 border-dashed border-blue-500">
                 <span className="font-bold text-sm">Datos del Elemento</span>
                 <div className="flex gap-4">
-                    <Select campo='Objetivo' name='objetivo' direccion="row" opciones={['APLICACION','BASE DE DATOS','SERVIDOR']} />
+                    <Select campo='Elemento' name='elemento' direccion="row" opciones={['APLICACION','BASE DE DATOS','SERVIDOR']} />
                     <Input campo='Acronimo' name='acronimo' direccion="row" />
                     <Input campo='Nombre' name='nombre' direccion="row" />
                 </div>

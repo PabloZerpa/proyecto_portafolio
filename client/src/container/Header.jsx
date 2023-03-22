@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Perfil } from "./";
+import { Dropdown } from "./";
 import Autorizacion from '../services/auth.service';
 
 const logo = "https://logodownload.org/wp-content/uploads/2019/03/pdvsa-logo.png";
@@ -30,7 +30,7 @@ function Header() {
       ) : ( 
         <>
           <div className="pl-14 text-xl font-bold">Repositorio de Infraestructura y Aplicaciones</div>
-          <Perfil user={user} />
+          <Dropdown user={user} />
         </>
       )}
 

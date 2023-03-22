@@ -114,70 +114,84 @@ function Registro() {
 
                 {/* --------------- INFORMACION BASICA --------------- */}
                 <div className="grid gap-6 mb-0 md:grid-cols-2">
-                    <Input campo='Acronimo' name='acronimo' editable={true} manejador={handleInputChange} />
-                    <Select campo='Estatus' name='estatus' opciones={opcionEstatus} manejador={handleInputChange} />
+                    <Input campo='Acronimo' name='aplicacion_acronimo' editable={true} manejador={handleInputChange} />
+                    <Select campo='Estatus' name='aplicacion_estatus' opciones={opcionEstatus} manejador={handleInputChange}/>
                 </div>
 
-                <Input campo='Nombre' name='nombre' editable={true} area={true} manejador={handleInputChange} />
-                <Input campo='Descripcion' name='descripcion' editable={true} area={true} manejador={handleInputChange} />
+                <Input campo='Nombre' name='aplicacion_nombre' editable={true} area={true} manejador={handleInputChange} />
+                <Input campo='Descripcion' name='aplicacion_descripcion' editable={true} area={true} manejador={handleInputChange} />
 
                 <div className="relative grid gap-6 mb-0 md:grid-cols-2">
-                    <Input campo='ID' name='id' editable={true} manejador={handleInputChange} />
-                    <Select campo='Prioridad' name='prioridad' opciones={['ALTA','MEDIA','BAJA',]} manejador={handleInputChange} />
-                    <Select campo='Critico' name='critico' opciones={['SI','NO']} manejador={handleInputChange} />
-                    <Select campo='Version' name='version' opciones={opcionAlcance} manejador={handleInputChange} />
-                    <Select campo='Idioma' name='idioma' opciones={opcionAlcance} manejador={handleInputChange} />
-                    <Select campo='Alcance' name='alcance' opciones={opcionAlcance} manejador={handleInputChange} />
+                    <Input campo='Version' name='aplicacion_version' editable={true} manejador={handleInputChange} />
+                    <Select campo='Prioridad' name='aplicacion_prioridad' opciones={['ALTA','MEDIA','BAJA',]} manejador={handleInputChange} />
+                    <Select campo='Critico' name='aplicacion_critico' opciones={['SI','NO']} manejador={handleInputChange} />
+                    <Select campo='Alcance' name='aplicacion_alcance' opciones={opcionAlcance} manejador={handleInputChange} />
+                    <Select campo='Licencia' name='aplicacion_licencia' opciones={['NINGUNA','FISICA','LOGICA']} manejador={handleInputChange} />
+                    <Input campo='Direccion' name='aplicacion_direccion' editable={true} manejador={handleInputChange} />
 
-                    {/* --------------- RESPONSABLES --------------- */}
+                    {/* --------------- RESPONSABLES --------------- */} 
                     <div className='flex flex-col'>
                         <p className='ml-32 font-bold'>Responsable Funcional</p>
-                        <Input campo='Nombre' name='nombreFuncional' editable={true} manejador={handleInputChange} />
-                        <Input campo='Apellido' name='apellidoFuncional' editable={true} manejador={handleInputChange} />
-                        <Input campo='Indicador' name='indicadorFuncional' editable={true} manejador={handleInputChange} />
-                        <Input campo='Cedula' name='cedulaFuncional' editable={true} />
-                        <Input campo='Telefono' name='telefonoFuncional' editable={true} manejador={handleInputChange} />
-                        <Select campo='Region' name='regionFuncional' opciones={opcionRegion} manejador={handleInputChange} />
-                        <Select campo='Localidad' name='localidadFuncional' opciones={opcionRegion} manejador={handleInputChange} />
+                        <Input campo='Nombre' name='funcional_nombre' editable={true} manejador={handleInputChange} />
+                        <Input campo='Apellido' name='funcional_apellido' editable={true} manejador={handleInputChange} />
+                        <Input campo='Indicador' name='funcional_indicador' editable={true} manejador={handleInputChange} />
+                        <Input campo='Cedula' name='funcional_cedula' editable={true} />
+                        <Input campo='Telefono' name='funcional_telefono' editable={true} manejador={handleInputChange} />
+                        <Select campo='Rol' name='funcional_rol' opciones={opcionRegion} manejador={handleInputChange} />
+                        <Select campo='Gerencia' name='funcional_gerencia' opciones={opcionRegion} manejador={handleInputChange} />
+                        <Select campo='Subgerencia' name='funcional_subgerencia' opciones={opcionRegion} manejador={handleInputChange} />
+                        <Select campo='Region' name='funcional_region' opciones={opcionRegion} manejador={handleInputChange} />
+                        <Select campo='Localidad' name='funcional_localidad' opciones={opcionRegion} manejador={handleInputChange} />
                     </div>
 
                     <div className='relative flex flex-col'>
                         <div className='absolute -left-4 top-12 w-1 h-72 border-2 border-dashed border-gray-500'></div>
                         <div className='absolute -left-4 top-80 w-1 h-80 border-2 border-dashed border-gray-500'></div>
                         <p className='ml-32 font-bold'>Responsable Tecnico</p>
-                        <Input campo='Nombre' name='nombreTecnico' editable={true} manejador={handleInputChange} />
-                        <Input campo='Apellido' name='apellidoTecnico' editable={true} manejador={handleInputChange} />
-                        <Input campo='Indicador' name='indicadorTecnico' editable={true} manejador={handleInputChange} />
-                        <Input campo='Cedula' name='cedulaTecnico' editable={true} />
-                        <Input campo='Telefono' name='telefonoTecnico' editable={true} manejador={handleInputChange} />
-                        <Select campo='Region' name='regionTecnico' opciones={opcionRegion} manejador={handleInputChange} />
-                        <Select campo='Localidad' name='localidadTecnico' opciones={opcionRegion} manejador={handleInputChange} />
+                        <Input campo='Nombre' name='tecnico_nombre' editable={true} manejador={handleInputChange} />
+                        <Input campo='Apellido' name='tecnico_apellido' editable={true} manejador={handleInputChange} />
+                        <Input campo='Indicador' name='tecnico_indicador' editable={true} manejador={handleInputChange} />
+                        <Input campo='Cedula' name='tecnico_cedula' editable={true} />
+                        <Input campo='Telefono' name='tecnico_telefono' editable={true} manejador={handleInputChange} />
+                        <Select campo='Rol' name='tecnico_rol' opciones={opcionRegion} manejador={handleInputChange} />
+                        <Select campo='Gerencia' name='tecnico_gerencia' opciones={opcionRegion} manejador={handleInputChange} />
+                        <Select campo='Subgerencia' name='tecnico_subgerencia' opciones={opcionRegion} manejador={handleInputChange} />
+                        <Select campo='Region' name='tecnico_region' opciones={opcionRegion} manejador={handleInputChange} />
+                        <Select campo='Localidad' name='tecnico_localidad' opciones={opcionRegion} manejador={handleInputChange} />
                     </div>
 
                     {/* --------------- TECNOLOGIAS --------------- */}
-                    <div className='relative'>
+
+                    <Select campo='Plataforma' name='plataforma' opciones={opcionPlataforma} manejador={handleInputChange} />
+                    <Select campo='Codigo Fuente' name='aplicacion_codigo_fuente' opciones={['SI','NO']} manejador={handleInputChange} />
+                    <Input campo='Lenguaje' name='lenguaje' editable={true} manejador={handleInputChange} />
+                    <Input campo='Version Len' name='lenguaje_version' editable={true} manejador={handleInputChange} />
+                    <Input campo='Framework' name='framework' editable={true} manejador={handleInputChange} />
+                    <Input campo='Version Fram' name='framework_version' editable={true} manejador={handleInputChange} />
+
+                    {/* <div className='relative'>
                         <div className='absolute left-0 -top-4 w-96 h-1 border-2 border-dashed border-gray-500'></div>
-                        <Select campo='Codigo Fuente' name='codigoFuente' opciones={['SI','NO']} manejador={handleInputChange} />
-                        <Select campo='Licencia' name='licencia' opciones={['NINGUNA','FISICA','LOGICA']} manejador={handleInputChange} />
-                        <Input campo='Direccion' name='direccion' editable={true} manejador={handleInputChange} />
                     </div>
                     <div className='relative'>
                         <div className='absolute right-0 -top-4 w-96 h-1 border-2 border-dashed border-gray-500'></div>
                         <div className='absolute right-96 -top-4 w-24 h-1 border-2 border-dashed border-gray-500'></div>
-                        <Select campo='Plataforma' name='plataforma' opciones={opcionPlataforma} manejador={handleInputChange} />
-                        <Input campo='Lenguaje' name='lenguaje' editable={true} manejador={handleInputChange} />
-                        <Input campo='Framework' name='framework' editable={true} manejador={handleInputChange} />
-                    </div>
+                    </div> */}
                     
                     {/* --------------- BASE DE DATOS --------------- */}
                     <div className='relative flex flex-col'>
                         <p className='ml-32 font-bold'>Base de datos</p>
-                        <Select campo='Base de Datos' name='baseDatos' opciones={['SI','NO']} manejador={handleInputChange} />
-                        <Input campo='Nombre' name='nombreBase' manejador={handleInputChange} />
-                        <Select campo='Estatus' name='estatusBase' opciones={['SI','NO']} manejador={handleInputChange} />
-                        <Select campo='Tipo' name='tipoBase' opciones={['Relacional','NO Relacional','Objetos']} manejador={handleInputChange} />
-                        <Select campo='Manejador' name='manejadorBase' opciones={['MYSQL','POSTGRESS','MARIADB']} editable={true} />
-                        <Input campo='Direccion' name='direccionBase' editable={true} manejador={handleInputChange} />
+                        <Input campo='Nombre' name='base_datos_nombre' editable={true} manejador={handleInputChange} />
+                        <Select campo='Estatus' name='base_datos_estatus' opciones={opcionEstatus} manejador={handleInputChange}/>
+                        <Select campo='Tipo' name='base_datos_tipo' opciones={['Relacional','NO Relacional','Objetos']} manejador={handleInputChange} />
+                        <Select campo='Manejador' name='base_datos_manejador' opciones={['MYSQL','POSTGRESS','MARIADB']} manejador={handleInputChange} />
+                        <Input campo='Version Man' name='base_datos_manejador_version' editable={true} manejador={handleInputChange} />
+                        <Input campo='Sistema' name='base_datos_sistema' editable={true} manejador={handleInputChange} />
+                        <Input campo='Version Sis' name='base_datos_sistemas_version' editable={true} manejador={handleInputChange} />
+                        <Select campo='Tipo Amb' name='base_datos_tipo_ambiente' opciones={['Relacional','NO Relacional','Objetos']} manejador={handleInputChange} />
+                        <Input campo='N° Usuarios' name='base_datos_cantidad' editable={true} manejador={handleInputChange} />
+                        <Input campo='Direccion' name='base_datos_direccion' editable={true} manejador={handleInputChange} />
+                        <Input campo='Servidor' name='base_datos_servidor' editable={true} manejador={handleInputChange} />
+
                     </div>
 
                     {/* --------------- SERVIDOR --------------- */}
@@ -185,56 +199,43 @@ function Registro() {
                         <div className='absolute -left-4 top-12 w-1 h-56 border-2 border-dashed border-gray-500'></div>
                         <div className='absolute -left-4 top-44 w-1 h-64 border-2 border-dashed border-gray-500'></div>
                         <p className='ml-32 font-bold'>Servidor</p>
-                        <Select campo='Servidor' name='servidor' opciones={['SI','NO']} manejador={handleInputChange} />
-                        <Input campo='Nombre' name='nombreServidor' manejador={handleInputChange} />
-                        <Select campo='Estatus' name='estatusServidor' opciones={['SI','NO']} manejador={handleInputChange} />
-                        <Input campo='Direccion' name='direccionServidor' editable={true} manejador={handleInputChange} />
-                        <Input campo='Ubicacion' name='ubicacionServidor' editable={true} manejador={handleInputChange} />
+                        <Input campo='Nombre' name='servidor_nombre' editable={true} manejador={handleInputChange} />
+                        <Select campo='Estatus' name='servidor_estatus' opciones={['SI','NO']} manejador={handleInputChange}/>
+                        <Input campo='Sistema' name='servidor_sistema' editable={true} manejador={handleInputChange} />
+                        <Input campo='Version Sis' name='servidor_sistemas_version' editable={true} manejador={handleInputChange} />
+                        <Input campo='Direccion' name='servidor_direccion' editable={true} manejador={handleInputChange} />
+                        <Input campo='Marca' name='servidor_marca' editable={true} manejador={handleInputChange} />
+                        <Input campo='Modelo' name='servidor_modelo' editable={true} manejador={handleInputChange} />
+                        <Input campo='Serial' name='servidor_modelo' editable={true} manejador={handleInputChange} />
+                        <Input campo='Cantidad' name='servidor_cantidad_cpu' editable={true} manejador={handleInputChange} />
+                        <Input campo='Velocidad' name='servidor_velocidad_cpu' editable={true} manejador={handleInputChange} />
+                        <Input campo='Memoria' name='servidor_memoria' editable={true} manejador={handleInputChange} />
+                        <Select campo='Region' name='servidor_region' opciones={opcionRegion} manejador={handleInputChange} />
+                        <Select campo='Localidad' name='servidor_localidad' opciones={opcionRegion} manejador={handleInputChange} />
                     </div>
 
                     {/* --------------- CLIENTE --------------- */}
-                    <div>
-                        <Input campo='Negocio' name='negocio' editable={true} manejador={handleInputChange} />
-                        <Input campo='Cliente' name='cliente' editable={true} manejador={handleInputChange} />
-                        <Input campo='Tipo deCliente' name='tipoCliente' editable={true} manejador={handleInputChange} />
-                    </div>
-                    <div>
-                        <Input campo='N° de Usuarios' name='cantidad' editable={true} manejador={handleInputChange} />
-                        <Input campo='Region' name='regionCliente' editable={true} manejador={handleInputChange} />
-                        <Input campo='Localidad' name='localidadCliente' editable={true} manejador={handleInputChange} />
-                    </div>
+                    <Input campo='Cliente' name='cliente_nombre' editable={true} manejador={handleInputChange} />
+                    <Input campo='N° Usuarios' name='cliente_cantidad' editable={true} manejador={handleInputChange} />
+                    <Input campo='Region' name='cliente_region' editable={true} manejador={handleInputChange} />
+                    <Input campo='Localidad' name='cliente_localidad' editable={true} manejador={handleInputChange} />
 
                     {/* --------------- DOCUMENTACION --------------- */}
-                    <div>
-                        <Input campo='Documentacion' name='documentacion' editable={true} manejador={handleInputChange} />
-                        <Input campo='Descripcion' name='descripcionDoc' editable={true} manejador={handleInputChange} />
-                    </div>
-                    <div>
-                        <Input campo='Direccion' name='direccionDoc' editable={true} manejador={handleInputChange} />
-                        <Input campo='Tipo' name='tipoDoc' editable={true} manejador={handleInputChange} />
-                    </div>
+                    <Input campo='Nombre' name='documentacion_nombre' editable={true} manejador={handleInputChange} />
+                    <Input campo='Descripcion' name='documentacion_descrip' editable={true} manejador={handleInputChange} />
+                    <Input campo='Direccion' name='documentacion_direccion' editable={true} manejador={handleInputChange} />
+                    <Input campo='Tipo de Doc' name='documentacion_tipo' editable={true} manejador={handleInputChange} />
 
                     {/* --------------- MANTENIMIENTO --------------- */}
-                    <div className='relative'>
-                        <div className='absolute left-0 -top-4 w-96 h-1 border-2 border-dashed border-gray-500'></div>
-                        <Select campo='Frecuencia' name='frecuencia' opciones={opcionMantenimiento} editable={true} manejador={handleInputChange} />
-                        <Input campo='Horas Promedio' name='horasProm' editable={true} manejador={handleInputChange} />
-                    </div>
-                    <div className='relative'>
-                        <div className='absolute right-0 -top-4 w-96 h-1 border-2 border-dashed border-gray-500'></div>
-                        <div className='absolute right-96 -top-4 w-24 h-1 border-2 border-dashed border-gray-500'></div>
-                        <Select campo='Tipo' name='tipoMan' opciones={opcionMantenimiento} editable={true} manejador={handleInputChange} />
-                        <Input campo='Horas Anuales' name='horasAnuales' editable={true} manejador={handleInputChange} />
-                    </div>
+                    <Select campo='Frecuencia' name='mantenimiento_frecuencia' opciones={opcionMantenimiento} editable={true} manejador={handleInputChange}/>
+                    <Input campo='Horas Pro' name='mantenimiento_horas_prom' editable={true} manejador={handleInputChange} />
+                    <Input campo='Horas Anu' name='mantenimiento_horas_anuales' editable={true} manejador={handleInputChange} />
+                    <div></div>
 
                     {/* --------------- UBICACION Y FECHA --------------- */}
                     <div>
                         <div className='absolute top-0 left-0 w-full border-dashed border-gray-500'></div>
-                        <Select campo='Propiedad' name='propiedad' opciones={['PROPIO','TERCERO','COMPARTIDO']} manejador={handleInputChange} />
-                        <Select campo='Region' name='region' opciones={opcionRegion} manejador={handleInputChange} />
-                    </div>
-                    <div>
-                        <Select campo='Localidad' name='localidad' opciones={opcionRegion} manejador={handleInputChange} />
+                        <Select campo='Region' name='aplicacion_region' opciones={opcionRegion} manejador={handleInputChange} />
                         <div className='flex flex-col gap-2 text-xs font-medium text-gray-900 mb-6'>
                             <label>Fecha de Registro</label>
                             <input
@@ -245,6 +246,9 @@ function Registro() {
                                 onChange={(e) => {handleInputChange(e)}}
                             />
                         </div>
+                    </div>
+                    <div>
+                        <Select campo='Localidad' name='aplicacion_localidad' opciones={['PROPIO','TERCERO','COMPARTIDO']} manejador={handleInputChange} />
                     </div>
 
                     {/* --------------- FALLAS - SOLICITUDES --------------- */}

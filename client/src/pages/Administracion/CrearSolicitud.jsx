@@ -19,8 +19,8 @@ function CrearSolicitud() {
                 <span className="font-bold text-sm">Datos de la solicitud</span>
                 <div className="flex gap-4">
                     <Select campo='Tipo' name='tipo' direccion="row" editable={true} opciones={['CREACION','MODIFICACION','DESINCORPORACION']} />
-                    <Select campo='Estatus' name='estatus' direccion="row" editable={true} opciones={['NUEVA','APROBADA','RECHAZADA','REVISION']} />
-                    <Select campo='Objetivo' name='objetivo' direccion="row" editable={true} opciones={['APLICACION','BASE DE DATOS','SERVIDOR']} />
+                    <Select campo='Estatus' name='estatus' direccion="row" editable={true} opciones={['NUEVA','APROBADA','RECHAZADA','ANULADA','DIFERIDA']} />
+                    <Select campo='Elemento' name='elemento' direccion="row" editable={true} opciones={['APLICACION','BASE DE DATOS','SERVIDOR']} />
                 </div>
 
                 <Input campo='Descripcion' name='descripcion' area={true} direccion="row" editable={true} />
@@ -30,8 +30,8 @@ function CrearSolicitud() {
                 <span className="font-bold text-sm">Datos del Aprobador</span>
                 <div className="flex gap-4">
                     <Input campo='Nombre' name='nombre' direccion="row" editable={true} />
-                    <Select campo='Gerencia' name='gerencia' direccion="row" editable={true} opciones={['NUEVA','APROBADA','RECHAZADA','REVISION']} />
-                    <Select campo='SubGerencia' name='subgerencia' direccion="row" editable={true} opciones={['NUEVA','APROBADA','RECHAZADA','REVISION']} />
+                    <Select campo='Gerencia' name='gerencia' direccion="row" editable={true} opciones={['NUEVA','APROBADA','RECHAZADA','ANULADA','DIFERIDA']} />
+                    <Select campo='SubGerencia' name='subgerencia' direccion="row" editable={true} opciones={['NUEVA','APROBADA','RECHAZADA','ANULADA','DIFERIDA']} />
                 </div>
             </div>
 

@@ -5,7 +5,7 @@ import { Button, Container, Input, Radio } from '../../components';
 import Tabla3 from '../../components/Table3';
 import Usuarios from '../../services/user.service';
 
-const opcionesVista = ['Todo', 'General','Responsables','Tecnologia',
+const opcionesVista = ['General','Responsables','Tecnologia',
   'Base de datos','Servidor','Documentacion','Fallas'];
 
 function Vista() {
@@ -18,7 +18,7 @@ function Vista() {
   const obtencionDeEstado = (parametroDevuelto) => {setValorDevuelto(parametroDevuelto)};
   const [valorDevuelto2, setValorDevuelto2] = useState(false);
   const obtencionDeEstado2 = (parametroDevuelto) => {setValorDevuelto2(parametroDevuelto)};
-  const [opcion, setOpcion] = useState('Todo');
+  const [opcion, setOpcion] = useState('General');
 
   const handleInputChange = (e) => {
     setOpcion(e.target.value);
@@ -38,30 +38,6 @@ function Vista() {
     if(valor === null) 
       return <Navigate to='/' />
 
-      function Tecnologia() {
-        return(
-          <>
-            <h2 className='font-bold text-lg'>Tecnologia</h2>
-            <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-              <div className='grid gap-6 mb-6 md:grid-cols-2'>
-  
-                <Input campo={'Codigo Fuente'} propiedad={valor.codigo_fuente} />
-                <Input campo={'Licencia'} propiedad={valor.licencia} />
-                <Input campo={'Direccion'} propiedad={valor.direccion} />
-                <Input campo='Plataforma' propiedad={valor.plataforma} />
-                <Input campo={'Lenguaje'} propiedad={valor.lenguaje} />
-                <Input campo='Framework' propiedad={valor.framework} />
-  
-                <Input campo={'Frecuencia de Mantenimiento'} propiedad={valor.frecuencia} />
-                <Input campo={'Horas Promedio de Mantenimiento'} propiedad={valor.horasProm} />
-                <Input campo={'Tipo de Mantenimiento'} propiedad={valor.tipoMan} />
-                <Input campo={'Horas Anuales de Mantenimiento'} propiedad={valor.horasAnuales} />
-              </div>
-            </form>
-          </>
-        )
-      }
-  
       function General(){
         return(
           <>
@@ -91,113 +67,106 @@ function Vista() {
           </>
         )
       }
+
+      const columnasTec = ['id','Codigo','Licencia','Plataforma','Lenguaje','Framework','Base de datos',
+      'Servidor','Mantenimiento','Tipo','Horas Prom','Horas Anuales'];
+      const resultadosTec = [
+          {id:'1',codigo:'SI',licencia:'FISICA',plataforma:'WEB',lenguaje:'PHP',framework:'BOOTSTRAP',
+          basededatos:'SI',servidor:'NO',mantenimiento:'SEMANAL',tipo:'PREVENTIVO',horasprom:'2',horasanuales:'96',},
+          {id:'2',codigo:'NO',licencia:'NINGUNA',plataforma:'ESCRITORIO',lenguaje:'JAVA',framework:'SPRING',
+          basededatos:'SI',servidor:'SI',mantenimiento:'MENSUAL',tipo:'PREDICTIVO',horasprom:'8',horasanuales:'75',},
+      ];
+
+      function Tecnologia() {
+        return(
+          <>
+            <h2 className='font-bold text-lg'>Tecnologia</h2>
+            <form className="flex justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
+              <Tabla3 columnas={columnasTec} datos={resultadosTec} />
+            </form>
+          </>
+        )
+      }
+
+      const columnasBas = ['id','Nombre','Estatus','Tipo','Manejador','Version','Direccion',
+      'Sistema Operativo','Region','Localidad'];
+      const resultadosBas = [
+          {id:'1',nombre:'DataBase1',estatus:'ACTIVO',tipo:'RELACIONAL',manejador:'MYSQL',version:'2.1',direccion:'111.111.111',
+            sistema:'LINUX',region:'ORIENTE',localidad:'MATURIN'},
+          {id:'2',nombre:'DataBase2',estatus:'INACTIVO',tipo:'NO RELACIONAL',manejador:'MONGODB',version:'4.3',direccion:'222.222.222',
+            sistema:'WINDOWS',region:'OCCIDENTE',localidad:'MARACAIBO'},
+            {id:'3',nombre:'DataBase3',estatus:'ACTIVO',tipo:'RELACIONAL',manejador:'POSTGRESS',version:'1.8',direccion:'333.333.333',
+            sistema:'LINUX',region:'CENTRO',localidad:'LOS TEQUES'},
+      ];
   
       function Basedatos (){
         return(
           <>
             <h2 className='font-bold text-lg'>Base de datos</h2>
-            <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-  
-              <div className='grid gap-6 mb-6 md:grid-cols-2'>
-                <Input campo={'Base de datos'} propiedad={valor.nombreBase} />
-                <Input campo={'Nombre Base de datos'} propiedad={valor.nombreBase} />
-                <Input campo={'Estatus Base de datos'} propiedad={valor.estatuBase} />
-                <Input campo={'Tipo Base de datos'} propiedad={valor.tipoBase} />
-                <Input campo={'Manejador Base de datos'} propiedad={valor.manejadorBase} />
-                <Input campo={'Version'} propiedad={valor.versionBase} />
-                <Input campo={'Direccion Base de datos'} propiedad={valor.direccionBase} />
-                <Input campo={'Sistema Operativo'} propiedad={valor.sistemaBase} />
-                <Input campo={'Region'} propiedad={valor.regionBase} />
-                <Input campo={'Localidad'} propiedad={valor.localidadBase} />
-              </div>
+            <form className="flex justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
+              <Tabla3 columnas={columnasBas} datos={resultadosBas} />
             </form>
           </>
         )
       }
   
+      const columnasSer = ['id','Nombre','Estatus','Direccion','Sistema Operativo','Marca','Modelo','Cantidad CPU',
+      'Velocidad','Memoria','Region','Localidad'];
+      const resultadosSer = [
+          {id:'1',nombre:'Servidor1',estatus:'ACTIVO',direccion:'111.111.111',
+            sistema:'LINUX',marca:'HP',Modelo:'zyxw',cantidad:'2.4ghz',velocidad:'4gb',
+            memoria:'500gb',region:'ORIENTE',localidad:'MATURIN'},
+          {id:'2',nombre:'Servidor2',estatus:'INACTIVO',direccion:'222.222.222',
+            sistema:'WINDOWS',marca:'LENOVO',Modelo:'abcdef',cantidad:'3.5ghz',velocidad:'8gb',
+            memoria:'320gb',region:'OCCIDENTE',localidad:'MARACAIBO'},
+      ];
+
       function Servidor(){
         return(
           <>
             <h2 className='font-bold text-lg'>Servidor</h2>
-            <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-  
-              <div className='grid gap-6 mb-6 md:grid-cols-2'>
-                <Input campo={'Servidor'} propiedad={valor.servidor} />
-                <Input campo={'Nombre Servidor'} propiedad={valor.nombreServidor} />
-                <Input campo={'Estatus Servidor'} propiedad={valor.estatusServidor} />
-                <Input campo={'Direccion Servidor'} propiedad={valor.direccionServidor} />
-                <Input campo={'Sistema Operativo'} propiedad={valor.sistemaServidor} />
-                <Input campo={'Marca'} propiedad={valor.direccionServidor} />
-                <Input campo={'Modelo'} propiedad={valor.direccionServidor} />
-                <Input campo={'Cantidad CPU'} propiedad={valor.direccionServidor} />
-                <Input campo={'Velocidad CPU'} propiedad={valor.direccionServidor} />
-                <Input campo={'Memoria'} propiedad={valor.direccionServidor} />
-                <Input campo={'Region Servidor'} propiedad={valor.regionServidor} />
-                <Input campo={'Localidad Servidor'} propiedad={valor.localidadServidor} />
-              </div>
+            <form className="flex justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
+              <Tabla3 columnas={columnasSer} datos={resultadosSer} />
             </form>
           </>
         )
       }
+
+      const columnasRes = ['id','Custodio','Nombre','Apellido','Indicador','Correo','Cedula','Telefono',
+      'Region','Localidad','Rol','Gerencia','SubGerencia'];
+      const resultadosRes = [
+          {id:'1',tipo:'Funcional',nombre:'Fulano',apellido:'Mengano',indicador:'fulano1',
+            correo:'fulano1@pdvsa.com',cedula:'123456',telefono:'0416-111111',region:'CENTRO',localidad:'CARACAS',
+            rol:'Analista',gerencia:'AIT',subgerencia:'Informatica'},
+          {id:'2',tipo:'Tecnico',nombre:'Fulano',apellido:'Mengano',indicador:'fulano2',
+            correo:'fulano2@pdvsa.com',cedula:'24680',telefono:'0414-22222',region:'ORIENTE NORTE',localidad:'PTO LA CRUZ',
+            rol:'Especialista',gerencia:'AIT',subgerencia:'Servidor'},
+      ];
   
       function Responsable() {
         return(
           <>
             <h2 className='font-bold text-lg'>Responsables</h2>
-            <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-  
-              <div className='grid gap-6 mb-6 md:grid-cols-2'>
-                    
-                <Input campo={'Responsable Funcional'} propiedad={valor.responsablef} />
-                <Input campo={'Responsable Tecnico'} propiedad={valor.responsablet} />
-      
-                <div>
-                  <Input campo={'Nombre'} propiedad={valor.responsablef_ind} />
-                  <Input campo={'Apellido'} propiedad={valor.responsablef_ind} />
-                  <Input campo={'Indicador'} propiedad={valor.responsablef_ind} />
-                  <Input campo={'Cedula'} propiedad={valor.responsablef_cor} />
-                  <Input campo={'Telefono'} propiedad={valor.responsablef_tlf} />
-                  <Input campo={'Correo'} propiedad={valor.responsablef_tlf} />
-                  <Input campo={'Region'} propiedad={valor.responsablef_tlf} />
-                  <Input campo={'Localidad'} propiedad={valor.responsablef_tlf} />
-                  <Input campo={'Rol'} propiedad={valor.responsablef_tlf} />
-                  <Input campo={'Gerencia'} propiedad={valor.responsablef_tlf} />
-                  <Input campo={'SubGerencia'} propiedad={valor.responsablef_tlf} />
-                </div>
-                <div>
-                  <Input campo={'Nombre'} propiedad={valor.responsablef_ind} />
-                  <Input campo={'Apellido'} propiedad={valor.responsablef_ind} />
-                  <Input campo={'Indicador'} propiedad={valor.responsablef_ind} />
-                  <Input campo={'Cedula'} propiedad={valor.responsablef_cor} />
-                  <Input campo={'Telefono'} propiedad={valor.responsablef_tlf} />
-                  <Input campo={'Correo'} propiedad={valor.responsablef_tlf} />
-                  <Input campo={'Region'} propiedad={valor.responsablef_tlf} />
-                  <Input campo={'Localidad'} propiedad={valor.responsablef_tlf} />
-                  <Input campo={'Rol'} propiedad={valor.responsablef_tlf} />
-                  <Input campo={'Gerencia'} propiedad={valor.responsablef_tlf} />
-                  <Input campo={'SubGerencia'} propiedad={valor.responsablef_tlf} />
-                </div>
-                  
-              </div>
+            <form className="flex justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
+              <Tabla3 columnas={columnasRes} datos={resultadosRes} />
             </form>
           </>
         )
       }
-  
+
+      const columnasDoc = ['id','Tipo','Descripcion','Direccion','Fecha'];
+      const resultadosDoc = [
+          {id:'10',tipo:'Aplicaciones',descripcion:'aaaaaaaaaaaaaa',direccion:'xxxxxxx',fecha:'12/12/2009',},
+          {id:'20',tipo:'Aplicaciones',descripcion:'bbbbbbb',direccion:'yyyy',fecha:'5/5/2015',},
+          {id:'30',clatipose:'Base de datos',descripcion:'cccccccccccc',direccion:'zzzzzzzzzzzz',fecha:'9/9/2022',},
+      ];
   
       function Documentacion(){
         return (
           <>
             <h2 className='font-bold text-lg'>Documentacion</h2>
             <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-  
-              <div className='grid gap-6 mb-6 md:grid-cols-2'>
-                <Input campo={'Documentacion'} propiedad={valor.documentacion} />
-                <Input campo={'Descripcion'} propiedad={valor.descripcionDoc} />
-                <Input campo={'Tipo'} propiedad={valor.tipoDoc} />
-                <Input campo={'Direccion'} propiedad={valor.direccionDoc} />
-              </div>
-  
+              <Tabla3 columnas={columnasDoc} datos={resultadosDoc} />
             </form>
           </>
         )
@@ -207,17 +176,17 @@ function Vista() {
       const resultadosFallas = [
           {id:'10',clase:'Aplicaciones',descripcion:'aaaaaaaaaaaaaa',solucion:'xxxxxxx',
             editar:
-            <Link to={`/administracion/solicitudes/${1}`}>
+            <Link to={`/solicitudes/${1}`}>
               <FaPlus className="text-base text-blue-500 cursor-pointer ml-4" />
             </Link>},
           {id:'20',clase:'Aplicaciones',descripcion:'bbbbbbb',solucion:'yyyy',
             editar:
-            <Link to={`/administracion/solicitudes/${1}`}>
+            <Link to={`/solicitudes/${1}`}>
               <FaPlus className="text-base text-blue-500 cursor-pointer ml-4" />
             </Link>},
           {id:'30',clase:'Base de datos',descripcion:'cccccccccccc',solucion:'zzzzzzzzzzzz',
             editar:
-            <Link to={`/administracion/solicitudes/${1}`}>
+            <Link to={`/solicitudes/${1}`}>
               <FaPlus className="text-base text-blue-500 cursor-pointer ml-4" />
             </Link>},
       ];
@@ -339,7 +308,6 @@ function Vista() {
     return(
       <Container>
         <Radio label=' ' size='big' opciones={opcionesVista} manejador={handleInputChange} />
-        {opcion === 'Todo' ? <Todo/> : null}
         {opcion === 'General' ? <General/> : null}
         {opcion === 'Tecnologia' ? <Tecnologia/> : null}
         {opcion === 'Base de datos' ? <Basedatos/> : null }
