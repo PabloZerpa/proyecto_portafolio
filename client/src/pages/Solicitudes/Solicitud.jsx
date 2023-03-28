@@ -7,7 +7,7 @@ function Solicitud() {
         <Container>
             <h2 className='font-bold text-lg'>Datos Solicitud</h2>
 
-            <div className="flex flex-col w-3/4 justify-start gap-4 border-2 border-dashed border-blue-500">
+            <div className="flex flex-col w-3/4 justify-start gap-4 p-2 bg-zinc-400 rounded border-2 border-dashed border-blue-500">
                 <span className="font-bold text-sm">Datos del solicitante</span>
                 <div className="flex gap-4">
                     <Input campo='Nombre' name='nombre' direccion="row" />
@@ -15,7 +15,7 @@ function Solicitud() {
                 </div>
             </div>
 
-            <div className="flex flex-col w-3/4 justify-start gap-4 border-2 border-dashed border-blue-500">
+            <div className="flex flex-col w-3/4 justify-start gap-4 p-2 bg-zinc-400 rounded border-2 border-dashed border-blue-500">
                 <span className="font-bold text-sm">Datos de la solicitud</span>
                 <div className="flex gap-4">
                     <Input campo='N° Solicitud' name='numero' direccion="row" />
@@ -29,7 +29,7 @@ function Solicitud() {
                 <Input campo='Descripcion' name='descripcion' area={true} direccion="row" />
             </div>
 
-            <div className="flex flex-col w-3/4 justify-start gap-4 border-2 border-dashed border-blue-500">
+            <div className="flex flex-col w-3/4 justify-start gap-4 p-2 bg-zinc-400 rounded border-2 border-dashed border-blue-500">
                 <span className="font-bold text-sm">Datos del Aprobador</span>
                 <div className="flex gap-4">
                     <Input campo='Nombre' name='nombre' direccion="row" />
@@ -37,7 +37,7 @@ function Solicitud() {
                 </div>
             </div>
 
-            <div className="flex flex-col w-3/4 justify-start gap-4 border-2 border-dashed border-blue-500">
+            <div className="flex flex-col w-3/4 justify-start gap-4 p-2 bg-zinc-400 rounded border-2 border-dashed border-blue-500">
                 <span className="font-bold text-sm">Datos del Elemento</span>
                 <div className="flex gap-4">
                     <Select campo='Elemento' name='elemento' direccion="row" opciones={['APLICACION','BASE DE DATOS','SERVIDOR']} />

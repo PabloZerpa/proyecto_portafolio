@@ -24,18 +24,13 @@ function Tabla2({columnas, datos, paginacion=false, campo}) {
                 const datoModificacion = { campo,valor };
                 console.log(edicion, campo, valor);
                 
-                await Autorizacion.actualizarDato(edicion, datoModificacion); 
+                await Autorizacion.actualizarDato(4, datoModificacion); 
+                console.log('ALO');
                 habilitar();
             }
         }
         catch (error) { console.log('ERROR AL ACTUALIZAR APL_ACT'); }
     }
-
-    useEffect(() => {
-        // console.log(datos[0]);
-		// console.log(Object.values(datos[0]).length);
-        // console.log(columnas);
-	}, []);
 
     return (
         <div className="relative mx-8 mb-4 sm:rounded">
@@ -54,12 +49,12 @@ function Tabla2({columnas, datos, paginacion=false, campo}) {
                         console.log(dato);
                         const valor = Object.values(dato);
                         return (
-                        <tr key={dato.id} className="bg-white border-b hover:bg-gray-100">
+                        <tr key={dato.aplicacion_id} className="bg-white border-b hover:bg-gray-100">
                             <td className="px-1 py-1">{valor[0]}</td>
                             <td className="px-1 py-1">{valor[1]}</td>
                             <td className="px-1 py-1">{valor[2]}</td>
                             <td className="px-1 py-1">
-                                {edicion!==dato.id ? (
+                                {edicion!==dato.aplicacion_id ? (
                                     <input type='text' defaultValue={valor[3]} disabled
                                     className="w-full p-2 bg-gray-50 border-none text-gray-900 text-xs text-center rounded-md" />
                                 ) : (
@@ -70,13 +65,13 @@ function Tabla2({columnas, datos, paginacion=false, campo}) {
                                 </td>
                             <td className="px-2 py-2">
 
-                                {edicion===dato.id ? 
+                                {edicion===dato.aplicacion_id ? 
                                     <FaCheckCircle 
                                         onClick={updateData}
                                         className="ml-3 text-green-500 text-lg cursor-pointer"/>
                                     :
                                     <FaEdit 
-                                        onClick={(e) => habilitar(dato.id)}
+                                        onClick={(e) => habilitar(dato.aplicacion_id)}
                                         className="ml-3 text-blue-500 text-lg cursor-pointer" />
                                 }
 

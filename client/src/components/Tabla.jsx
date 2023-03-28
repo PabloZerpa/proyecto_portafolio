@@ -3,25 +3,11 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaEye, FaEdit } from "react-icons/fa";
 import Paginacion from "./Paginacion";
+import { columnasUser, columnasAdmin } from "../services/campos.service";
 
-const columnasUser = ['Ver','ID','Acronimo','Nombre','Estatus','Prioridad','Critica','Region','Localidad','Custodio Funcional',
-'Custodio Tecnico','Alcance','Plataforma','Lenguaje','Framework','Base de datos','Servidor','Cliente','N° Usuarios',
-'Mantenimiento','Horas Prom','Documentacion','Fecha Implantacion','Ult Actualizacion'];
-const columnasAdmin = ['Operaciones','ID','Acronimo','Nombre','Estatus','Prioridad','Critica','Region','Localidad','Custodio Funcional',
-'Custodio Tecnico','Alcance','Plataforma','Lenguaje','Framework','Base de datos','Servidor','Cliente','N° Usuarios',
-'Mantenimiento','Horas Prom','Documentacion','Fecha Implantacion','Ult Actualizacion'];
 
-function Tabla({columnas, datos, opciones, paginacion=false, campo=null}) {
-
-    const [campo2, setCampo] = useState(['ID', campo, 'Editar']);
-    const [datosArray, setDatosArray] = useState('');
-
-    useEffect(() => {
-        setDatosArray(Object.keys(datos));
-        console.log(datos);
-		console.log(datosArray);
-	}, []);
-
+function Tabla({datos, opciones, paginacion=false}) {
+ 
     return (
         <div>
             <div className="relative overflow-x-auto w-[960px] mx-8 mb-4 sm:rounded">
@@ -45,63 +31,27 @@ function Tabla({columnas, datos, opciones, paginacion=false, campo=null}) {
                     </thead>
                     <tbody>
                         {datos.map((dato, index) => { 
-                            const valor = Object.values(dato);
-                            //console.log(valor.length);
+                            let valor = Object.values(dato);
+                            if(opciones){
+                                valor.unshift(
+                                    <Link to={dato.aplicacion_id ? `/administracion/actualizacion/${dato.aplicacion_id}` : `/dashboard`} className='text-lg' state={dato} >
+                                        <FaEdit className="text-blue-500" />
+                                    </Link>
+                                )
+                            }
+                            valor.unshift(
+                                <Link to={dato.aplicacion_id ? `/aplicaciones/${dato.aplicacion_id}` : `/dashboard`} className='text-lg' state={dato} >
+                                    <FaEye className="text-blue-500" />
+                                </Link>
+                            )
                             return (
                                 <tr key={index} className="bg-white border-b hover:bg-gray-100">
                                     {valor.map((valor, index) => {
-                                        if(index===0)
-                                            return ( 
-                                                <td key={index} className="px-2 py-2 flex justify-center items-center gap-4">
-                                                    <Link to={dato.id ? `/aplicaciones/${dato.id}` : `/dashboard`} className='text-lg' state={dato} >
-                                                        <FaEye className="text-blue-500" />
-                                                    </Link>
-                                                    {opciones ? (
-                                                        <Link to={dato.id ? `/administracion/actualizacion/${dato.id}` : `/dashboard`} className='text-lg' state={dato} >
-                                                            <FaEdit className="text-blue-500" />
-                                                        </Link>) 
-                                                        : 
-                                                        (null) 
-                                                    }
-                                                </td> 
-                                            );
-                                        if(index===3)
-                                            return ( 
-                                                null
-                                            );
-                                        else
                                             return ( <td key={index} className="px-2 py-2">{valor}</td> );
                                     })}
                                 </tr>
                             );
-
-                            return (
-                            <tr key={dato.id} className="bg-white border-b hover:bg-gray-100">
-                                <td className="px-1 py-1">
-                                    <Link to={dato.id ? `/aplicaciones/${dato.id}` : `/dashboard`} className='text-lg' state={dato} >
-                                        <FaEye className="text-blue-500" />
-                                    </Link>
-                                </td>
-                                {opciones ? (
-                                    <td className="px-1 py-1">
-                                        <Link to={dato.id ? `/administracion/actualizacion/${dato.id}` : `/dashboard`} className='text-lg' state={dato} >
-                                            <FaEdit className="text-blue-500" />
-                                        </Link>
-                                    </td>) : (null)
-                                }
-                                <td scope="row" className="px-1 py-1 font-medium text-gray-900 whitespace-nowrap">{dato.id}</td>
-                                <td className="px-1 py-1">{dato.acronimo}</td>
-                                <td className="px-1 py-1">{dato.nombre}</td>
-                                <td className="px-1 py-1">{dato.estatus}</td>
-                                <td className="px-1 py-1">{dato.region}</td>
-                                <td className="px-1 py-1">{dato.responsablef}</td>
-                                <td className="px-1 py-1">{dato.responsablet}</td>
-                                <td className="px-1 py-1">{dato.prioridad}</td>
-                                <td className="px-1 py-1">{dato.tipo}</td>
-                                
-                            </tr>
-                        );
-                    })}
+                        })}
                     </tbody>
                 </table>
             </div>

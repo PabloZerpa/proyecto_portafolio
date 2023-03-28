@@ -7,9 +7,9 @@ const baseUrl = "http://localhost:3001/api/";
 class Autorizacion {
 
     // ---------------- LOGIN ------------------
-    async login(indicador, password, rol) {
+    async login(indicador, password) {
         
-        return axios.post(`${baseUrl}login`, {indicador,password,rol})
+        return axios.post(`${baseUrl}login`, {indicador,password})
         .then(response => {
             if (response.data.token)
                 localStorage.setItem("user", JSON.stringify(response.data));
@@ -21,10 +21,11 @@ class Autorizacion {
     // ---------------- CREATE DE LA INFO DE NUEVA APP ------------------
     async crearDatos(datos) {
         console.log('AFUERA DE CREAR DATOS SERVICE')
+        console.log(datos);
         try {
             console.log('EN EL TRY DE CREAR DATOS SERVICE')
 
-            const respuesta = await axios.post(`${baseUrl}user/`, datos, { headers: authHeader() });
+            const respuesta = await axios.post(`${baseUrl}aplicaciones/`, datos, { headers: authHeader() });
 
             console.log('DESPUES DE CREAR DATOS SERVICE')
             return respuesta;
@@ -35,10 +36,11 @@ class Autorizacion {
 
     // ---------------- UPDATE DE TODOS LOS DATOS ------------------
     async actualizarDatos(id, datosModificacion) {
-        console.log('AFUERA DE ACTUALIZAR DATOS SERVICE')
+        console.log('AFUERA DE ACTUALIZAR DATOS SERVICE');
+        console.log(id);
         try {
             console.log('EN EL TRY DE ACTUALIZAR DATOS SERVICE')
-            const respuesta = await axios.put(`${baseUrl}user/${id}`, datosModificacion, { headers: authHeader() });
+            const respuesta = await axios.put(`${baseUrl}aplicaciones/${id}`, datosModificacion, { headers: authHeader() });
             console.log('DESPUES DE ACTUALIZAR DATOS SERVICE')
             return respuesta;
         } catch (error) {
@@ -49,7 +51,9 @@ class Autorizacion {
     // ---------------- UPDATE DE UN CAMPO EN ESPECIFICO ------------------
     async actualizarDato(id, datoModificacion) {
         try {
-            const respuesta = await axios.patch(`${baseUrl}user/${id}`, datoModificacion, { headers: authHeader() });
+            console.log(id);
+            console.log(datoModificacion);
+            const respuesta = await axios.patch(`${baseUrl}aplicaciones/${id}`, datoModificacion, { headers: authHeader() });
             return respuesta;
         } catch (error) {
             console.log('ERROR AL ACTUALIZAR auth.service');
@@ -72,4 +76,4 @@ class Autorizacion {
 
 }
 
-export default new Autorizacion();
+export default new Autorizacion();  

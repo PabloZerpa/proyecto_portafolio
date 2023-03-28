@@ -4,20 +4,11 @@ import { useDebounce } from 'use-debounce';
 import { FaSearch } from 'react-icons/fa';
 import { Select, Radio } from '../components';
 import Usuarios from "../services/user.service";
-
-const opcionCount = [10,20,30,40,50];
-const opcionEstatus = ['TODAS', 'DESARROLLO', 'MANTENIMIENTO', 'DESINCORPORADA', 'ESTABILIZACION',
-'SIN USO', 'VISAULIZACION', 'PRUEBA'];
-const opcionRegion = ['TODAS', 'CENTRO', 'CENTRO SUR', 'CENTRO OCCIDENTE','ORIENTE NORTE', 
-'ORIENTE SUR', 'OCCIDENTE','FAJA','METROPOLITANA',];
-const opcionPlataforma = ['TODAS', 'WEB', 'ESCRITORIO', 'MOVIL', 'CLIENTE-SERVIDOR', 'STAND ALONE', 'MINI', 'MAINFRAME'];
-const opcionAlcance = ['TODAS', 'LOCAL', 'DEPARTAMENTAL', 'CORPORATIVO'];
-const opcionMantenimiento = ['TODAS', 'DIARIO', 'SEMANAL', 'QUINCENAL', 'MENSUAL',
-'BIMENSUAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL', 'NO APLICA'];
+import { opcionEstatus, opcionRegion, opcionPlataforma, opcionAlcance, opcionMantenimiento, opcionCount, opcionLocalidad } from '../services/campos.service';
 
 
 function Busqueda({manejarBusqueda}) {
-    
+     
     const [searchTerm, setSearchTerm] = useState("");
     const [resultados, setResultados] = useState([]);
     const [debounceValue] = useDebounce(searchTerm, 500);
@@ -86,6 +77,7 @@ function Busqueda({manejarBusqueda}) {
 
                 <div style={avanzados ? {display: 'block'} : {display: 'none'}} className="selectArea">
                     <div className="flex flex-wrap justify-center items-center gap-4">
+                        <Select campo='Localidad' name='localidad' busqueda={true} opciones={opcionLocalidad} manejador={handleInputChange} />
                         <Select campo='Alcance' name='alcance' busqueda={true} opciones={opcionAlcance} manejador={handleInputChange} />
                         <Select campo='Mantenimiento' name='mantenimiento' busqueda={true} opciones={opcionMantenimiento} manejador={handleInputChange} />
                         <Select campo='Fecha' name='fecha' busqueda={true} opciones={['2023','2022','2021','2020','2019','2018']} />

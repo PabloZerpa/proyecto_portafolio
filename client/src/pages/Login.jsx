@@ -30,9 +30,9 @@ function Login() {
   async function handleLogin(e) {
     e.preventDefault();
 
-    if(password.length > 7 && indicador !== '' && rol !== ''){
+    if(password.length > 7 && indicador !== ''){
       try {
-        await Autorizacion.login(indicador,password,rol);
+        await Autorizacion.login(indicador,password);
         setOpcion('exito');
         setMensaje(indicador);
         setShow(true);
@@ -105,7 +105,7 @@ function Login() {
         </li>
 
 
-        <li className='w-72 relative'>
+        {/* <li className='w-72 relative'>
           <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <FaHardHat />
           </div>
@@ -119,7 +119,7 @@ function Login() {
             <option value="user">User</option>
             <option value="admin">Admin</option>
           </select>
-        </li>
+        </li> */}
 
         <li>
           <div className='flex gap-2 items-center text-sm font-bold'>

@@ -8,13 +8,13 @@ import Linea from "../chart/Linea";
 function Dashboard() {
   
   const [datos, setDatos] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
 
     async function fetchData(){
       try {
-        const data = await Usuarios.obtenerDatosUsuarios();
+        const data = await Usuarios.obtenerAplicaciones();
         setIsLoading(false);
         setDatos(data.data);
       }

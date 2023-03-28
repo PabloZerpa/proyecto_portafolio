@@ -47,9 +47,9 @@ function Solicitudes() {
 
             <h2 className='font-bold text-lg'>Lista de Solicitudes</h2>
 
-            <form className="w-1/2 bg-zinc-400 p-4 mb-4 rounded drop-shadow-md" >
+            <form className="w-[600px] bg-zinc-400 p-4 mb-4 rounded drop-shadow-md" >
 
-                <div className='flex justify-center items-center flex-row gap-2 py-4 bg-zinc-400 border-solid rounded'>
+                <div className='flex justify-center items-center flex-row gap-2 bg-zinc-400 rounded py-4 bg-zinc-400 border-solid rounded'>
                     <div className="flex gap-4">
 
                         <div className="relative w-96">

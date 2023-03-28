@@ -4,6 +4,7 @@ import { Tabla, Container } from "../../components";
 import { Busqueda } from "../../container"
 import Usuarios from "../../services/user.service";
 import Autorizacion from "../../services/auth.service";
+import Tabla3 from "../../components/Table3";
 
 function Aplicaciones() {
 
@@ -17,7 +18,9 @@ function Aplicaciones() {
       setRol(Autorizacion.obtenerUsuario().rol)
       async function fetchData(){
         try {
-          const response = await Usuarios.obtenerDatosUsuario()
+          const response = await Usuarios.obtenerAplicaciones();
+          console.log('APLICACIONES');
+          console.log(response.data);
           setDatos(response.data);
         } 
         catch (error) {
@@ -30,13 +33,13 @@ function Aplicaciones() {
   return (
     <Container>
 
-        <Busqueda manejarBusqueda={obtenerResultado} />
+      <Busqueda manejarBusqueda={obtenerResultado} />
 
-        {resultado ? (
-          <Tabla datos={resultado} opciones={(rol==='admin') ? true : false} paginacion={true} />
-        ) : (
-          <div></div>
-        )}
+      {resultado ? (
+        <Tabla datos={resultado} opciones={(rol==='admin') ? true : false} paginacion={true} />
+      ) : (
+        <div></div>
+      )}
 
     </Container>
   )

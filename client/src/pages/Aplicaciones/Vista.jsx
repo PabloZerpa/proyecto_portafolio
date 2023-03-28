@@ -47,6 +47,8 @@ function Vista() {
               <div className='grid gap-6 mb-6 md:grid-cols-2'>
                 <Input campo={'Acronimo'} propiedad={valor.acronimo} />
                 <Input campo={'Estatus'} propiedad={valor.estatus} />
+                <Input campo='Version' propiedad={valor.prioridad} />
+                <Input campo='Direccion' propiedad={valor.prioridad} />
               </div>
     
               <div className='flex flex-col gap-2 text-sm font-medium text-gray-900 mb-6'>
@@ -57,10 +59,10 @@ function Vista() {
               <div className='grid gap-6 mb-6 md:grid-cols-2'>
                 <Input campo='Prioridad' propiedad={valor.prioridad} />
                 <Input campo='Alcance' propiedad={valor.alcance} />
-                <Input campo='Negocio' propiedad={valor.negocio} />
                 <Input campo='Cliente' propiedad={valor.cliente} />
                 <Input campo='N° de Usuarios' propiedad={valor.cantidad} />
-                <Input campo='Ubicacion Cliente' propiedad={valor.ubicacionCliente} />  
+                <Input campo='Region Cliente' propiedad={valor.ubicacionCliente} />  
+                <Input campo='Localidad Cliente' propiedad={valor.ubicacionCliente} />  
               </div>
   
             </form>

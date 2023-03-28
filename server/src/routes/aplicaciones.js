@@ -1,9 +1,9 @@
 
 const router = require("express").Router();
-const { getItems, getItem, createItems, updateItems, deleteItems, getByTerm, getByCampo, getByGrafico, updateByCampo } = require("../controllers/user");
+const { getItems, getItem, createItems, updateItems, deleteItems, getByTerm, getByCampo, getByGrafico, updateByCampo } = require("../controllers/aplicaciones");
 const { auth, authAdmin } = require("../middlewares/auth");
 const { autenticarUser } = require("../middlewares/ad");
-const { validatorCreateItem, validatorGetItem } = require("../validators/user");
+const { validatorCreateItem, validatorGetItem } = require("../validators/aplicaciones");
 
 // *************** RUTA PARA OBTENER TODOS LOS DATOS *************** 
 router.get("/", getItems);
@@ -30,11 +30,11 @@ router.post("/", createItems);
 
 
 // *************** RUTA PARA ACTUALIZAR LOS DATOS POR ID *************** 
-router.put("/:id", authAdmin, updateItems);
+router.put("/:id", updateItems);
 
 
 // *************** RUTA PARA ACTUALIZAR LOS DATOS POR CAMPO *************** 
-router.patch("/:id", authAdmin, updateByCampo);
+router.patch("/:id", updateByCampo);
 
 
 // *************** RUTA PARA ELIMINAR DATOS POR ID *************** 

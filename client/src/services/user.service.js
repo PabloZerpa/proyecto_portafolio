@@ -8,31 +8,32 @@ const baseUrl = "http://localhost:3001/api/";
 class Usuarios {
 
     // =============== OBTIENE TODOS LOS DATOS DE LAS APPS ===============
-    async obtenerDatosUsuarios() {
+    async obtenerAplicaciones() {
         try {
-            const respuesta = await axios.get(`${baseUrl}user`, { headers: authHeader() });
+            const respuesta = await axios.get(`${baseUrl}aplicaciones`, { headers: authHeader() });
+            console.log(respuesta);
             return respuesta;
         } catch (error) {
             Authorization.logout();
             window.location.reload();
         }
-        //return axios.get(`${baseUrl}user`, { headers: this.authHeader() });
+        //return axios.get(`${baseUrl}aplicaciones`, { headers: this.authHeader() });
     }
 
     // =============== OBTIENE EL DATO DE UNA APP POR SU ID ===============
     async obtenerDato(id) {
         try {
-            const respuesta = await axios.get(`${baseUrl}user/${id}`, { headers: authHeader() });
+            const respuesta = await axios.get(`${baseUrl}aplicaciones/${id}`, { headers: authHeader() });
             return respuesta;
         } catch (error) {
-            console.log('Error al obtener dato');
+            console.log('Error al obtener dato'); 
         }
-    }
+    } 
 
     // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
-    async obtenerPorTermino(term,estatus,region,prioridad,tipo,order,count) {
+    async obtenerPorTermino(term,estatus,region,prioridad,plataforma,order,count) {
         try {
-            return axios.post(`${baseUrl}user/term`, {term,estatus,region,prioridad,tipo,order,count});
+            return axios.post(`${baseUrl}aplicaciones/term`, {term,estatus,region,prioridad,plataforma,order,count});
         } catch (error) {
             console.log('Error al obtener dato');
         }
@@ -41,7 +42,7 @@ class Usuarios {
     // =============== OBTIENE LOS DATOS POR EL CAMPO A ACTUALIZAR ESPECIFICO ===============
     async obtenerPorCampo(term,campo) {
         try {
-            return axios.post(`${baseUrl}user/campo`, {term,campo});
+            return axios.post(`${baseUrl}aplicaciones/campo`, {term,campo});
         } catch (error) {
             console.log('Error al obtener dato');
         }
@@ -52,7 +53,7 @@ class Usuarios {
         console.log(categoria);
         console.log(orden);
         try {
-            return axios.post(`${baseUrl}user/grafico`, {categoria,orden});
+            return axios.post(`${baseUrl}aplicaciones/grafico`, {categoria,orden});
         } catch (error) {
             console.log('Error al obtener dato');
         }

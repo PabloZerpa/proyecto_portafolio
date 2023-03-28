@@ -7,9 +7,10 @@ const { generarToken } = require('../helpers/token');
 const login = async (req, res) => { 
     try {
         const body = matchedData(req);
-        const {indicador, password, rol} = body;
+        const {indicador, password } = body;
         const query = await pool.query('SELECT * FROM usuarios WHERE indicador = ?', [indicador]);
         const user = query[0][0];
+        const rol = user.rol;
         
         // ********** VERIFICA QUE EL USUARIO EXISTA **********
         if(!user){
@@ -24,10 +25,10 @@ const login = async (req, res) => {
         }
 
         // ********** VERIFICA QUE EN ROL SEA CORRECTO **********
-        if(rol != user.rol){
-            console.log('ROL INCORRECTO');
-            return res.status(401).json({ message: 'ROL INCORRECTO' });
-        }
+        // if(rol != user.rol){
+        //     console.log('ROL INCORRECTO');
+        //     return res.status(401).json({ message: 'ROL INCORRECTO' });
+        // }
 
         // ********** GENERA EL TOKEN DEL USUARIO **********
         const token = await generarToken(indicador,rol);
