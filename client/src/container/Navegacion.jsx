@@ -42,10 +42,6 @@ function Navegacion() {
                                 <div></div>
                             ) : (
                                 <div style={open2 ? {display: 'block'} : {display: 'none'}} className='pl-4'>
-                                    <Link to="/administracion/permisos" 
-                                        className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
-                                            Permisos
-                                    </Link>
                                     <Link to="/administracion" 
                                         className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                             Actualizacion
@@ -54,8 +50,12 @@ function Navegacion() {
                                         className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                             Registro
                                     </Link>
+                                    <Link to="/administracion/permisos" 
+                                        className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
+                                            Permisos
+                                    </Link>
                                 </div>
-                            )}
+                            )} 
 
                         </li>
                         <li>

@@ -15,27 +15,27 @@ export const campos = {
     apl_localidad: '',
     apl_fecha_registro: '',
     
-    funcional_nombre: '',
-    funcional_apellido: '',
-    funcional_indicador: '',
-    funcional_telefono: '',
-    funcional_cedula: '',
-    funcional_gerencia: '',
-    funcional_subgerencia: '',
-    funcional_cargo: '',
-    funcional_region: '',
-    funcional_localidad: '',
+    res_funcional_nombre: '',
+    res_funcional_apellido: '',
+    res_funcional_indicador: '',
+    res_funcional_telefono: '',
+    res_funcional_cedula: '',
+    res_funcional_gerencia: '',
+    res_funcional_subgerencia: '',
+    res_funcional_cargo: '',
+    res_funcional_region: '',
+    res_funcional_localidad: '',
     
-    tecnico_nombre: '',
-    tecnico_apellido: '',
-    tecnico_indicador: '',
-    tecnico_telefono: '',
-    tecnico_cedula: '',
-    tecnico_gerencia: '',
-    tecnico_subgerencia: '',
-    tecnico_cargo: '',
-    tecnico_region: '',
-    tecnico_localidad: '',
+    res_tecnico_nombre: '',
+    res_tecnico_apellido: '',
+    res_tecnico_indicador: '',
+    res_tecnico_telefono: '',
+    res_tecnico_cedula: '',
+    res_tecnico_gerencia: '',
+    res_tecnico_subgerencia: '',
+    res_tecnico_cargo: '',
+    res_tecnico_region: '',
+    res_tecnico_localidad: '',
 
     plataforma: '',
     lenguaje: '',
@@ -49,7 +49,6 @@ export const campos = {
     bas_manejador: '',
     bas_manejador_version: '',
     bas_tipo_ambiente: '',
-    bas_direccion: '',
     bas_servidor: '',
     bas_cantidad: '',
     
@@ -68,9 +67,6 @@ export const campos = {
     ser_localidad: '',
 
     cliente: '',
-    cli_cantidad: '',
-    cli_region: '',
-    cli_localidad: '',
     
     doc_descripcion: '',
     doc_direccion: '',
@@ -119,13 +115,13 @@ export const opcionMantenimiento = ['TODAS', 'DIARIO', 'SEMANAL', 'QUINCENAL', '
     'BIMENSUAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL', 'NO APLICA'];
 
 
-export const columnasUser = ['Ver','ID','Acronimo','Nombre','Descripcion','Version','Estatus','Prioridad','Critica','Alcance','Codigo Fuente','Licencia','Direccion',
-'Plataforma','Lenguaje','Framework','Base de datos','BD Estatus','BD Direccion','DB Cantidad','BD Tipo','Manejador','Ambiente','Servidor','Estatus','Direccion','OS','OS_Version','Marca',
-'Modelo','Serial','Cantidad CPU','Velocidad CPU','Memoria','Cliente','N° Usuarios','Mantenimiento','Horas Prom','Horas Año','Documentacion','Tipo Docu','Direccion'];
+export const columnasUser = ['Ver','ID','Acronimo','Nombre','Descripcion','Version','Estatus','Prioridad','Critica','Alcance','Codigo Fuente','Licencia','Direccion','N° Usuarios',
+'Plataforma','Lenguaje','Framework','Base de datos','BD Estatus','DB Cantidad','BD Tipo','Manejador','Ambiente','Servidor','Estatus','Direccion','OS','OS_Version','Marca',
+'Modelo','Serial','Cantidad CPU','Velocidad CPU','Memoria','Cliente','Region','Localidad','Mantenimiento','Horas Prom','Horas Año','Documentacion','Tipo Docu','Direccion'];
 
-export const columnasAdmin = ['Ver','Editar','ID','Acronimo','Nombre','Descripcion','Version','Estatus','Prioridad','Critica','Alcance','Codigo Fuente','Licencia','Direccion',
-'Plataforma','Lenguaje','Framework','Base de datos','BD Estatus','BD Direccion','DB Cantidad','BD Tipo','Manejador','Ambiente','Servidor','Estatus','Direccion','OS','OS_Version','Marca',
-'Modelo','Serial','Cantidad CPU','Velocidad CPU','Memoria','Cliente','N° Usuarios','Mantenimiento','Horas Prom','Horas Año','Documentacion','Tipo Docu','Direccion'];
+export const columnasAdmin = ['Ver','Editar','ID','Acronimo','Nombre','Descripcion','Version','Estatus','Prioridad','Critica','Alcance','Codigo Fuente','Licencia','Direccion','N° Usuarios',
+'Plataforma','Lenguaje','Framework','Base de datos','BD Estatus','DB Cantidad','BD Tipo','Manejador','Ambiente','Servidor','Estatus','Direccion','OS','OS_Version','Marca',
+'Modelo','Serial','Cantidad CPU','Velocidad CPU','Memoria','Cliente','Region','Localidad','Mantenimiento','Horas Prom','Horas Año','Documentacion','Tipo Docu','Direccion'];
 
 /*
 select aplicaciones.apl_id,aplicaciones.acronimo,aplicaciones.nombre,aplicaciones.estatus,

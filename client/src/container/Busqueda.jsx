@@ -6,7 +6,7 @@ import { Select, Radio } from '../components';
 import Usuarios from "../services/user.service";
 import { opcionEstatus, opcionRegion, opcionPlataforma, opcionAlcance, opcionMantenimiento, opcionCount, opcionLocalidad } from '../services/campos.service';
 
-
+ 
 function Busqueda({manejarBusqueda}) {
      
     const [searchTerm, setSearchTerm] = useState("");

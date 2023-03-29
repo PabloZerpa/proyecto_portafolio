@@ -5,12 +5,12 @@ import { Button, Container, Input, Radio } from '../../components';
 import Tabla3 from '../../components/Table3';
 import Usuarios from '../../services/user.service';
 
-const opcionesVista = ['General','Responsables','Tecnologia',
-  'Base de datos','Servidor','Documentacion','Fallas'];
+const opcionesVista = ['General','Tecnologia',
+  'Base de datos','Servidor','Responsables','Documentacion','Fallas'];
 
 function Vista() {
 
-  const { paramsId } = useParams();
+  const { id } = useParams();
   const location = useLocation();
   const [valor, setValor] = useState(location.state);
 
@@ -33,7 +33,7 @@ function Vista() {
       }catch (error) { console.log(error) }
     }
     fetchData();
-  }, [paramsId]);
+  }, [id]);
   
     if(valor === null) 
       return <Navigate to='/' />
@@ -45,24 +45,24 @@ function Vista() {
             <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
     
               <div className='grid gap-6 mb-6 md:grid-cols-2'>
-                <Input campo={'Acronimo'} propiedad={valor.acronimo} />
-                <Input campo={'Estatus'} propiedad={valor.estatus} />
-                <Input campo='Version' propiedad={valor.prioridad} />
-                <Input campo='Direccion' propiedad={valor.prioridad} />
+                <Input campo='Acronimo' propiedad={valor.apl_acronimo} />
+                <Input campo='Estatus' propiedad={valor.apl_estatus} />
+                <Input campo='Version' propiedad={valor.apl_version} />
+                <Input campo='Direccion' propiedad={valor.apl_direccion} />
               </div>
     
               <div className='flex flex-col gap-2 text-sm font-medium text-gray-900 mb-6'>
-                <Input campo='Nombre' area={true} propiedad={valor.nombre} />
-                <Input campo='Descripcion' area={true} propiedad={valor.descripcion} />
+                <Input campo='Nombre' area={true} propiedad={valor.apl_nombre} />
+                <Input campo='Descripcion' area={true} propiedad={valor.apl_descripcion} />
               </div>
                 
               <div className='grid gap-6 mb-6 md:grid-cols-2'>
-                <Input campo='Prioridad' propiedad={valor.prioridad} />
-                <Input campo='Alcance' propiedad={valor.alcance} />
+                <Input campo='Prioridad' propiedad={valor.apl_prioridad} />
+                <Input campo='Critico' propiedad={valor.apl_critico} />
+                <Input campo='Alcance' propiedad={valor.apl_alcance} />
                 <Input campo='Cliente' propiedad={valor.cliente} />
-                <Input campo='N° de Usuarios' propiedad={valor.cantidad} />
-                <Input campo='Region Cliente' propiedad={valor.ubicacionCliente} />  
-                <Input campo='Localidad Cliente' propiedad={valor.ubicacionCliente} />  
+                <Input campo='N° Usuarios' propiedad={valor.apl_cantidad_usuarios} />
+                <Input campo='Region' propiedad={valor.region} />  
               </div>
   
             </form>
@@ -71,12 +71,21 @@ function Vista() {
       }
 
       const columnasTec = ['id','Codigo','Licencia','Plataforma','Lenguaje','Framework','Base de datos',
-      'Servidor','Mantenimiento','Tipo','Horas Prom','Horas Anuales'];
+      'Servidor','Mantenimiento','Horas Prom','Horas Anuales'];
       const resultadosTec = [
-          {id:'1',codigo:'SI',licencia:'FISICA',plataforma:'WEB',lenguaje:'PHP',framework:'BOOTSTRAP',
-          basededatos:'SI',servidor:'NO',mantenimiento:'SEMANAL',tipo:'PREVENTIVO',horasprom:'2',horasanuales:'96',},
-          {id:'2',codigo:'NO',licencia:'NINGUNA',plataforma:'ESCRITORIO',lenguaje:'JAVA',framework:'SPRING',
-          basededatos:'SI',servidor:'SI',mantenimiento:'MENSUAL',tipo:'PREDICTIVO',horasprom:'8',horasanuales:'75',},
+          {
+            id: id,
+            codigo: valor.apl_codigo_fuente,
+            licencia: valor.apl_licencia,
+            plataforma: valor.plataforma,
+            lenguaje: valor.lenguaje,
+            framework: valor.framework,
+            basededatos: valor.base_datos,
+            servidor: valor.servidor,
+            mantenimiento: valor.man_frecuencia,
+            horasprom: valor.man_horas_prom,
+            horasanuales: valor.man_horas_anuales
+          },
       ];
 
       function Tecnologia() {
@@ -90,15 +99,18 @@ function Vista() {
         )
       }
 
-      const columnasBas = ['id','Nombre','Estatus','Tipo','Manejador','Version','Direccion',
-      'Sistema Operativo','Region','Localidad'];
+      const columnasBas = ['id','Nombre','Estatus','Tipo','Manejador','Tipo Ambiente','N° Usuarios','Servidor'];
       const resultadosBas = [
-          {id:'1',nombre:'DataBase1',estatus:'ACTIVO',tipo:'RELACIONAL',manejador:'MYSQL',version:'2.1',direccion:'111.111.111',
-            sistema:'LINUX',region:'ORIENTE',localidad:'MATURIN'},
-          {id:'2',nombre:'DataBase2',estatus:'INACTIVO',tipo:'NO RELACIONAL',manejador:'MONGODB',version:'4.3',direccion:'222.222.222',
-            sistema:'WINDOWS',region:'OCCIDENTE',localidad:'MARACAIBO'},
-            {id:'3',nombre:'DataBase3',estatus:'ACTIVO',tipo:'RELACIONAL',manejador:'POSTGRESS',version:'1.8',direccion:'333.333.333',
-            sistema:'LINUX',region:'CENTRO',localidad:'LOS TEQUES'},
+          {
+            id: id,
+            basededatos: valor.base_datos,
+            estatus: valor.bas_estatus,
+            tipo: valor.tipo,
+            manejador: valor.manejador,
+            tipo_ambiente: valor.bas_tipo_ambiente,
+            cantidad_usuarios: valor.bas_cantidad_usuarios,
+            servidor: valor.servidor,
+          },
       ];
   
       function Basedatos (){
@@ -112,15 +124,25 @@ function Vista() {
         )
       }
   
-      const columnasSer = ['id','Nombre','Estatus','Direccion','Sistema Operativo','Marca','Modelo','Cantidad CPU',
-      'Velocidad','Memoria','Region','Localidad'];
+      const columnasSer = ['id','Nombre','Estatus','Direccion','Sistema Operativo','Version OS','Marca','Modelo',
+      'Serial','Cantidad CPU','Velocidad','Memoria','Region','Localidad'];
       const resultadosSer = [
-          {id:'1',nombre:'Servidor1',estatus:'ACTIVO',direccion:'111.111.111',
-            sistema:'LINUX',marca:'HP',Modelo:'zyxw',cantidad:'2.4ghz',velocidad:'4gb',
-            memoria:'500gb',region:'ORIENTE',localidad:'MATURIN'},
-          {id:'2',nombre:'Servidor2',estatus:'INACTIVO',direccion:'222.222.222',
-            sistema:'WINDOWS',marca:'LENOVO',Modelo:'abcdef',cantidad:'3.5ghz',velocidad:'8gb',
-            memoria:'320gb',region:'OCCIDENTE',localidad:'MARACAIBO'},
+          {
+            id: id,
+            servidor: valor.servidor,
+            estatus: valor.ser_estatus,
+            direccion: valor.ser_direccion,
+            sistema_operativo: valor.sistema,
+            version_sistema: valor.sis_version,
+            marca: valor.marca,
+            modelo: valor.mar_modelo,
+            serial: valor.mar_serial,
+            cantidad_cpu: valor.mar_cantidad_cpu,
+            velocidad_cpu: valor.mar_velocidad_cpu,
+            memoria: valor.mar_memoria,
+            region: valor.ser_region,
+            localidad: valor.ser_localidad,
+          },
       ];
 
       function Servidor(){
@@ -156,8 +178,9 @@ function Vista() {
         )
       }
 
-      const columnasDoc = ['id','Tipo','Descripcion','Direccion','Fecha'];
+      const columnasDoc = ['id','Descripcion','Direccion','Tipo'];
       const resultadosDoc = [
+          {id: id,descripcion: valor.doc_descripcion,direccion: valor.doc_direccion, tipo: valor.doc_tipo,},
           {id:'10',tipo:'Aplicaciones',descripcion:'aaaaaaaaaaaaaa',direccion:'xxxxxxx',fecha:'12/12/2009',},
           {id:'20',tipo:'Aplicaciones',descripcion:'bbbbbbb',direccion:'yyyy',fecha:'5/5/2015',},
           {id:'30',clatipose:'Base de datos',descripcion:'cccccccccccc',direccion:'zzzzzzzzzzzz',fecha:'9/9/2022',},
@@ -176,6 +199,16 @@ function Vista() {
 
       const columnasFallas = ['Numero','Clase','Descripcion','Solucion','Ver'];
       const resultadosFallas = [
+          {
+            id: id,
+            clase: valor.fal_clase,
+            descripcion: valor.fal_descripcion,
+            solucion: valor.fal_solucion,
+            editar:
+            <Link to={`/solicitudes/${1}`}>
+              <FaPlus className="text-base text-blue-500 cursor-pointer ml-4" />
+            </Link>
+          },
           {id:'10',clase:'Aplicaciones',descripcion:'aaaaaaaaaaaaaa',solucion:'xxxxxxx',
             editar:
             <Link to={`/solicitudes/${1}`}>

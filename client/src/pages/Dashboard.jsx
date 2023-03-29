@@ -14,7 +14,7 @@ function Dashboard() {
 
     async function fetchData(){
       try {
-        const data = await Usuarios.obtenerAplicaciones();
+        const data = await Usuarios.obtenerDatos();
         setIsLoading(false);
         setDatos(data.data);
       }

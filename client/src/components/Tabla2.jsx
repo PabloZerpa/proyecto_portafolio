@@ -12,17 +12,19 @@ function Tabla2({columnas, datos, paginacion=false, campo}) {
 
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
     async function updateData(e) {
-        
+         
         e.preventDefault();
         console.log('DENTRO DEL UPDATE DE ACTUALIZACION');
 
+        console.log(datos);
         try {
             console.log('TRY DEL UPDATE');
             
             if(Autorizacion.obtenerUsuario().rol === 'admin'){
 
-                const datoModificacion = { campo,valor };
+                const datoModificacion = { edicion, campo,valor };
                 console.log(edicion, campo, valor);
+                console.log(datoModificacion);
                 
                 await Autorizacion.actualizarDato(4, datoModificacion); 
                 console.log('ALO');
@@ -46,7 +48,7 @@ function Tabla2({columnas, datos, paginacion=false, campo}) {
                 <tbody>
 
                     {datos.map((dato, index) => { 
-                        console.log(dato);
+                        //console.log(dato);
                         const valor = Object.values(dato);
                         return (
                         <tr key={dato.aplicacion_id} className="bg-white border-b hover:bg-gray-100">

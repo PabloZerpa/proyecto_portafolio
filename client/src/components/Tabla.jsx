@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 import { FaEye, FaEdit } from "react-icons/fa";
 import Paginacion from "./Paginacion";
 import { columnasUser, columnasAdmin } from "../services/campos.service";
-
-
+ 
+ 
 function Tabla({datos, opciones, paginacion=false}) {
  
     return (

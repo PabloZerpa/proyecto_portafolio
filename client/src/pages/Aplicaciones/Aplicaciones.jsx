@@ -18,7 +18,7 @@ function Aplicaciones() {
       setRol(Autorizacion.obtenerUsuario().rol)
       async function fetchData(){
         try {
-          const response = await Usuarios.obtenerAplicaciones();
+          const response = await Usuarios.obtenerDatos();
           console.log('APLICACIONES');
           console.log(response.data);
           setDatos(response.data);

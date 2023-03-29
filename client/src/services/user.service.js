@@ -8,14 +8,15 @@ const baseUrl = "http://localhost:3001/api/";
 class Usuarios {
 
     // =============== OBTIENE TODOS LOS DATOS DE LAS APPS ===============
-    async obtenerAplicaciones() {
+    async obtenerDatos() { 
         try {
             const respuesta = await axios.get(`${baseUrl}aplicaciones`, { headers: authHeader() });
             console.log(respuesta);
             return respuesta;
         } catch (error) {
-            Authorization.logout();
-            window.location.reload();
+            // Authorization.logout();
+            // window.location.reload();
+            console.log('Error al obtener datos'); 
         }
         //return axios.get(`${baseUrl}aplicaciones`, { headers: this.authHeader() });
     }
@@ -28,7 +29,7 @@ class Usuarios {
         } catch (error) {
             console.log('Error al obtener dato'); 
         }
-    } 
+    }  
 
     // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
     async obtenerPorTermino(term,estatus,region,prioridad,plataforma,order,count) {
@@ -40,7 +41,7 @@ class Usuarios {
     }
 
     // =============== OBTIENE LOS DATOS POR EL CAMPO A ACTUALIZAR ESPECIFICO ===============
-    async obtenerPorCampo(term,campo) {
+    async obtenerPorCampo(term,campo) { 
         try {
             return axios.post(`${baseUrl}aplicaciones/campo`, {term,campo});
         } catch (error) {

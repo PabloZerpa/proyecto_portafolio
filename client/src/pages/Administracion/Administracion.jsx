@@ -7,8 +7,8 @@ import Usuarios from "../../services/user.service";
 import Autorizacion from "../../services/auth.service";
 import Tabla2 from "../../components/Tabla2";
 
-const campos = ['acronimo', 'nombre', 'descripcion', 'estatus', 
-  'prioridad', 'alcance', 'codigo_fuente', 'licencia'];
+const campos = ['Acronimo', 'Nombre', 'Estatus', 'Prioridad','Alcance','Codigo_Fuente', 
+'Licencia','Cantidad_Usuarios','Plataforma','Lenguaje','Framework','Cliente','Region'];
 
 function Administracion() {
   
@@ -19,7 +19,11 @@ function Administracion() {
 
     const handleInputChange = (e) => {
         console.log(e.target.value);
-        setCampo(e.target.value);
+        if(e.target.value === 'Plataforma' || e.target.value === 'Framework' || e.target.value === 'Lenguaje')
+          setCampo(e.target.value);
+        else
+          setCampo(`apl_${e.target.value}`);
+
         onSearch(searchTerm,campo);
     }
 
@@ -28,7 +32,7 @@ function Administracion() {
         onSearch(debounceValue,campo);
       } 
       else { setResultados(null) }
-    }, [debounceValue]);
+    }, [debounceValue, campo]);
 
     const onSearch = async (value,campo) => {
       try {

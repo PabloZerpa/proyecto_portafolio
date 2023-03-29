@@ -22,11 +22,9 @@ class Autorizacion {
     async crearDatos(datos) {
         console.log('AFUERA DE CREAR DATOS SERVICE')
         console.log(datos);
-        try {
+        try { 
             console.log('EN EL TRY DE CREAR DATOS SERVICE')
-
             const respuesta = await axios.post(`${baseUrl}aplicaciones/`, datos, { headers: authHeader() });
-
             console.log('DESPUES DE CREAR DATOS SERVICE')
             return respuesta;
         } catch (error) {
@@ -47,10 +45,11 @@ class Autorizacion {
             console.log('ERROR AL ACTUALIZAR auth.service');
         }
     }
-    
+     
     // ---------------- UPDATE DE UN CAMPO EN ESPECIFICO ------------------
     async actualizarDato(id, datoModificacion) {
         try {
+            const id = datoModificacion.edicion;
             console.log(id);
             console.log(datoModificacion);
             const respuesta = await axios.patch(`${baseUrl}aplicaciones/${id}`, datoModificacion, { headers: authHeader() });
