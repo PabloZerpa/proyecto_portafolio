@@ -14,20 +14,7 @@ function Aplicaciones() {
     const obtenerResultado = (respuesta) => {setResultado(respuesta)};
   
     useEffect(() => {
-      
       setRol(Autorizacion.obtenerUsuario().rol)
-      async function fetchData(){
-        try {
-          const response = await Usuarios.obtenerDatos();
-          console.log('APLICACIONES');
-          console.log(response.data);
-          setDatos(response.data);
-        } 
-        catch (error) {
-          console.log(error)
-        }
-      }
-      fetchData();
     }, []);
 
   return (

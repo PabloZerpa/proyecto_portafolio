@@ -96,7 +96,7 @@ function Registro() {
                         <Input campo='Nombre' name='funcional_nombre' editable={true} manejador={handleInputChange} />
                         <Input campo='Apellido' name='funcional_apellido' editable={true} manejador={handleInputChange} />
                         <Input campo='Indicador' name='funcional_indicador' editable={true} manejador={handleInputChange} />
-                        <Input campo='Cedula' name='funcional_cedula' editable={true} />
+                        <Input campo='Cedula' name='funcional_cedula' editable={true} manejador={handleInputChange} />
                         <Input campo='Telefono' name='funcional_telefono' editable={true} manejador={handleInputChange} />
                         <Select campo='Cargo' name='funcional_cargo' opciones={opcionRegion} manejador={handleInputChange} />
                         <Select campo='Gerencia' name='funcional_gerencia' opciones={opcionRegion} manejador={handleInputChange} />
@@ -110,7 +110,7 @@ function Registro() {
                         <Input campo='Nombre' name='tecnico_nombre' editable={true} manejador={handleInputChange} />
                         <Input campo='Apellido' name='tecnico_apellido' editable={true} manejador={handleInputChange} />
                         <Input campo='Indicador' name='tecnico_indicador' editable={true} manejador={handleInputChange} />
-                        <Input campo='Cedula' name='tecnico_cedula' editable={true} />
+                        <Input campo='Cedula' name='tecnico_cedula' editable={true} manejador={handleInputChange} />
                         <Input campo='Telefono' name='tecnico_telefono' editable={true} manejador={handleInputChange} />
                         <Select campo='Cargo' name='tecnico_cargo' opciones={opcionRegion} manejador={handleInputChange} />
                         <Select campo='Gerencia' name='tecnico_gerencia' opciones={opcionRegion} manejador={handleInputChange} />

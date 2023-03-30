@@ -116,10 +116,12 @@ export const opcionMantenimiento = ['TODAS', 'DIARIO', 'SEMANAL', 'QUINCENAL', '
 
 
 export const columnasUser = ['Ver','ID','Acronimo','Nombre','Descripcion','Version','Estatus','Prioridad','Critica','Alcance','Codigo Fuente','Licencia','Direccion','N° Usuarios',
+'Nombre','Apellido','Indicador','Cedula','Cargo','Telefono','Gerencia','Subgerencia',
 'Plataforma','Lenguaje','Framework','Base de datos','BD Estatus','DB Cantidad','BD Tipo','Manejador','Ambiente','Servidor','Estatus','Direccion','OS','OS_Version','Marca',
 'Modelo','Serial','Cantidad CPU','Velocidad CPU','Memoria','Cliente','Region','Localidad','Mantenimiento','Horas Prom','Horas Año','Documentacion','Tipo Docu','Direccion'];
 
 export const columnasAdmin = ['Ver','Editar','ID','Acronimo','Nombre','Descripcion','Version','Estatus','Prioridad','Critica','Alcance','Codigo Fuente','Licencia','Direccion','N° Usuarios',
+'Nombre','Apellido','Indicador','Cedula','Cargo','Telefono','Gerencia','Subgerencia',
 'Plataforma','Lenguaje','Framework','Base de datos','BD Estatus','DB Cantidad','BD Tipo','Manejador','Ambiente','Servidor','Estatus','Direccion','OS','OS_Version','Marca',
 'Modelo','Serial','Cantidad CPU','Velocidad CPU','Memoria','Cliente','Region','Localidad','Mantenimiento','Horas Prom','Horas Año','Documentacion','Tipo Docu','Direccion'];
 

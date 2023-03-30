@@ -1,4 +1,12 @@
 
+/*
+ EL ORDEN PARA OBTENER LOS DATOS DEL DASHBOARD:
+    1) MODIFICAR LA CONSULTA OBTENER DATOS DEL SERVIDOR
+    2) SE RECIBE EN OBTENER DATOS DE LA CLASE USUARIO
+    3) LOS DATOS SE GUARDAN EN DASHBOARD Y SE PASAN AL COMPONENTE TABLA
+    4) EN LA TABLA LOS VALORES DE "CAMPO" DEBEN COINCIDIR CON LOS CAMPOS LA CONSULTA
+*/
+
 import { useState, useEffect } from "react";
 import { Tabla, Container } from "../components";
 import { BiLoaderAlt } from "react-icons/bi";
@@ -17,6 +25,9 @@ function Dashboard() {
         const data = await Usuarios.obtenerDatos();
         setIsLoading(false);
         setDatos(data.data);
+
+        console.log('DASHBOARD OBTENER DATOS');
+        console.log(datos);
       }
       catch (error) {
         console.log(error)
@@ -35,7 +46,7 @@ function Dashboard() {
             <h3 className='font-bold text-lg'>Modificaciones Recientes</h3>
             <Tabla datos={datos} opciones={false} />
             
-            <Linea />
+            {/* <Linea /> */}
           </>
         )
       }

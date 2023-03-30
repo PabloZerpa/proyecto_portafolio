@@ -6,7 +6,7 @@ import { Select, Radio } from '../components';
 import Usuarios from "../services/user.service";
 import { opcionEstatus, opcionRegion, opcionPlataforma, opcionAlcance, opcionMantenimiento, opcionCount, opcionLocalidad } from '../services/campos.service';
 
- 
+  
 function Busqueda({manejarBusqueda}) {
      
     const [searchTerm, setSearchTerm] = useState("");
@@ -48,8 +48,9 @@ function Busqueda({manejarBusqueda}) {
     const onSearch = async (value) => {
         try {
             const { estatus,alcance,plataforma,prioridad,registros,orden } = datos;
-
-            const respuesta = await Usuarios.obtenerPorTermino(value,estatus,alcance,prioridad,plataforma,orden,registros);
+            
+            console.log('BUSQUEDA')
+            const respuesta = await Usuarios.obtenerPorBusqueda(value,estatus,alcance,prioridad,plataforma,orden,registros);
             console.log(estatus,alcance,prioridad,plataforma,orden,registros);
             console.log(Object.keys(respuesta.data).length);
 

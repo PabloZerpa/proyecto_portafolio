@@ -6,11 +6,13 @@ const baseUrl = "http://localhost:3001/api/";
 // const baseUrl = "https://proyecto-portafolio-server.onrender.com/api/";
 
 class Usuarios {
-
+  
     // =============== OBTIENE TODOS LOS DATOS DE LAS APPS ===============
     async obtenerDatos() { 
         try {
             const respuesta = await axios.get(`${baseUrl}aplicaciones`, { headers: authHeader() });
+
+            console.log('USER SERVICE OBTENER DATOS');
             console.log(respuesta);
             return respuesta;
         } catch (error) {
@@ -32,8 +34,9 @@ class Usuarios {
     }  
 
     // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
-    async obtenerPorTermino(term,estatus,region,prioridad,plataforma,order,count) {
+    async obtenerPorBusqueda(term,estatus,region,prioridad,plataforma,order,count) {
         try {
+            console.log('Obtener por busqueda');
             return axios.post(`${baseUrl}aplicaciones/term`, {term,estatus,region,prioridad,plataforma,order,count});
         } catch (error) {
             console.log('Error al obtener dato');
