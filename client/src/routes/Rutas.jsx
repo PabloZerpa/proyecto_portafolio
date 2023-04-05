@@ -1,7 +1,6 @@
 
 import { Routes, Route } from "react-router-dom";
-import { Protegida } from "./Protegida";
-import { ProtegidaAdm } from "./ProtegidaAdm";
+import { Protegida, ProtegidaAdm, ProtegidaSuper } from "./Protegida";
 import { 
   Login, 
   Dashboard,
@@ -33,25 +32,35 @@ function Rutas() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/perfil" element={<Perfil />} />
 
+            {/* MODULO DE ADMINISTRACION */}
             <Route element={<ProtegidaAdm />} >
+              {/* REGISTRO Y PERMISOS SOLO PUEDE ACCERDER LOS ADMIN */}
+              <Route path="/administracion/permisos" element={<Permisos />} />
+              <Route path="/administracion/registro" element={<Registro />} />
+            </Route>
+
+            <Route element={<ProtegidaSuper />} >
+              {/* ADMINISTRACION POR CAMPO Y ACTUALIZACION POR ID PUEDEN ACCERDER SUPERUSER Y ADMIN */}
               <Route path="/administracion" element={<Administracion />} />
               <Route path="/administracion/actualizacion/:id" element={<Actualizacion />} />
-              <Route path="/administracion/registro" element={<Registro />} />
-              <Route path="/administracion/permisos" element={<Permisos />} />
-              {/* <Route path="/administracion/solicitudes" element={<Solicitudes />} />
-              <Route path="/administracion/solicitudes/:id" element={<Solicitud />} />
-              <Route path="/administracion/crearsolicitud" element={<CrearSolicitud />} /> */}
             </Route>
             
+            {/* MODULO DE APLICACIONES */}
             <Route path="/aplicaciones/" element={<Aplicaciones />} />
             <Route path="/aplicaciones/:id" element={<Vista />} />
             <Route path="/aplicaciones/diagramas" element={<Diagramas />} />
               
+            {/* MODULO DE ADMINISTRACION */}
             <Route path="/basedatos" element={<BaseDatos />} />
 
+            {/* MODULO DE SOLICITUDES */}
             <Route path="/solicitudes" element={<Solicitudes />} />
             <Route path="/solicitudes/:id" element={<Solicitud />} />
-            <Route path="/solicitudes/crear" element={<CrearSolicitud />} />
+
+            {/* CREACION DE SOLICITUDES PUEDEN ACCERDER SUPERUSER Y ADMIN */}
+            <Route element={<ProtegidaSuper />} >
+              <Route path="/solicitudes/crear" element={<CrearSolicitud />} />
+            </Route>
             
           </Route> 
 

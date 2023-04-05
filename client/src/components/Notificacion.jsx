@@ -2,8 +2,8 @@
 import { useState } from "react";
 import { FaCheckCircle, FaTimes, FaTimesCircle } from "react-icons/fa";
 
-function Notificacion({ opcion, mensaje }) {
-    
+function Notificacion({ opcion, titulo, mensaje }) {
+     
   const [open, setOpen] = useState(true);
   const openMenu = () => setOpen(!open);
 
@@ -13,7 +13,7 @@ function Notificacion({ opcion, mensaje }) {
           <div className="bg-green-500 flex justify-between items-center py-2 px-3 bg-clip-padding border-b border-green-400 rounded-t-lg">
             <p className="font-bold text-white flex items-center">
               <FaCheckCircle className="text-xl mr-1" />
-              LOGIN COMPLETADO
+              {titulo}
             </p>
             <div className="flex items-center">
               <FaTimes 
@@ -23,7 +23,7 @@ function Notificacion({ opcion, mensaje }) {
             </div>
           </div>
           <div className="p-2 text-lg bg-green-500 rounded-b-lg break-words text-white">
-            <p>Bienvenido/a {mensaje}</p>
+            <p>{mensaje}</p>
           </div>
         </div>
       )
@@ -35,7 +35,7 @@ function Notificacion({ opcion, mensaje }) {
                 <div className="bg-red-600 flex justify-between items-center py-2 px-3 bg-clip-padding border-b border-red-500 rounded-t-lg">
                   <p className="font-bold text-white flex items-center">
                     <FaTimesCircle className="text-xl mr-1" />
-                    LOGIN FALLIDO
+                    {titulo}
                   </p>
                   <div className="flex items-center">
                     <FaTimes 

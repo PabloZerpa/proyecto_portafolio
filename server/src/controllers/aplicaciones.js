@@ -1,178 +1,334 @@
 
 const pool = require('../config');
-const { matchedData } = require('express-validator');
-const { verificarAplicacion, verificarCliente, verificarPlataforma, verificarLenguaje, verificarFramework, 
-verificarRegion, verificarServidor, verificarBase, verificarMantenimiento, verificarDocumentacion } = require('../helpers/verificaciones')
 
-const plataforma = `
-JOIN aplicacion_plataforma
-ON aplicaciones.aplicacion_id = aplicacion_plataforma.aplicacion_id
-JOIN plataformas
-ON aplicacion_plataforma.plataforma_id = plataformas.plataforma_id`;
+const { verificarAplicacion, verificarPlataforma, 
+        verificarLenguaje, verificarFramework, verificarRegion, verificarServidor, 
+        verificarBase, verificarMantenimiento, verificarDocumentacion, verificarResponsable } = require('../helpers/verificaciones');
+const { selectSimple } = require('../helpers/consultas');
 
-const lenguaje = `inner join aplicacion_lenguaje
-on aplicaciones.aplicacion_id = aplicacion_lenguaje.aplicacion_id
-inner join lenguajes
-on aplicacion_lenguaje.lenguaje_id = lenguajes.lenguaje_id`;
-
-const framework = `inner join aplicacion_framework
-on aplicaciones.aplicacion_id = aplicacion_framework.aplicacion_id
-inner join frameworks
-on aplicacion_framework.framework_id = frameworks.framework_id`;
-
-const base_datos = `inner join aplicacion_basedatos
-on aplicaciones.aplicacion_id = aplicacion_basedatos.aplicacion_id
-inner join bases_datos
-on aplicacion_basedatos.base_datos_id = bases_datos.base_datos_id
-inner join manejadores
-on bases_datos.base_datos_id = manejadores.manejador_id
-inner join tipos_bases
-on bases_datos.base_datos_id = tipo_base_id`;
-
-const servidor = `join servidores
-on bases_datos.bas_servidor_id = servidores.servidor_id
-inner join sistemas_operativos
-on sistemas_operativos.sistema_id = servidores.servidor_id
-inner join marcas
-on marcas.marca_id = servidores.servidor_id`;
-
-const responsables = `inner join responsables_funcionales
-on aplicaciones.aplicacion_id = responsables_funcionales.aplicacion_id
-inner join responsables
-on responsables.responsable_id = responsables_funcionales.responsable_id
-inner join telefonos
-on responsables.responsable_id = telefonos.telefono_id
-inner join gerencias
-on responsables.res_gerencia_id = gerencias.gerencia_id`;
-
-const clientes = `inner join clientes
-on aplicaciones.aplicacion_id = clientes.cliente_id`;
-
-const regiones = `inner join regiones
-on aplicaciones.aplicacion_id = regiones.region_id
-inner join localidades
-on regiones.region_id = localidades.localidad_id`;
-
-const mantenimientos = `inner join mantenimientos
-on mantenimientos.aplicacion_id = aplicaciones.aplicacion_id`;
-
-const documentaciones = `inner join documentaciones
-on documentaciones.aplicacion_id = aplicaciones.aplicacion_id`;
-
-const select = `
-SELECT 
-    aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_descripcion,
-    apl_version,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
-    apl_codigo_fuente,apl_licencia,apl_direccion,apl_cantidad_usuarios,
-    res_nombre, res_apellido, res_indicador, res_cedula, res_cargo, telefono, gerencia, subgerencia,
-    plataforma,lenguaje, framework, 
-    base_datos,bas_estatus,bas_cantidad_usuarios, tipo, manejador,bas_tipo_ambiente,
-    servidor, ser_estatus,ser_direccion, sistema,
-    sistema_version, marca,mar_modelo,mar_serial,mar_cantidad_cpu,mar_velocidad_cpu,mar_memoria,
-    cliente,region, localidad,
-    man_frecuencia,man_horas_prom,man_horas_anuales, 
-    doc_descripcion,doc_tipo, doc_direccion
-FROM aplicaciones 
-    ${plataforma}
-    ${lenguaje}
-    ${framework}
-    ${base_datos}
-    ${servidor}
-    ${responsables}
-    ${clientes}
-    ${regiones}
-    ${mantenimientos}
-    ${documentaciones}
-`;
 
 // *********************************** OBTENER TODOS LOS DATOS ***********************************
-const obtenerDatos = async (req,res) => {
+const obtenerLenguajes = async (req,res) => {
     try {
-        const query = `${select}ORDER BY aplicaciones.aplicacion_id ASC`;
-
-        const data = await pool.query(query);
+        const data = await pool.query(`SELECT lenguaje FROM lenguajes`);
         res.send(data[0]);
     } catch (error) {
         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
     }
 };
 
+// *********************************** OBTENER TODOS LOS DATOS ***********************************
+const obtenerFrameworks = async (req,res) => {
+    try {
+        const data = await pool.query(`SELECT framework FROM frameworks`);
+        res.send(data[0]);
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+    }
+};
+
+// *********************************** OBTENER TODOS LOS DATOS ***********************************
+const obtenerBaseDatos = async (req,res) => {
+    try {
+        const data = await pool.query(`SELECT base_datos FROM bases_datos`);
+        res.send(data[0]);
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+    }
+};
+
+// *********************************** OBTENER TODOS LOS DATOS ***********************************
+const obtenerServidores = async (req,res) => {
+    try {
+        const data = await pool.query(`SELECT servidor FROM servidores`);
+        res.send(data[0]);
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+    }
+};
+
+
+// *********************************** OBTENER CANTIDAD TOTAL ***********************************
+const obtenerCantidadTotal = async (req,res) => {
+    try {
+        const data = await pool.query(`
+            SELECT 
+                COUNT(*)
+            FROM aplicaciones
+                JOIN aplicacion_plataforma
+                ON aplicaciones.aplicacion_id = aplicacion_plataforma.aplicacion_id
+                JOIN plataformas
+                ON aplicacion_plataforma.plataforma_id = plataformas.plataforma_id
+                inner join aplicacion_lenguaje
+                on aplicaciones.aplicacion_id = aplicacion_lenguaje.aplicacion_id
+                inner join lenguajes
+                on aplicacion_lenguaje.lenguaje_id = lenguajes.lenguaje_id
+                inner join aplicacion_basedatos
+                on aplicaciones.aplicacion_id = aplicacion_basedatos.aplicacion_id
+                inner join bases_datos
+                on aplicacion_basedatos.base_datos_id = bases_datos.base_datos_id
+                join servidores
+                on aplicaciones.aplicacion_id = servidores.servidor_id
+                inner join regiones
+                on aplicaciones.aplicacion_id = regiones.region_id
+                inner join responsables_funcionales
+                on aplicaciones.aplicacion_id = responsables_funcionales.aplicacion_id
+                inner join responsables
+                on responsables.responsable_id = responsables_funcionales.responsable_id
+            `);
+        res.send(data[0]);
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+    }
+};
+
+// *********************************** OBTENER TODOS LOS DATOS ***********************************
+const obtenerDatos = async (req,res) => {
+    try {
+        const data = await pool.query(selectSimple);
+        res.send(data[0]);
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+    }
+};
+
+// *********************************** OBTENER DATOS POR ID ***********************************
+const obtenerDato = async (req,res) => {
+    try {
+        //const body = matchedData(req);
+        console.log('ALO');
+        const { id } = req.params;
+        const app = await pool.query(`
+            SELECT 
+                apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,
+                apl_critico,apl_alcance,apl_codigo_fuente,apl_licencia,apl_version,apl_direccion,apl_cantidad_usuarios,
+                region,apl_cliente,apl_fecha_registro,telefono,gerencia,subgerencia,region,localidad,
+                plataforma,lenguaje, framework, 
+                base_datos,bas_estatus,bas_tipo_ambiente,bas_cantidad_usuarios,tipo,manejador,
+                servidor,ser_estatus,ser_direccion,region,localidad,
+                marca,mar_modelo,mar_serial,mar_cantidad_cpu,mar_velocidad_cpu,mar_memoria,sistema,sistema_version,
+                man_frecuencia,man_horas_prom, man_horas_anuales, 
+                doc_descripcion,doc_tipo, doc_direccion
+            FROM aplicaciones
+                JOIN regiones ON regiones.region_id = aplicaciones.aplicacion_id
+                inner join localidades on regiones.region_id = localidades.localidad_id
+                JOIN aplicacion_plataforma ON aplicaciones.aplicacion_id = aplicacion_plataforma.aplicacion_id
+                JOIN plataformas ON aplicacion_plataforma.plataforma_id = plataformas.plataforma_id
+                inner join aplicacion_lenguaje on aplicaciones.aplicacion_id = aplicacion_lenguaje.aplicacion_id
+                inner join lenguajes on aplicacion_lenguaje.lenguaje_id = lenguajes.lenguaje_id
+                inner join aplicacion_framework on aplicaciones.aplicacion_id = aplicacion_framework.aplicacion_id
+                inner join frameworks on aplicacion_framework.framework_id = frameworks.framework_id
+                inner join aplicacion_basedatos on aplicaciones.aplicacion_id = aplicacion_basedatos.aplicacion_id
+                inner join bases_datos on aplicacion_basedatos.base_datos_id = bases_datos.base_datos_id
+                inner join manejadores on bases_datos.base_datos_id = manejadores.manejador_id
+                inner join tipos_bases on bases_datos.base_datos_id = tipo_base_id
+                join servidores on bases_datos.bas_servidor_id = servidores.servidor_id
+                inner join sistemas_operativos on sistemas_operativos.sistema_id = servidores.servidor_id
+                inner join marcas on marcas.marca_id = servidores.servidor_id
+                inner join responsables_funcionales on aplicaciones.aplicacion_id = responsables_funcionales.aplicacion_id
+				inner join responsables on responsables.responsable_id = responsables_funcionales.responsable_id
+                inner join telefonos on responsables.responsable_id = telefonos.telefono_id
+				inner join gerencias on responsables.res_gerencia_id = gerencias.gerencia_id
+                inner join mantenimientos on mantenimientos.aplicacion_id = aplicaciones.aplicacion_id
+                inner join documentaciones on documentaciones.aplicacion_id = aplicaciones.aplicacion_id
+            WHERE aplicaciones.aplicacion_id = ?`, [id]);
+
+        // const responsable = await pool.query(`
+        //     SELECT 
+        //         res_nombre,res_apellido,res_indicador,res_cedula,res_cargo,telefono,gerencia,subgerencia,region,localidad
+        //     FROM responsables
+        //         JOIN regiones ON regiones.region_id = responsables.responsable_id
+        //         JOIN localidades ON localidades.localidad_id = responsables.responsable_id
+        //         JOIN gerencias ON gerencias.gerencia_id = responsables.responsable_id
+        //         JOIN telefonos ON telefonos.telefono_id = responsables.responsable_id
+        //     WHERE responsables.responsable_id = ?`, [id]);
+
+        res.send(app[0][0]);
+    } catch (error) {
+        console.log("ERROR_CREATE_ITEMS");
+    }
+};
+
 // *********************************** OBTENER LOS DATOS POR TERMINO DE BUSQUEDA ***********************************
-const obtenerPorBusqueda = async (req,res) => {
+const obtenerBusqueda = async (req,res) => {
     try {  
-        const { term,estatus,region,prioridad,plataforma,order,count } = req.body;
+        const { term,estatus,region,prioridad,plataforma,order,count,pagina } = req.body;
         const termino = '%' + term + '%';
         let data;
 
-        console.log(termino,estatus,region,prioridad,plataforma,order,count);
+        const offset = (pagina-1)*10;
+        console.log(termino,estatus,region,prioridad,plataforma,order,count,pagina,offset); 
+
 
         if (term === undefined || null)
             return res.status(404).json({ message: "Error al recibir consulta" });
         
         if(estatus){
             data = await pool.query(`
-            ${select}
-            WHERE (aplicaciones.aplicacion_id LIKE ? OR 
-                apl_acronimo LIKE ? OR 
-                apl_nombre LIKE ? OR
-                apl_prioridad LIKE ? OR
-                lenguaje LIKE ? OR 
-                framework LIKE ? OR 
-                base_datos LIKE ? OR 
-                servidor LIKE ? OR 
-                plataforma LIKE ?)
-                AND apl_estatus LIKE ? ORDER BY aplicaciones.aplicacion_id ${order} LIMIT ?;`, 
-            [termino,termino,termino,termino,termino,termino,termino,termino,termino,estatus,parseInt(count)]);
+                SELECT 
+                    aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_version,
+                    apl_estatus,apl_prioridad,apl_direccion,region,apl_cliente,
+                    res_nombre, res_apellido,res_indicador,
+                    plataforma,lenguaje,base_datos,servidor
+                FROM aplicaciones
+                    JOIN aplicacion_plataforma
+                    ON aplicaciones.aplicacion_id = aplicacion_plataforma.aplicacion_id
+                    JOIN plataformas
+                    ON aplicacion_plataforma.plataforma_id = plataformas.plataforma_id
+                    inner join aplicacion_lenguaje
+                    on aplicaciones.aplicacion_id = aplicacion_lenguaje.aplicacion_id
+                    inner join lenguajes
+                    on aplicacion_lenguaje.lenguaje_id = lenguajes.lenguaje_id
+                    inner join aplicacion_basedatos
+                    on aplicaciones.aplicacion_id = aplicacion_basedatos.aplicacion_id
+                    inner join bases_datos
+                    on aplicacion_basedatos.base_datos_id = bases_datos.base_datos_id
+                    join servidores
+                    on aplicaciones.aplicacion_id = servidores.servidor_id
+                    inner join regiones
+                    on aplicaciones.aplicacion_id = regiones.region_id
+                    inner join responsables_funcionales
+                    on aplicaciones.aplicacion_id = responsables_funcionales.aplicacion_id
+                    inner join responsables
+                    on responsables.responsable_id = responsables_funcionales.responsable_id
+                WHERE (aplicaciones.aplicacion_id LIKE ? OR 
+                    apl_acronimo LIKE ? OR 
+                    apl_nombre LIKE ? OR
+                    apl_prioridad LIKE ? OR
+                    lenguaje LIKE ? OR
+                    base_datos LIKE ? OR 
+                    servidor LIKE ? OR 
+                    plataforma LIKE ?)
+                    AND apl_estatus LIKE ? ORDER BY aplicaciones.aplicacion_id ${order} LIMIT ? OFFSET ?;`, 
+            [termino,termino,termino,termino,termino,termino,termino,termino,estatus,parseInt(count),offset]);
         }
         else if(prioridad){
             data = await pool.query(
-                `${select}
+                `SELECT 
+                    aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_version,
+                    apl_estatus,apl_prioridad,apl_direccion,region,apl_cliente,
+                    res_nombre, res_apellido,res_indicador,
+                    plataforma,lenguaje,base_datos,servidor
+                FROM aplicaciones
+                    JOIN aplicacion_plataforma
+                    ON aplicaciones.aplicacion_id = aplicacion_plataforma.aplicacion_id
+                    JOIN plataformas
+                    ON aplicacion_plataforma.plataforma_id = plataformas.plataforma_id
+                    inner join aplicacion_lenguaje
+                    on aplicaciones.aplicacion_id = aplicacion_lenguaje.aplicacion_id
+                    inner join lenguajes
+                    on aplicacion_lenguaje.lenguaje_id = lenguajes.lenguaje_id
+                    inner join aplicacion_basedatos
+                    on aplicaciones.aplicacion_id = aplicacion_basedatos.aplicacion_id
+                    inner join bases_datos
+                    on aplicacion_basedatos.base_datos_id = bases_datos.base_datos_id
+                    join servidores
+                    on aplicaciones.aplicacion_id = servidores.servidor_id
+                    inner join regiones
+                    on aplicaciones.aplicacion_id = regiones.region_id
+                    inner join responsables_funcionales
+                    on aplicaciones.aplicacion_id = responsables_funcionales.aplicacion_id
+                    inner join responsables
+                    on responsables.responsable_id = responsables_funcionales.responsable_id
                 WHERE (aplicaciones.aplicacion_id LIKE ? OR 
                     apl_acronimo LIKE ? OR 
                     apl_nombre LIKE ? OR 
                     apl_estatus LIKE ? OR 
-                    lenguaje LIKE ? OR 
-                    framework LIKE ? OR 
+                    lenguaje LIKE ? OR
                     base_datos LIKE ? OR 
                     servidor LIKE ? OR 
                     plataforma LIKE ?)
-                    AND apl_prioridad LIKE ? ORDER BY aplicaciones.aplicacion_id ${order} LIMIT ?`,
-                [termino,termino,termino,termino,termino,termino,termino,termino,termino,prioridad,parseInt(count)]);
+                    AND apl_prioridad LIKE ? ORDER BY aplicaciones.aplicacion_id ${order} LIMIT ? OFFSET ?`,
+                [termino,termino,termino,termino,termino,termino,termino,termino,prioridad,parseInt(count),offset]);
         }
         else if(plataforma){
             data = await pool.query(
-                `${select}
+                `SELECT 
+                    aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_version,
+                    apl_estatus,apl_prioridad,apl_direccion,region,apl_cliente,
+                    res_nombre, res_apellido,res_indicador,
+                    plataforma,lenguaje,base_datos,servidor
+                FROM aplicaciones
+                    JOIN aplicacion_plataforma
+                    ON aplicaciones.aplicacion_id = aplicacion_plataforma.aplicacion_id
+                    JOIN plataformas
+                    ON aplicacion_plataforma.plataforma_id = plataformas.plataforma_id
+                    inner join aplicacion_lenguaje
+                    on aplicaciones.aplicacion_id = aplicacion_lenguaje.aplicacion_id
+                    inner join lenguajes
+                    on aplicacion_lenguaje.lenguaje_id = lenguajes.lenguaje_id
+                    inner join aplicacion_basedatos
+                    on aplicaciones.aplicacion_id = aplicacion_basedatos.aplicacion_id
+                    inner join bases_datos
+                    on aplicacion_basedatos.base_datos_id = bases_datos.base_datos_id
+                    join servidores
+                    on aplicaciones.aplicacion_id = servidores.servidor_id
+                    inner join regiones
+                    on aplicaciones.aplicacion_id = regiones.region_id
+                    inner join responsables_funcionales
+                    on aplicaciones.aplicacion_id = responsables_funcionales.aplicacion_id
+                    inner join responsables
+                    on responsables.responsable_id = responsables_funcionales.responsable_id
                 WHERE (aplicaciones.aplicacion_id LIKE ? OR 
                     apl_acronimo LIKE ? OR 
                     apl_nombre LIKE ? OR 
                     apl_prioridad LIKE ? OR 
                     apl_estatus LIKE ? OR 
-                    lenguaje LIKE ? OR 
-                    framework LIKE ? OR 
+                    lenguaje LIKE ? OR
                     base_datos LIKE ? OR 
                     servidor LIKE ? )
-                    AND plataforma LIKE ? ORDER BY aplicaciones.aplicacion_id ${order} LIMIT ?`,
-                [termino,termino,termino,termino,termino,termino,termino,termino,termino,plataforma,parseInt(count)]);
+                    AND plataforma LIKE ? ORDER BY aplicaciones.aplicacion_id ${order} LIMIT ? OFFSET ?`,
+                [termino,termino,termino,termino,termino,termino,termino,termino,plataforma,parseInt(count),offset]);
         }
         else{
             data = await pool.query(
-                `${select}
+                `SELECT 
+                    aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_version,
+                    apl_estatus,apl_prioridad,apl_direccion,region,apl_cliente,
+                    res_nombre, res_apellido,res_indicador,
+                    plataforma,lenguaje,base_datos,servidor
+                FROM aplicaciones
+                    JOIN aplicacion_plataforma
+                    ON aplicaciones.aplicacion_id = aplicacion_plataforma.aplicacion_id
+                    JOIN plataformas
+                    ON aplicacion_plataforma.plataforma_id = plataformas.plataforma_id
+                    inner join aplicacion_lenguaje
+                    on aplicaciones.aplicacion_id = aplicacion_lenguaje.aplicacion_id
+                    inner join lenguajes
+                    on aplicacion_lenguaje.lenguaje_id = lenguajes.lenguaje_id
+                    inner join aplicacion_basedatos
+                    on aplicaciones.aplicacion_id = aplicacion_basedatos.aplicacion_id
+                    inner join bases_datos
+                    on aplicacion_basedatos.base_datos_id = bases_datos.base_datos_id
+                    join servidores
+                    on aplicaciones.aplicacion_id = servidores.servidor_id
+                    inner join regiones
+                    on aplicaciones.aplicacion_id = regiones.region_id
+                    inner join responsables_funcionales
+                    on aplicaciones.aplicacion_id = responsables_funcionales.aplicacion_id
+                    inner join responsables
+                    on responsables.responsable_id = responsables_funcionales.responsable_id
                 WHERE 
                     (aplicaciones.aplicacion_id LIKE ? OR 
                     apl_nombre LIKE ? OR 
                     apl_acronimo LIKE ? OR 
                     apl_estatus LIKE ? OR 
                     apl_prioridad LIKE ? OR 
-                    lenguaje LIKE ? OR 
-                    framework LIKE ? OR 
+                    lenguaje LIKE ? OR
                     base_datos LIKE ? OR 
                     servidor LIKE ? OR 
-                    plataforma LIKE ? ) ORDER BY aplicaciones.aplicacion_id ${order} LIMIT ?`, 
-                [termino,termino,termino,termino,termino,termino,termino,termino,termino,termino,parseInt(count)]);
+                    plataforma LIKE ? ) ORDER BY aplicaciones.aplicacion_id ${order} LIMIT ? OFFSET ?`, 
+                [termino,termino,termino,termino,termino,termino,termino,termino,termino,parseInt(count),offset]);
         }
 
-        if (data.affectedRows === 0)
-            return res.status(404).json({ message: "Sin coincidencias" });
+        console.log(data[0][0]);
+        if (data[0][0] === undefined){
+            data = 'NULL'
+            return res.json([]);
+        }
+
+        // if (data.affectedRows === 0)
+        //     return res.status(404).json({ message: "Sin coincidencias" });
 
         res.json(data[0]);
         
@@ -182,7 +338,7 @@ const obtenerPorBusqueda = async (req,res) => {
 };
 
 // *********************************** OBTENER LOS DATOS POR CAMPO ESPECIFICO ***********************************
-const obtenerPorCampo = async (req,res) => {
+const obtenerCampo = async (req,res) => {
     try { 
         const { term, campo } = req.body;
         const termino = '%' + term + '%';
@@ -210,81 +366,18 @@ const obtenerPorCampo = async (req,res) => {
     }
 };
 
-// *********************************** OBTENER DATOS PARA GENERAR GRAFICOS ***********************************
-const obtenerPorGraficos = async (req,res) => {
-    try { 
-        const opcionRegion = ['CARABOBO NORTE', 'CENTRO', 'CENTRO SUR', 'CORPORATIVO','ORIENTE NORTE', 
-        'ORIENTE SUR', 'OCCIDENTE','ANDES',''];
-        const { categoria, orden } = req.body;
-        let regiones = '';
-        //let cantidad = {orienteNorte: ''};
-        let cantidad = [];
-
-        console.log(categoria,orden);
- 
-        if (categoria === undefined || null)
-            return res.status(404).json({ message: "Error al recibir consulta" });
-         
-        const query = await pool.query( `SELECT ${categoria} FROM apps`);
-        regiones = query[0]; 
-        console.log(regiones);
-        console.log(regiones.length);
-
-        //          (POSICION_ARREGLO/CANTIDAD_TOTAL)*100
-        // console.log(regiones[5].region);
-        // const data = await pool.query( `SELECT ${categoria} FROM apps WHERE region = ?`, [regiones[5].region]);
-        // console.log(data[0]);
-        // console.log(data[0].length);
-        // cantidad.orienteNorte = data[0].length
-        // //cantidad.push(data[0].length)
-        // console.log(cantidad);
-
-        for(let i=0; i < opcionRegion.length; i++){
-            console.log(opcionRegion[i]);
-
-            const data = await pool.query( `SELECT ${categoria} FROM apps WHERE region = ?`, [opcionRegion[i]]);
-
-            console.log(data[0]);
-            console.log(data[0].length);
-            cantidad.push(data[0].length)
-            console.log(cantidad); 
-        }
-
-        // if (data.affectedRows === 0)
-        //     return res.status(404).json({ message: "Sin coincidencias" });
-
-        // res.json(data[0]);
-        
-    } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
-    }
-};
-
-// *********************************** OBTENER DATOS POR ID ***********************************
-const obtenerDato = async (req,res) => {
-    try {
-        //const body = matchedData(req);
-        const { id } = req.params;
-        const [rows] = await pool.query('SELECT * FROM apps WHERE id = ?', [id]);
-        console.log(rows[0]);
-        res.send(rows[0]);
-    } catch (error) {
-        console.log("ERROR_CREATE_ITEMS");
-    }
-};
-
 // *********************************** CREAR REGISTRO ***********************************
 const crearAplicacion = async (req,res) => {
     try {
         const {
-            apl_acronimo,apl_nombre,apl_descripcion,apl_region,
+            apl_acronimo,apl_nombre,apl_descripcion,apl_region,apl_cliente,
             apl_version,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
             apl_codigo_fuente,apl_licencia,apl_direccion,apl_cantidad_usuarios,
             plataforma,lenguaje, framework, 
             base_datos,base_estatus,base_cantidad_usuarios, base_tipo, base_manejador,base_tipo_ambiente,
-            servidor, ser_estatus,ser_direccion, ser_sistema,ser_region,ser_localidad,
+            servidor, ser_estatus,ser_direccion, ser_sistema,ser_region,ser_localidad,base_servidor,
             ser_sistemas_version,ser_marca,ser_modelo,ser_serial,ser_cantidad_cpu,ser_velocidad_cpu,ser_memoria,
-            cliente, man_frecuencia,man_horas_prom,man_horas_anuales, 
+            man_frecuencia,man_horas_prom,man_horas_anuales, 
             doc_descripcion,doc_tipo, doc_direccion, apl_fecha_registro,
 
             funcional_nombre,funcional_apellido,funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
@@ -297,21 +390,21 @@ const crearAplicacion = async (req,res) => {
         {apl_codigo_fuente === 'SI' ? codigo = 1 : codigo = 0}
         {apl_critico === 'SI' ? critico = 1 : critico = 0}
 
-        console.log(apl_acronimo,apl_nombre,apl_descripcion,apl_region,
-            apl_version,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
-            apl_codigo_fuente,apl_licencia,apl_direccion,apl_cantidad_usuarios,
-            plataforma,lenguaje, framework, 
-            base_datos,base_estatus,base_cantidad_usuarios, base_tipo, base_manejador,base_tipo_ambiente,
-            servidor, ser_estatus,ser_direccion, ser_sistema,ser_region,ser_localidad,
-            ser_sistemas_version,ser_marca,ser_modelo,ser_serial,ser_cantidad_cpu,ser_velocidad_cpu,ser_memoria,
-            cliente, man_frecuencia,man_horas_prom,man_horas_anuales, 
-            doc_descripcion,doc_tipo, doc_direccion, apl_fecha_registro,
+        // console.log(apl_acronimo,apl_nombre,apl_descripcion,apl_region,apl_cliente,
+        //     apl_version,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
+        //     apl_codigo_fuente,apl_licencia,apl_direccion,apl_cantidad_usuarios,
+        //     plataforma,lenguaje, framework, 
+        //     base_datos,base_estatus,base_cantidad_usuarios, base_tipo, base_manejador,base_tipo_ambiente,
+        //     servidor, ser_estatus,ser_direccion, ser_sistema,ser_region,ser_localidad,
+        //     ser_sistemas_version,ser_marca,ser_modelo,ser_serial,ser_cantidad_cpu,ser_velocidad_cpu,ser_memoria,
+        //     man_frecuencia,man_horas_prom,man_horas_anuales, 
+        //     doc_descripcion,doc_tipo, doc_direccion, apl_fecha_registro,
             
-            funcional_nombre,funcional_apellido,funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
-            funcional_gerencia,funcional_subgerencia,funcional_region,funcional_localidad,
+        //     funcional_nombre,funcional_apellido,funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
+        //     funcional_gerencia,funcional_subgerencia,funcional_region,funcional_localidad,
 
-            tecnico_nombre,tecnico_apellido,tecnico_indicador,tecnico_cedula,tecnico_cargo,tecnico_telefono,
-            tecnico_gerencia,tecnico_subgerencia,tecnico_region,tecnico_localidad,);
+        //     tecnico_nombre,tecnico_apellido,tecnico_indicador,tecnico_cedula,tecnico_cargo,tecnico_telefono,
+        //     tecnico_gerencia,tecnico_subgerencia,tecnico_region,tecnico_localidad,);
 
         const query = await pool.query(
             `SELECT * FROM aplicaciones WHERE apl_acronimo = ? OR apl_nombre = ?`, 
@@ -324,26 +417,33 @@ const crearAplicacion = async (req,res) => {
             return res.status(401).json({ message: 'ERROR, APLICACION YA EXISTE' });
         }
         else{
-            const cliente_id = await verificarCliente(cliente);
-            const region_id = await verificarRegion(apl_region);
+            //const cliente_id = await verificarCliente(cliente);
+            //const region_id = await verificarRegion(apl_region);
             const aplicacion_id = await verificarAplicacion(
                 apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,critico,apl_alcance,
-                codigo,apl_licencia,apl_version,apl_direccion,apl_cantidad_usuarios,region_id,cliente_id
+                codigo,apl_licencia,apl_version,apl_direccion,apl_cantidad_usuarios,apl_region,apl_cliente
             );
+
+            await verificarResponsable('funcional',aplicacion_id,funcional_nombre,funcional_apellido,
+                funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
+                funcional_gerencia,funcional_subgerencia,funcional_region,funcional_localidad);    
+            await verificarResponsable('tecnico',aplicacion_id,tecnico_nombre,tecnico_apellido,
+                tecnico_indicador,tecnico_cedula,tecnico_cargo,tecnico_telefono,
+                tecnico_gerencia,tecnico_subgerencia,tecnico_region,tecnico_localidad); 
 
             await verificarPlataforma(aplicacion_id, plataforma);          
             await verificarLenguaje(aplicacion_id, lenguaje);          
             await verificarFramework(aplicacion_id, framework);
-            const servidor_id = await verificarServidor(servidor,ser_sistema,ser_sistemas_version,ser_marca,ser_modelo,ser_serial,
-                ser_cantidad_cpu, ser_velocidad_cpu, ser_memoria, ser_region, ser_localidad
-            );
+            await verificarServidor(aplicacion_id,servidor,ser_estatus,ser_direccion,ser_sistema,ser_sistemas_version,ser_marca,ser_modelo,ser_serial,
+                ser_cantidad_cpu, ser_velocidad_cpu, ser_memoria, ser_region, ser_localidad);
             await verificarBase(aplicacion_id,base_datos,base_manejador,base_tipo,base_estatus,
-                base_tipo_ambiente,base_cantidad_usuarios,servidor_id);
+                base_tipo_ambiente,base_cantidad_usuarios,base_servidor);
 
             await verificarMantenimiento(aplicacion_id,man_frecuencia,man_horas_prom,man_horas_anuales);          
             await verificarDocumentacion(aplicacion_id,doc_descripcion,doc_direccion,doc_tipo);
 
             console.log('CREACION EXITOSA');
+            res.send('CREACION EXITOSA');
         }
     } catch (error) {
         console.log("ERROR_CREATE_ITEMS");
@@ -470,6 +570,55 @@ const eliminarAplicacion = async (req,res) => {
     }
 };
 
+// *********************************** OBTENER DATOS PARA GENERAR GRAFICOS ***********************************
+const obtenerPorGraficos = async (req,res) => {
+    try { 
+        const opcionRegion = ['CARABOBO NORTE', 'CENTRO', 'CENTRO SUR', 'CORPORATIVO','ORIENTE NORTE', 
+        'ORIENTE SUR', 'OCCIDENTE','ANDES',''];
+        const { categoria, orden } = req.body;
+        let regiones = '';
+        //let cantidad = {orienteNorte: ''};
+        let cantidad = [];
+
+        console.log(categoria,orden);
+ 
+        if (categoria === undefined || null)
+            return res.status(404).json({ message: "Error al recibir consulta" });
+         
+        const query = await pool.query( `SELECT ${categoria} FROM apps`);
+        regiones = query[0]; 
+        console.log(regiones);
+        console.log(regiones.length);
+
+        //          (POSICION_ARREGLO/CANTIDAD_TOTAL)*100
+        // console.log(regiones[5].region);
+        // const data = await pool.query( `SELECT ${categoria} FROM apps WHERE region = ?`, [regiones[5].region]);
+        // console.log(data[0]);
+        // console.log(data[0].length);
+        // cantidad.orienteNorte = data[0].length
+        // //cantidad.push(data[0].length)
+        // console.log(cantidad);
+
+        for(let i=0; i < opcionRegion.length; i++){
+            console.log(opcionRegion[i]);
+
+            const data = await pool.query( `SELECT ${categoria} FROM apps WHERE region = ?`, [opcionRegion[i]]);
+
+            console.log(data[0]);
+            console.log(data[0].length);
+            cantidad.push(data[0].length)
+            console.log(cantidad); 
+        }
+
+        // if (data.affectedRows === 0)
+        //     return res.status(404).json({ message: "Sin coincidencias" });
+
+        // res.json(data[0]);
+        
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+    }
+};
 
 module.exports = { 
     obtenerDatos, 
@@ -477,7 +626,13 @@ module.exports = {
     crearAplicacion, 
     actualizarAplicacion, 
     eliminarAplicacion,
-    obtenerPorBusqueda,
-    obtenerPorCampo,
+    obtenerBusqueda,
+    obtenerCampo,
     obtenerPorGraficos,
-    actualizarCampo };
+    actualizarCampo,
+    obtenerLenguajes,
+    obtenerFrameworks,
+    obtenerBaseDatos,
+    obtenerServidores,
+    obtenerCantidadTotal,
+ };

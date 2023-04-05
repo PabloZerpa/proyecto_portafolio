@@ -19,7 +19,7 @@ function Navegacion() {
         return null
 
     return (
-        <nav className="m-0 p-0 z-60 fixed drop-shadow-md">
+        <nav className="m-0 p-0 z-50 fixed drop-shadow-md">
 
             <aside className="mt-20 top-0 left-0 w-64 h-screen transition-transform" >
                 

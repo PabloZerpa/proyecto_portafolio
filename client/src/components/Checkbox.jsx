@@ -15,7 +15,7 @@ function Checkbox({id, name, opciones, manejador}) {
                             value={id}
                             onChange={(e) => {onHandle(e)}}
                         />
-                        <label for={id}>                           
+                        <label htmlFor={id}>                           
                             <div className="text-sm font-semibold">{opcion}</div>
                         </label>
                     </li>

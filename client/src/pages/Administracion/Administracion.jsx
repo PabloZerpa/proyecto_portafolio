@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Container, Select, Tabla } from "../../components/";
+import { Container, Notificacion, Select, Tabla } from "../../components/";
 import { FaSearch } from "react-icons/fa";
 import { useDebounce } from "use-debounce";
 import Usuarios from "../../services/user.service";
@@ -15,14 +15,27 @@ function Administracion() {
     const [searchTerm, setSearchTerm] = useState("");
     const [resultados, setResultados] = useState([]);
     const [debounceValue] = useDebounce(searchTerm, 500);
-    const [campo, setCampo] = useState('acronimo');
+    const [campo, setCampo] = useState('apl_acronimo');
+    const [campoTabla, setCampoTabla] = useState('acronimo');
+
+    const [show, setShow] = useState(false);
+    const [opcion, setOpcion] = useState('error');
+    const [mensaje, setMensaje] = useState('error');
+
+    useEffect(() => {
+      if(show){
+          setTimeout(() => { setShow(!show) }, "2000");
+      }
+    }, [show])
 
     const handleInputChange = (e) => {
-        console.log(e.target.value);
+        //console.log(e.target.value);
         if(e.target.value === 'Plataforma' || e.target.value === 'Framework' || e.target.value === 'Lenguaje')
           setCampo(e.target.value);
         else
           setCampo(`apl_${e.target.value}`);
+        
+        setCampoTabla(e.target.value);
 
         onSearch(searchTerm,campo);
     }
@@ -37,17 +50,19 @@ function Administracion() {
     const onSearch = async (value,campo) => {
       try {
         const datos = await Usuarios.obtenerPorCampo(value,campo);
-        console.log(campo);
+        //console.log(campo);
 
         setResultados(datos.data);
-        console.log(resultados); 
 
-      } catch (error) { console.log('ERROR AL BUSCAR DATOS') }
+        //console.log(resultados); 
+
+      } catch (error) { 
+        console.log('ERROR AL BUSCAR DATOS') 
+      }
     }
 
     return (
       <Container>
-
         <h2 className='font-bold text-lg'>Actualizacion por Campo</h2>
 
         <form className='flex justify-center items-center flex-row gap-4 p-4 bg-zinc-400 border-solid rounded'>
@@ -69,7 +84,7 @@ function Administracion() {
 
         {resultados ? (
           // <Tabla datos={resultados} opciones={(rol==='admin') ? true : false} />
-          <Tabla2 columnas={['ID','Acronimo','Nombre',campo, 'Editar']} datos={resultados} paginacion={true} campo={campo} />
+          <Tabla2 columnas={['ID','Acronimo','Nombre',campoTabla, 'Editar']} datos={resultados} paginacion={true} campo={campo} />
         ) : (
           <div></div>
         )}

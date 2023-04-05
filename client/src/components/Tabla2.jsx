@@ -3,6 +3,7 @@ import { useState,useEffect } from "react";
 import { FaEdit, FaCheckCircle } from "react-icons/fa";
 import Autorizacion from '../services/auth.service';
 import Paginacion from "./Paginacion";
+import Notificacion from "./Notificacion";
 
 function Tabla2({columnas, datos, paginacion=false, campo}) {
 
@@ -10,48 +11,70 @@ function Tabla2({columnas, datos, paginacion=false, campo}) {
     const [edicion, setEdicion] = useState(null);
     const habilitar = (id) => {setEdicion(id)}
 
+    const [show, setShow] = useState(false);
+    const [opcion, setOpcion] = useState('error');
+    const [mensaje, setMensaje] = useState('error');
+
+    useEffect(() => {
+        if(show){
+            setTimeout(() => { setShow(!show) }, "2000");
+        }
+      }, [show])
+
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
     async function updateData(e) {
          
         e.preventDefault();
-        console.log('DENTRO DEL UPDATE DE ACTUALIZACION');
+        //console.log('DENTRO DEL UPDATE DE ACTUALIZACION');
 
-        console.log(datos);
+        //console.log(datos);
         try {
-            console.log('TRY DEL UPDATE');
+            //console.log('TRY DEL UPDATE');
             
             if(Autorizacion.obtenerUsuario().rol === 'admin'){
 
                 const datoModificacion = { edicion, campo,valor };
-                console.log(edicion, campo, valor);
-                console.log(datoModificacion);
+                //console.log(edicion, campo, valor);
+                //console.log(datoModificacion);
                 
                 await Autorizacion.actualizarDato(4, datoModificacion); 
-                console.log('ALO');
+                //console.log('ALO');
                 habilitar();
+                setOpcion('exito');
+                setMensaje('Campo modificado exitosamente');
+                setShow(true);
             }
         }
-        catch (error) { console.log('ERROR AL ACTUALIZAR APL_ACT'); }
+        catch (error) { 
+            console.log('ERROR AL ACTUALIZAR APL_ACT'); 
+            setMensaje(error.response.data.message);
+            setOpcion('error');
+            setShow(true);
+        }
     }
 
     return (
         <div className="relative mx-8 mb-4 sm:rounded">
 
+            <div style={show ? {display: 'block'} : {display: 'none'}} className='fixed top-24' >
+                <Notificacion opcion={opcion} titulo='ACTUALIZACION' mensaje={mensaje} />
+            </div>
+
             <table className="table-auto border-separate w-full text-xs text-center text-gray-700 shadow-md ">
                 <thead className="text-xs text-gray-700 font-bold bg-zinc-200 uppercase">
                     
                     <tr className="bg-zinc-200 border-b hover:bg-zinc-300">
-                        {columnas.map((dato) => { return  <td scope="col" className="px-2 py-2">{dato}</td> }) }
+                        {columnas.map((dato,index) => { return  <td key={index} scope="col" className="px-2 py-2">{dato}</td> }) }
                     </tr> 
                     
                 </thead>
                 <tbody>
 
-                    {datos.map((dato, index) => { 
+                    {datos.map((dato,index) => { 
                         //console.log(dato);
                         const valor = Object.values(dato);
                         return (
-                        <tr key={dato.aplicacion_id} className="bg-white border-b hover:bg-gray-100">
+                        <tr key={index} className="bg-white border-b hover:bg-gray-100">
                             <td className="px-1 py-1">{valor[0]}</td>
                             <td className="px-1 py-1">{valor[1]}</td>
                             <td className="px-1 py-1">{valor[2]}</td>

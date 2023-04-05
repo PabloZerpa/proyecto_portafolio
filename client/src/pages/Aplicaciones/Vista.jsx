@@ -12,7 +12,7 @@ function Vista() {
 
   const { id } = useParams();
   const location = useLocation();
-  const [valor, setValor] = useState(location.state);
+  const [valor, setValor] = useState('');
 
   const [valorDevuelto, setValorDevuelto] = useState(false);
   const obtencionDeEstado = (parametroDevuelto) => {setValorDevuelto(parametroDevuelto)};
@@ -25,11 +25,13 @@ function Vista() {
   }
   
   useEffect(() => {
-    console.log(location.state);
+    //console.log(location.state);
     async function fetchData(){
       try {
-        const response = await Usuarios.obtenerDato(location.state.id)
+        const response = await Usuarios.obtenerDato(id)
         setValor(response.data);
+        console.log(response.data);
+        console.log(valor);
       }catch (error) { console.log(error) }
     }
     fetchData();
@@ -60,7 +62,7 @@ function Vista() {
                 <Input campo='Prioridad' propiedad={valor.apl_prioridad} />
                 <Input campo='Critico' propiedad={valor.apl_critico} />
                 <Input campo='Alcance' propiedad={valor.apl_alcance} />
-                <Input campo='Cliente' propiedad={valor.cliente} />
+                <Input campo='Cliente' propiedad={valor.apl_cliente} />
                 <Input campo='N° Usuarios' propiedad={valor.apl_cantidad_usuarios} />
                 <Input campo='Region' propiedad={valor.region} />  
               </div>
@@ -70,11 +72,10 @@ function Vista() {
         )
       }
 
-      const columnasTec = ['id','Codigo','Licencia','Plataforma','Lenguaje','Framework','Base de datos',
+      const columnasTec = ['Codigo','Licencia','Plataforma','Lenguaje','Framework','Base de datos',
       'Servidor','Mantenimiento','Horas Prom','Horas Anuales'];
       const resultadosTec = [
           {
-            id: id,
             codigo: valor.apl_codigo_fuente,
             licencia: valor.apl_licencia,
             plataforma: valor.plataforma,
@@ -99,18 +100,17 @@ function Vista() {
         )
       }
 
-      const columnasBas = ['id','Nombre','Estatus','Tipo','Manejador','Tipo Ambiente','N° Usuarios','Servidor'];
+      const columnasBas = ['Nombre','Estatus','Tipo','Manejador','Tipo Ambiente','N° Usuarios','Servidor'];
       const resultadosBas = [
-          {
-            id: id,
-            basededatos: valor.base_datos,
-            estatus: valor.bas_estatus,
-            tipo: valor.tipo,
-            manejador: valor.manejador,
-            tipo_ambiente: valor.bas_tipo_ambiente,
-            cantidad_usuarios: valor.bas_cantidad_usuarios,
-            servidor: valor.servidor,
-          },
+        {
+          basededatos: valor.base_datos,
+          estatus: valor.bas_estatus,
+          tipo: valor.tipo,
+          manejador: valor.manejador,
+          tipo_ambiente: valor.bas_tipo_ambiente,
+          cantidad_usuarios: valor.bas_cantidad_usuarios,
+          servidor: valor.servidor,
+        },
       ];
   
       function Basedatos (){
@@ -124,16 +124,15 @@ function Vista() {
         )
       }
   
-      const columnasSer = ['id','Nombre','Estatus','Direccion','Sistema Operativo','Version OS','Marca','Modelo',
+      const columnasSer = ['Nombre','Estatus','Direccion','Sistema Operativo','Version OS','Marca','Modelo',
       'Serial','Cantidad CPU','Velocidad','Memoria','Region','Localidad'];
       const resultadosSer = [
           {
-            id: id,
             servidor: valor.servidor,
             estatus: valor.ser_estatus,
             direccion: valor.ser_direccion,
             sistema_operativo: valor.sistema,
-            version_sistema: valor.sis_version,
+            version_sistema: valor.sistema_version,
             marca: valor.marca,
             modelo: valor.mar_modelo,
             serial: valor.mar_serial,
@@ -156,15 +155,22 @@ function Vista() {
         )
       }
 
-      const columnasRes = ['id','Custodio','Nombre','Apellido','Indicador','Correo','Cedula','Telefono',
-      'Region','Localidad','Rol','Gerencia','SubGerencia'];
+      const columnasRes = ['Custodio','Nombre','Apellido','Indicador','Cedula','Cargo','Telefono',
+      'Region','Localidad','Gerencia','SubGerencia'];
       const resultadosRes = [
-          {id:'1',tipo:'Funcional',nombre:'Fulano',apellido:'Mengano',indicador:'fulano1',
-            correo:'fulano1@pdvsa.com',cedula:'123456',telefono:'0416-111111',region:'CENTRO',localidad:'CARACAS',
-            rol:'Analista',gerencia:'AIT',subgerencia:'Informatica'},
-          {id:'2',tipo:'Tecnico',nombre:'Fulano',apellido:'Mengano',indicador:'fulano2',
-            correo:'fulano2@pdvsa.com',cedula:'24680',telefono:'0414-22222',region:'ORIENTE NORTE',localidad:'PTO LA CRUZ',
-            rol:'Especialista',gerencia:'AIT',subgerencia:'Servidor'},
+        {
+          tipo: 'Funcional',
+          nombre: valor.res_nombre,
+          apellido: valor.res_apellido,
+          indicador: valor.res_indicador,
+          cedula: valor.res_cedula,
+          cargo: valor.res_cargo,
+          telefono: valor.res_telefono,
+          region: valor.res_region,
+          localidad: valor.res_localidad,
+          gerencia: valor.res_gerencia,
+          subgerencia: valor.res_subgerencia,
+        },
       ];
   
       function Responsable() {
@@ -178,12 +184,10 @@ function Vista() {
         )
       }
 
-      const columnasDoc = ['id','Descripcion','Direccion','Tipo'];
+      const columnasDoc = ['Descripcion','Direccion','Tipo','Fecha'];
       const resultadosDoc = [
-          {id: id,descripcion: valor.doc_descripcion,direccion: valor.doc_direccion, tipo: valor.doc_tipo,},
-          {id:'10',tipo:'Aplicaciones',descripcion:'aaaaaaaaaaaaaa',direccion:'xxxxxxx',fecha:'12/12/2009',},
-          {id:'20',tipo:'Aplicaciones',descripcion:'bbbbbbb',direccion:'yyyy',fecha:'5/5/2015',},
-          {id:'30',clatipose:'Base de datos',descripcion:'cccccccccccc',direccion:'zzzzzzzzzzzz',fecha:'9/9/2022',},
+          {descripcion: valor.doc_descripcion,direccion: valor.doc_direccion, tipo: valor.doc_tipo,},
+          {tipo:'Aplicaciones',descripcion:'aaaaaaaaaaaaaa',direccion:'xxxxxxx',fecha:'12/12/2009',},
       ];
   
       function Documentacion(){
@@ -200,7 +204,7 @@ function Vista() {
       const columnasFallas = ['Numero','Clase','Descripcion','Solucion','Ver'];
       const resultadosFallas = [
           {
-            id: id,
+            numero: valor.fal_numero,
             clase: valor.fal_clase,
             descripcion: valor.fal_descripcion,
             solucion: valor.fal_solucion,

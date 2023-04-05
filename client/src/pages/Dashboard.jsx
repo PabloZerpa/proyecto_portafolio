@@ -26,8 +26,8 @@ function Dashboard() {
         setIsLoading(false);
         setDatos(data.data);
 
-        console.log('DASHBOARD OBTENER DATOS');
-        console.log(datos);
+        // console.log('DASHBOARD OBTENER DATOS');
+        // console.log(datos);
       }
       catch (error) {
         console.log(error)
@@ -35,6 +35,8 @@ function Dashboard() {
     }
     fetchData();
   }, []);
+
+
 
   return (
     <Container>
@@ -46,7 +48,7 @@ function Dashboard() {
             <h3 className='font-bold text-lg'>Modificaciones Recientes</h3>
             <Tabla datos={datos} opciones={false} />
             
-            {/* <Linea /> */}
+            <Linea />
           </>
         )
       }
@@ -56,3 +58,11 @@ function Dashboard() {
 };
 
 export default Dashboard;
+
+
+
+// DEBE LLEGAR MAXIMO HASTA DONDE SEA EL TOTAL DE RESULTADOS
+
+//LOS SELECT ANIDADOS DEBEN AFECTARSE SOLO 1 A 1
+
+// VERIFICAR OTRAS OPCIONES DE UPDATE

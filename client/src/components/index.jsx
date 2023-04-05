@@ -6,6 +6,7 @@ import Button from './Button';
 import Input from './Input';
 import Select from './Select';
 import Radio from './Radio';
+import Checkbox from './Checkbox';
 import Paginacion from './Paginacion';
 
 export {
@@ -16,5 +17,6 @@ export {
     Input,
     Container,
     Radio,
+    Checkbox,
     Paginacion,
 };

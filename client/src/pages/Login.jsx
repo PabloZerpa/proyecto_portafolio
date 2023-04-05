@@ -9,7 +9,6 @@ function Login() {
   
   const [password, setPassword] = useState('');
   const [indicador, setIndicador] = useState('');
-  const [rol, setRol] = useState('');
   const [showPass, setShowPass] = useState(false);
   
   const [show, setShow] = useState(false);
@@ -34,7 +33,7 @@ function Login() {
       try {
         await Autorizacion.login(indicador,password);
         setOpcion('exito');
-        setMensaje(indicador);
+        setMensaje(`Bienvenido/a ${indicador}`);
         setShow(true);
         
         setTimeout(() => {
@@ -56,8 +55,8 @@ function Login() {
   return (
     <div className='relative flex flex-col justify-center items-center w-full h-screen bg-zinc-300'>
 
-      <div style={show ? {display: 'block'} : {display: 'none'}} className='absolute top-24' >
-        <Notificacion opcion={opcion} mensaje={mensaje} />
+      <div style={show ? {display: 'block'} : {display: 'none'}} className='fixed top-24' >
+        <Notificacion opcion={opcion} titulo='LOGIN' mensaje={mensaje} />
       </div>
 
       <form
@@ -69,7 +68,7 @@ function Login() {
         <FaUserCircle className='text-6xl text-blue-500' />
 
         <li className='relative w-72'>
-          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <FaUser />
           </div>
           <input 
@@ -103,23 +102,6 @@ function Login() {
             { showPass ? <FaEye/> : <FaEyeSlash /> }
           </div>
         </li>
-
-
-        {/* <li className='w-72 relative'>
-          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <FaHardHat />
-          </div>
-
-          <select 
-            name="rol" 
-            placeholder='Rol'
-            className='w-full h-10 pl-8 p-2 border-solid border-gray-400 outline-blue-500 rounded'
-            onChange={(e) => {setRol(e.target.value)}} >
-            <option disabled selected>Rol</option>
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
-        </li> */}
 
         <li>
           <div className='flex gap-2 items-center text-sm font-bold'>

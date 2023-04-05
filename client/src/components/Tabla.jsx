@@ -3,11 +3,46 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaEye, FaEdit } from "react-icons/fa";
 import Paginacion from "./Paginacion";
-import { columnasUser, columnasAdmin } from "../services/campos.service";
+import { columnasUserSimple, columnasAdminSimple } from "../services/campos.service";
  
 
-function Tabla({datos, opciones, paginacion=false}) {
- 
+function Tabla({datos, opciones, paginacion=false, count=10, manejarPagina=null}) {
+
+    const [pagina, setPagina] = useState(1);
+    const [primerResultado, setPrimer] = useState([pagina-1]*count);
+    const [ultimoResultado, setUltimo] = useState([pagina*count] - 1);
+
+    const cambioPagina = () => {
+        setPrimer([pagina-1]*count);
+        setUltimo([pagina*count] - 1);
+        if(manejarPagina)
+            manejarPagina(pagina);
+    }
+    
+    const paginaSiguiente = () => {
+        if(Object.keys(datos).length === 0){
+            setPagina(pagina+1);
+            console.log('PAGINA EN TABLA SIG: ' + pagina);
+        }
+    }
+
+    const paginaAnterior = () => {
+        if(Object.keys(datos).length === 0){
+            if(pagina > 1){
+                setPagina(pagina-1);
+            }
+            console.log('PAGINA EN TABLA ANTERIOR: ' + pagina);
+        }
+    }
+
+    useEffect(() => {
+        // if(Object.keys(datos).length === 0){
+        //     console.log(Object.keys(datos).length);
+        // }
+        cambioPagina();
+
+    }, [pagina, datos])
+     
     return (
         <div>
             <div className="relative overflow-x-auto w-[960px] mx-8 mb-4 sm:rounded">
@@ -17,14 +52,14 @@ function Tabla({datos, opciones, paginacion=false}) {
                         
                         <tr className="bg-zinc-200 border-b hover:bg-zinc-300">
                             {opciones ? (
-                                columnasAdmin.map((dato,index) => { 
+                                columnasAdminSimple.map((dato,index) => { 
                                     if(index===0)
-                                        return  <td key={dato.id} scope="col" className="px-1 py-1">{dato}</td> 
+                                        return  <td key={index} scope="col" className="px-1 py-1">{dato}</td> 
                                     else
-                                        return  <td key={dato.id} scope="col" className="px-1 py-1">{dato}</td> 
+                                        return  <td key={index} scope="col" className="px-1 py-1">{dato}</td> 
                                 })
                             ) : (
-                                columnasUser.map(dato => { return  <td key={dato.id} scope="col" className="px-1 py-1">{dato}</td> })
+                                columnasUserSimple.map((dato, index) => { return  <td key={index} scope="col" className="px-1 py-1">{dato}</td> })
                             )}    
                         </tr>
                         
@@ -56,7 +91,16 @@ function Tabla({datos, opciones, paginacion=false}) {
                 </table>
             </div>
 
-            {paginacion ? ( <Paginacion primero={1} ultimo={datos.length} total={100} />) : (null)}
+            {paginacion ? ( 
+                <Paginacion 
+                    paginaAnterior={paginaAnterior}
+                    paginaSiguiente={paginaSiguiente}
+                    del={primerResultado+1} 
+                    al={ultimoResultado+1} 
+                    total={100} />
+                ) : 
+                (null)
+            }
             
         </div>
     );

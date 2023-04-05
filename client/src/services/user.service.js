@@ -4,16 +4,29 @@ import authHeader from './header.service';
 import Authorization from './auth.service';
 const baseUrl = "http://localhost:3001/api/";
 // const baseUrl = "https://proyecto-portafolio-server.onrender.com/api/";
-
-class Usuarios {
+ 
+class Usuarios {  
   
     // =============== OBTIENE TODOS LOS DATOS DE LAS APPS ===============
+
+    async obtenerOpciones(nombre) { 
+        try { 
+            const respuesta = await axios.get(`${baseUrl}aplicaciones/${nombre}`, { headers: authHeader() });
+            //console.log(respuesta);
+            return respuesta;
+        } catch (error) {
+            console.log('Error al obtener datos'); 
+        }
+        //return axios.get(`${baseUrl}aplicaciones`, { headers: this.authHeader() });
+    }
+
+    // =============== OBTIENE TODOS LOS DATOS DE LAS APPS ===============
     async obtenerDatos() { 
-        try {
+        try { 
             const respuesta = await axios.get(`${baseUrl}aplicaciones`, { headers: authHeader() });
 
-            console.log('USER SERVICE OBTENER DATOS');
-            console.log(respuesta);
+            // console.log('USER SERVICE OBTENER DATOS');
+            // console.log(respuesta);
             return respuesta;
         } catch (error) {
             // Authorization.logout();
@@ -24,6 +37,16 @@ class Usuarios {
     }
 
     // =============== OBTIENE EL DATO DE UNA APP POR SU ID ===============
+    async obtenerCantidadTotal() {
+        try {
+            const respuesta = await axios.get(`${baseUrl}aplicaciones/total`, { headers: authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log('Error al obtener dato'); 
+        }
+    }   
+
+    // =============== OBTIENE EL DATO DE UNA APP POR SU ID ===============
     async obtenerDato(id) {
         try {
             const respuesta = await axios.get(`${baseUrl}aplicaciones/${id}`, { headers: authHeader() });
@@ -31,13 +54,13 @@ class Usuarios {
         } catch (error) {
             console.log('Error al obtener dato'); 
         }
-    }  
-
+    }   
+ 
     // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
-    async obtenerPorBusqueda(term,estatus,region,prioridad,plataforma,order,count) {
+    async obtenerPorBusqueda(term,estatus,region,prioridad,plataforma,order,count,pagina) {
         try {
-            console.log('Obtener por busqueda');
-            return axios.post(`${baseUrl}aplicaciones/term`, {term,estatus,region,prioridad,plataforma,order,count});
+            console.log('OBTENER_BUSQUEDA PAGINA: :' + pagina);
+            return axios.post(`${baseUrl}aplicaciones/busqueda`, {term,estatus,region,prioridad,plataforma,order,count,pagina});
         } catch (error) {
             console.log('Error al obtener dato');
         }
@@ -54,8 +77,8 @@ class Usuarios {
 
     // =============== OBTIENE LOS DATOS PARA GENERAR LOS GRAFICOS ===============
     async datosGraficos(categoria,orden) {
-        console.log(categoria);
-        console.log(orden);
+        //console.log(categoria);
+        //console.log(orden);
         try {
             return axios.post(`${baseUrl}aplicaciones/grafico`, {categoria,orden});
         } catch (error) {

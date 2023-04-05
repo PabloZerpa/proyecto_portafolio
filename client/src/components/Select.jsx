@@ -5,7 +5,7 @@ function Select({campo, name, direccion='col', opciones, propiedad=null, busqued
     const clase2 = `flex flex-${direccion} items-center gap-2 text-xs font-medium text-gray-900`;
     const claseSelect = `w-full p-2 text-gray-900 bg-gray-50 text-xs border-none rounded focus:ring-blue-500 focus:border-blue-500`
     const claseSelect2 = `w-32 p-2 text-gray-900 bg-gray-50 text-xs border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500`
-
+ 
     const onHandle = (e) =>  manejador(e);
     
     return(
@@ -20,9 +20,9 @@ function Select({campo, name, direccion='col', opciones, propiedad=null, busqued
             >
                 {opciones.map((opcion, index) => {
                     if(opcion === propiedad)
-                        return <option selected value={opcion}>{opcion}</option>
+                        return <option key={index} value={opcion}>{opcion}</option>
                     else
-                        return <option value={opcion}>{opcion}</option>
+                        return <option key={index} value={opcion}>{opcion}</option>
                 })}
 
             </select>

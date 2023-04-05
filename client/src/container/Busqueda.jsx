@@ -7,7 +7,7 @@ import Usuarios from "../services/user.service";
 import { opcionEstatus, opcionRegion, opcionPlataforma, opcionAlcance, opcionMantenimiento, opcionCount, opcionLocalidad } from '../services/campos.service';
 
   
-function Busqueda({manejarBusqueda}) {
+function Busqueda({manejarBusqueda, manejarCount, pagina}) {
      
     const [searchTerm, setSearchTerm] = useState("");
     const [resultados, setResultados] = useState([]);
@@ -16,7 +16,7 @@ function Busqueda({manejarBusqueda}) {
     const [avanzados, setAvanzados] = useState(false);
     const [datos, setDatos] = useState({
         estatus: '',
-        plataforma: '',
+        plataforma: '', 
         prioridad: '',
         region: '',
         alcance: '',
@@ -28,7 +28,7 @@ function Busqueda({manejarBusqueda}) {
         codigo: '',
         registros: 10,
         orden: 'ASC',
-    });
+    }); 
 
     const handleInputChange = (e) => {
         if(e.target.value === 'TODAS')
@@ -39,24 +39,22 @@ function Busqueda({manejarBusqueda}) {
 
     useEffect(() => {
 		if (debounceValue) {
+            manejarCount(datos.registros);
             onSearch(debounceValue);
         } else {
             setResultados(null);
         }
-	}, [debounceValue, datos]);
+	}, [debounceValue, datos, pagina]); 
 
     const onSearch = async (value) => {
         try {
             const { estatus,alcance,plataforma,prioridad,registros,orden } = datos;
-            
-            console.log('BUSQUEDA')
-            const respuesta = await Usuarios.obtenerPorBusqueda(value,estatus,alcance,prioridad,plataforma,orden,registros);
-            console.log(estatus,alcance,prioridad,plataforma,orden,registros);
-            console.log(Object.keys(respuesta.data).length);
+
+            console.log('PAGINA EN BUSQUEDA: ' + pagina);
+            const respuesta = await Usuarios.obtenerPorBusqueda(value,estatus,alcance,prioridad,plataforma,orden,registros,pagina);
 
             setResultados(respuesta.data);
             manejarBusqueda(respuesta.data);
-            console.log(resultados);
             
         } catch (error) {
             console.log('ERROR AL BUSCAR DATOS');

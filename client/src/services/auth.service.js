@@ -73,6 +73,23 @@ class Autorizacion {
         return JSON.parse(localStorage.getItem('user'));
     }
 
+    async crearUsuario(datos) {
+
+        const { indicador, rol, gerencia } = datos;
+        const password = `87654321`;
+        const data = {indicador, password, rol, gerencia};
+        console.log(data);
+        console.log('EN CREAR USUARIO')
+        try {
+            console.log('ANTES DE CREAR USUARIO')
+            const respuesta = await axios.post(`${baseUrl}login/registro`, data)
+            console.log('DESPUES DE CREAR USUARIO')
+            return respuesta;
+        } catch (error) {
+            console.log('ERROR AL CREAR USUARIO');
+        }
+    }
+
 }
 
 export default new Autorizacion();  

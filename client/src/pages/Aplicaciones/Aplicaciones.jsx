@@ -1,29 +1,37 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Tabla, Container } from "../../components";
 import { Busqueda } from "../../container"
-import Usuarios from "../../services/user.service";
 import Autorizacion from "../../services/auth.service";
-import Tabla3 from "../../components/Table3";
 
 function Aplicaciones() {
 
-    const [rol, setRol] = useState('');
-    const [datos, setDatos] = useState([]);
-    const [resultado, setResultado] = useState('');
-    const obtenerResultado = (respuesta) => {setResultado(respuesta)};
-  
-    useEffect(() => {
-      setRol(Autorizacion.obtenerUsuario().rol)
-    }, []);
+  const [pagina, setPagina] = useState(1);
+  const [count, setCount] = useState('');
+  const [resultado, setResultado] = useState('');
+
+  const obtenerPagina = (respuesta) => {setPagina(respuesta); console.log('PAGINA EN APLICACIONES: ' + pagina)};
+  const obtenerCount = (respuesta) => {setCount(respuesta); console.log('COUNT EN APLICACIONES: ' + count)};
+  const obtenerResultado = (respuesta) => {setResultado(respuesta)};
+
 
   return (
     <Container>
 
-      <Busqueda manejarBusqueda={obtenerResultado} />
+      <Busqueda 
+        manejarBusqueda={obtenerResultado}
+        manejarCount={obtenerCount}
+        pagina={pagina ? pagina : 1}
+      />
 
       {resultado ? (
-        <Tabla datos={resultado} opciones={(rol==='admin') ? true : false} paginacion={true} />
+        <Tabla 
+          datos={resultado} 
+          opciones={(Autorizacion.obtenerUsuario().rol==='admin') ? true : false} 
+          paginacion={true} 
+          count={count}
+          manejarPagina={obtenerPagina}
+        />
       ) : (
         <div></div>
       )}

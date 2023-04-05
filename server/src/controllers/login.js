@@ -2,6 +2,7 @@
 const pool = require('../config');
 const { matchedData } = require("express-validator");
 const { generarToken } = require('../helpers/token');
+const { encriptar, comparar } = require('../helpers/encriptar');
 
 // *************** LOGEAR USUARIO ***************
 const login = async (req, res) => { 
@@ -19,7 +20,13 @@ const login = async (req, res) => {
         }
 
         // ********** VERIFICA QUE LA CONTRASEÑA SEA CORRECTA **********
-        if(password != user.password){
+        // if(password != user.password){
+        //     console.log('CONTRASEÑA INCORRECTA');
+        //     return res.status(401).json({ message: 'CONTRASEÑA INCORRECTA' });
+        // }
+
+        const passwordVerificado = await comparar(password, user.password);
+        if (!passwordVerificado) {
             console.log('CONTRASEÑA INCORRECTA');
             return res.status(401).json({ message: 'CONTRASEÑA INCORRECTA' });
         }
@@ -50,4 +57,29 @@ const login = async (req, res) => {
     }
 }
 
-module.exports = { login };
+// *************** CREAR USUARIO ***************
+const registrar = async (req, res) => {
+  
+    const password = await encriptar(req.body.password);
+    const datos = {...req.body, password };
+    console.log(datos.indicador);
+
+    const buscarUsuario = await pool.query('SELECT * FROM usuarios WHERE indicador = ?', [datos.indicador]);
+    const user = buscarUsuario[0][0];
+        
+    // ********** VERIFICA QUE EL USUARIO EXISTA **********
+    if(user){
+        console.log('USUARIO YA EXISTENTE');
+        return res.status(401).json({ message: 'USUARIO YA REGISTRADO' });
+    }
+
+    const query = await pool.query(
+        `INSERT INTO usuarios (indicador, password, rol, gerencia_id) VALUES (?,?,?,?)`, 
+            [datos.indicador, datos.password, datos.rol, 1]
+    );
+
+    console.log('USUARIO CREADO SATISFACTORIAMENTE');
+    res.status(200).json(datos);
+ }
+
+module.exports = { login, registrar };

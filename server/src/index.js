@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended:false }));
 // ---------- ROUTE ----------
 app.use("/api/login", require("./routes/login"));
 app.use("/api/logout", require("./routes/logout"));
-app.use("/api/user", require("./routes/aplicaciones"));
+//app.use("/api/user", require("./routes/aplicaciones"));
 app.use("/api/aplicaciones", require("./routes/aplicaciones"));
 
 // ---------- SERVER ----------
