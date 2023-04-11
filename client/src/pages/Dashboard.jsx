@@ -27,7 +27,7 @@ function Dashboard() {
         setDatos(data.data);
 
         // console.log('DASHBOARD OBTENER DATOS');
-        // console.log(datos);
+        console.log(datos);
       }
       catch (error) {
         console.log(error)

@@ -1,39 +1,6 @@
 
 const pool = require('../config');
 
-const verificarCliente = async (cliente) => {
-    // revisa si el cliente ingresado ya existe
-    let cliente_id = null;
-    const buscarCliente = await pool.query(`SELECT cliente_id FROM clientes WHERE cliente = ?`, [cliente]);
-    
-    // sino existe, lo crea y guarda su id para pasarselo a la tabla aplicaciones
-    if(buscarCliente[0][0] === undefined){
-        console.log('HOLA');
-        const datos_cli = await pool.query(
-            `INSERT INTO clientes (cliente) VALUES (?)`, 
-            [cliente]
-        );
-        const selectCli = await pool.query(`SELECT * FROM clientes ORDER BY cliente_id DESC LIMIT 1`, [cliente]);
-            cliente_id = selectCli[0][0].cliente_id;
-        }
-    // si existe, guarda su id para pasarselo a la tabla aplicaciones
-    else{
-        cliente_id = buscarCliente[0][0].cliente_id;
-    }
-    console.log('CLIENTE REGISTRADO: ' + cliente_id);
-    return cliente_id;
-};
-
-const verificarRegion = async (region) => {
-	let region_id = null;
-
-    const buscarRegion = await pool.query(`SELECT region_id FROM regiones WHERE region = ?`, [region]);
-    if(buscarRegion[0][0]){
-       region_id = buscarRegion[0][0].region_id;
-    }
-    console.log('REGION REGISTRADA: ' + region_id);
-	return region_id;
-}
 
 const verificarPlataforma = async (aplicacion_id, plataforma) => {
 	const buscarPlataforma = await pool.query(`SELECT plataforma_id FROM plataformas WHERE plataforma = ?`, [plataforma]);
@@ -75,28 +42,32 @@ const verificarFramework = async (aplicacion_id, framework) => {
     }	  
 }
 
-const verificarServidor = async (aplicacion_id,servidor,estatus,direccion,sistema,sistema_version,marca,modelo,serial,
+const verificarServidor = async (aplicacion_id,select_servidor,servidor,estatus,direccion,sistema,sistema_version,marca,modelo,serial,
     cantidad_cpu, velocidad_cpu, memoria, region, localidad) => {
+        
+    console.log(aplicacion_id,select_servidor,servidor,estatus,direccion,sistema,sistema_version,marca,modelo,serial,
+        cantidad_cpu, velocidad_cpu, memoria, region, localidad);
+    
+    let servidor_id = null;
 
-        console.log(servidor,estatus,direccion,sistema,sistema_version,marca,modelo,serial,
-            cantidad_cpu, velocidad_cpu, memoria, region, localidad);
+    if(!select_servidor){
 
-        let servidor_id = null;
         const buscarServidor = await pool.query(`SELECT servidor_id FROM servidores WHERE servidor = ?`, [servidor]);
+        console.log(buscarServidor[0][0])
 
         if(buscarServidor[0][0] === undefined){
- 
+    
             // crea los datos del sistema operativo del servidor
             let sistema_id = null;
             const buscarOS = await pool.query(`SELECT sistema_id FROM sistemas_operativos WHERE sistema = ?`, [sistema]);
-
+    
             if(buscarOS[0][0] === undefined){
-
+    
                 const datos_sistema = await pool.query(
                     `INSERT INTO sistemas_operativos (sistema,sistema_version) VALUES (?,?)`, 
                     [sistema,sistema_version]
                 );
-
+    
                 const selectSis = await pool.query(`SELECT * FROM sistemas_operativos ORDER BY sistema_id DESC LIMIT 1`);
                 sistema_id = selectSis[0][0].sistema_id;
                 console.log('SISTEMA OPERATIVO REGISTRADO: ' + sistema_id);
@@ -105,7 +76,7 @@ const verificarServidor = async (aplicacion_id,servidor,estatus,direccion,sistem
                 sistema_id = buscarOS[0][0].sistema_id;
             }
             console.log('SISTEMA REGISTRADO: ' + sistema_id);
-
+    
             // crea los datos de la marca del servidor
             let marca_id = null;
             const buscarMarca = await pool.query(`SELECT marca_id FROM marcas WHERE marca = ?`, [marca]);
@@ -121,45 +92,49 @@ const verificarServidor = async (aplicacion_id,servidor,estatus,direccion,sistem
                 marca_id = buscarMarca[0][0].marca_id;
             }
             console.log('MARCA REGISTRADA: ' + marca_id);
-
+    
             // crea los datos del servidor
             const datos_servidor = await pool.query(
                 `INSERT INTO servidores 
                     (servidor,ser_estatus,ser_direccion,ser_sistema,ser_marca,ser_region_id,ser_localidad_id) 
                 VALUES 
-                    (?,?,?,?,?,(SELECT region_id FROM regiones WHERE region = ?),?);`,
-                [servidor,estatus,direccion,sistema_id,marca_id,region,2]
+                    (?,?,?,?,?,(SELECT region_id FROM regiones WHERE region = ?),(SELECT localidad_id FROM localidades WHERE localidad = ?));`,
+                [servidor,estatus,direccion,sistema_id,marca_id,region,localidad]
             );
             console.log('SERVIDOR REGISTRADO');
-            // const datos_servidor = await pool.query(
-            //     `INSERT INTO servidores (servidor,ser_estatus,ser_direccion,ser_sistema,ser_marca,ser_region_id,ser_localidad_id) 
-            //     VALUES (?,?,?,?,?,?,?)`, 
-            //     [servidor,estatus,direccion,sistema,marca,ser_region_id,1]
-            // );
-
+    
             const buscarServidor = await pool.query(`SELECT servidor_id FROM servidores WHERE servidor = ?`, [servidor]);
             servidor_id = buscarServidor[0][0].servidor_id;
-            
-            // crea la relacion aplicacion-servidores
-            const app_servidor = await pool.query(
-                `INSERT INTO aplicacion_servidor (aplicacion_id,servidor_id) VALUES (?,?)`, 
-                [aplicacion_id,servidor_id]
-            );
-            console.log('SERVIDOR-APLICACION REGISTRADO: ' + aplicacion_id);
         }
         else{
+            console.log(buscarServidor[0][0])
             servidor_id = buscarServidor[0][0].servidor_id;
         }
-        console.log('SERVIDOR GENERAL REGISTRADO: ' + servidor_id);
+    }
+    else{
+        const buscarServidor = await pool.query(`SELECT servidor_id FROM servidores WHERE servidor = ?`, [select_servidor]);
+        servidor_id = buscarServidor[0][0].servidor_id;
+    }
+
+    
+    console.log(servidor_id)
+    // crea la relacion aplicacion-servidores
+    const app_servidor = await pool.query(
+        `INSERT INTO aplicacion_servidor (aplicacion_id,servidor_id) VALUES (?,?)`, 
+        [aplicacion_id,servidor_id]
+    );
+    console.log('SERVIDOR GENERAL REGISTRADO: ' + servidor_id);
 
 }
 
-const verificarBase = async (aplicacion_id,base_datos,manejador,tipo,estatus,
+const verificarBase = async (aplicacion_id,select_base,base_datos,manejador,tipo,estatus,
     tipo_ambiente,cantidad_usuarios,servidor) => {
+        
+    let base_datos_id = null;
 
-        let base_datos_id = null;
+    if(!select_base){
+        
         const buscarBaseDatos = await pool.query(`SELECT base_datos_id FROM bases_datos WHERE base_datos = ?`, [base_datos]);
-
         if(buscarBaseDatos[0][0] === undefined){
             
             // crea los datos del manejador de la bd
@@ -197,16 +172,21 @@ const verificarBase = async (aplicacion_id,base_datos,manejador,tipo,estatus,
         else{
             base_datos_id = buscarBaseDatos[0][0].base_datos_id;
         }
-        console.log('BASE DE DATOS GENERAL REGISTRADO: ' + base_datos_id);
-
-        // crea la relacion aplicacion-base_de_datos
-        const datos_bas = await pool.query(
-            `INSERT INTO aplicacion_basedatos (aplicacion_id,base_datos_id) VALUES (?,?)`, 
-            [aplicacion_id,base_datos_id]
-        );
-        console.log('BASE DE DATOS REGISTRADA');
+    }
+    else{
+        const buscarBaseDatos = await pool.query(`SELECT * FROM bases_datos WHERE base_datos = ?`, [select_base]);
+        base_datos_id = buscarBaseDatos[0][0].base_datos_id;
+    }
+    console.log('BASE DE DATOS GENERAL REGISTRADO: ' + base_datos_id);
     
-        return base_datos_id;  
+    // crea la relacion aplicacion-base_de_datos
+    const datos_bas = await pool.query(
+        `INSERT INTO aplicacion_basedatos (aplicacion_id,base_datos_id) VALUES (?,?)`, 
+        [aplicacion_id,base_datos_id]
+    );
+    console.log('BASE DE DATOS REGISTRADA');
+    
+    return base_datos_id; 
 }
 
 const verificarResponsable = async (tipo_responsables,aplicacion_id,nombre,apellido,indicador,cedula,
@@ -217,30 +197,14 @@ const verificarResponsable = async (tipo_responsables,aplicacion_id,nombre,apell
         
         if(buscarResponsable[0][0] === undefined){
             
-            let gerencia_id = null;
-            const buscarGerencia = await pool.query(`SELECT gerencia_id FROM gerencias WHERE gerencia_id = ?`, [gerencia]);
-            if(buscarGerencia[0][0]){
-                gerencia_id = buscarGerencia[0][0].gerencia_id;
-            }
-            console.log('GERENCIA: ' + gerencia_id);
-            
-            let res_region_id = null;
-            const buscarRegion = await pool.query(`SELECT region_id FROM regiones WHERE region = ?`, [region]);
-            if(buscarRegion[0][0]){
-                res_region_id = buscarRegion[0][0].region_id;
-            }
-
-            let res_localidad_id = null;
-            const buscarLocalidad = await pool.query(`SELECT localidad_id FROM localidades WHERE localidad = ?`, [localidad]);
-            if(buscarLocalidad[0][0]){
-                res_localidad_id = buscarLocalidad[0][0].localidad_id;
-            }
-            
             // crea los datos del responsable
             const datos_responsable = await pool.query(
                 `INSERT INTO responsables (res_nombre,res_apellido,res_indicador,res_cedula,res_cargo,res_gerencia_id,res_region_id,res_localidad_id) 
-                VALUES (?,?,?,?,?,?,?,?)`,
-                [nombre,apellido,indicador,cedula,cargo,gerencia_id,res_region_id,1]
+                VALUES (?,?,?,?,?,
+                    (SELECT gerencia_id FROM gerencias WHERE gerencia = ?),
+                    (SELECT region_id FROM regiones WHERE region = ?),
+                    (SELECT localidad_id FROM localidades WHERE localidad = ?))`,
+                [nombre,apellido,indicador,cedula,cargo,gerencia,region,localidad]
             );
 
             const buscarResponsable = await pool.query(`SELECT responsable_id FROM responsables WHERE res_indicador = ?`, [indicador]);
@@ -304,18 +268,20 @@ const verificarDocumentacion = async (aplicacion_id,doc_descripcion,doc_direccio
     console.log('DOCUMENTACION REGISTRADO: ' + documentacion_id);
 }
 
-const verificarAplicacion = async (apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,critico,apl_alcance,
-    codigo,apl_licencia,apl_version,apl_direccion,apl_cantidad_usuarios,apl_region,apl_cliente) => {
+const verificarAplicacion = async (apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
+    apl_codigo_fuente,apl_licencia,apl_version,apl_direccion,apl_cantidad_usuarios,apl_region,apl_cliente,apl_fecha_registro) => {
 
         console.log('ALO1');
     const datos_apl = await pool.query(
-        `INSERT INTO aplicaciones (apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
-            apl_codigo_fuente,apl_licencia,apl_version,apl_direccion,apl_cantidad_usuarios,apl_region_id,apl_cliente)
+        `INSERT INTO aplicaciones (apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,
+            apl_critico,apl_alcance,apl_codigo_fuente,apl_licencia,apl_version,apl_direccion,
+            apl_cantidad_usuarios,apl_region_id,apl_cliente,apl_fecha_registro)
         VALUE 
-            (?,?,?,?,?,?,?,?,?,?,?,?,(SELECT region_id FROM regiones WHERE region = ?),?);`, 
+            (?,?,?,?,?,?,?,?,?,?,?,?,(SELECT region_id FROM regiones WHERE region = ?),?,?);`, 
         [
-            apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,critico,apl_alcance,
-            codigo,apl_licencia,apl_version,apl_direccion,apl_cantidad_usuarios,apl_region,apl_cliente
+            apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,apl_critico,
+            apl_alcance,apl_codigo_fuente,apl_licencia,apl_version,apl_direccion,apl_cantidad_usuarios,
+            apl_region,apl_cliente,apl_fecha_registro
         ]
     );
         console.log('ALO2');
@@ -327,8 +293,8 @@ const verificarAplicacion = async (apl_acronimo,apl_nombre,apl_descripcion,apl_e
     //         apl_cliente)
     //     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);`, 
     //     [
-    //         apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,critico,apl_alcance,
-    //         codigo,apl_licencia,apl_version,apl_direccion,apl_cantidad_usuarios,region_id,apl_cliente
+    //         apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
+    //         apl_codigo_fuente,apl_licencia,apl_version,apl_direccion,apl_cantidad_usuarios,region_id,apl_cliente
     //     ]
     // );
 
@@ -339,6 +305,6 @@ const verificarAplicacion = async (apl_acronimo,apl_nombre,apl_descripcion,apl_e
     return aplicacion_id;
 }
 
-module.exports = { verificarAplicacion, verificarCliente, verificarPlataforma, 
-    verificarLenguaje, verificarFramework,verificarRegion, verificarServidor, 
+module.exports = { verificarAplicacion, verificarPlataforma, 
+    verificarLenguaje, verificarFramework, verificarServidor, 
     verificarBase, verificarMantenimiento,verificarDocumentacion, verificarResponsable };

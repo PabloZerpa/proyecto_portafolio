@@ -3,7 +3,7 @@ import { useState } from "react";
 import { FaCheckCircle, FaTimes, FaTimesCircle } from "react-icons/fa";
 
 function Notificacion({ opcion, titulo, mensaje }) {
-     
+      
   const [open, setOpen] = useState(true);
   const openMenu = () => setOpen(!open);
 

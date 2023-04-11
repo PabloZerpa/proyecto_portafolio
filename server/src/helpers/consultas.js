@@ -58,7 +58,7 @@ const mantenimientos = `
 const documentaciones = `
     inner join documentaciones
     on documentaciones.aplicacion_id = aplicaciones.aplicacion_id`;
-
+ 
 const selectSimple = `
     SELECT 
         aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_version,

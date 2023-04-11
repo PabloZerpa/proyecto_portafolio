@@ -1,7 +1,8 @@
+
 import { useState, useEffect } from 'react';
-import { FaEye, FaPlus } from 'react-icons/fa';
-import { useLocation, useParams, Navigate, Link } from 'react-router-dom';
-import { Button, Container, Input, Radio } from '../../components';
+import { FaPlus } from 'react-icons/fa';
+import { useParams, Navigate, Link } from 'react-router-dom';
+import { Container, Input, Radio } from '../../components';
 import Tabla3 from '../../components/Table3';
 import Usuarios from '../../services/user.service';
 
@@ -11,13 +12,8 @@ const opcionesVista = ['General','Tecnologia',
 function Vista() {
 
   const { id } = useParams();
-  const location = useLocation();
+  //const location = useLocation();
   const [valor, setValor] = useState('');
-
-  const [valorDevuelto, setValorDevuelto] = useState(false);
-  const obtencionDeEstado = (parametroDevuelto) => {setValorDevuelto(parametroDevuelto)};
-  const [valorDevuelto2, setValorDevuelto2] = useState(false);
-  const obtencionDeEstado2 = (parametroDevuelto) => {setValorDevuelto2(parametroDevuelto)};
   const [opcion, setOpcion] = useState('General');
 
   const handleInputChange = (e) => {
@@ -239,107 +235,6 @@ function Vista() {
 
               {/* {paginacion ? ( <Paginacion />) : (null)} */}
             </form>
-          </>
-        )
-      }
-          
-      function Todo(){
-        return (
-          <>
-              <h2 className='font-bold text-lg'>Informacion General</h2>
-              <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-  
-                <div className='grid gap-6 mb-6 md:grid-cols-2'>
-                  <Input campo={'Acronimo'} propiedad={valor.acronimo} />
-                  <Input campo={'Estatus'} propiedad={valor.estatus} />
-                </div>
-  
-                <div className='flex flex-col gap-2 text-sm font-medium text-gray-900 mb-6'>
-                  <Input campo='Nombre' area={true} propiedad={valor.nombre} />
-                  <Input campo='Descripcion' area={true} propiedad={valor.descripcion} />
-                </div>
-                
-                <div className='grid gap-6 mb-6 md:grid-cols-2'>
-                  <Input campo='Prioridad' propiedad={valor.prioridad} />
-                  <Input campo='Alcance' propiedad={valor.alcance} />
-  
-                  <Input campo={'Responsable Funcional'} propiedad={valor.responsablef} detalles={true} peticionEstado={obtencionDeEstado} />
-                  <Input campo={'Responsable Tecnico'} propiedad={valor.responsablet} />
-  
-                  <div style={valorDevuelto ? {display: 'block'} : {display: 'none'}} className='' >
-                    <Input campo={'Nombre'} propiedad={valor.responsablef_ind} />
-                    <Input campo={'Apellido'} propiedad={valor.responsablef_ind} />
-                    <Input campo={'Indicador'} propiedad={valor.responsablef_ind} />
-                    <Input campo={'Cedula'} propiedad={valor.responsablef_cor} />
-                    <Input campo={'Telefono'} propiedad={valor.responsablef_tlf} />
-                    <Input campo={'Region'} propiedad={valor.responsablef_tlf} />
-                    <Input campo={'Localidad'} propiedad={valor.responsablef_tlf} />
-                  </div>
-                  <div style={valorDevuelto ? {display: 'block'} : {display: 'none'}} className='' >
-                    <Input campo={'Nombre'} propiedad={valor.responsablef_ind} />
-                    <Input campo={'Apellido'} propiedad={valor.responsablef_ind} />
-                    <Input campo={'Indicador'} propiedad={valor.responsablef_ind} />
-                    <Input campo={'Cedula'} propiedad={valor.responsablef_cor} />
-                    <Input campo={'Telefono'} propiedad={valor.responsablef_tlf} />
-                    <Input campo={'Region'} propiedad={valor.responsablef_tlf} />
-                    <Input campo={'Localidad'} propiedad={valor.responsablef_tlf} />
-                  </div>
-  
-                  <Input campo='Negocio' propiedad={valor.negocio} />
-                  <Input campo='Cliente' propiedad={valor.cliente} />
-                  <Input campo='N° de Usuarios' propiedad={valor.cantidad} />
-                  <Input campo='Ubicacion Cliente' propiedad={valor.ubicacionCliente} /> 
-                
-                </div>
-              </form>
-  
-              <h2 className='font-bold text-lg'>Caracteristicas de la Aplicaciones</h2>
-              <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-                <div className='grid gap-6 mb-6 md:grid-cols-2'>
-                  <Input campo={'Codigo Fuente'} propiedad={valor.codigo_fuente} />
-                  <Input campo={'Licencia'} propiedad={valor.licencia} />
-                  <Input campo={'Direccion'} propiedad={valor.direccion} />
-                  <Input campo='Plataforma' propiedad={valor.plataforma} />
-                  <Input campo={'Base de datos'} propiedad={valor.nombreBase} detalles={true} peticionEstado={obtencionDeEstado2} />
-                  <Input campo={'Servidor'} propiedad={valor.servidor} />
-  
-                  <div style={valorDevuelto2 ? {display: 'block'} : {display: 'none'}} className='' >
-                    <Input campo={'Lenguaje'} propiedad={valor.lenguaje} />
-                    <Input campo={'Nombre Base de datos'} propiedad={valor.nombreBase} />
-                    <Input campo={'Estatus Base de datos'} propiedad={valor.estatuBase} />
-                    <Input campo={'Tipo Base de datos'} propiedad={valor.tipoBase} />
-                    <Input campo={'Manejador Base de datos'} propiedad={valor.manejadorBase} />
-                    <Input campo={'Direccion Base de datos'} propiedad={valor.direccionBase} />
-                  </div>
-                  <div style={valorDevuelto2 ? {display: 'block'} : {display: 'none'}} className='' >
-                    <Input campo='Framework' propiedad={valor.framework} />
-                    <Input campo={'Nombre Servidor'} propiedad={valor.nombreServidor} />
-                    <Input campo={'Estatus Servidor'} propiedad={valor.estatusServidor} />
-                    <Input campo={'Ubicacion Servidor'} propiedad={valor.ubicacionServidor} />
-                    <Input campo={'Direccion Servidor'} propiedad={valor.direccionServidor} />
-                  </div>
-  
-                  <Input campo={'Documentacion'} propiedad={valor.documentacion} />
-                  <Input campo={'Descripcion'} propiedad={valor.descripcionDoc} />
-                  <Input campo={'Tipo'} propiedad={valor.tipoDoc} />
-                  <Input campo={'Direccion'} propiedad={valor.direccionDoc} />
-  
-                  <Input campo={'Frecuencia de Mantenimiento'} propiedad={valor.frecuencia} />
-                  <Input campo={'Horas Promedio de Mantenimiento'} propiedad={valor.horasProm} />
-                  <Input campo={'Tipo de Mantenimiento'} propiedad={valor.tipoMan} />
-                  <Input campo={'Horas Anuales de Mantenimiento'} propiedad={valor.horasAnuales} />
-                </div>
-              </form>
-  
-              <h2 className='font-bold text-lg'>Informacion de Gestion de la Plataforma</h2>
-              <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-                <div className='grid gap-6 mb-6 md:grid-cols-2'>
-                  <Input campo={'Region'} propiedad={valor.region} />
-                  <Input campo={'Localidad'} propiedad={valor.localidad} />
-                  <Input campo={'Fecha de Registro'} propiedad={valor.registro} />
-                  <Input campo={'Ultima Actualizacion'} propiedad={valor.ultima} />
-                </div>
-              </form>
           </>
         )
       }

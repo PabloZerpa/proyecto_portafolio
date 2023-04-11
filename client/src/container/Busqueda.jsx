@@ -5,8 +5,8 @@ import { FaSearch } from 'react-icons/fa';
 import { Select, Radio } from '../components';
 import Usuarios from "../services/user.service";
 import { opcionEstatus, opcionRegion, opcionPlataforma, opcionAlcance, opcionMantenimiento, opcionCount, opcionLocalidad } from '../services/campos.service';
-
-  
+ 
+   
 function Busqueda({manejarBusqueda, manejarCount, pagina}) {
      
     const [searchTerm, setSearchTerm] = useState("");
@@ -26,15 +26,29 @@ function Busqueda({manejarBusqueda, manejarCount, pagina}) {
         servidor: '',
         critico: '',
         codigo: '',
+        licencia: '',
         registros: 10,
         orden: 'ASC',
     }); 
+
+    const resetCampos = () => {
+        for (let clave in datos){
+            if(clave==='orden')
+                datos[clave] = 'ASC';
+            else if(clave==='registros')
+                datos[clave] = 10;
+            else
+                datos[clave] = '';
+        }
+    }
 
     const handleInputChange = (e) => {
         if(e.target.value === 'TODAS')
             setDatos({ ...datos, [e.target.name] : null })
         else
             setDatos({ ...datos, [e.target.name] : e.target.value })
+        
+        console.log(datos);
     }
 
     useEffect(() => {
@@ -46,12 +60,19 @@ function Busqueda({manejarBusqueda, manejarCount, pagina}) {
         }
 	}, [debounceValue, datos, pagina]); 
 
+
     const onSearch = async (value) => {
         try {
-            const { estatus,alcance,plataforma,prioridad,registros,orden } = datos;
+            const { estatus,plataforma,prioridad,region,alcance,mantenimiento,
+                basedatos,servidor,critico,codigo,licencia,registros,orden } = datos;
+
+            console.log(estatus,plataforma,prioridad,region,alcance,mantenimiento,
+                basedatos,servidor,critico,codigo,licencia,registros,orden);
 
             console.log('PAGINA EN BUSQUEDA: ' + pagina);
-            const respuesta = await Usuarios.obtenerPorBusqueda(value,estatus,alcance,prioridad,plataforma,orden,registros,pagina);
+            const respuesta = await Usuarios.obtenerPorBusqueda
+            (value,estatus,plataforma,prioridad,region,alcance,mantenimiento,
+                basedatos,servidor,critico,codigo,licencia,registros,orden,pagina);
 
             setResultados(respuesta.data);
             manejarBusqueda(respuesta.data);
@@ -87,12 +108,12 @@ function Busqueda({manejarBusqueda, manejarCount, pagina}) {
                     <div className="flex flex-wrap justify-center items-center">
                         <Radio label='Orden' name='orden' opciones={['ASC', 'DESC']} manejador={handleInputChange} />
                         <Radio label='Prioridad' name='prioridad' opciones={['TODAS', 'ALTA', 'MEDIA', 'BAJA']} manejador={handleInputChange} />
-                        <Radio label='Critica' name='critica' opciones={['SI','NO']} manejador={handleInputChange} />
+                        <Radio label='Critica' name='critico' opciones={['TODAS', 'SI','NO']} manejador={handleInputChange} />
                     </div>
                     
                     <div style={avanzados ? {display: 'flex'} : {display: 'none'}} className="flex flex-wrap justify-center items-center">
-                        <Radio label='Codigo Fuente' name='codigo' opciones={['SI', 'NO']} manejador={handleInputChange} />
-                        <Radio label='Licencia' name='licencia' opciones={['NO', 'LOGICA', 'FISICA']} manejador={handleInputChange} />
+                        <Radio label='Codigo Fuente' name='codigo' opciones={['TODAS', 'SI', 'NO']} manejador={handleInputChange} />
+                        <Radio label='Licencia' name='licencia' opciones={['TODAS', 'LOGICA', 'FISICA']} manejador={handleInputChange} />
                         <Radio label='Base de Datos' name='basedatos' opciones={['SI', 'NO']} manejador={handleInputChange} />
                         <Radio label='Servidor' name='servidor' opciones={['SI', 'NO']} manejador={handleInputChange} />
                     </div>
@@ -118,7 +139,7 @@ function Busqueda({manejarBusqueda, manejarCount, pagina}) {
                         </div>
 
                         <input type='reset' value='Restablecer' 
-                            onClick={(e) => {e.preventDefault()}}
+                            onClick={resetCampos}
                             className='w-20 h-8 text-xs bg-blue-600 text-white border-none outline-none rounded cursor-pointer hover:bg-blue-500' size='small' 
                         />
 

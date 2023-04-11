@@ -1,15 +1,7 @@
 
 import { useEffect, useState } from "react";
-import { Button, Container, Input, Select, Tabla } from "../../components";
-import Radio from "../../components/Radio";
-import Tabla3 from "../../components/Table3";
+import { Container, Select, } from "../../components";
 
-const columnas = ['Acronimo','Nombre','Estatus','Prioridad','Region','Cliente','Plataforma'];
-const resultados = [
-    {acronimo:'ABC',nombre:'QWERTY',estatus:'DESARROLLO',prioridad:'ALTA',region:'CENTRO',cliente:'PDVSA',plataforma:'WEB'},
-    {acronimo:'DEF',nombre:'ASDF',estatus:'ACTIVO',prioridad:'MEDIA',region:'ORIENTE',cliente:'PDVSA',plataforma:'ESCRITORIO'},
-    {acronimo:'GHI',nombre:'XYZ',estatus:'INACTIVO',prioridad:'BAJA',region:'OCCIDENTE',cliente:'DESCONOCIDO',plataforma:'MOVIL'},
-];
 
 
 const opcionRegion = ['TODAS', 'CENTRO', 'CENTRO SUR', 'CENTRO OCCIDENTE','ORIENTE NORTE', 
@@ -28,59 +20,57 @@ const localidadMetropolitana = ['CARACAS', 'CHARALLAVE', 'GUARICO', 'INTERNACION
 
 function BaseDatos() {
 
-    function saludo(e){
-        e.preventDefault();
-        console.log('SALUDO');
-    }
-
     const [datos, setDatos] = useState({region: '', localidad: ''});
-    const [opcionActual, setOpcionActual] = useState(opcionLocalidad);
+    const [opcion1, setOpcion1] = useState(opcionLocalidad);
+    const [opcion2, setOpcion2] = useState(opcionLocalidad);
+    const [opcion3, setOpcion3] = useState(opcionLocalidad);
 
-    function cambioDeOpcion(valor){
+    function cambioDeOpcion(valor, elemento){
+
         console.log(valor);
-        //OBTENGO LA REGION SELECCIONADA
-        console.log(opcionActual);
-        const regionSelected = 'CENTRO';
 
-        if(valor === 'CENTRO'){
-            setOpcionActual(localidadCentro);
-        }
-        else if(valor === 'FAJA'){
-            setOpcionActual(localidadFaja);
-        }
-        else if(valor === 'METROPOLITANA'){
-            setOpcionActual(localidadMetropolitana);
-        }
-        else{
-            setOpcionActual(opcionLocalidad);
-        }
-        console.log(opcionActual);
+        if(valor === 'CENTRO')
+            elemento(localidadCentro);
+        else if(valor === 'FAJA')
+            elemento(localidadFaja);
+        else if(valor === 'METROPOLITANA')
+            elemento(localidadMetropolitana);
+        else
+            elemento(opcionLocalidad);
+        
+        console.log(opcion1);
     }
-
-    useEffect(() => {
-        cambioDeOpcion();
-    }, []);
 
     // FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS
     const handleInputChange = (e) => {
-        console.log(e.target.name)
-        console.log(e.target.value)
+        console.log(e.target.name);
 
         if(e.target.value === 'TODAS')
             setDatos({ ...datos, [e.target.name] : null })
         else
             setDatos({ ...datos, [e.target.name] : e.target.value })
 
-        cambioDeOpcion(e.target.value);
+        if(e.target.name === 'region_res')
+            cambioDeOpcion(e.target.value, setOpcion1);
+        else if(e.target.name === 'region_ser')
+            cambioDeOpcion(e.target.value, setOpcion2);
+        else if(e.target.name === 'region_bas')
+            cambioDeOpcion(e.target.value, setOpcion3);
     }
 
     return(
         <Container>
 
-            <Select campo='Region' name='region' opciones={opcionRegion} manejador={handleInputChange} />
-            <Select campo='Localidad' name='localidad' opciones={opcionActual} manejador={handleInputChange} />
+            <Select campo='Region' name='region_res' opciones={opcionRegion} manejador={handleInputChange} />
+            <Select campo='Localidad' name='localidad' opciones={opcion1} manejador={handleInputChange} />
 
-            <form name="f1"> 
+            <Select campo='Region' name='region_ser' opciones={opcionRegion} manejador={handleInputChange} />
+            <Select campo='Localidad' name='localidad' opciones={opcion2} manejador={handleInputChange} />
+
+            <Select campo='Region' name='region_bas' opciones={opcionRegion} manejador={handleInputChange} />
+            <Select campo='Localidad' name='localidad' opciones={opcion3} manejador={handleInputChange} />
+
+            {/* <form name="f1"> 
                 <select name='pais' onChange={(e) => {cambioDeOpcion(e.target.value)}}> 
                     <option value="0" selected>Seleccione... </option>
                     <option value="CENTRO">CENTRO</option>
@@ -95,13 +85,10 @@ function BaseDatos() {
                         )
                     })}
                 </select> 
-            </form>
-
-
-            <Tabla3 columnas={columnas} datos={resultados} />
+            </form> */}
 
         </Container>
-
+        
     )
 };
 

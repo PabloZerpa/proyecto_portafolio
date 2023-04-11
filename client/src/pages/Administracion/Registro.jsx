@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { Button, Container, Input, Notificacion, Select } from '../../components';
 import { campos, opcionEstatus, opcionRegion, opcionPlataforma, opcionAlcance, opcionMantenimiento,
-        opcionLocalidad, opcionGerencia, opcionSubgerencia, 
+        opcionLocalidad, opcionGerencia, gerenciaInfor, gerenciaAuto, gerenciaTeleco,
         localidadCentro, localidadCentroOccidente, localidadCentroSur, localidadFaja, 
         localidadMetropolitana, localidadOccidente, localidadOrienteNorte, localidadOrienteSur } from '../../services/campos.service';
 import Autorizacion from '../../services/auth.service';
@@ -15,8 +15,14 @@ function Registro() {
     const navigate = useNavigate();
     const [datos, setDatos] = useState(campos);
 
+    // OPCIONES DE SELECT ANIDADOS
+    const [opcion1, setOpcion1] = useState(opcionLocalidad);
+    const [opcion2, setOpcion2] = useState(opcionLocalidad);
+    const [opcion3, setOpcion3] = useState(opcionLocalidad);
+    const [opcion4, setOpcion4] = useState(opcionLocalidad);
+    const [opcion5, setOpcion5] = useState(opcionLocalidad);
+
     // OPCIONES BUSCADAS DE LA BASE DE DATOS
-    const [opcionActual, setOpcionActual] = useState(opcionLocalidad);
     const [opcionLenguaje, setLenguajes] = useState([]);
     const [opcionFramework, setFramework] = useState([]);
     const [opcionBaseDatos, setBaseDatos] = useState([]);
@@ -51,8 +57,50 @@ function Registro() {
         else
             setDatos({ ...datos, [e.target.name] : e.target.value })
 
-        if(e.target.name === 'ser_region')
-            cambioDeOpcion(e.target.value);
+        if(e.target.name === 'funcional_region')
+            cambioDeOpcion(e.target.value, setOpcion1);
+        else if(e.target.name === 'tecnico_region')
+            cambioDeOpcion(e.target.value, setOpcion2);
+        else if(e.target.name === 'ser_region')
+            cambioDeOpcion(e.target.value, setOpcion3);
+        else if(e.target.name === 'ser_region')
+            cambioDeOpcion(e.target.value, setOpcion3);
+        else if(e.target.name === 'funcional_gerencia')
+            cambioDeOpcion(e.target.value, setOpcion4);
+        else if(e.target.name === 'tecnico_gerencia')
+            cambioDeOpcion(e.target.value, setOpcion5);
+        
+    }
+
+    function cambioDeOpcion(valor, elemento){
+
+        console.log(valor);
+
+        if(valor === 'CENTRO')
+            elemento(localidadCentro);
+        else if(valor === 'CENTRO SUR')
+            elemento(localidadCentroSur);
+        else if(valor === 'CENTRO OCCIDENTE')
+            elemento(localidadCentroOccidente);
+        else if(valor === 'ORIENTE NORTE')
+            elemento(localidadOrienteNorte);
+        else if(valor === 'ORIENTE SUR')
+            elemento(localidadOrienteSur);
+        else if(valor === 'OCCIDENTE')
+            elemento(localidadOccidente);
+        else if(valor === 'FAJA')
+            elemento(localidadFaja);
+        else if(valor === 'METROPOLITANA')
+            elemento(localidadMetropolitana);
+        else if(valor === 'INFORMATICA')
+            elemento(gerenciaInfor);
+        else if(valor === 'AUTOMATIZACION')
+            elemento(gerenciaAuto);
+        else if(valor === 'TELECOMUNICACIONES')
+            elemento(gerenciaTeleco);
+        else
+            elemento(opcionLocalidad);
+
     }
 
     function navegar() { navigate(-1) }
@@ -97,39 +145,6 @@ function Registro() {
         }
         fetchData();
       }, []);
-
-    // FUNCION PARA CAMBIO DE OPCION
-    function cambioDeOpcion(valor, campo){
-
-        if(valor === 'CENTRO'){
-            setOpcionActual(localidadCentro);
-        }
-        else if(valor === 'CENTRO SUR'){
-            setOpcionActual(localidadCentroSur);
-        }
-        else if(valor === 'CENTRO OCCIDENTE'){
-            setOpcionActual(localidadCentroOccidente);
-        }
-        else if(valor === 'ORIENTE NORTE'){
-            setOpcionActual(localidadOrienteNorte);
-        }
-        else if(valor === 'ORIENTE SUR'){
-            setOpcionActual(localidadOrienteSur);
-        }
-        else if(valor === 'OCCIDENTE'){
-            setOpcionActual(localidadOccidente);
-        }
-        else if(valor === 'FAJA'){
-            setOpcionActual(localidadFaja);
-        }
-        else if(valor === 'METROPOLITANA'){
-            setOpcionActual(localidadMetropolitana);
-        }
-        else{
-            setOpcionActual(opcionLocalidad);
-        }
-        console.log(opcionActual);
-    }
 
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
     async function createData(e) {
@@ -215,9 +230,9 @@ function Registro() {
                         <Input campo='Telefono' name='funcional_telefono' editable={true} manejador={handleInputChange} />
                         <Select campo='Cargo' name='funcional_cargo' opciones={opcionRegion} manejador={handleInputChange} />
                         <Select campo='Gerencia' name='funcional_gerencia' opciones={opcionGerencia} manejador={handleInputChange} />
-                        <Select campo='Subgerencia' name='funcional_subgerencia' opciones={opcionSubgerencia} manejador={handleInputChange} />
+                        <Select campo='Subgerencia' name='funcional_subgerencia' opciones={opcion4} manejador={handleInputChange} />
                         <Select campo='Region' name='funcional_region' opciones={opcionRegion} manejador={handleInputChange} />
-                        <Select campo='Localidad' name='funcional_localidad' opciones={opcionLocalidad} manejador={handleInputChange} />
+                        <Select campo='Localidad' name='funcional_localidad' opciones={opcion1} manejador={handleInputChange} />
                     </div>
                     
                     <div className='relative grid grid-cols-1'>
@@ -229,9 +244,9 @@ function Registro() {
                         <Input campo='Telefono' name='tecnico_telefono' editable={true} manejador={handleInputChange} />
                         <Select campo='Cargo' name='tecnico_cargo' opciones={opcionRegion} manejador={handleInputChange} />
                         <Select campo='Gerencia' name='tecnico_gerencia' opciones={opcionGerencia} manejador={handleInputChange} />
-                        <Select campo='Subgerencia' name='tecnico_subgerencia' opciones={opcionSubgerencia} manejador={handleInputChange} />
+                        <Select campo='Subgerencia' name='tecnico_subgerencia' opciones={opcion5} manejador={handleInputChange} />
                         <Select campo='Region' name='tecnico_region' opciones={opcionRegion} manejador={handleInputChange} />
-                        <Select campo='Localidad' name='tecnico_localidad' opciones={opcionLocalidad} manejador={handleInputChange} />
+                        <Select campo='Localidad' name='tecnico_localidad' opciones={opcion2} manejador={handleInputChange} />
                     </div>
                     
                 </div>
@@ -266,7 +281,7 @@ function Registro() {
                             <Select campo='Framework 4' name='framework4' opciones={opcionFramework} manejador={handleInputChange} />
                         </div>
                     </div>
-
+                    
                 </div>
                     
                 {/* --------------- BASE DE DATOS --------------- */}
@@ -310,7 +325,7 @@ function Registro() {
                     <Input campo='Velocidad' name='ser_velocidad_cpu' editable={true} manejador={handleInputChange} />
                     <Input campo='Memoria' name='ser_memoria' editable={true} manejador={handleInputChange} />
                     <Select campo='Region' name='ser_region' opciones={opcionRegion} manejador={handleInputChange} />
-                    <Select campo='Localidad' name='ser_localidad' opciones={opcionActual} manejador={handleInputChange} />
+                    <Select campo='Localidad' name='ser_localidad' opciones={opcion3} manejador={handleInputChange} />
                 </div>
                 
                 <div className='w-full h-1 border-2 border-dashed border-gray-500'></div>

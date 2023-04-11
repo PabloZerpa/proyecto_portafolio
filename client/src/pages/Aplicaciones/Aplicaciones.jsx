@@ -10,10 +10,9 @@ function Aplicaciones() {
   const [count, setCount] = useState('');
   const [resultado, setResultado] = useState('');
 
-  const obtenerPagina = (respuesta) => {setPagina(respuesta); console.log('PAGINA EN APLICACIONES: ' + pagina)};
-  const obtenerCount = (respuesta) => {setCount(respuesta); console.log('COUNT EN APLICACIONES: ' + count)};
+  const obtenerPagina = (respuesta) => {setPagina(respuesta); /*console.log('PAGINA EN APLICACIONES: ' + pagina)*/};
+  const obtenerCount = (respuesta) => {setCount(respuesta); /*console.log('COUNT EN APLICACIONES: ' + count)*/};
   const obtenerResultado = (respuesta) => {setResultado(respuesta)};
-
 
   return (
     <Container>

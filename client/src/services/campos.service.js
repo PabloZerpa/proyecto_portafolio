@@ -32,6 +32,7 @@ export const campos = {
     framework: '',
     fra_version: '',
 
+    select_base: '',
     base_datos: '',
     bas_estatus: '',
     bas_tipo: '',
@@ -41,6 +42,7 @@ export const campos = {
     bas_servidor: '',
     bas_cantidad: '',
     
+    select_servidor: '',
     servidor: '',
     ser_estatus: '',
     ser_direccion: '',
@@ -92,6 +94,8 @@ export const opcionEstatus = ['TODAS', 'DESARROLLO', 'MANTENIMIENTO', 'DESINCORP
 export const opcionRegion = ['TODAS', 'CENTRO', 'CENTRO SUR', 'CENTRO OCCIDENTE','ORIENTE NORTE', 
 'ORIENTE SUR', 'OCCIDENTE','FAJA','METROPOLITANA',];
 
+export const opcionPrioridad = ['ALTA', 'MEDIA', 'BAJA'];
+
 export const opcionLocalidad = ['TODAS'];
 export const localidadCentro = ['APURE', 'CALABOZO', 'GUACARA', 'MARACAY','SAN FELIPE', 'VALENCIA'];
 export const localidadCentroSur = ['SAN CARLOS', 'MINAS DE RIECITO', 'VALLE DE LA PASCUA'];
@@ -103,13 +107,20 @@ export const localidadFaja = ['AYACUCHO', 'SAN TOME', 'CARABOBO', 'PUERTO ORDAZ'
 export const localidadMetropolitana = ['CARACAS', 'CHARALLAVE', 'GUARICO', 'INTERNACIONAL','LOS TEQUES'];
 
 export const opcionGerencia = ['INFORMATICA', 'AUTOMATIZACION', 'TELECOMUNICACIONES'];
-export const opcionSubgerencia = ['I+D', 'SERVIDORES', 'RRHH'];
+
+export const gerenciaInfor = ['I+D', 'SERVIDORES', 'SOPORTE'];
+export const gerenciaAuto = ['SEGURIDAD', 'ELECTRONICA', 'MECANICA'];
+export const gerenciaTeleco = ['REDES', 'RADIO', 'RRHH'];
 
 export const opcionCount = [10,20,30,40,50];
 
 export const opcionPlataforma = ['TODAS', 'WEB', 'ESCRITORIO', 'MOVIL', 'CLIENTE-SERVIDOR', 'STAND ALONE', 'MINI', 'MAINFRAME'];
 
 export const opcionAlcance = ['TODAS', 'LOCAL', 'REGIONAL', 'CORPORATIVO'];
+
+export const opcionLicencia = ['NINGUNA', 'FISICA', 'LOGICA'];
+
+export const opcionSiNo = ['SI', 'NO'];
 
 export const opcionMantenimiento = ['TODAS', 'DIARIO', 'SEMANAL', 'QUINCENAL', 'MENSUAL',
     'BIMENSUAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL', 'NO APLICA'];
@@ -118,12 +129,14 @@ export const opcionMantenimiento = ['TODAS', 'DIARIO', 'SEMANAL', 'QUINCENAL', '
 
 
 // ====================== COLUMNAS PARA LA TABLA  ======================
-export const columnasUserSimple = ['Ver','ID','Acronimo','Nombre','Version','Estatus','Prioridad','Direccion',
-    'Region','Cliente','Nombre','Apellido','Indicador','Plataforma','Lenguaje','Base de datos','Servidor'];
+export const columnasUserSimple = ['Ver','ID','Acronimo','Nombre','Version','Alcance','Estatus','Prioridad','Direccion',
+    'Region','Cliente','Codigo','Critico','Licencia','Nombre','Apellido','Indicador','Plataforma','Lenguaje',
+    'Base de datos','Servidor','Mantenimiento'];
     
-export const columnasAdminSimple = ['Ver','Editar','ID','Acronimo','Nombre','Version','Estatus','Prioridad','Direccion',
-    'Region','Cliente','Nombre','Apellido','Indicador','Plataforma','Lenguaje','Base de datos','Servidor'];
-
+export const columnasAdminSimple = ['Ver','Editar','ID','Acronimo','Nombre','Version','Alcance','Estatus','Prioridad','Direccion',
+    'Region','Cliente','Codigo','Critico','Licencia','Nombre','Apellido','Indicador','Plataforma','Lenguaje',
+    'Base de datos','Servidor','Mantenimiento'];
+ 
 
 export const columnasUser = ['Ver','ID','Acronimo','Nombre','Descripcion','Version','Estatus','Prioridad','Critica','Alcance','Codigo Fuente','Licencia','Direccion','N° Usuarios',
 'Nombre','Apellido','Indicador','Cedula','Cargo','Telefono','Gerencia','Subgerencia',

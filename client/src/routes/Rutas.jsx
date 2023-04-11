@@ -12,6 +12,8 @@ import {
   CrearSolicitud,
   Perfil,
   Permisos,
+  CrearUsuario,
+  BuscarUsuario,
   Aplicaciones,
   Vista,
   Diagramas,
@@ -36,6 +38,8 @@ function Rutas() {
             <Route element={<ProtegidaAdm />} >
               {/* REGISTRO Y PERMISOS SOLO PUEDE ACCERDER LOS ADMIN */}
               <Route path="/administracion/permisos" element={<Permisos />} />
+              <Route path="/administracion/permisos/crear" element={<CrearUsuario />} />
+              <Route path="/administracion/permisos/buscar" element={<BuscarUsuario />} />
               <Route path="/administracion/registro" element={<Registro />} />
             </Route>
 

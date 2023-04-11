@@ -31,7 +31,7 @@ class Autorizacion {
             console.log('ERROR AL CREAR auth.service');
         }
     }
-
+ 
     // ---------------- UPDATE DE TODOS LOS DATOS ------------------
     async actualizarDatos(id, datosModificacion) {
         console.log('AFUERA DE ACTUALIZAR DATOS SERVICE');
@@ -48,7 +48,7 @@ class Autorizacion {
      
     // ---------------- UPDATE DE UN CAMPO EN ESPECIFICO ------------------
     async actualizarDato(id, datoModificacion) {
-        try {
+        try { 
             const id = datoModificacion.edicion;
             console.log(id);
             console.log(datoModificacion);

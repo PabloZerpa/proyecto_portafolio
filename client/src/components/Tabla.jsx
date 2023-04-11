@@ -4,35 +4,20 @@ import { Link } from "react-router-dom";
 import { FaEye, FaEdit } from "react-icons/fa";
 import Paginacion from "./Paginacion";
 import { columnasUserSimple, columnasAdminSimple } from "../services/campos.service";
- 
 
+  
 function Tabla({datos, opciones, paginacion=false, count=10, manejarPagina=null}) {
 
     const [pagina, setPagina] = useState(1);
     const [primerResultado, setPrimer] = useState([pagina-1]*count);
     const [ultimoResultado, setUltimo] = useState([pagina*count] - 1);
+    const obtenerPagina = (respuesta) => {setPagina(respuesta); /*console.log('PAGINA EN TABLA 2: ' + pagina)*/};
 
     const cambioPagina = () => {
         setPrimer([pagina-1]*count);
         setUltimo([pagina*count] - 1);
         if(manejarPagina)
             manejarPagina(pagina);
-    }
-    
-    const paginaSiguiente = () => {
-        if(Object.keys(datos).length === 0){
-            setPagina(pagina+1);
-            console.log('PAGINA EN TABLA SIG: ' + pagina);
-        }
-    }
-
-    const paginaAnterior = () => {
-        if(Object.keys(datos).length === 0){
-            if(pagina > 1){
-                setPagina(pagina-1);
-            }
-            console.log('PAGINA EN TABLA ANTERIOR: ' + pagina);
-        }
     }
 
     useEffect(() => {
@@ -93,11 +78,10 @@ function Tabla({datos, opciones, paginacion=false, count=10, manejarPagina=null}
 
             {paginacion ? ( 
                 <Paginacion 
-                    paginaAnterior={paginaAnterior}
-                    paginaSiguiente={paginaSiguiente}
                     del={primerResultado+1} 
                     al={ultimoResultado+1} 
-                    total={100} />
+                    total={100} 
+                    devolver={obtenerPagina} />
                 ) : 
                 (null)
             }

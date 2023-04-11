@@ -1,55 +1,157 @@
 
 import { useState,useEffect } from "react";
 import { FaEdit, FaCheckCircle } from "react-icons/fa";
+import { opcionEstatus, opcionPrioridad, opcionAlcance, opcionLicencia, 
+    opcionPlataforma, opcionRegion, opcionSiNo } from '../services/campos.service';
 import Autorizacion from '../services/auth.service';
-import Paginacion from "./Paginacion";
+import Usuarios from "../services/user.service";
 import Notificacion from "./Notificacion";
+import Paginacion from "./Paginacion";
+  
+function Tabla2({columnas, datos, paginacion=false, campo, devolverPagina=null}) {
 
-function Tabla2({columnas, datos, paginacion=false, campo}) {
+    // VARIABLES PARA LA PAGINA
+    const [pagina, setPagina] = useState(1);
+    const [primerResultado, setPrimer] = useState([pagina-1]*20);
+    const [ultimoResultado, setUltimo] = useState([pagina*20] - 1);
+    const obtenerPagina = (respuesta) => {setPagina(respuesta); console.log('PAGINA EN TABLA 2: ' + pagina)};
 
+    // VARIABLES LAS OPCIONES DE LENGUAJE-FRAMEWORK
+    const [opcionLenguaje, setLenguajes] = useState([]);
+    const [opcionFramework, setFramework] = useState([]);
+
+    // VARIABLES EL VALOR-EDICION DEL UPDATE
     const [valor, setValor] = useState('');
     const [edicion, setEdicion] = useState(null);
     const habilitar = (id) => {setEdicion(id)}
 
+    // VARIABLES PARA LA INFO DE NOTIFICACION
     const [show, setShow] = useState(false);
     const [opcion, setOpcion] = useState('error');
     const [mensaje, setMensaje] = useState('error');
 
+    // FUNCION PARA CAMBIAR DE RANGO DE RESULTADOS
+    const cambioPagina = () => {
+        setPrimer([pagina-1]*20);
+        setUltimo([pagina*20] - 1);
+        if(devolverPagina)
+            devolverPagina(pagina);
+    }
+
+    // -------------------- FUNCION PARA CAMBIAR DE PAGINA --------------------
     useEffect(() => {
-        if(show){
-            setTimeout(() => { setShow(!show) }, "2000");
+        cambioPagina();
+        console.log(pagina);
+    }, [pagina, datos]);
+
+    // -------------------- FUNCION OBTENER LOS VALORES DE LENGUAJE-FRAMEWORK --------------------
+    useEffect(() => {
+        async function fetchData(){
+            try {
+                const datosLenguajes = await Usuarios.obtenerOpciones('lenguajes');
+                const datosFrameworks = await Usuarios.obtenerOpciones('frameworks');
+
+                let lenguajes = [];
+                for (let i = 0; i < Object.keys(datosLenguajes.data).length; i++) {
+                lenguajes.push(datosLenguajes.data[i].lenguaje);
+                }
+
+                let frameworks = [];
+                for (let i = 0; i < Object.keys(datosFrameworks.data).length; i++) {
+                    frameworks.push(datosFrameworks.data[i].framework);
+                }
+
+                setLenguajes(lenguajes);
+                setFramework(frameworks);
+            }
+            catch (error) {
+                console.log(error)
+            }
         }
-      }, [show])
+        fetchData();
+    }, []);
+
+    // -------------------- FUNCION PARA DESAPARECER LA NOTIFICACION --------------------
+    useEffect(() => {
+        if(show)
+            setTimeout(() => { setShow(!show) }, "2000");
+    }, [show]);
 
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
     async function updateData(e) {
-         
         e.preventDefault();
-        //console.log('DENTRO DEL UPDATE DE ACTUALIZACION');
-
-        //console.log(datos);
         try {
-            //console.log('TRY DEL UPDATE');
             
             if(Autorizacion.obtenerUsuario().rol === 'admin'){
 
-                const datoModificacion = { edicion, campo,valor };
-                //console.log(edicion, campo, valor);
-                //console.log(datoModificacion);
-                
+                const datoModificacion = { edicion, campo, valor, pagina };
                 await Autorizacion.actualizarDato(4, datoModificacion); 
-                //console.log('ALO');
                 habilitar();
+
                 setOpcion('exito');
                 setMensaje('Campo modificado exitosamente');
                 setShow(true);
             }
         }
         catch (error) { 
-            console.log('ERROR AL ACTUALIZAR APL_ACT'); 
             setMensaje(error.response.data.message);
             setOpcion('error');
             setShow(true);
+        }
+    }
+
+    // SELECT PERSONALIZADO
+    const selectCampo = (opciones,valor) => {
+        return (
+            <select 
+                className={`w-full p-2 bg-gray-50 border border-solid border-blue-500 text-gray-900 text-xs text-center rounded-md`} 
+                onChange={(e) => {setValor(e.target.value)}}
+            >
+                {opciones.map((opcion, index) => {
+                    if(opcion === valor)
+                        return <option key={index} value={opcion}>{opcion}</option>
+                    else
+                        return <option key={index} value={opcion}>{opcion}</option>
+                })}
+            </select>
+        )
+    }
+
+    // FUNCION PARA VERIFICAR Y ELEGIR SELECT SEGUN LA OPCION SELECCIONADA
+    const verificarCampo = (campo, valor) => {
+        if(campo === 'Estatus'){
+            return (selectCampo(opcionEstatus,valor));
+        }
+        else if(campo === 'Prioridad'){
+            return (selectCampo(opcionPrioridad,valor));
+        }
+        else if(campo === 'Alcance'){
+            return (selectCampo(opcionAlcance,valor));
+        }
+        else if(campo === 'Licencia'){
+            return (selectCampo(opcionLicencia,valor));
+        }
+        else if(campo === 'Region'){
+            return (selectCampo(opcionRegion,valor));
+        }
+        else if(campo === 'Plataforma'){
+            return (selectCampo(opcionPlataforma,valor));
+        }
+        else if(campo === 'Lenguaje'){
+            return (selectCampo(opcionLenguaje,valor));
+        }
+        else if(campo === 'Framework'){
+            return (selectCampo(opcionFramework,valor));
+        }
+        else if(campo === 'Codigo_Fuente' || campo === 'Critico'){
+            return (selectCampo(opcionSiNo,valor));
+        }
+        else{
+            return (
+                <input type='text' defaultValue={valor}
+                onChange={(e) => {setValor(e.target.value)}}
+                className="w-full p-2 bg-gray-50 border border-solid border-blue-500 text-gray-900 text-xs text-center rounded-md" />
+            )
         }
     }
 
@@ -78,14 +180,12 @@ function Tabla2({columnas, datos, paginacion=false, campo}) {
                             <td className="px-1 py-1">{valor[0]}</td>
                             <td className="px-1 py-1">{valor[1]}</td>
                             <td className="px-1 py-1">{valor[2]}</td>
-                            <td className="px-1 py-1">
+                            <td className="px-1 py-1"> 
                                 {edicion!==dato.aplicacion_id ? (
                                     <input type='text' defaultValue={valor[3]} disabled
                                     className="w-full p-2 bg-gray-50 border-none text-gray-900 text-xs text-center rounded-md" />
                                 ) : (
-                                    <input type='text' defaultValue={valor[3]}
-                                    onChange={(e) => {setValor(e.target.value)}}
-                                    className="w-full p-2 bg-gray-50 border border-solid border-blue-500 text-gray-900 text-xs text-center rounded-md" />
+                                    verificarCampo(columnas[3],valor[3])
                                 )}
                                 </td>
                             <td className="px-2 py-2">
@@ -108,7 +208,13 @@ function Tabla2({columnas, datos, paginacion=false, campo}) {
                 </tbody>
             </table>
 
-            {paginacion ? ( <Paginacion />) : (null)}
+            {paginacion ? ( 
+                <Paginacion
+                    del={primerResultado+1} 
+                    al={ultimoResultado+1} 
+                    total={100}
+                    devolver={obtenerPagina} />
+            ) : (null)}
             
         </div>
     );

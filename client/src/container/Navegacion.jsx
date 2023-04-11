@@ -77,7 +77,7 @@ function Navegacion() {
                                 </Link>
                                 <Link to="/aplicaciones" 
                                     className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
-                                    Otros
+                                    Fallas
                                 </Link>
                             </div>
                         </li>

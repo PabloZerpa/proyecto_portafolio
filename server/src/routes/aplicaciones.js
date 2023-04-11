@@ -7,6 +7,7 @@ const { auth, authAdmin } = require("../middlewares/auth");
 const { autenticarUser } = require("../middlewares/ad");
 const { validatorCreateItem, validatorGetItem } = require("../validators/aplicaciones");
 
+
 // *************** RUTA PARA OBTENER LENGUAJES *************** 
 router.get("/lenguajes", obtenerLenguajes);
 
@@ -21,7 +22,6 @@ router.get("/servidores", obtenerServidores);
 
 // *************** RUTA PARA OBTENER TODOS LOS DATOS *************** 
 router.get("/total", obtenerCantidadTotal);
-
 
 
 // *************** RUTA PARA OBTENER TODOS LOS DATOS *************** 

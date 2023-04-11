@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useLocation, useParams, useNavigate, Navigate } from 'react-router-dom';
+import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { Button, Container, Input, Select } from '../../components';
 import Autorizacion from '../../services/auth.service';
 import Usuarios from '../../services/user.service';
@@ -13,9 +13,7 @@ function Actualizacion() {
   const { id } = useParams();
   const [datos, setDatos] = useState(campos);
   const [valor, setValor] = useState('');
-  const location = useLocation();
 
-  
   function navegar() { navigate(-1) }
 
   const handleInputChange = (e) => {
@@ -54,6 +52,8 @@ function Actualizacion() {
       apl_estatus : valor.apl_estatus,
       apl_version : valor.apl_version,
       apl_codigo_fuente : valor.apl_codigo_fuente,
+      apl_cantidad_usuarios : valor.apl_cantidad_usuarios,
+      apl_cliente : valor.apl_cliente,
       plataforma : valor.plataforma,
       framework : valor.framework,
       lenguaje : valor.lenguaje,
@@ -81,8 +81,6 @@ function Actualizacion() {
       doc_descripcion: valor.doc_descripcion,
       doc_direccion: valor.doc_direccion,
       doc_tipo: valor.doc_tipo,
-      cliente: valor.cliente,
-      cli_cantidad: valor.cli_cantidad_usuarios,
     });
 
   }, [id]);
@@ -100,10 +98,10 @@ function Actualizacion() {
 
         console.log(datos);
         console.log(id);
-        //await Autorizacion.actualizarDatos(id, datos); 
+        await Autorizacion.actualizarDatos(id, datos); 
         //navigate("/dashboard");
       }
-    }
+    } 
     catch (error) { console.log('ERROR AL ACTUALIZAR APL_ACT'); }
   }
 
@@ -213,7 +211,7 @@ function Actualizacion() {
                     <Select campo='Estatus' name='ser_estatus' propiedad={valor.ser_estatus} opciones={['SI','NO']} manejador={handleInputChange}/>
                     <Input campo='Direccion' name='ser_direccion' propiedad={valor.ser_direccion} editable={true} manejador={handleInputChange} />
                     <Input campo='Sistema' name='ser_sistema' propiedad={valor.sistema} editable={true} manejador={handleInputChange} />
-                    <Input campo='Version Sis' name='ser_sistemas_version' propiedad={valor.sistema_version} editable={true} manejador={handleInputChange} />
+                    <Input campo='Version Sis' name='ser_sistema_version' propiedad={valor.sistema_version} editable={true} manejador={handleInputChange} />
                     <Input campo='Marca' name='ser_marca' propiedad={valor.marca} editable={true} manejador={handleInputChange} />
                     <Input campo='Modelo' name='ser_modelo' propiedad={valor.mar_modelo} editable={true} manejador={handleInputChange} />
                     <Input campo='Serial' name='ser_serial' propiedad={valor.mar_serial} editable={true} manejador={handleInputChange} />
@@ -243,7 +241,7 @@ function Actualizacion() {
 
                     
                 <div className="absolute bottom-4 right-1/3">
-                    <Button width={32}>Registrar</Button>
+                    <Button width={32}>Actualizar</Button>
                 </div>
                 <div className="absolute bottom-4 left-1/3">
                     <Button color='red' width={32} accion={navegar} >Cancelar</Button>

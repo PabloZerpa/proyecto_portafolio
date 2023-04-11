@@ -1,7 +1,28 @@
 
+import { useEffect, useState } from 'react';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 
-function Paginacion({paginaAnterior, paginaSiguiente, del=1,al=10,total=100}) {
+function Paginacion({del=1,al=10,total=100, devolver=null}) {
+
+    const [pagina, setPagina] = useState(1);
+
+    const cambioPagina = () => {
+        if(devolver)
+            devolver(pagina);
+    }
+
+    const siguiente = () => {
+        setPagina(pagina+1);
+    }
+
+    const anterior = () => {
+        if(pagina>1)
+            setPagina(pagina-1);
+    }
+
+    useEffect(() => {
+        cambioPagina();
+    }, [pagina])
 
     return(
         <div className="flex flex-col items-center my-4">
@@ -13,18 +34,20 @@ function Paginacion({paginaAnterior, paginaSiguiente, del=1,al=10,total=100}) {
             </span> 
             <div className="inline-flex mt-2 xs:mt-0">
                 <button 
-                    onClickCapture={paginaAnterior}
+                    onClick={anterior}
                     className="flex items-center gap-2 px-2 py-2 text-xs font-medium text-white bg-gray-800 rounded-l hover:bg-gray-900">
                     <FaArrowLeft />
                     Anterior
                 </button>
                 <button 
-                    onClickCapture={paginaSiguiente}
+                    onClick={siguiente}
                     className="flex items-center gap-2 px-2 py-2 text-xs font-medium text-white bg-gray-800 border-l border-gray-700 rounded-r hover:bg-gray-900">
                     Siguiente
                     <FaArrowRight />                
                 </button>
             </div>
+            
+            <p>{pagina}</p>
         </div>
     );
 }

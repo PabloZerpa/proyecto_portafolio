@@ -3,7 +3,7 @@ import { Container } from "../../components/";
 import { FaUserEdit, FaUserPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
-function CrearUsuario() {
+function BuscarUsuario() {
     return(
         <Container>
             <ul className="grid grid-cols-2 gap-4">
@@ -25,4 +25,4 @@ function CrearUsuario() {
     );
 }
 
-export default CrearUsuario;
+export default BuscarUsuario;

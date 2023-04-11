@@ -5,6 +5,8 @@ import Actualizacion from './Administracion/Actualizacion';
 import Registro from './Administracion/Registro';
 import Perfil from './Administracion/Perfil';
 import Permisos from './Administracion/Permisos';
+import CrearUsuario from './Administracion/CrearUsuario';
+import BuscarUsuario from './Administracion/BuscarUsuario';
 import Solicitudes from './Solicitudes/Solicitudes';
 import Solicitud from './Solicitudes/Solicitud';
 import CrearSolicitud from './Solicitudes/CrearSolicitud';
@@ -24,6 +26,8 @@ export {
     CrearSolicitud,
     Perfil,
     Permisos,
+    CrearUsuario,
+    BuscarUsuario,
     Aplicaciones,
     Vista,
     Diagramas,
