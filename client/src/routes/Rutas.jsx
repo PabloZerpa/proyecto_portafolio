@@ -19,7 +19,8 @@ import {
   Diagramas,
   BaseDatos, 
   VistaDB,
-  CrearBD
+  CrearBD,
+  Fallas
 } from '../pages';
 
 function Rutas() {
@@ -55,20 +56,12 @@ function Rutas() {
             <Route path="/aplicaciones/" element={<Aplicaciones />} />
             <Route path="/aplicaciones/:id" element={<Vista />} />
             <Route path="/aplicaciones/diagramas" element={<Diagramas />} />
+            <Route path="/aplicaciones/fallas" element={<Fallas />} />
               
             {/* MODULO DE ADMINISTRACION */}
             <Route path="/basedatos" element={<BaseDatos />} />
             <Route path="/basedatos/:id" element={<VistaDB />} />
             <Route path="/basedatos/registro" element={<CrearBD />} />
-
-            {/* MODULO DE SOLICITUDES */}
-            <Route path="/solicitudes" element={<Solicitudes />} />
-            <Route path="/solicitudes/:id" element={<Solicitud />} />
-
-            {/* CREACION DE SOLICITUDES PUEDEN ACCERDER SUPERUSER Y ADMIN */}
-            <Route element={<ProtegidaSuper />} >
-              <Route path="/solicitudes/crear" element={<CrearSolicitud />} />
-            </Route>
             
           </Route> 
 

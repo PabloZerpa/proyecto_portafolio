@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from "react";
 import { Button, Container, Input, Notificacion, Select } from "../../components/";
-import Checkbox from "../../components/Checkbox";
 import Autorizacion from "../../services/auth.service";
 import { opcionGerencia } from "../../services/campos.service";
 
@@ -79,20 +78,6 @@ function Permisos() {
                         <Input campo='Contraseña' name='password' direccion="col" editable={true} manejador={handleInputChange} />
                         <Select campo='Gerencia' name='gerencia' direccion="col" opciones={opcionGerencia} manejador={handleInputChange} />
                         <Input campo='Cargo' name='cargo' direccion="col" editable={true} manejador={handleInputChange} />
-                    </div>
-                </div>
-
-                <div className="flex flex-col items-center gap-2">
-                    <h2 className='font-bold text-sm'>Acciones Permitidas</h2>
-                    <div className="flex gap-4 p-4 bg-zinc-400 rounded">
-                        <Checkbox id='aplicaciones' name='elementos_permitidos' opciones={['Ver','Modificar','Eliminar','Solicitar','Aprobar',]} />
-                    </div>
-                </div>
-
-                <div className="flex flex-col items-center gap-2">
-                    <h2 className='font-bold text-sm'>Elementos Permitidos</h2>
-                    <div className="flex gap-4 items-center p-4 bg-zinc-400 rounded">
-                        <Checkbox id='aplicaciones' name='elementos_permitidos' opciones={['Aplicaciones','Base de datos','Servidores','Solicitudes','Graficos',]} />
                     </div>
                 </div>
 

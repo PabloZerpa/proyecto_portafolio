@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { Button, Container, Input, Select } from '../../components';
+import { BiLoaderAlt } from "react-icons/bi";
 import Autorizacion from '../../services/auth.service';
 import Usuarios from '../../services/user.service';
 import { campos, opcionEstatus, opcionRegion, opcionPlataforma, opcionAlcance, opcionMantenimiento,
@@ -171,7 +172,7 @@ function Actualizacion() {
     return <Navigate to='/' />
  
   if(load){
-    return('CARGANDO');
+    return <BiLoaderAlt className='text-6xl text-blue-500 animate-spin' />
   }
   else{
     return (
@@ -267,36 +268,6 @@ function Actualizacion() {
                         </div> */}
                     </div>
                 </div>
-                    
-                {/* --------------- BASE DE DATOS --------------- */}
-                <p className='font-bold text-base my-4'>Base de datos</p>
-                <div className="grid grid-cols-2 gap-4">
-                    <Input campo='Nombre' name='base_datos' propiedad={valor.basedatos.base_datos} editable={true} manejador={handleInputChange} />
-                    <Select campo='Estatus' name='base_estatus' propiedad={valor.basedatos.bas_estatus} opciones={opcionEstatus} manejador={handleInputChange}/>
-                    <Select campo='Tipo' name='base_tipo' propiedad={valor.basedatos.tipo} opciones={['Relacional','NO Relacional','Objetos']} manejador={handleInputChange} />
-                    <Select campo='Manejador' name='base_manejador' propiedad={valor.basedatos.manejador} opciones={['MYSQL','POSTGfuncionalS','MARIADB']} manejador={handleInputChange} />
-                    <Select campo='Tipo Amb' name='base_tipo_ambiente' propiedad={valor.basedatos.bas_tipo_ambiente} opciones={['Relacional','NO Relacional','Objetos']} manejador={handleInputChange} />
-                    <Input campo='N° Usuarios' name='base_cantidad_usuarios' propiedad={valor.basedatos.bas_cantidad_usuarios} editable={true} manejador={handleInputChange} />
-                    <Input campo='Servidor' name='base_servidor' propiedad={valor.basedatos.servidor} editable={true} manejador={handleInputChange} />
-                </div>
-
-            {/* --------------- SERVIDOR --------------- */}
-            <p className='font-bold text-base my-4'>Servidor</p>
-            <div className="grid grid-cols-2 gap-4">
-                <Input campo='Nombre' name='servidor' propiedad={valor.servidor.servidor} editable={true} manejador={handleInputChange} />
-                <Select campo='Estatus' name='ser_estatus' propiedad={valor.servidor.ser_estatus} opciones={['SI','NO']} manejador={handleInputChange}/>
-                <Input campo='Direccion' name='ser_direccion' propiedad={valor.servidor.ser_direccion} editable={true} manejador={handleInputChange} />
-                <Input campo='Sistema' name='ser_sistema' propiedad={valor.servidor.sistema} editable={true} manejador={handleInputChange} />
-                <Input campo='Version Sis' name='ser_sistema_version' propiedad={valor.servidor.sistema_version} editable={true} manejador={handleInputChange} />
-                <Input campo='Modelo' name='ser_modelo' propiedad={valor.modelos.modelo} editable={true} manejador={handleInputChange} />
-                <Input campo='Marca' name='ser_marca' propiedad={valor.modelos.mod_marca} editable={true} manejador={handleInputChange} />
-                <Input campo='Serial' name='ser_serial' propiedad={valor.modelos.mod_serial} editable={true} manejador={handleInputChange} />
-                <Input campo='Cantidad' name='ser_cantidad_cpu' propiedad={valor.modelos.mod_cantidad_cpu} editable={true} manejador={handleInputChange} />
-                <Input campo='Velocidad' name='ser_velocidad_cpu' propiedad={valor.modelos.mod_velocidad_cpu} editable={true} manejador={handleInputChange} />
-                <Input campo='Memoria' name='ser_memoria' propiedad={valor.modelos.mod_memoria} editable={true} manejador={handleInputChange} />
-                <Select campo='Region' name='ser_region' propiedad={valor.servidor.region} opciones={opcionRegion} manejador={handleInputChange} />
-                <Select campo='Localidad' name='ser_localidad' propiedad={valor.servidor.localidad} opciones={opcion3} manejador={handleInputChange} />
-            </div>
 
             <div className='w-full h-1 border-2 border-dashed border-gray-500'></div>
             {/* --------------- DOCUMENTACION --------------- */}

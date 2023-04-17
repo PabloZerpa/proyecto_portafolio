@@ -6,36 +6,6 @@ const baseUrl = "http://localhost:3001/api/";
  
 class Usuarios {  
 
-    // =============== OBTIENE INFORMACION GENERAL DATABASE ===============
-    async obtenerGeneralBD(id) { 
-        try { 
-            const respuesta = await axios.get(`${baseUrl}basedatos/general/${id}`, { headers: authHeader() });
-            return respuesta;
-        } catch (error) {
-            console.log('Error al obtener datos'); 
-        }
-    }
-    // =============== OBTIENE INFORMACION SERVIDOR DATABASE ===============
-    async obtenerAplicacionBD(id) { 
-        try { 
-            const respuesta = await axios.get(`${baseUrl}basedatos/aplicacion/${id}`, { headers: authHeader() });
-            //console.log(respuesta);
-            return respuesta;
-        } catch (error) {
-            console.log('Error al obtener datos'); 
-        }
-    }
-    // =============== OBTIENE INFORMACION APLICACION DATABASE ===============
-    async obtenerServidorBD(id) { 
-        try { 
-            const respuesta = await axios.get(`${baseUrl}basedatos/servidor/${id}`, { headers: authHeader() });
-            //console.log(respuesta);
-            return respuesta;
-        } catch (error) {
-            console.log('Error al obtener datos'); 
-        }
-    }
-
     // =============== OBTIENE LOS DATOS DE LOS USUARIOS ===============
     async obtenerUsuarios(term,pagina) { 
         try { console.log('alo');
@@ -44,6 +14,11 @@ class Usuarios {
             console.log('Error al obtener dato');
         }
     }
+
+
+
+
+
 
     // =============== OBTIENE INFORMACION GENERAL ===============
     async obtenerTodo(id) { 
@@ -207,35 +182,6 @@ class Usuarios {
             console.log('Error al obtener dato'); 
         }
     }   
- 
-    // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
-    async obtenerPorBusqueda(term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
-        critico,codigo,count,order,pagina) {
-        try {
-            //console.log('OBTENER_BUSQUEDA PAGINA: :' + pagina);
-            console.log(term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
-                critico,codigo,count,order,pagina);
-
-            return axios.post(`${baseUrl}aplicaciones/busqueda`, 
-            {term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
-                critico,codigo,count,order,pagina});
-        } catch (error) {
-            console.log('Error al obtener dato');
-        }
-    }
-
-    // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
-    async obtenerBDPorBusqueda(term,count,orden) {
-        try {
-            console.log('OBTENER_BUSQUEDA');
-            console.log(term,count,orden);
- 
-            return axios.post(`${baseUrl}basedatos/busqueda`, 
-            {term,count,orden});
-        } catch (error) {
-            console.log('Error al obtener dato');
-        }
-    }
 
     // =============== OBTIENE LOS DATOS POR EL CAMPO A ACTUALIZAR ESPECIFICO ===============
     async obtenerPorCampo(term,campo,pagina) { 
@@ -256,6 +202,76 @@ class Usuarios {
             console.log('Error al obtener dato');
         }
     }
+    
+    // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
+    async obtenerPorBusqueda(term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
+        critico,codigo,count,order,pagina) {
+        try {
+            //console.log('OBTENER_BUSQUEDA PAGINA: :' + pagina);
+            console.log(term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
+                critico,codigo,count,order,pagina);
+
+            return axios.post(`${baseUrl}aplicaciones/busqueda`, 
+            {term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
+                critico,codigo,count,order,pagina});
+        } catch (error) {
+            console.log('Error al obtener dato');
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    // =============== OBTIENE INFORMACION GENERAL DATABASE ===============
+    async obtenerGeneralBD(id) { 
+        try { 
+            const respuesta = await axios.get(`${baseUrl}basedatos/general/${id}`, { headers: authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log('Error al obtener datos'); 
+        }
+    }
+    // =============== OBTIENE INFORMACION SERVIDOR DATABASE ===============
+    async obtenerAplicacionBD(id) { 
+        try { 
+            const respuesta = await axios.get(`${baseUrl}basedatos/aplicacion/${id}`, { headers: authHeader() });
+            //console.log(respuesta);
+            return respuesta;
+        } catch (error) {
+            console.log('Error al obtener datos'); 
+        }
+    }
+    // =============== OBTIENE INFORMACION APLICACION DATABASE ===============
+    async obtenerServidorBD(id) { 
+        try { 
+            const respuesta = await axios.get(`${baseUrl}basedatos/servidor/${id}`, { headers: authHeader() });
+            //console.log(respuesta);
+            return respuesta;
+        } catch (error) {
+            console.log('Error al obtener datos'); 
+        }
+    }
+
+
+    // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
+    async obtenerBDPorBusqueda(term,count,orden) {
+        try {
+            console.log('OBTENER_BUSQUEDA');
+            console.log(term,count,orden);
+ 
+            return axios.post(`${baseUrl}basedatos/busqueda`, 
+            {term,count,orden});
+        } catch (error) {
+            console.log('Error al obtener dato');
+        }
+    }
+
 
 }
 

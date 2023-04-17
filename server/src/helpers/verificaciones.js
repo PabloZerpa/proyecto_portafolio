@@ -94,80 +94,18 @@ const verificarFramework = async (id, framework,framework2,framework3) => {
     }
 }
 
-const verificarServidor = async (id,select_servidor,servidor,estatus,direccion,sistema,sistema_version,marca,modelo,serial,
-    cantidad_cpu, velocidad_cpu, memoria, region, localidad) => {
+const verificarServidor = async (id,select_servidor) => {
     
     let servidor_id = null;
 
     if(!select_servidor){
-
-        const buscarServidor = await pool.query(`SELECT servidor_id FROM servidores WHERE servidor = ?`, [servidor]);
-        console.log(buscarServidor[0][0])
-
-        if(buscarServidor[0][0] === undefined){
-    
-            // crea los datos del sistema operativo del servidor
-            let sistema_id = null;
-            const buscarOS = await pool.query(`SELECT sistema_id FROM sistemas_operativos WHERE sistema = ?`, [sistema]);
-    
-            if(buscarOS[0][0] === undefined){
-    
-                const datos_sistema = await pool.query(
-                    `INSERT INTO sistemas_operativos (sistema,sistema_version) VALUES (?,?)`, 
-                    [sistema,sistema_version]
-                );
-    
-                const selectSis = await pool.query(`SELECT * FROM sistemas_operativos ORDER BY sistema_id DESC LIMIT 1`);
-                sistema_id = selectSis[0][0].sistema_id;
-                console.log('SISTEMA OPERATIVO REGISTRADO: ' + sistema_id);
-            }
-            else{
-                sistema_id = buscarOS[0][0].sistema_id;
-            }
-            console.log('SISTEMA REGISTRADO: ' + sistema_id);
-    
-            // crea los datos de la marca del servidor
-            let modelo_id = null;
-            const buscarModelo = await pool.query(`SELECT modelo_id FROM modelos WHERE modelo = ?`, [modelo]);
-            if(buscarModelo[0][0] === undefined){
-                const datos_modelo = await pool.query(
-                    `INSERT INTO modelos (modelo,mod_marca,mod_serial,mod_cantidad_cpu,mod_velocidad_cpu,mod_memoria) VALUES (?,?,?,?,?,?)`, 
-                    [modelo,marca,serial,cantidad_cpu,velocidad_cpu,memoria]
-                );
-                const selectMod = await pool.query(`SELECT * FROM modelos ORDER BY modelo_id DESC LIMIT 1`);
-                modelo_id = selectMod[0][0].modelo_id;
-            }
-            else{
-                modelo_id = buscarModelo[0][0].modelo_id;
-            }
-            console.log('MODELO REGISTRADA: ' + modelo_id);
-    
-            // crea los datos del servidor
-            const datos_servidor = await pool.query(
-                `INSERT INTO servidores 
-                    (servidor,ser_estatus,ser_direccion,ser_sistema,ser_modelo,ser_region_id,ser_localidad_id) 
-                VALUES 
-                    (?,?,?,?,?,
-                        (SELECT region_id FROM regiones WHERE region = ?),
-                        (SELECT localidad_id FROM localidades WHERE localidad = ?));`,
-                [servidor,estatus,direccion,sistema_id,modelo_id,region,localidad]
-            );
-            console.log('SERVIDOR REGISTRADO');
-    
-            const buscarServidor = await pool.query(`SELECT servidor_id FROM servidores WHERE servidor = ?`, [servidor]);
-            servidor_id = buscarServidor[0][0].servidor_id;
-        }
-        else{
-            console.log(buscarServidor[0][0]);
-            servidor_id = buscarServidor[0][0].servidor_id;
-        }
+        return res.status(401).json({ message: 'ERROR, SERVIDOR SIN SELECCIONAR' });
     }
     else{
         const buscarServidor = await pool.query(`SELECT servidor_id FROM servidores WHERE servidor = ?`, [select_servidor]);
         servidor_id = buscarServidor[0][0].servidor_id;
     }
 
-    
     console.log(servidor_id)
     // crea la relacion aplicacion-servidores
     const app_servidor = await pool.query(
@@ -178,94 +116,24 @@ const verificarServidor = async (id,select_servidor,servidor,estatus,direccion,s
 
 }
 
-const verificarBase = async (id,select_base,base_datos,manejador,version,tipo,estatus,
-    tipo_ambiente,cantidad_usuarios,servidor) => {
+const verificarBase = async (id,select_base) => {
         
     let base_datos_id = null;
 
     if(!select_base){
-        
-        const buscarBaseDatos = await pool.query(`SELECT base_datos_id FROM bases_datos WHERE base_datos = ?`, [base_datos]);
-        if(buscarBaseDatos[0][0] === undefined){
-
-            
-            // crea los datos del manejador de la bd
-            let manejador_id;
-            const buscarManejador = await pool.query(`SELECT manejador_id FROM manejadores WHERE manejador = ?`, [manejador]);
-            if(buscarManejador[0][0] === undefined){
-                const datos_manejador = await pool.query(
-                    `INSERT INTO manejadores (manejador) VALUES (?)`, 
-                    [manejador]
-                );
-            }
-            else{
-                manejador_id = buscarManejador[0][0].manejador_id;
-            }
-            const selectMan = await pool.query(`SELECT * FROM manejadores ORDER BY manejador_id DESC LIMIT 1`);
-            manejador_id = selectMan[0][0].manejador_id;
-            console.log('MANEJADOR REGISTRADO: ' + manejador_id);
-
-
-            let version_id;
-            const buscarVersion = await pool.query(`
-                SELECT version_manejador_id FROM versiones_manejadores WHERE version_manejador = ?`, [version]);
-            if(buscarVersion[0][0] === undefined){
-                const datos_version = await pool.query(
-                    `INSERT INTO versiones_manejadores (version_manejador,manejador_id) VALUES (?,?);`, 
-                    [version,manejador_id]
-                );
-            }
-            else{
-                version_id = buscarVersion[0][0].version_manejador_id;
-            }
-            const selectVer = await pool.query(`SELECT * FROM manejadores ORDER BY manejador_id DESC LIMIT 1`);
-            version_id = selectVer[0][0].version_manejador_id;
-            console.log('VERSION MANEJADOR REGISTRADO: ' + version_id);
-
-            
-            // crea los datos del tipo de bd
-            let tipo_base_id;
-            const buscarTipo = await pool.query(`SELECT tipo_base_id FROM tipos_bases WHERE tipo_base = ?`, [tipo]);
-            if(buscarTipo[0][0] === undefined){
-                const datos_tipoBases = await pool.query(
-                    `INSERT INTO tipos_bases (tipo) VALUES (?)`, 
-                    [tipo]
-                );
-            }
-            else{
-                tipo_base_id = buscarTipo[0][0].tipo_base_id;
-            }
-            const selectTipo = await pool.query(`SELECT * FROM tipos_bases ORDER BY tipo_base_id DESC LIMIT 1`);
-            tipo_base_id = selectTipo[0][0].tipo_base_id;
-            console.log('TIPO DE BD REGISTRADO: ' + tipo_base_id);
-
-            
-            // crea los datos de la base de datos
-            const datos_basedatos = await pool.query(
-                `INSERT INTO bases_datos (base_datos,bas_estatus,bas_tipo,bas_manejador,
-                    bas_tipo_ambiente,bas_cantidad_usuarios) 
-                VALUES (?,?,?,?,?,?);`, 
-                [base_datos,estatus,tipo_base_id,manejador_id,tipo_ambiente,cantidad_usuarios]
-            );
-
-            const buscarBaseDatos = await pool.query(`SELECT * FROM bases_datos WHERE base_datos = ?`, [base_datos]);
-            base_datos_id = buscarBaseDatos[0][0].base_datos_id;
-        }
-        else{
-            base_datos_id = buscarBaseDatos[0][0].base_datos_id;
-        }
+        return res.status(401).json({ message: 'ERROR, BASE DE DATOS SIN SELECCIONAR' });
     }
     else{
         const buscarBaseDatos = await pool.query(`SELECT * FROM bases_datos WHERE base_datos = ?`, [select_base]);
         base_datos_id = buscarBaseDatos[0][0].base_datos_id;
     }
-    console.log('BASE DE DATOS GENERAL REGISTRADO: ' + base_datos_id);
+    console.log(base_datos_id);
 
-    const basedatos_servidor = await pool.query(
-        `INSERT INTO basedatos_servidor (base_datos_id,servidor_id) VALUES (?,
-            (SELECT servidor_id FROM servidores WHERE servidor = ?));`, 
-        [base_datos_id,servidor]
-    );
+    // const basedatos_servidor = await pool.query(
+    //     `INSERT INTO basedatos_servidor (base_datos_id,servidor_id) VALUES (?,
+    //         (SELECT servidor_id FROM servidores WHERE servidor = ?));`, 
+    //     [base_datos_id,servidor]
+    // );
     
     // crea la relacion aplicacion-base_de_datos
     const datos_bas = await pool.query(
@@ -359,7 +227,6 @@ const verificarDocumentacion = async (id,descripcion,direccion,tipo) => {
 const verificarAplicacion = async (acronimo,nombre,descripcion,estatus,prioridad,critico,alcance,
     codigo_fuente,version,direccion,cantidad_usuarios,region,fecha_registro) => {
 
-    console.log('ALO1');
     console.log(acronimo,nombre,descripcion,estatus,prioridad,critico,alcance,
         codigo_fuente,version,direccion,cantidad_usuarios,region,fecha_registro);
 

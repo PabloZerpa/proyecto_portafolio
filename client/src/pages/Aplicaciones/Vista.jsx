@@ -1,8 +1,8 @@
 
 import { useState, useEffect } from 'react';
-import { FaPlus } from 'react-icons/fa';
+import { FaEye, FaPlus } from 'react-icons/fa';
 import { useParams, Navigate, Link } from 'react-router-dom';
-import { Container, Input, Radio } from '../../components';
+import { Button, Container, Input, Radio } from '../../components';
 import Tabla3 from '../../components/Table3';
 import Usuarios from '../../services/user.service';
 
@@ -178,42 +178,19 @@ function Vista() {
         )
       }
 
-      const columnasFallas = ['Numero','Clase','Descripcion','Solucion','Impacto','Ver'];
-      const resultadosFallas = [
-          {
-            numero: valor.fal_numero,
-            clase: valor.fal_clase,
-            descripcion: valor.fal_descripcion,
-            solucion: valor.fal_solucion,
-            editar:
-            <Link to={`/solicitudes/${1}`}>
-              <FaPlus className="text-base text-blue-500 cursor-pointer ml-4" />
-            </Link>
-          },
-          {id:'10',clase:'Aplicaciones',descripcion:'aaaaaaaaaaaaaa',solucion:'xxxxxxx',
-            editar:
-            <Link to={`/solicitudes/${1}`}>
-              <FaPlus className="text-base text-blue-500 cursor-pointer ml-4" />
-            </Link>},
-          {id:'20',clase:'Aplicaciones',descripcion:'bbbbbbb',solucion:'yyyy',
-            editar:
-            <Link to={`/solicitudes/${1}`}>
-              <FaPlus className="text-base text-blue-500 cursor-pointer ml-4" />
-            </Link>},
-          {id:'30',clase:'Base de datos',descripcion:'cccccccccccc',solucion:'zzzzzzzzzzzz',
-            editar:
-            <Link to={`/solicitudes/${1}`}>
-              <FaPlus className="text-base text-blue-500 cursor-pointer ml-4" />
-            </Link>},
-      ];
+      const columnasFallas = ['Numero','Clase','Descripcion','Solucion','Impacto'];
 
       function Fallas(){
         let datos = fallas.data.datos;
         return (
           <>
             <h2 className='font-bold text-lg'>Fallas</h2>
-            <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
+            <form className="relative w-3/4 bg-zinc-400 p-4 pb-12 mb-10 rounded drop-shadow-md" >
               <Tabla3 columnas={columnasFallas} datos={datos} />
+              
+              <div className='absolute right-16'>
+                <Button width={32}><Link to='/aplicaciones/fallas' >Añadir Falla</Link></Button>
+              </div>
 
               {/* {paginacion ? ( <Paginacion />) : (null)} */}
             </form>

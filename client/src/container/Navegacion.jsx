@@ -75,7 +75,7 @@ function Navegacion() {
                                     className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                     Visualizacion
                                 </Link>
-                                <Link to="/aplicaciones" 
+                                <Link to="/aplicaciones/fallas" 
                                     className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                     Fallas
                                 </Link>

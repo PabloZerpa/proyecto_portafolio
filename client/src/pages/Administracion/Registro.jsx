@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { Button, Container, Input, Notificacion, Select } from '../../components';
 import { campos, opcionEstatus, opcionRegion, opcionPlataforma, opcionAlcance, opcionMantenimiento,
         opcionLocalidad, opcionGerencia, opcionLenguaje, frameworkPhp, frameworkJS, frameworkJAVA, 
@@ -210,7 +210,19 @@ function Registro() {
                     <p className='font-bold text-base my-4'>Responsable Funcional</p>
                     <p className='font-bold text-base my-4'>Responsable Tecnico</p>
 
-                    <div className='grid grid-cols-1'>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div style={registrarBase ? {display: 'none'} : {display: 'block'}}>
+                            <Select campo='Seleccione Custodio' name='select_base' opciones={opcionBasedatos} manejador={handleInputChange}/>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div style={registrarBase ? {display: 'none'} : {display: 'block'}}>
+                            <Select campo='Seleccione Custodio' name='select_base' opciones={opcionBasedatos} manejador={handleInputChange}/>
+                        </div>
+                        <Checkbox id='registrar_funcional' name='registrar_funcional' opciones={['Registrar nuevo']} manejador={habilitarBase} />
+                    </div>
+                    
+                    <div style={registrarBase ? {display: 'grid'} : {display: 'none'}} className='grid grid-cols-1'>
                         <Input campo='Nombre' name='funcional_nombre' editable={true} manejador={handleInputChange} />
                         <Input campo='Apellido' name='funcional_apellido' editable={true} manejador={handleInputChange} />
                         <Input campo='Indicador' name='funcional_indicador' editable={true} manejador={handleInputChange} />
@@ -222,7 +234,7 @@ function Registro() {
                         <Select campo='Localidad' name='funcional_localidad' opciones={opcion1} manejador={handleInputChange} />
                     </div>
                     
-                    <div className='relative grid grid-cols-1'>
+                    <div style={registrarBase ? {display: 'grid'} : {display: 'none'}} className='relative grid grid-cols-1'>
                         <div className='absolute -left-2.5 top-0 w-1 h-full border-2 border-dashed border-gray-500'></div>
                         <Input campo='Nombre' name='tecnico_nombre' editable={true} manejador={handleInputChange} />
                         <Input campo='Apellido' name='tecnico_apellido' editable={true} manejador={handleInputChange} />
@@ -270,46 +282,19 @@ function Registro() {
                 {/* --------------- BASE DE DATOS --------------- */}
                 <p className='font-bold text-base my-4'>Base de datos</p>
                 <div className="grid grid-cols-2 gap-4">
-                    <div style={registrarBase ? {display: 'none'} : {display: 'block'}}>
-                        <Select campo='Seleccione Base de datos' name='select_base' opciones={opcionBasedatos} manejador={handleInputChange}/>
+                    <Select campo='Seleccione Base de datos' name='select_base' opciones={opcionBasedatos} manejador={handleInputChange}/>
+                    <div className='mt-6'>
+                        <Button width={32}><Link to={`/basedatos/registro`} target="_blank">Registrar Nueva</Link></Button>
                     </div>
-                    <Checkbox id='registrar_base' name='registrar_base' opciones={['Registrar nueva']} manejador={habilitarBase} />
-                </div>
-
-                <div style={registrarBase ? {display: 'grid'} : {display: 'none'}} className="grid grid-cols-2 gap-4">
-                    <Input campo='Nombre' name='base_datos' editable={true} manejador={handleInputChange} />
-                    <Select campo='Estatus' name='base_estatus' opciones={opcionEstatus} manejador={handleInputChange}/>
-                    <Select campo='Tipo' name='base_tipo' opciones={['SELECCIONE','Relacional','NO Relacional','Objetos']} manejador={handleInputChange} />
-                    <Select campo='Tipo Amb' name='base_tipo_ambiente' opciones={['SELECCIONE','Relacional','NO Relacional','Objetos']} manejador={handleInputChange} />
-                    <Select campo='Manejador' name='base_manejador' opciones={['SELECCIONE','MYSQL','POSTGRESS','MARIADB']} manejador={handleInputChange} />
-                    <Input campo='Version' name='bas_manejador_version' editable={true}  manejador={handleInputChange} />
-                    <Input campo='N° Usuarios' name='base_cantidad_usuarios' editable={true} manejador={handleInputChange} />
-                    <Input campo='Servidor' name='base_servidor' editable={true} manejador={handleInputChange} />
                 </div>
 
                 {/* --------------- SERVIDOR --------------- */}
                 <p className='font-bold text-base my-4'>Servidor</p>
                 <div className="grid grid-cols-2 gap-4">
-                    <div style={registrarServidor ? {display: 'none'} : {display: 'block'}}>
-                        <Select campo='Seleccione Servidor' name='select_servidor' opciones={opcionServidor} manejador={handleInputChange}/>
+                    <Select campo='Seleccione Servidor' name='select_servidor' opciones={opcionServidor} manejador={handleInputChange}/>
+                    <div className='mt-6'>
+                        <Button width={32}><Link to={`/basedatos/registro`} target="_blank">Registrar Nuevo</Link></Button>
                     </div>
-                    <Checkbox id='registrar_servidor' name='registrar_servidor' opciones={['Registrar nuevo']} manejador={habilitarServidor} />
-                </div>
-
-                <div style={registrarServidor ? {display: 'grid'} : {display: 'none'}} className="grid grid-cols-2 gap-4">
-                    <Input campo='Nombre' name='servidor' editable={true} manejador={handleInputChange} />
-                    <Select campo='Estatus' name='ser_estatus' opciones={['SELECCIONE','SI','NO']} manejador={handleInputChange}/>
-                    <Input campo='Direccion' name='ser_direccion' editable={true} manejador={handleInputChange} />
-                    <Input campo='Sistema' name='ser_sistema' editable={true} manejador={handleInputChange} />
-                    <Input campo='Version Sis' name='ser_sistemas_version' editable={true} manejador={handleInputChange} />
-                    <Input campo='Modelo' name='ser_modelo' editable={true} manejador={handleInputChange} />
-                    <Input campo='Marca' name='ser_marca' editable={true} manejador={handleInputChange} />
-                    <Input campo='Serial' name='ser_serial' editable={true} manejador={handleInputChange} />
-                    <Input campo='Cantidad' name='ser_cantidad_cpu' editable={true} manejador={handleInputChange} />
-                    <Input campo='Velocidad' name='ser_velocidad_cpu' editable={true} manejador={handleInputChange} />
-                    <Input campo='Memoria' name='ser_memoria' editable={true} manejador={handleInputChange} />
-                    <Select campo='Region' name='ser_region' opciones={opcionRegion} manejador={handleInputChange} />
-                    <Select campo='Localidad' name='ser_localidad' opciones={opcion3} manejador={handleInputChange} />
                 </div>
                 
                 <div className='w-full h-1 border-2 border-dashed border-gray-500'></div>

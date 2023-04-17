@@ -413,10 +413,8 @@ const crearAplicacion = async (req,res) => {
             apl_acronimo,apl_nombre,apl_descripcion,apl_region,
             apl_version,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
             apl_codigo_fuente,apl_direccion,apl_cantidad_usuarios,
-            plataforma,lenguaje,lenguaje2,lenguaje3, framework,framework2,framework3, select_base, select_servidor,
-            base_datos,base_estatus,base_cantidad_usuarios, base_tipo, base_manejador, bas_manejador_version, base_tipo_ambiente,
-            servidor, ser_estatus,ser_direccion, ser_sistema,ser_region,ser_localidad,base_servidor,
-            ser_sistemas_version,ser_marca,ser_modelo,ser_serial,ser_cantidad_cpu,ser_velocidad_cpu,ser_memoria,
+            plataforma,lenguaje,lenguaje2,lenguaje3, framework,framework2,framework3, 
+            select_base, select_servidor,
             man_frecuencia,man_horas_prom,man_horas_anuales, 
             doc_descripcion,doc_tipo, doc_direccion, apl_fecha_registro,
 
@@ -430,10 +428,8 @@ const crearAplicacion = async (req,res) => {
             apl_acronimo,apl_nombre,apl_descripcion,apl_region,
             apl_version,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
             apl_codigo_fuente,apl_direccion,apl_cantidad_usuarios,
-            plataforma,lenguaje,lenguaje2,lenguaje3, framework,framework2,framework3, select_base, select_servidor,
-            base_datos,base_estatus,base_cantidad_usuarios, base_tipo, base_manejador, bas_manejador_version,
-            base_tipo_ambiente,servidor, ser_estatus,ser_direccion, ser_sistema,ser_region,ser_localidad,base_servidor,
-            ser_sistemas_version,ser_marca,ser_modelo,ser_serial,ser_cantidad_cpu,ser_velocidad_cpu,ser_memoria,
+            plataforma,lenguaje,lenguaje2,lenguaje3, framework,framework2,framework3, 
+            select_base, select_servidor,
             man_frecuencia,man_horas_prom,man_horas_anuales, 
             doc_descripcion,doc_tipo, doc_direccion, apl_fecha_registro,
 
@@ -463,10 +459,8 @@ const crearAplicacion = async (req,res) => {
             await verificarLenguaje(aplicacion_id, lenguaje, lenguaje2, lenguaje3);          
             await verificarFramework(aplicacion_id, framework, framework2, framework3);
 
-            await verificarServidor(aplicacion_id,select_servidor,servidor,ser_estatus,ser_direccion,ser_sistema,ser_sistemas_version,ser_marca,ser_modelo,ser_serial,
-                ser_cantidad_cpu, ser_velocidad_cpu, ser_memoria, ser_region, ser_localidad);
-            await verificarBase(aplicacion_id,select_base,base_datos,base_manejador,bas_manejador_version,base_tipo,base_estatus,
-                base_tipo_ambiente,base_cantidad_usuarios,base_servidor);
+            await verificarServidor(aplicacion_id,select_servidor);
+            await verificarBase(aplicacion_id,select_base);
 
             await verificarResponsable('funcional',aplicacion_id,funcional_nombre,funcional_apellido,
                 funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
