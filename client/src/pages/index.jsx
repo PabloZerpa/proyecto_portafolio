@@ -14,6 +14,8 @@ import Aplicaciones from './Aplicaciones/Aplicaciones';
 import Vista from './Aplicaciones/Vista';
 import Diagramas from './Aplicaciones/Diagramas';
 import BaseDatos from './BaseDatos/BaseDatos';
+import VistaDB from './BaseDatos/VistaBD';
+import CrearBD from './BaseDatos/CrearBD';
 
 export {
     Login, 
@@ -32,4 +34,6 @@ export {
     Vista,
     Diagramas,
     BaseDatos,
+    VistaDB,
+    CrearBD,
 };

@@ -10,7 +10,6 @@ export const campos = {
     apl_critico: '',
     apl_alcance: '',
     apl_codigo_fuente: '',
-    apl_licencia: '',
     apl_direccion: '',
     apl_region: '',
     apl_fecha_registro: '',
@@ -21,16 +20,18 @@ export const campos = {
     res_telefono: '',
     res_cedula: '',
     res_gerencia: '',
-    res_subgerencia: '',
     res_cargo: '',
     res_region: '',
     res_localidad: '',
 
     plataforma: '',
     lenguaje: '',
+    lenguaje2: '',
+    lenguaje3: '',
     len_version: '',
     framework: '',
-    fra_version: '',
+    framework2: '',
+    framework3: '',
 
     select_base: '',
     base_datos: '',
@@ -48,8 +49,8 @@ export const campos = {
     ser_direccion: '',
     ser_sistema: '',
     ser_sistema_version: '',
-    ser_marca: '',
     ser_modelo: '',
+    ser_marca: '',
     ser_serial: '',
     ser_cantidad_cpu: '',
     ser_velocidad_cpu: '',
@@ -71,81 +72,102 @@ export const campos = {
     fal_solucion: '',
     fal_impacto: '',
 
-    sol_numero: '',
-    sol_estatus: '',
-    sol_tipo: '',
-    sol_elemento: '',
-    sol_descripcion: '',
-    sol_aprobador: '',
-    sol_solicitante: '',
+    // usu_indicador: '',
+    // usu_password: '',
+    // usu_rol: '',
+    // usu_gerencia: '',
 
-    usu_indicador: '',
-    usu_password: '',
-    usu_rol: '',
-    usu_gerencia: '',
-    usu_subgerencia: ''
+    // sol_numero: '',
+    // sol_estatus: '',
+    // sol_tipo: '',
+    // sol_elemento: '',
+    // sol_descripcion: '',
+    // sol_aprobador: '',
+    // sol_solicitante: '',
+
 }
 
 
 // ====================== OPCIONES ======================
-export const opcionEstatus = ['TODAS', 'DESARROLLO', 'MANTENIMIENTO', 'DESINCORPORADA', 'ESTABILIZACION',
-    'SIN USO', 'VISAULIZACION', 'PRUEBA'];
 
-export const opcionRegion = ['TODAS', 'CENTRO', 'CENTRO SUR', 'CENTRO OCCIDENTE','ORIENTE NORTE', 
-'ORIENTE SUR', 'OCCIDENTE','FAJA','METROPOLITANA',];
+export const opcionRol = ['SELECCIONE','admin','superuser', 'user'];
+
+export const opcionEstatus = ['SELECCIONE','TODAS', 'DESARROLLO', 'MANTENIMIENTO', 'DESINCORPORADA', 'ESTABILIZACION',
+    'SIN USO', 'VISAULIZACION', 'PRUEBA'];
 
 export const opcionPrioridad = ['ALTA', 'MEDIA', 'BAJA'];
 
-export const opcionLocalidad = ['TODAS'];
-export const localidadCentro = ['APURE', 'CALABOZO', 'GUACARA', 'MARACAY','SAN FELIPE', 'VALENCIA'];
-export const localidadCentroSur = ['SAN CARLOS', 'MINAS DE RIECITO', 'VALLE DE LA PASCUA'];
-export const localidadCentroOccidente = [ 'MIRANDA', 'PUERTO AYACUCHO', 'VARGAS'];
-export const localidadOrienteNorte = ['ANACO', 'SAN ORQUE', 'BARCELONA', 'CARUPANO','CUMANA', 'NUEVA ESPARTA'];
-export const localidadOrienteSur = ['MATURIN', 'MORICHAL', 'QUIRIQUIRE', 'TEMBLADOR'];
-export const localidadOccidente = ['ALTAGRACIA', 'BARINAS', 'BARQUISIMETO', 'CIUDAD OJEDA','INTERNACIONAL', 'MARACAIBO', 'MERIDA'];
-export const localidadFaja = ['AYACUCHO', 'SAN TOME', 'CARABOBO', 'PUERTO ORDAZ'];
-export const localidadMetropolitana = ['CARACAS', 'CHARALLAVE', 'GUARICO', 'INTERNACIONAL','LOS TEQUES'];
+export const opcionRegion = ['SELECCIONE','TODAS', 'CENTRO', 'CENTRO SUR', 'CENTRO OCCIDENTE','ORIENTE NORTE', 
+'ORIENTE SUR', 'OCCIDENTE','FAJA','METROPOLITANA',];
 
-export const opcionGerencia = ['INFORMATICA', 'AUTOMATIZACION', 'TELECOMUNICACIONES'];
+export const opcionLocalidad = ['SELECCIONE'];
+export const localidadCentro = 
+['SELECCIONE','ACARIGUA', 'APURE', 'BORBURATA', 'CAGUA','CALABOZO', 'CHIVACOA',
+'EL PALITO','GUACARA', 'LA QUIZANDA', 'LA VICTORIA', 'MARACAY','MARIARA', 'MINAS DE RIECITO',
+'MORON','NAGUANAGUA', 'PALO NEGRO', 'POR DETERMINAR', 'PTO CABELLO','SAN CARLOS', 'SAN FELIPE',
+'SAN JUAN DE LOS MORROS','SAN MATEO', 'SAN RAFAEL DE ONOTO', 'TINACO', 'TINAQUILLO','TOCUYITO', 'TODAS', 'TUACAS',
+'VALENCIA', 'VALLE DE LA PASCUA', 'VILLA DE CURA','YAGUA'];
 
-export const gerenciaInfor = ['I+D', 'SERVIDORES', 'SOPORTE'];
-export const gerenciaAuto = ['SEGURIDAD', 'ELECTRONICA', 'MECANICA'];
-export const gerenciaTeleco = ['REDES', 'RADIO', 'RRHH'];
+export const localidadCentroSur = ['SELECCIONE','BARINAS'];
+
+export const localidadCentroOccidente = ['SELECCIONE','MIRANDA', 'PUERTO AYACUCHO', 'VARGAS'];
+
+export const localidadOrienteNorte = ['SELECCIONE','ANACO', 'SAN ORQUE', 'BARCELONA', 'CARUPANO','CUMANA', 'NUEVA ESPARTA'];
+
+export const localidadOrienteSur = ['SELECCIONE','MATURIN', 'MORICHAL', 'QUIRIQUIRE', 'TEMBLADOR'];export const localidadOccidente = ['SELECCIONE','ALTAGRACIA', 'BARINAS', 'BARQUISIMETO', 'CIUDAD OJEDA','INTERNACIONAL', 'MARACAIBO', 'MERIDA'];
+
+export const localidadFaja = 
+['SELECCIONE','AYACUCHO','PETRORITUPANO','OBC','PETROPIAR', 'SAN TOME', 'CARABOBO','MORICHAL', 'PUERTO ORDAZ','SINOVENSA',
+'JUNIN CABRUTICA','PETROCEDEÑO', 'STM'];
+
+export const localidadMetropolitana = 
+['CANTINAS','CARACAS', 'CARENERO','CHARALLAVE','GUARICO', 'GUATIRE', 'HIGUEROTE', 'INTERNACIONAL','LOS TEQUES','MAIQUETIA',
+'MIRANDA', 'PUERTO AYACUCHO','TODAS','VARGAS'];
+
+export const opcionGerencia = ['SELECCIONE','AIT', 'SERVIDORES', 'TELECOMUNICACIONES'];
 
 export const opcionCount = [10,20,30,40,50];
 
-export const opcionPlataforma = ['TODAS', 'WEB', 'ESCRITORIO', 'MOVIL', 'CLIENTE-SERVIDOR', 'STAND ALONE', 'MINI', 'MAINFRAME'];
+export const opcionPlataforma = ['SELECCIONE','TODAS', 'WEB', 'ESCRITORIO', 'MOVIL', 'CLIENTE-SERVIDOR', 'STAND ALONE', 'MINI', 'MAINFRAME'];
 
-export const opcionAlcance = ['TODAS', 'LOCAL', 'REGIONAL', 'CORPORATIVO'];
-
-export const opcionLicencia = ['NINGUNA', 'FISICA', 'LOGICA'];
+export const opcionAlcance = ['SELECCIONE','TODAS', 'LOCAL', 'REGIONAL', 'CORPORATIVO'];
 
 export const opcionSiNo = ['SI', 'NO'];
 
-export const opcionMantenimiento = ['TODAS', 'DIARIO', 'SEMANAL', 'QUINCENAL', 'MENSUAL',
+export const opcionMantenimiento = ['SELECCIONE','TODAS', 'DIARIO', 'SEMANAL', 'QUINCENAL', 'MENSUAL',
     'BIMENSUAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL', 'NO APLICA'];
+
+export const opcionManejadores = ['SELECCIONE','MYSQL', 'POSTGRESS', 'MARIADB','ORACLE','MONGODB'];
+
+export const opcionTipoBD = ['SELECCIONE','RELACIONAL', 'NO RELACIONAL', 'DISTRIBUIDA','OBJETO'];
+
+export const opcionLenguaje = ['SELECCIONE','PHP', 'JAVASCRIPT', 'JAVA', 'C++', 'C#','VISUAL BASIC',
+    'TYPESCRIPT','PYTHON','GO','RUST'];
+
+// export const opcionFramework = ['LARAVEL', 'CODEIGNITER', 'REACT', 'VUE', 'ANGULAR','SPRING',
+//     'BOOTSTRAP','MATERIAL DESIGN'];
+
+export const frameworkPhp = ['SELECCIONE','LARAVEL', 'CODEIGNITER', 'SIMPHONY'];
+export const frameworkJS = ['SELECCIONE','REACT', 'VUE', 'ANGULAR','BOOTSTRAP','MATERIAL DESIGN'];
+export const frameworkJAVA = ['SELECCIONE','SPRING'];
+export const frameworkCPP = ['SELECCIONE','QT'];
+export const frameworkCS = ['SELECCIONE','BLAZE'];
+export const frameworkPY = ['SELECCIONE','TENSERFLOW','NUMPHY','FLASK'];
+
+export const opcionBasedatos = ['SELECCIONE','PRIMERA DATABASE', 'SEGUNDA DATABASE', 'TERCERA DATABASE'];
+
+export const opcionServidor = ['SELECCIONE','SERVIDOR 1', 'SERVIDOR 2', 'SERVIDOR 3'];
+
 
 
 
 
 // ====================== COLUMNAS PARA LA TABLA  ======================
 export const columnasUserSimple = ['Ver','ID','Acronimo','Nombre','Version','Alcance','Estatus','Prioridad','Direccion',
-    'Region','Cliente','Codigo','Critico','Licencia','Nombre','Apellido','Indicador','Plataforma','Lenguaje',
-    'Base de datos','Servidor','Mantenimiento'];
+    'Region','Plataforma','Critico','Codigo','Mantenimiento'];
     
 export const columnasAdminSimple = ['Ver','Editar','ID','Acronimo','Nombre','Version','Alcance','Estatus','Prioridad','Direccion',
-    'Region','Cliente','Codigo','Critico','Licencia','Nombre','Apellido','Indicador','Plataforma','Lenguaje',
-    'Base de datos','Servidor','Mantenimiento'];
+'Region','Plataforma','Critico','Codigo','Mantenimiento'];
  
-
-export const columnasUser = ['Ver','ID','Acronimo','Nombre','Descripcion','Version','Estatus','Prioridad','Critica','Alcance','Codigo Fuente','Licencia','Direccion','N° Usuarios',
-'Nombre','Apellido','Indicador','Cedula','Cargo','Telefono','Gerencia','Subgerencia',
-'Plataforma','Lenguaje','Framework','Base de datos','BD Estatus','DB Cantidad','BD Tipo','Manejador','Ambiente','Servidor','Estatus','Direccion','OS','OS_Version','Marca',
-'Modelo','Serial','Cantidad CPU','Velocidad CPU','Memoria','Cliente','Region','Localidad','Mantenimiento','Horas Prom','Horas Año','Documentacion','Tipo Docu','Direccion'];
-
-export const columnasAdmin = ['Ver','Editar','ID','Acronimo','Nombre','Descripcion','Version','Estatus','Prioridad','Critica','Alcance','Codigo Fuente','Licencia','Direccion','N° Usuarios',
-'Nombre','Apellido','Indicador','Cedula','Cargo','Telefono','Gerencia','Subgerencia',
-'Plataforma','Lenguaje','Framework','Base de datos','BD Estatus','DB Cantidad','BD Tipo','Manejador','Ambiente','Servidor','Estatus','Direccion','OS','OS_Version','Marca',
-'Modelo','Serial','Cantidad CPU','Velocidad CPU','Memoria','Cliente','Region','Localidad','Mantenimiento','Horas Prom','Horas Año','Documentacion','Tipo Docu','Direccion'];
 
 

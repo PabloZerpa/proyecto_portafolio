@@ -12,6 +12,7 @@ import { Tabla, Container } from "../components";
 import { BiLoaderAlt } from "react-icons/bi";
 import Usuarios from "../services/user.service";
 import Linea from "../chart/Linea";
+import { columnasUserSimple, columnasAdminSimple } from "../services/campos.service";
 
 function Dashboard() {
   
@@ -46,7 +47,7 @@ function Dashboard() {
         ) : (
           <>
             <h3 className='font-bold text-lg'>Modificaciones Recientes</h3>
-            <Tabla datos={datos} opciones={false} />
+            <Tabla columnas={columnasUserSimple} datos={datos} opciones={false} />
             
             <Linea />
           </>

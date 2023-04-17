@@ -7,7 +7,7 @@ import Usuarios from "../../services/user.service";
 import Tabla2 from "../../components/Tabla2";
 
 const campos = ['Seleccione','Acronimo', 'Nombre', 'Estatus', 'Prioridad','Alcance','Codigo_Fuente', 
-'Critico','Licencia','Cantidad_Usuarios','Cliente','Region','Plataforma','Lenguaje','Framework'];
+'Critico','Cantidad_Usuarios','Region','Plataforma','Lenguaje','Framework'];
 
 function Administracion() {
 
@@ -72,7 +72,7 @@ function Administracion() {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="block p-2 pr-12 w-96 text-xs text-black bg-white rounded border-none outline-none" placeholder="Buscar" />
           <button 
-            type="submit" 
+            type="button" 
             className="absolute top-0 right-0 p-2 h-8 text-xs font-medium text-white bg-blue-600 rounded-r border border-blue-700 hover:bg-blue-700">          
             <FaSearch />
           </button>

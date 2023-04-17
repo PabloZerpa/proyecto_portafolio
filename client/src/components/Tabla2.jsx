@@ -1,7 +1,7 @@
 
 import { useState,useEffect } from "react";
 import { FaEdit, FaCheckCircle } from "react-icons/fa";
-import { opcionEstatus, opcionPrioridad, opcionAlcance, opcionLicencia, 
+import { opcionEstatus, opcionPrioridad, opcionAlcance, 
     opcionPlataforma, opcionRegion, opcionSiNo } from '../services/campos.service';
 import Autorizacion from '../services/auth.service';
 import Usuarios from "../services/user.service";
@@ -127,9 +127,6 @@ function Tabla2({columnas, datos, paginacion=false, campo, devolverPagina=null})
         }
         else if(campo === 'Alcance'){
             return (selectCampo(opcionAlcance,valor));
-        }
-        else if(campo === 'Licencia'){
-            return (selectCampo(opcionLicencia,valor));
         }
         else if(campo === 'Region'){
             return (selectCampo(opcionRegion,valor));

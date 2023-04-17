@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Button, Container, Input, Notificacion, Select } from "../../components/";
 import Checkbox from "../../components/Checkbox";
 import Autorizacion from "../../services/auth.service";
+import { opcionGerencia } from "../../services/campos.service";
 
 function Permisos() {
     const [show, setShow] = useState(false);
@@ -72,10 +73,12 @@ function Permisos() {
                     <div className="grid grid-cols-2 w-[900px] gap-4 p-4 bg-zinc-400 rounded border-2 border-dashed border-blue-500">
                         <Input campo='Indicador' name='indicador' direccion="col" editable={true} manejador={handleInputChange} />
                         <Input campo='Cedula' name='cedula' direccion="col" editable={true} manejador={handleInputChange} />
+                        <Input campo='Nombre' name='nombre' direccion="col" editable={true} manejador={handleInputChange} />
+                        <Input campo='Apellido' name='apellido' direccion="col" editable={true} manejador={handleInputChange} />
                         <Select campo='Rol' name='rol' direccion="col" opciones={['admin','superuser','user']} manejador={handleInputChange} />
                         <Input campo='Contraseña' name='password' direccion="col" editable={true} manejador={handleInputChange} />
-                        <Select campo='Gerencia' name='gerencia' direccion="col" opciones={['Admin','Superuser','User']} manejador={handleInputChange} />
-                        <Select campo='Subgerencia' name='subgerencia' direccion="col" opciones={['Admin','Superuser','User']} manejador={handleInputChange} />
+                        <Select campo='Gerencia' name='gerencia' direccion="col" opciones={opcionGerencia} manejador={handleInputChange} />
+                        <Input campo='Cargo' name='cargo' direccion="col" editable={true} manejador={handleInputChange} />
                     </div>
                 </div>
 

@@ -7,7 +7,7 @@ function Select({campo, name, direccion='col', opciones, propiedad=null, busqued
     const claseSelect2 = `w-32 p-2 text-gray-900 bg-gray-50 text-xs border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500`
  
     const onHandle = (e) =>  manejador(e);
-    
+     
     return(
         <div className={busqueda ? clase2 : clase} >
             <label>{campo}</label>
@@ -22,7 +22,10 @@ function Select({campo, name, direccion='col', opciones, propiedad=null, busqued
                     if(opcion === propiedad)
                         return <option key={index} value={opcion} selected>{opcion}</option>
                     else
-                        return <option key={index} value={opcion}>{opcion}</option>
+                        if(index === 0)
+                            return <option key={index} value={opcion} disabled selected>{opcion}</option>
+                        else
+                            return <option key={index} value={opcion}>{opcion}</option>
                 })} 
 
             </select>

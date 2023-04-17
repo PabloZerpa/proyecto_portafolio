@@ -12,26 +12,43 @@ const opcionesVista = ['General','Tecnologia',
 function Vista() {
 
   const { id } = useParams();
-  //const location = useLocation();
   const [valor, setValor] = useState('');
+
   const [opcion, setOpcion] = useState('General');
+  const [general, setGeneral] = useState('');
+  const [tecnologia, setTecnologia] = useState('');
+  const [basedatos, setBaseDatos] = useState('');
+  const [servidor, setServidor] = useState('');
+  const [responsables, setResponsables] = useState('');
+  const [documentacion, setDocumentacion] = useState('');
+  const [fallas, setFallas] = useState('');
 
   const handleInputChange = (e) => {
     setOpcion(e.target.value);
   }
   
   useEffect(() => {
-    //console.log(location.state);
     async function fetchData(){
       try {
-        const response = await Usuarios.obtenerDato(id)
-        setValor(response.data);
-        console.log(response.data);
-        console.log(valor);
+        const gen = await Usuarios.obtenerGeneral(id);
+        const tec = await Usuarios.obtenerTecnologia(id);
+        const bas = await Usuarios.obtenerBaseDatos(id);
+        const ser = await Usuarios.obtenerServidor(id);
+        const res = await Usuarios.obtenerResponsable(id);
+        const doc = await Usuarios.obtenerDocumentacion(id);
+        const fal = await Usuarios.obtenerFallas(id);
+
+        setGeneral(gen.data[0]);
+        setTecnologia(tec);
+        setBaseDatos(bas);
+        setServidor(ser);
+        setResponsables(res);
+        setDocumentacion(doc);
+        setFallas(fal);
       }catch (error) { console.log(error) }
-    }
+    } 
     fetchData();
-  }, [id]);
+  }, []);
   
     if(valor === null) 
       return <Navigate to='/' />
@@ -43,161 +60,125 @@ function Vista() {
             <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
     
               <div className='grid gap-6 mb-6 md:grid-cols-2'>
-                <Input campo='Acronimo' propiedad={valor.apl_acronimo} />
-                <Input campo='Estatus' propiedad={valor.apl_estatus} />
-                <Input campo='Version' propiedad={valor.apl_version} />
-                <Input campo='Direccion' propiedad={valor.apl_direccion} />
+                <Input campo='Acronimo' propiedad={general.apl_acronimo} />
+                <Input campo='Estatus' propiedad={general.apl_estatus} />
+                <Input campo='Version' propiedad={general.apl_version} />
+                <Input campo='Direccion' propiedad={general.apl_direccion} />
               </div>
     
               <div className='flex flex-col gap-2 text-sm font-medium text-gray-900 mb-6'>
-                <Input campo='Nombre' area={true} propiedad={valor.apl_nombre} />
-                <Input campo='Descripcion' area={true} propiedad={valor.apl_descripcion} />
+                <Input campo='Nombre' area={true} propiedad={general.apl_nombre} />
+                <Input campo='Descripcion' area={true} propiedad={general.apl_descripcion} />
               </div>
                 
               <div className='grid gap-6 mb-6 md:grid-cols-2'>
-                <Input campo='Prioridad' propiedad={valor.apl_prioridad} />
-                <Input campo='Critico' propiedad={valor.apl_critico} />
-                <Input campo='Alcance' propiedad={valor.apl_alcance} />
-                <Input campo='Cliente' propiedad={valor.apl_cliente} />
-                <Input campo='N° Usuarios' propiedad={valor.apl_cantidad_usuarios} />
-                <Input campo='Region' propiedad={valor.region} />  
+                <Input campo='Prioridad' propiedad={general.apl_prioridad} />
+                <Input campo='Alcance' propiedad={general.apl_alcance} />
+                <Input campo='Critico' propiedad={general.apl_critico} />
+                <Input campo='Codigo Fuente' propiedad={general.apl_codigo_fuente} />
+                <Input campo='N° Usuarios' propiedad={general.apl_cantidad_usuarios} />
+                <Input campo='Region' propiedad={general.region} /> 
               </div>
-  
             </form>
           </>
         )
       }
-
-      const columnasTec = ['Codigo','Licencia','Plataforma','Lenguaje','Framework','Base de datos',
-      'Servidor','Mantenimiento','Horas Prom','Horas Anuales'];
-      const resultadosTec = [
-          {
-            codigo: valor.apl_codigo_fuente,
-            licencia: valor.apl_licencia,
-            plataforma: valor.plataforma,
-            lenguaje: valor.lenguaje,
-            framework: valor.framework,
-            basededatos: valor.base_datos,
-            servidor: valor.servidor,
-            mantenimiento: valor.man_frecuencia,
-            horasprom: valor.man_horas_prom,
-            horasanuales: valor.man_horas_anuales
-          },
-      ];
 
       function Tecnologia() {
+        const datos = tecnologia.data.datos;
+        console.log(tecnologia.data.datos);
+        const plataformas = tecnologia.data.plataformas;
+        const lenguajes = tecnologia.data.lenguajes;
+
         return(
-          <>
+          <> 
             <h2 className='font-bold text-lg'>Tecnologia</h2>
-            <form className="flex justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-              <Tabla3 columnas={columnasTec} datos={resultadosTec} />
+            <form className="grid grid-cols-2 justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
+
+              <div className='col-span-2'>
+                <Tabla3 columnas={['Mantenimiento','Horas Prom','Horas Anuales']} datos={datos} />
+              </div>
+              
+              <Tabla3 columnas={['Plataformas']} datos={plataformas} />
+              <Tabla3 columnas={['Lenguaje', 'Version', 'Framework']} datos={lenguajes} />
             </form>
           </>
         )
       }
 
-      const columnasBas = ['Nombre','Estatus','Tipo','Manejador','Tipo Ambiente','N° Usuarios','Servidor'];
-      const resultadosBas = [
-        {
-          basededatos: valor.base_datos,
-          estatus: valor.bas_estatus,
-          tipo: valor.tipo,
-          manejador: valor.manejador,
-          tipo_ambiente: valor.bas_tipo_ambiente,
-          cantidad_usuarios: valor.bas_cantidad_usuarios,
-          servidor: valor.servidor,
-        },
-      ];
+      const columnasBas = ['Nombre','Estatus','Tipo','Manejador','Version','N° Usuarios',
+      'Tipo Ambiente','Servidor'];
   
       function Basedatos (){
+        const datos = basedatos.data.datos;
         return(
           <>
             <h2 className='font-bold text-lg'>Base de datos</h2>
             <form className="flex justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-              <Tabla3 columnas={columnasBas} datos={resultadosBas} />
+              <Tabla3 columnas={columnasBas} datos={datos} />
             </form>
           </>
         )
       }
   
-      const columnasSer = ['Nombre','Estatus','Direccion','Sistema Operativo','Version OS','Marca','Modelo',
-      'Serial','Cantidad CPU','Velocidad','Memoria','Region','Localidad'];
-      const resultadosSer = [
-          {
-            servidor: valor.servidor,
-            estatus: valor.ser_estatus,
-            direccion: valor.ser_direccion,
-            sistema_operativo: valor.sistema,
-            version_sistema: valor.sistema_version,
-            marca: valor.marca,
-            modelo: valor.mar_modelo,
-            serial: valor.mar_serial,
-            cantidad_cpu: valor.mar_cantidad_cpu,
-            velocidad_cpu: valor.mar_velocidad_cpu,
-            memoria: valor.mar_memoria,
-            region: valor.ser_region,
-            localidad: valor.ser_localidad,
-          },
-      ];
+      const columnasSer = ['Nombre','Direccion','Estatus','Sistema Operativo','Version OS','Region','Localidad'];
+      const columnasMod = ['Modelo','Marca','Serial','Cantidad CPU','Velocidad','Memoria'];
 
       function Servidor(){
+        const datos = servidor.data.datos;
+        const modelos = servidor.data.modelos;
         return(
           <>
             <h2 className='font-bold text-lg'>Servidor</h2>
-            <form className="flex justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-              <Tabla3 columnas={columnasSer} datos={resultadosSer} />
+            <form className="flex flex-col justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
+              <Tabla3 columnas={columnasSer} datos={datos} />
+              <Tabla3 columnas={columnasMod} datos={modelos} />
             </form>
           </>
         )
       }
 
-      const columnasRes = ['Custodio','Nombre','Apellido','Indicador','Cedula','Cargo','Telefono',
-      'Region','Localidad','Gerencia','SubGerencia'];
-      const resultadosRes = [
-        {
-          tipo: 'Funcional',
-          nombre: valor.res_nombre,
-          apellido: valor.res_apellido,
-          indicador: valor.res_indicador,
-          cedula: valor.res_cedula,
-          cargo: valor.res_cargo,
-          telefono: valor.res_telefono,
-          region: valor.res_region,
-          localidad: valor.res_localidad,
-          gerencia: valor.res_gerencia,
-          subgerencia: valor.res_subgerencia,
-        },
-      ];
+      const columnasRes = ['Nombre','Apellido','Indicador','Cedula','Telefono','Cargo',
+      'Gerencia','Region','Localidad'];
   
       function Responsable() {
+        const funcional = responsables.data.funcional;
+        const tecnico = responsables.data.tecnico;
         return(
           <>
             <h2 className='font-bold text-lg'>Responsables</h2>
-            <form className="flex justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-              <Tabla3 columnas={columnasRes} datos={resultadosRes} />
+            <form className="flex flex-col justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
+              
+              <div className="flex flex-col justify-center items-center">
+                <h3 className='font-bold text-base'>Responsables Funcional</h3>
+                <Tabla3 columnas={columnasRes} datos={funcional} />
+              </div>
+
+              <div className="flex flex-col justify-center items-center">
+                <h3 className='font-bold text-base'>Responsables Tecnico</h3>
+                <Tabla3 columnas={columnasRes} datos={tecnico} />
+              </div>
+
             </form>
           </>
         )
       }
 
       const columnasDoc = ['Descripcion','Direccion','Tipo','Fecha'];
-      const resultadosDoc = [
-          {descripcion: valor.doc_descripcion,direccion: valor.doc_direccion, tipo: valor.doc_tipo,},
-          {tipo:'Aplicaciones',descripcion:'aaaaaaaaaaaaaa',direccion:'xxxxxxx',fecha:'12/12/2009',},
-      ];
-  
+
       function Documentacion(){
+        const datos = documentacion.data.datos;
         return (
           <>
             <h2 className='font-bold text-lg'>Documentacion</h2>
             <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-              <Tabla3 columnas={columnasDoc} datos={resultadosDoc} />
+              <Tabla3 columnas={columnasDoc} datos={datos} />
             </form>
           </>
         )
       }
 
-      const columnasFallas = ['Numero','Clase','Descripcion','Solucion','Ver'];
+      const columnasFallas = ['Numero','Clase','Descripcion','Solucion','Impacto','Ver'];
       const resultadosFallas = [
           {
             numero: valor.fal_numero,
@@ -227,11 +208,12 @@ function Vista() {
       ];
 
       function Fallas(){
+        let datos = fallas.data.datos;
         return (
           <>
             <h2 className='font-bold text-lg'>Fallas</h2>
             <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-              <Tabla3 columnas={columnasFallas} datos={resultadosFallas} />
+              <Tabla3 columnas={columnasFallas} datos={datos} />
 
               {/* {paginacion ? ( <Paginacion />) : (null)} */}
             </form>

@@ -3,10 +3,9 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaEye, FaEdit } from "react-icons/fa";
 import Paginacion from "./Paginacion";
-import { columnasUserSimple, columnasAdminSimple } from "../services/campos.service";
+ 
 
-  
-function Tabla({datos, opciones, paginacion=false, count=10, manejarPagina=null}) {
+function Tabla({columnas, datos, opciones, paginacion=false, count=10, devolverPagina=null}) {
 
     const [pagina, setPagina] = useState(1);
     const [primerResultado, setPrimer] = useState([pagina-1]*count);
@@ -16,8 +15,8 @@ function Tabla({datos, opciones, paginacion=false, count=10, manejarPagina=null}
     const cambioPagina = () => {
         setPrimer([pagina-1]*count);
         setUltimo([pagina*count] - 1);
-        if(manejarPagina)
-            manejarPagina(pagina);
+        if(devolverPagina)
+            devolverPagina(pagina);
     }
 
     useEffect(() => {
@@ -37,14 +36,14 @@ function Tabla({datos, opciones, paginacion=false, count=10, manejarPagina=null}
                         
                         <tr className="bg-zinc-200 border-b hover:bg-zinc-300">
                             {opciones ? (
-                                columnasAdminSimple.map((dato,index) => { 
+                                columnas.map((dato,index) => { 
                                     if(index===0)
                                         return  <td key={index} scope="col" className="px-1 py-1">{dato}</td> 
                                     else
                                         return  <td key={index} scope="col" className="px-1 py-1">{dato}</td> 
                                 })
                             ) : (
-                                columnasUserSimple.map((dato, index) => { return  <td key={index} scope="col" className="px-1 py-1">{dato}</td> })
+                                columnas.map((dato, index) => { return  <td key={index} scope="col" className="px-1 py-1">{dato}</td> })
                             )}    
                         </tr>
                         

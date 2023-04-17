@@ -18,6 +18,8 @@ import {
   Vista,
   Diagramas,
   BaseDatos, 
+  VistaDB,
+  CrearBD
 } from '../pages';
 
 function Rutas() {
@@ -56,6 +58,8 @@ function Rutas() {
               
             {/* MODULO DE ADMINISTRACION */}
             <Route path="/basedatos" element={<BaseDatos />} />
+            <Route path="/basedatos/:id" element={<VistaDB />} />
+            <Route path="/basedatos/registro" element={<CrearBD />} />
 
             {/* MODULO DE SOLICITUDES */}
             <Route path="/solicitudes" element={<Solicitudes />} />

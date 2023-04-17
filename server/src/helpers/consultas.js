@@ -58,21 +58,22 @@ const mantenimientos = `
 const documentaciones = `
     inner join documentaciones
     on documentaciones.aplicacion_id = aplicaciones.aplicacion_id`;
- 
+    
 const selectSimple = `
     SELECT 
         aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_version,
-        apl_estatus,apl_prioridad,apl_direccion,region,apl_cliente,
-        res_nombre, res_apellido,res_indicador,
-        plataforma,lenguaje,base_datos,servidor
+        apl_alcance,apl_estatus,apl_prioridad,apl_direccion,region,plataforma,
+        apl_critico,apl_codigo_fuente,man_frecuencia
     FROM aplicaciones 
-        ${regiones}
-        ${responsables}
-        ${plataforma}
-        ${lenguaje}
-        ${base_datos}
-        ${servidor}
-    ORDER BY aplicaciones.aplicacion_id ASC
+        inner join regiones
+        on aplicaciones.aplicacion_id = regiones.region_id
+        JOIN aplicacion_plataforma
+        ON aplicaciones.aplicacion_id = aplicacion_plataforma.aplicacion_id
+        JOIN plataformas
+        ON aplicacion_plataforma.plataforma_id = plataformas.plataforma_id
+        inner join mantenimientos
+        on mantenimientos.aplicacion_id = aplicaciones.aplicacion_id
+    ORDER BY aplicaciones.aplicacion_id ASC;
 `;
 
 const select = `

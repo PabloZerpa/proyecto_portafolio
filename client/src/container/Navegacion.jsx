@@ -42,6 +42,10 @@ function Navegacion() {
                                 <div></div>
                             ) : (
                                 <div style={open2 ? {display: 'block'} : {display: 'none'}} className='pl-4'>
+                                    <Link to="/administracion/permisos" 
+                                        className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
+                                            Permisos
+                                    </Link>
                                     <Link to="/administracion" 
                                         className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                             Actualizacion
@@ -49,10 +53,6 @@ function Navegacion() {
                                     <Link to="/administracion/registro" 
                                         className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                             Registro
-                                    </Link>
-                                    <Link to="/administracion/permisos" 
-                                        className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
-                                            Permisos
                                     </Link>
                                 </div>
                             )} 
@@ -94,18 +94,18 @@ function Navegacion() {
                                     className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                     Busqueda
                                 </Link>
+                                <Link to="/basedatos/registro" 
+                                    className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
+                                    Registro
+                                </Link>
                                 <Link to="/basedatos" 
                                     className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                     Visualizacion
                                 </Link>
-                                <Link to="/basedatos" 
-                                    className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
-                                    Otros
-                                </Link>
                             </div>
                         </li>
 
-                        <li>
+                        {/* <li>
                             <div className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg cursor-pointer hover:bg-gray-800 hover:text-gray-100" 
                                 onClick={openMenu4}>
                                 <FaListAlt />
@@ -123,7 +123,8 @@ function Navegacion() {
                                     Crear Solicitud
                                 </Link>
                             </div>
-                        </li>
+                        </li> */}
+                        
                     </ul>
                     
                 </div>

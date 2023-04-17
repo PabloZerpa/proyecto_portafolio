@@ -22,11 +22,8 @@ function Busqueda({manejarBusqueda, manejarCount, pagina}) {
         alcance: '',
         mantenimiento: '',
         fecha: '',
-        basedatos: '',
-        servidor: '',
         critico: '',
         codigo: '',
-        licencia: '',
         registros: 10,
         orden: 'ASC',
     }); 
@@ -64,15 +61,15 @@ function Busqueda({manejarBusqueda, manejarCount, pagina}) {
     const onSearch = async (value) => {
         try {
             const { estatus,plataforma,prioridad,region,alcance,mantenimiento,
-                basedatos,servidor,critico,codigo,licencia,registros,orden } = datos;
+                critico,codigo,registros,orden } = datos;
 
             console.log(estatus,plataforma,prioridad,region,alcance,mantenimiento,
-                basedatos,servidor,critico,codigo,licencia,registros,orden);
+                critico,codigo,registros,orden);
 
             console.log('PAGINA EN BUSQUEDA: ' + pagina);
             const respuesta = await Usuarios.obtenerPorBusqueda
             (value,estatus,plataforma,prioridad,region,alcance,mantenimiento,
-                basedatos,servidor,critico,codigo,licencia,registros,orden,pagina);
+                critico,codigo,registros,orden,pagina);
 
             setResultados(respuesta.data);
             manejarBusqueda(respuesta.data);
@@ -113,9 +110,6 @@ function Busqueda({manejarBusqueda, manejarCount, pagina}) {
                     
                     <div style={avanzados ? {display: 'flex'} : {display: 'none'}} className="flex flex-wrap justify-center items-center">
                         <Radio label='Codigo Fuente' name='codigo' opciones={['TODAS', 'SI', 'NO']} manejador={handleInputChange} />
-                        <Radio label='Licencia' name='licencia' opciones={['TODAS', 'LOGICA', 'FISICA']} manejador={handleInputChange} />
-                        <Radio label='Base de Datos' name='basedatos' opciones={['SI', 'NO']} manejador={handleInputChange} />
-                        <Radio label='Servidor' name='servidor' opciones={['SI', 'NO']} manejador={handleInputChange} />
                     </div>
 
                     <div className='mt-8 flex justify-center items-center gap-4'>

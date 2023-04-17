@@ -4,11 +4,13 @@ const { verificarToken } = require('../helpers/token');
 const auth = async (req, res, next) => {
 
     const {authorization} = req.headers;
+    console.log(authorization);
+    
     if(!authorization) return res.status(401);
 
     const token = await verificarToken(authorization);
-    // console.log('Token Verificado');
-    // console.log(token);
+    console.log('Token Verificado');
+    console.log(token);
     
     if(token)
         next();
