@@ -249,6 +249,8 @@ const verificarAplicacion = async (acronimo,nombre,descripcion,estatus,prioridad
     return aplicacion_id;
 }
 
+
+
 module.exports = { verificarAplicacion, verificarPlataforma, 
     verificarLenguaje, verificarFramework, verificarServidor, 
     verificarBase, verificarMantenimiento,verificarDocumentacion, verificarResponsable };

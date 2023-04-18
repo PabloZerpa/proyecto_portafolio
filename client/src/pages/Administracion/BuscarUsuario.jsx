@@ -19,8 +19,8 @@ function BuscarUsuario() {
 
   const [rol, setRol] = useState("");
   const [gerencia, setGerencia] = useState("");
-
   const [edicion, setEdicion] = useState(null);
+
   const habilitar = (dato) => {
     setEdicion(dato.usuario_id); 
     setRol(dato.rol); 
@@ -75,7 +75,7 @@ function BuscarUsuario() {
         // setOpcion('error');
         // setShow(true);
     }
-}
+  }
 
   // SELECT PERSONALIZADO
   const selectCampo = (opciones,valor,elemento) => {

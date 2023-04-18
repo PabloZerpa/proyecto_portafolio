@@ -2,11 +2,12 @@
 import { useEffect, useState } from "react";
 import { Container, Select, Radio, Tabla } from "../../components";
 import { useDebounce } from 'use-debounce';
-import { FaSearch } from 'react-icons/fa';
+import { FaEdit, FaEye, FaSearch } from 'react-icons/fa';
 import Usuarios from "../../services/user.service";
 import Autorizacion from "../../services/auth.service";
 import { opcionEstatus, opcionRegion, opcionPlataforma, opcionAlcance, 
     opcionMantenimiento, opcionCount, opcionLocalidad } from '../../services/campos.service';
+import { Link } from "react-router-dom";
 
 const columnasUserSimple = ['Ver','ID','Nombre','Estatus','Tipo','Manejador','Version',
 'N° Usuarios','Ambiente'];
@@ -14,6 +15,7 @@ const columnasUserSimple = ['Ver','ID','Nombre','Estatus','Tipo','Manejador','Ve
 const columnasAdminSimple = ['Ver','Editar','ID','Nombre','Estatus','Tipo','Manejador','Version',
 'N° Usuarios','Ambiente'];
 
+const opciones = true;
 
 function BaseDatos() {
 
@@ -157,16 +159,59 @@ function BaseDatos() {
             </form>
 
             {resultado ? (
-                <Tabla
-                    columnas={rol === 'admin' ? columnasAdminSimple : columnasUserSimple}
-                    datos={resultado} 
-                    opciones={(Autorizacion.obtenerUsuario().rol==='admin') ? true : false} 
-                    paginacion={true}
-                />
+            <table className="table-auto border-separate w-4/3 text-xs text-center text-gray-700 shadow-md">
+                <thead className="text-xs text-gray-700 font-bold bg-zinc-200 uppercase">
+                    
+                    <tr className="bg-zinc-200 border-b hover:bg-zinc-300">
+                        {opciones ? (
+                            columnasAdminSimple.map((dato,index) => { 
+                                if(index===0)
+                                    return  <td key={index} scope="col" className="px-1 py-1">{dato}</td> 
+                                else
+                                    return  <td key={index} scope="col" className="px-1 py-1">{dato}</td> 
+                            })
+                        ) : (
+                            columnasAdminSimple.map((dato, index) => { return  <td key={index} scope="col" className="px-1 py-1">{dato}</td> })
+                        )}    
+                    </tr>
+                    
+                </thead>
+                <tbody>
+                    {resultado.map((dato, index) => { 
+                        let valor = Object.values(dato);
+                        if(opciones){
+                            console.log(dato.base_datos_id);
+                            valor.unshift(
+                                <Link to={dato.base_datos_id ? `/basedatos/actualizacion/${dato.base_datos_id}` : `/dashboard`} className='text-lg' state={dato} >
+                                    <FaEdit className="text-blue-500" />
+                                </Link>
+                            )
+                        }
+                        valor.unshift(
+                            <Link to={dato.base_datos_id ? `/basedatos/${dato.base_datos_id}` : `/dashboard`} className='text-lg' state={dato} >
+                                <FaEye className="text-blue-500" />
+                            </Link>
+                        )
+                        return (
+                            <tr key={index} className="bg-white border-b hover:bg-gray-100">
+                                {valor.map((valor, index) => {
+                                        return ( <td key={index} className="px-2 py-2">{valor}</td> );
+                                })}
+                            </tr>
+                        );
+                    })}
+                </tbody>
+            </table>
             ) : (
                 <div></div>
             )}
 
+            {/* <Tabla
+                columnas={rol === 'admin' ? columnasAdminSimple : columnasUserSimple}
+                datos={resultado} 
+                opciones={(Autorizacion.obtenerUsuario().rol==='admin') ? true : false} 
+                paginacion={true}
+            /> */}
 
         </Container>
         

@@ -2,7 +2,6 @@
 import axios from 'axios';
 import authHeader from './header.service';
 const baseUrl = "http://localhost:3001/api/";
-// const baseUrl = "https://proyecto-portafolio-server.onrender.com/api/";
  
 class Usuarios {  
 
@@ -14,10 +13,6 @@ class Usuarios {
             console.log('Error al obtener dato');
         }
     }
-
-
-
-
 
 
     // =============== OBTIENE INFORMACION GENERAL ===============
@@ -260,13 +255,41 @@ class Usuarios {
 
 
     // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
+    async obtenerBD(id) {
+        try {
+            console.log('OBTENER_BUSQUEDA');
+            console.log(id);
+ 
+            return axios.get(`${baseUrl}basedatos/${id}`);
+        } catch (error) {
+            console.log('Error al obtener dato');
+        } 
+    }
+
+    // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
     async obtenerBDPorBusqueda(term,count,orden) {
         try {
             console.log('OBTENER_BUSQUEDA');
             console.log(term,count,orden);
  
-            return axios.post(`${baseUrl}basedatos/busqueda`, 
-            {term,count,orden});
+            return axios.post(`${baseUrl}basedatos/busqueda`, {term,count,orden});
+        } catch (error) {
+            console.log('Error al obtener dato');
+        }
+    }
+
+
+
+
+
+
+    // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
+    async obtenerFallaPorBusqueda(term) {
+        try {
+            console.log('OBTENER_BUSQUEDA');
+            console.log(term);
+ 
+            return axios.post(`${baseUrl}aplicaciones/fallas/busqueda`,{term});
         } catch (error) {
             console.log('Error al obtener dato');
         }

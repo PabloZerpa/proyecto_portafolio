@@ -2,9 +2,10 @@
 import axios from 'axios';
 import authHeader from './header.service';
 const baseUrl = "http://localhost:3001/api/";
-// const baseUrl = "https://proyecto-portafolio-server.onrender.com/api/"
 
 class Autorizacion {
+
+// ******************************** LOGIN **********************************
 
     // ---------------- LOGIN ------------------
     async login(indicador, password) {
@@ -35,17 +36,12 @@ class Autorizacion {
 
 
     
+// ******************************** USUARIOS **********************************
 
     async crearUsuario(datos) {
-
-        const { indicador, rol, gerencia } = datos;
-        const password = `87654321`;
-        const data = {indicador, password, rol, gerencia};
-        console.log(data);
-        console.log('EN CREAR USUARIO')
         try {
             console.log('ANTES DE CREAR USUARIO')
-            const respuesta = await axios.post(`${baseUrl}login/registro`, data)
+            const respuesta = await axios.post(`${baseUrl}login/registro`, datos)
             console.log('DESPUES DE CREAR USUARIO')
             return respuesta;
         } catch (error) {
@@ -68,6 +64,7 @@ class Autorizacion {
 
 
 
+// ******************************** APLICACIONES **********************************
 
     // ---------------- CREATE DE LA INFO DE NUEVA APP ------------------
     async crearDatos(datos) {
@@ -109,6 +106,70 @@ class Autorizacion {
             console.log('ERROR AL ACTUALIZAR auth.service');
         }
     }
+
+
+    // ******************************** FALLAS **********************************
+
+    // =============== REGISTRA LA FALLA ===============
+    async registrarFalla(datos) {
+
+        //const { aplicacion_id, usuario_id, clase, impacto, descripcion, solucion } = datos;
+        try {
+            const respuesta = await axios.post(`${baseUrl}aplicaciones/fallas`, datos);
+            return respuesta;
+        } catch (error) {
+            console.log('ERROR AL CREAR USUARIO');
+        }
+    }
+
+    // =============== ACTUALIZA LA FALLA ===============
+    async actualizarFalla(datos) {
+
+        const { clase, impacto, descripcion, solucion } = datos;
+        const id = datos.edicion;
+        console.log('EN CREAR USUARIO')
+        try {
+            console.log('ANTES DE ACTUALIZAR FALLA')
+            const respuesta = await axios.patch(`${baseUrl}aplicaciones/fallas/${id}`, datos);
+            console.log('DESPUES DE CREAR USUARIO')
+            return respuesta;
+        } catch (error) {
+            console.log('ERROR AL CREAR USUARIO');
+        }
+    }
+
+
+
+    // ******************************** BASE DE DATOS **********************************
+
+    // ---------------- CREATE DE LA INFO DE NUEVA APP ------------------
+    async crearDatosDB(datos) {
+        console.log('AFUERA DE CREAR DATOS SERVICE')
+        console.log(datos);
+        try { 
+            console.log('EN EL TRY DE CREAR DATOS SERVICE')
+            const respuesta = await axios.post(`${baseUrl}basedatos/`, datos, { headers: authHeader() });
+            console.log('DESPUES DE CREAR DATOS SERVICE')
+            return respuesta;
+        } catch (error) {
+            console.log('ERROR AL CREAR auth.service');
+        }
+    }
+
+    // ---------------- CREATE DE LA INFO DE NUEVA APP ------------------
+    async actualizarDatosDB(id,datos) {
+        console.log('AFUERA DE CREAR DATOS SERVICE')
+        console.log(datos);
+        try { 
+            console.log('EN EL TRY DE CREAR DATOS SERVICE')
+            const respuesta = await axios.patch(`${baseUrl}basedatos/${id}`, datos, { headers: authHeader() });
+            console.log('DESPUES DE CREAR DATOS SERVICE')
+            return respuesta;
+        } catch (error) {
+            console.log('ERROR AL CREAR auth.service');
+        }
+    }
+
 
 }
 

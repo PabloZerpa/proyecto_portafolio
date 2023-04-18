@@ -23,7 +23,6 @@ const obtenerPorBusqueda = async (req,res) => {
 
     const { term } = req.body;
     const termino = `%${term}%`;
-    console.log(termino);
 
     try{
         const data = await pool.query(`
@@ -43,7 +42,7 @@ const obtenerPorBusqueda = async (req,res) => {
 // *************** CREAR USUARIO ***************
 const crearUsuario = async (req,res) => {
   
-    const { indicador, rol, gerencia, elementos, acciones } = req.body;
+    const { indicador, rol, gerencia } = req.body;
   
     try {
         const query = await pool.query(
@@ -60,7 +59,6 @@ const crearUsuario = async (req,res) => {
 const cambiarPermisos = async (req,res) => {
     const { id } = req.params;
     const { rol, gerencia } = req.body;
-    console.log(rol,gerencia);
    
     try {
         const query = await pool.query(`
@@ -72,8 +70,8 @@ const cambiarPermisos = async (req,res) => {
             WHERE 
                 usuario_id = ?;`, [rol, gerencia, id]
         );
+        
         res.send('ACTUALIZACION DE ROL EXITOSA');
-        console.log('AQUI');
     } catch (error) {
         return res.status(401).json({ message: 'ERROR' });
     }

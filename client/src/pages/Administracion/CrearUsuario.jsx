@@ -18,6 +18,7 @@ function Permisos() {
     const [datos, setDatos] = useState({
         indicador: '',
         rol: '',
+        password: '',
         gerencia: '',
         subgerencia: '',
         creador: Autorizacion.obtenerUsuario().indicador,
@@ -74,7 +75,7 @@ function Permisos() {
                         <Input campo='Cedula' name='cedula' direccion="col" editable={true} manejador={handleInputChange} />
                         <Input campo='Nombre' name='nombre' direccion="col" editable={true} manejador={handleInputChange} />
                         <Input campo='Apellido' name='apellido' direccion="col" editable={true} manejador={handleInputChange} />
-                        <Select campo='Rol' name='rol' direccion="col" opciones={['admin','superuser','user']} manejador={handleInputChange} />
+                        <Select campo='Rol' name='rol' direccion="col" opciones={['SELECCIONE','admin','superuser','user']} manejador={handleInputChange} />
                         <Input campo='Contraseña' name='password' direccion="col" editable={true} manejador={handleInputChange} />
                         <Select campo='Gerencia' name='gerencia' direccion="col" opciones={opcionGerencia} manejador={handleInputChange} />
                         <Input campo='Cargo' name='cargo' direccion="col" editable={true} manejador={handleInputChange} />

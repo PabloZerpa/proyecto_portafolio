@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Navigate } from 'react-router-dom';
+import { useParams, useNavigate, Navigate, Link } from 'react-router-dom';
 import { Button, Container, Input, Select } from '../../components';
 import { BiLoaderAlt } from "react-icons/bi";
 import Autorizacion from '../../services/auth.service';
@@ -41,7 +41,8 @@ function Actualizacion() {
             }catch (error) { console.log(error); }
         } 
         fetchData();  
-/*
+
+        
         setDatos({
             ...datos,
             apl_acronimo : valor.general.apl_acronimo,
@@ -59,24 +60,8 @@ function Actualizacion() {
             plataforma : valor.plataformas.plataforma,
             framework : valor.lenguajes.framework,
             lenguaje : valor.lenguajes.lenguaje,
-            base_datos : valor.basedatos.base_datos,
-            bas_estatus : valor.basedatos.bas_estatus,
-            bas_cantidad_usuarios : valor.basedatos.bas_cantidad_usuarios,
-            bas_direccion : valor.basedatos.bas_direccion,
-            bas_tipo_ambiente : valor.basedatos.bas_tipo_ambiente,
-            bas_tipo : valor.basedatos.tipo,
-            bas_manejador : valor.basedatos.manejador,
-            servidor: valor.servidor.servidor,
-            ser_estatus: valor.servidor.ser_estatus,
-            ser_direccion: valor.servidor.ser_direccion,
-            ser_sistema: valor.servidor.sistema,
-            ser_sistema_version: valor.servidor.sis_version,
-            ser_marca: valor.modelos.modelo,
-            ser_modelo: valor.modelos.mod_marca,
-            ser_serial: valor.modelos.mod_serial,
-            ser_cantidad_cpu: valor.modelos.mod_cantidad_cpu,
-            ser_velocidad_cpu: valor.modelos.mod_velocidad_cpu,
-            ser_memoria: valor.modelos.mod_memoria,
+            select_base: valor.basedatos.base_datos,
+            select_servidor: valor.servidor.servidor,
             man_frecuencia: valor.tecnologia.man_frecuencia,
             man_horas_prom: valor.tecnologia.man_horas_prom,
             man_horas_anuales: valor.tecnologia.man_horas_anuales,
@@ -84,25 +69,25 @@ function Actualizacion() {
             doc_direccion: valor.documentacion.doc_direccion,
             doc_tipo: valor.documentacion.doc_tipo,
         });
-*/
+
         console.log(datos);
     }, [id, load]);
 
-  // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
-  async function updateData(e) {
-    e.preventDefault();
-    //console.log('DENTRO DEL UPDATE DE ACTUALIZACION')
-    try {
-      //console.log('TRY DEL UPDATE');
-      if(Autorizacion.obtenerUsuario().rol === 'admin'){
-        console.log(datos);
-        console.log(id);
-        await Autorizacion.actualizarDatos(id, datos); 
-        //navigate("/dashboard");
-      }
-    } 
-    catch (error) { console.log('ERROR AL ACTUALIZAR APL_ACT'); }
-  }
+    // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
+    async function updateData(e) {
+        e.preventDefault();
+        //console.log('DENTRO DEL UPDATE DE ACTUALIZACION')
+        try {
+        //console.log('TRY DEL UPDATE');
+        if(Autorizacion.obtenerUsuario().rol === 'admin'){
+            console.log(datos);
+            console.log(id);
+            await Autorizacion.actualizarDatos(id, datos); 
+            //navigate("/dashboard");
+        }
+        } 
+        catch (error) { console.log('ERROR AL ACTUALIZAR APL_ACT'); }
+    }
 
     // FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS
     const handleInputChange = (e) => {
@@ -126,46 +111,45 @@ function Actualizacion() {
           cambioDeOpcion(e.target.value, setOpcion5);
       else if(e.target.name === 'lenguaje3')
           cambioDeOpcion(e.target.value, setOpcion6);
+    } 
 
-  } 
+    function cambioDeOpcion(valor, elemento){
 
-  function cambioDeOpcion(valor, elemento){
+        console.log(valor);
 
-      console.log(valor);
+        if(valor === 'PHP')
+            elemento(frameworkPhp);
+        else if(valor === 'JAVASCRIPT')
+            elemento(frameworkJS);
+        else if(valor === 'JAVA')
+            elemento(frameworkJAVA);
+        else if(valor === 'C++')
+            elemento(frameworkCPP);
+        else if(valor === 'C#')
+            elemento(frameworkCS);
+        else if(valor === 'PYTHON')
+            elemento(frameworkPY);
 
-      if(valor === 'PHP')
-          elemento(frameworkPhp);
-      else if(valor === 'JAVASCRIPT')
-          elemento(frameworkJS);
-      else if(valor === 'JAVA')
-          elemento(frameworkJAVA);
-      else if(valor === 'C++')
-          elemento(frameworkCPP);
-      else if(valor === 'C#')
-          elemento(frameworkCS);
-      else if(valor === 'PYTHON')
-          elemento(frameworkPY);
+        if(valor === 'CENTRO')
+            elemento(localidadCentro);
+        else if(valor === 'CENTRO SUR')
+            elemento(localidadCentroSur);
+        else if(valor === 'CENTRO OCCIDENTE')
+            elemento(localidadCentroOccidente);
+        else if(valor === 'ORIENTE NORTE')
+            elemento(localidadOrienteNorte);
+        else if(valor === 'ORIENTE SUR')
+            elemento(localidadOrienteSur);
+        else if(valor === 'OCCIDENTE')
+            elemento(localidadOccidente);
+        else if(valor === 'FAJA')
+            elemento(localidadFaja);
+        else if(valor === 'METROPOLITANA')
+            elemento(localidadMetropolitana);
+        else if (valor === 'TODAS')
+            elemento(opcionLocalidad);
 
-      if(valor === 'CENTRO')
-          elemento(localidadCentro);
-      else if(valor === 'CENTRO SUR')
-          elemento(localidadCentroSur);
-      else if(valor === 'CENTRO OCCIDENTE')
-          elemento(localidadCentroOccidente);
-      else if(valor === 'ORIENTE NORTE')
-          elemento(localidadOrienteNorte);
-      else if(valor === 'ORIENTE SUR')
-          elemento(localidadOrienteSur);
-      else if(valor === 'OCCIDENTE')
-          elemento(localidadOccidente);
-      else if(valor === 'FAJA')
-          elemento(localidadFaja);
-      else if(valor === 'METROPOLITANA')
-          elemento(localidadMetropolitana);
-      else if (valor === 'TODAS')
-          elemento(opcionLocalidad);
-
-  }
+    }
 
 
   if(Autorizacion.obtenerUsuario().rol !== 'admin') 
@@ -268,6 +252,24 @@ function Actualizacion() {
                         </div> */}
                     </div>
                 </div>
+
+            {/* --------------- BASE DE DATOS --------------- */}
+            <p className='font-bold text-base my-4'>Base de datos</p>
+            <div className="grid grid-cols-2 gap-4">
+                <Select campo='Seleccione Base de datos' name='select_base' opciones={opcionBasedatos} manejador={handleInputChange}/>
+                <div className='mt-6'>
+                    <Button width={32}><Link to={`/basedatos/registro`} target="_blank">Registrar Nueva</Link></Button>
+                </div>
+            </div>
+
+            {/* --------------- SERVIDOR --------------- */}
+            <p className='font-bold text-base my-4'>Servidor</p>
+            <div className="grid grid-cols-2 gap-4">
+                <Select campo='Seleccione Servidor' name='select_servidor' opciones={opcionServidor} manejador={handleInputChange}/>
+                <div className='mt-6'>
+                    <Button width={32}><Link to={`/basedatos/registro`} target="_blank">Registrar Nuevo</Link></Button>
+                </div>
+            </div>
 
             <div className='w-full h-1 border-2 border-dashed border-gray-500'></div>
             {/* --------------- DOCUMENTACION --------------- */}

@@ -29,7 +29,6 @@ FROM aplicaciones
 // *********************************** OBTENER TODOS LOS DATOS ***********************************
 const obtenerDatos = async (req,res) => {
     try {
-        console.log('OBTENER DATOS');
         const data = await pool.query(selectSimple);
         res.send(data[0]);
     } catch (error) {
@@ -39,73 +38,16 @@ const obtenerDatos = async (req,res) => {
 
 // *********************************** OBTENER DATOS POR ID ***********************************
 const obtenerDato = async (req,res) => {
-    // try {
-    //     //const body = matchedData(req);
-    //     console.log('OBTENER DATO');
-    //     const { id } = req.params;
-    //     const app = await pool.query(`
-    //         SELECT 
-    //             apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,
-    //             apl_critico,apl_alcance,apl_codigo_fuente,apl_licencia,apl_version,apl_direccion,apl_cantidad_usuarios,
-    //             region,apl_cliente,apl_fecha_registro,telefono,gerencia,subgerencia,region,localidad,
-    //             plataforma,lenguaje, framework, 
-    //             base_datos,bas_estatus,bas_tipo_ambiente,bas_cantidad_usuarios,tipo,manejador,
-    //             servidor,ser_estatus,ser_direccion,region,localidad,
-    //             marca,mar_modelo,mar_serial,mar_cantidad_cpu,mar_velocidad_cpu,mar_memoria,sistema,sistema_version,
-    //             man_frecuencia,man_horas_prom, man_horas_anuales, 
-    //             doc_descripcion,doc_tipo, doc_direccion
-    //         FROM aplicaciones
-    //             JOIN regiones ON regiones.region_id = aplicaciones.aplicacion_id
-    //             inner join localidades on regiones.region_id = localidades.localidad_id
-    //             JOIN aplicacion_plataforma ON aplicaciones.aplicacion_id = aplicacion_plataforma.aplicacion_id
-    //             JOIN plataformas ON aplicacion_plataforma.plataforma_id = plataformas.plataforma_id
-    //             inner join aplicacion_lenguaje on aplicaciones.aplicacion_id = aplicacion_lenguaje.aplicacion_id
-    //             inner join lenguajes on aplicacion_lenguaje.lenguaje_id = lenguajes.lenguaje_id
-    //             inner join aplicacion_framework on aplicaciones.aplicacion_id = aplicacion_framework.aplicacion_id
-    //             inner join frameworks on aplicacion_framework.framework_id = frameworks.framework_id
-    //             inner join aplicacion_basedatos on aplicaciones.aplicacion_id = aplicacion_basedatos.aplicacion_id
-    //             inner join bases_datos on aplicacion_basedatos.base_datos_id = bases_datos.base_datos_id
-    //             inner join manejadores on bases_datos.base_datos_id = manejadores.manejador_id
-    //             inner join tipos_bases on bases_datos.base_datos_id = tipo_base_id
-    //             join servidores on bases_datos.bas_servidor_id = servidores.servidor_id
-    //             inner join sistemas_operativos on sistemas_operativos.sistema_id = servidores.servidor_id
-    //             inner join marcas on marcas.marca_id = servidores.servidor_id
-    //             inner join responsables_funcionales on aplicaciones.aplicacion_id = responsables_funcionales.aplicacion_id
-	// 			inner join responsables on responsables.responsable_id = responsables_funcionales.responsable_id
-    //             inner join telefonos on responsables.responsable_id = telefonos.telefono_id
-	// 			inner join gerencias on responsables.res_gerencia_id = gerencias.gerencia_id
-    //             inner join mantenimientos on mantenimientos.aplicacion_id = aplicaciones.aplicacion_id
-    //             inner join documentaciones on documentaciones.aplicacion_id = aplicaciones.aplicacion_id
-    //         WHERE aplicaciones.aplicacion_id = ?`, [id]);
-
-    //     // const responsable = await pool.query(`
-    //     //     SELECT 
-    //     //         res_nombre,res_apellido,res_indicador,res_cedula,res_cargo,telefono,gerencia,subgerencia,region,localidad
-    //     //     FROM responsables
-    //     //         JOIN regiones ON regiones.region_id = responsables.responsable_id
-    //     //         JOIN localidades ON localidades.localidad_id = responsables.responsable_id
-    //     //         JOIN gerencias ON gerencias.gerencia_id = responsables.responsable_id
-    //     //         JOIN telefonos ON telefonos.telefono_id = responsables.responsable_id
-    //     //     WHERE responsables.responsable_id = ?`, [id]);
-
-    //     res.send(app[0][0]);
-    // } catch (error) {
-    //     console.log("ERROR_CREATE_ITEMS");
-    // }
 };
 
 // *********************************** OBTENER LOS DATOS POR TERMINO DE BUSQUEDA ***********************************
 const obtenerBusqueda = async (req,res) => {
     try {
-        console.log('OBTENER BUSQUEDA');
         const { term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
                 critico,codigo,count,order,pagina } = req.body;
         const termino = '%' + term + '%';
         const offset = (pagina-1)*10;
         let data;
-        
-        console.log(term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
-            critico,codigo,count,order,pagina,offset);
 
         if (term === undefined || null)
             return res.status(404).json({ message: "Error al recibir consulta" });
@@ -266,17 +208,7 @@ const obtenerBusqueda = async (req,res) => {
                 termino,termino,termino,termino,parseInt(count),offset]);
         }
 
-        console.log(data[0][0]);
-        // if (data[0][0] === undefined){
-        //     data = 'NULL'
-        //     return res.json([]);
-        // }
-
-        // if (data.affectedRows === 0)
-        //     return res.status(404).json({ message: "Sin coincidencias" });
-
         res.json(data[0]);
-        
     } catch (error) {
         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
     }
@@ -285,13 +217,10 @@ const obtenerBusqueda = async (req,res) => {
 // *********************************** OBTENER LOS DATOS POR CAMPO ESPECIFICO ***********************************
 const obtenerCampo = async (req,res) => {
     try { 
-        console.log('OBTENER CAMPO');
         const { term, campo, pagina } = req.body;
         const termino = '%' + term + '%';
         const offset = (pagina-1)*3;
         let data = null;
-
-        console.log(term,termino,campo,pagina,offset);
 
         if (term === undefined || null)
             return res.status(404).json({ message: "Error al recibir consulta" });
@@ -366,7 +295,6 @@ const obtenerCampo = async (req,res) => {
 // *********************************** OBTENER CANTIDAD TOTAL ***********************************
 const obtenerCantidadTotal = async (req,res) => {
     try {
-        console.log('OBTENER CANTIDAD TOTAL');
         const data = await pool.query(`
             SELECT 
                 COUNT(*)
@@ -424,21 +352,6 @@ const crearAplicacion = async (req,res) => {
             tecnico_gerencia,tecnico_region,tecnico_localidad,
         } = req.body;
 
-        console.log(
-            apl_acronimo,apl_nombre,apl_descripcion,apl_region,
-            apl_version,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
-            apl_codigo_fuente,apl_direccion,apl_cantidad_usuarios,
-            plataforma,lenguaje,lenguaje2,lenguaje3, framework,framework2,framework3, 
-            select_base, select_servidor,
-            man_frecuencia,man_horas_prom,man_horas_anuales, 
-            doc_descripcion,doc_tipo, doc_direccion, apl_fecha_registro,
-
-            funcional_nombre,funcional_apellido,funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
-            funcional_gerencia,funcional_region,funcional_localidad,
-            tecnico_nombre,tecnico_apellido,tecnico_indicador,tecnico_cedula,tecnico_cargo,tecnico_telefono,
-            tecnico_gerencia,tecnico_region,tecnico_localidad,
-        );
-
         const query = await pool.query(
             `SELECT * FROM aplicaciones WHERE apl_acronimo = ? OR apl_nombre = ?`, 
             [apl_acronimo,apl_nombre]);
@@ -483,29 +396,16 @@ const crearAplicacion = async (req,res) => {
 // *********************************** ACTUALIZAR REGISTRO ***********************************
 const actualizarAplicacion = async (req,res) => {
     try {
-        console.log('EN EN UPDATE DEL SERVER');
         const { id } = req.params;
         const {
-            apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,apl_version,apl_cliente,
-            apl_cantidad_usuarios,apl_critico,apl_licencia,apl_direccion,apl_codigo_fuente,apl_alcance,
+            apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,apl_version,
+            apl_cantidad_usuarios,apl_critico,apl_direccion,apl_codigo_fuente,apl_alcance,
             apl_region,apl_fecha_registro,plataforma,lenguaje,framework,indicador_funcional,indicador_tecnico,
-            fra_version,servidor,ser_estatus,ser_direccion,ser_sistema,ser_sistema_version,
-            ser_marca,ser_modelo,ser_serial,ser_cantidad_cpu,ser_velocidad_cpu,ser_memoria,
-            base_datos,base_estatus,base_direccion,base_manejador,
-            base_tipo,base_tipo_ambiente,base_cantidad,base_servidor,
+            select_servidor,select_base,
             doc_descripcion,doc_direccion,doc_tipo,
             man_frecuencia,man_horas_prom,man_horas_anuales
         } = req.body;
 
-        console.log(apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,apl_version,
-            apl_cantidad_usuarios,apl_critico,apl_direccion,apl_codigo_fuente,apl_alcance,apl_region,
-            apl_fecha_registro,plataforma,lenguaje,framework,indicador_funcional,indicador_tecnico,
-            servidor,
-            base_datos,
-            doc_descripcion,doc_direccion,doc_tipo,
-            man_frecuencia,man_horas_prom,man_horas_anuales);
-
-        // ACTUALIZAR EL ID DEL CLIENTE EN APLICACIONES
         const datos = await pool.query(`
             UPDATE aplicaciones 
                 JOIN mantenimientos ON aplicaciones.aplicacion_id = mantenimientos.aplicacion_id
@@ -527,6 +427,7 @@ const actualizarAplicacion = async (req,res) => {
                 doc_direccion,doc_tipo,id
             ]
         );
+        console.log('GENERAL ACTUALIZADO');
 
         const pla = await pool.query(`
             UPDATE aplicacion_plataforma
@@ -534,6 +435,7 @@ const actualizarAplicacion = async (req,res) => {
             WHERE aplicacion_plataforma.aplicacion_id = ?;`,
             [plataforma,id]
         );
+        console.log('PLATAFORMA ACTUALIZADO');
 
         const len = await pool.query(`
             UPDATE aplicacion_lenguaje
@@ -541,6 +443,7 @@ const actualizarAplicacion = async (req,res) => {
             WHERE aplicacion_lenguaje.aplicacion_id = ? AND aplicacion_lenguaje.lenguaje_id = 5;`,
             [lenguaje,id]
         );
+        console.log('LENGUAJE ACTUALIZADO');
 
         const fra = await pool.query(`
             UPDATE aplicacion_framework
@@ -548,20 +451,23 @@ const actualizarAplicacion = async (req,res) => {
             WHERE aplicacion_framework.aplicacion_id = ? AND aplicacion_framework.framework_id = 8;`,
             [framework,id]
         );
+        console.log('FRAMEWORK ACTUALIZADO');
 
         const bas = await pool.query(`
             UPDATE aplicacion_basedatos
             SET aplicacion_basedatos.base_datos_id = (SELECT base_datos_id FROM bases_datos WHERE base_datos = ?)
             WHERE aplicacion_basedatos.aplicacion_id = ?;`,
-            [base_datos,id]
+            [select_base,id]
         );
+        console.log('BASE DE DATOS ACTUALIZADO');
 
         const ser = await pool.query(`
             UPDATE aplicacion_servidor
             SET aplicacion_servidor.servidor_id = (SELECT servidor_id FROM servidores WHERE servidor = ?)
             WHERE aplicacion_servidor.aplicacion_id = ?;`,
-            [servidor,id]
+            [select_servidor,id]
         );
+        console.log('SERVIDOR ACTUALIZADO');
 
         const fun = await pool.query(`
             UPDATE responsables_funcionales
@@ -570,6 +476,7 @@ const actualizarAplicacion = async (req,res) => {
             WHERE responsables_funcionales.aplicacion_id = ?;`,
             [indicador_funcional,id]
         );
+        console.log('RESPONSABLE FUNCIONAL ACTUALIZADO');
 
         const tec = await pool.query(`
             UPDATE responsables_tecnicos
@@ -578,13 +485,12 @@ const actualizarAplicacion = async (req,res) => {
             WHERE responsables_tecnicos.aplicacion_id = ?;`,
             [indicador_tecnico,id]
         );
+        console.log('RESPONSABLE TECNICO ACTUALIZADO');
 
         console.log('ACTUALIZACION EXITOSA');
-        //const [rows] = await pool.query("SELECT * FROM aplicaciones WHERE aplicaciones.aplicacion_id = ?", [id]);
-        //res.json(rows[0]);
         res.json('UPDATE EXITOSO');
 
-    } catch (error) {
+    } catch (error) {  
         console.log("ERROR_UPDATE_ITEMS");
         console.error(error);
     }
@@ -596,10 +502,6 @@ const actualizarCampo = async (req,res) => {
         const { id } = req.params;
         const { campo, valor } = req.body;
         let data = null;
-
-        console.log('Campo: ' + campo); 
-        console.log('Valor: ' + valor);  
-        console.log('ID: ' + id);  
 
         if (campo === 'Plataforma') {
             data = await pool.query(
@@ -742,7 +644,6 @@ const obtenerPorGraficos = async (req,res) => {
 // *********************************** LISTA DE LENGUAJES PARA SELECTS ***********************************
 const obtenerLenguajes = async (req,res) => {
     try {
-        console.log('AQUI');
         const data = await pool.query(`SELECT lenguaje FROM lenguajes`);
         res.send(data[0]);
     } catch (error) {
@@ -802,7 +703,6 @@ const obtenerResponsables = async (req,res) => {
 const general = async (req,res) => {
     try {
         const { id } = req.params;
-        console.log(id);
 
         const data = await pool.query(`
         SELECT 
@@ -823,7 +723,6 @@ const general = async (req,res) => {
 const tecno = async (req,res) => {
     try {
         const { id } = req.params;
-        console.log(id);
         let respuestas = {};
 
         const data = await pool.query(`
@@ -859,7 +758,6 @@ const tecno = async (req,res) => {
             plataformas: plataformas[0],
             lenguajes: lenguajes[0],
         }
-        console.log(respuestas);
 
         res.send(respuestas);
     } catch (error) {
@@ -871,7 +769,6 @@ const tecno = async (req,res) => {
 const basedatos = async (req,res) => {
     try {
         const { id } = req.params;
-        console.log(id);
 
         const data = await pool.query(`
             SELECT 
@@ -903,7 +800,6 @@ const basedatos = async (req,res) => {
 const servidor = async (req,res) => {
     try {
         const { id } = req.params;
-        console.log(id);
 
         const data = await pool.query(`
             SELECT 
@@ -943,7 +839,6 @@ const servidor = async (req,res) => {
 const responsable = async (req,res) => {
     try {
         const { id } = req.params;
-        console.log(id);
 
         const funcional = await pool.query(`
             SELECT 
@@ -988,7 +883,6 @@ const responsable = async (req,res) => {
 const documentacion = async (req,res) => {
     try {
         const { id } = req.params;
-        console.log(id);
 
         const data = await pool.query(`
             SELECT 
@@ -1012,11 +906,10 @@ const documentacion = async (req,res) => {
 const fallas = async (req,res) => {
     try {
         const { id } = req.params;
-        console.log(id);
 
         const data = await pool.query(`
             SELECT 
-                fal_numero,fal_clase,fal_descripcion,fal_solucion,fal_impacto
+                falla_id,fal_clase,fal_descripcion,fal_solucion,fal_impacto
             FROM aplicaciones
                 JOIN fallas on aplicaciones.aplicacion_id = fallas.aplicacion_id
             WHERE aplicaciones.aplicacion_id = ?;`, 
@@ -1031,6 +924,82 @@ const fallas = async (req,res) => {
         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
     }
 };
+
+// *********************************** OBTENER FALLAS ***********************************
+const registrarFalla = async (req,res) => {
+    try {
+        
+        const { aplicacion,clase,impacto,descripcion,solucion } = req.body;
+
+        const data = await pool.query(`
+            INSERT INTO fallas
+                (aplicacion_id,fal_numero,fal_clase,fal_descripcion,fal_solucion,fal_impacto)
+            VALUES
+                (?,?,?,?,?,?);`, 
+            [aplicacion,10,clase,descripcion,solucion,impacto]); 
+                
+        console.log('FALLA REGISTRADA CORRECTAMENTE');
+        res.send('FALLA REGISTRADA CORRECTAMENTE');
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+    }
+};
+
+
+// *********************************** OBTENER FALLAS ***********************************
+const buscarFalla = async (req,res) => {
+    const { term } = req.body;
+    const termino = `%${term}%`;
+
+    if (term === undefined || null)
+        return res.status(404).json({ message: "Error al recibir consulta" });
+
+    try{
+        const data = await pool.query(`
+            SELECT falla_id, fal_clase, fal_impacto, fal_descripcion, fal_solucion, aplicaciones.aplicacion_id
+            FROM fallas 
+                JOIN aplicaciones ON aplicaciones.aplicacion_id = fallas.aplicacion_id
+            WHERE 
+                aplicaciones.aplicacion_id LIKE ? OR
+                falla_id LIKE ? OR 
+                fal_clase = ? OR 
+                fal_impacto LIKE ? OR 
+                fal_descripcion LIKE ? OR 
+                fal_solucion LIKE ?
+            ORDER BY falla_id ASC;`,
+            [termino,termino,termino,termino,termino,termino]
+        );
+        res.send(data[0]);
+
+    }
+    catch (error) {
+        return res.status(401).json({ message: 'ERROR' });
+    }
+};
+
+
+// *************** CAMBIAR PERMISOS ***************
+const actualizarFalla = async (req,res) => {
+    const { id } = req.params;
+    const { clase, impacto, descripcion, solucion } = req.body;
+   
+    try {
+        const query = await pool.query(`
+        UPDATE 
+            fallas 
+        SET 
+            fal_clase = ?, 
+            fal_impacto = ?,
+            fal_descripcion = ?, 
+            fal_solucion = ?
+        WHERE falla_id = ?`, [clase, impacto, descripcion, solucion, id]
+        );
+        
+        res.send('ACTUALIZACION EXITOSA');
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR' });
+    }
+ }
 
 
 module.exports = { 
@@ -1052,4 +1021,6 @@ module.exports = {
     general,tecno,basedatos,
     servidor,responsable,
     documentacion,fallas,
+    registrarFalla,buscarFalla,
+    actualizarFalla,
  };

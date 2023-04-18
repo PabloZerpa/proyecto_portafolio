@@ -178,19 +178,15 @@ function Vista() {
         )
       }
 
-      const columnasFallas = ['Numero','Clase','Descripcion','Solucion','Impacto'];
+      const columnasFallas = ['ID','Clase','Descripcion','Solucion','Impacto'];
 
       function Fallas(){
         let datos = fallas.data.datos;
         return (
           <>
             <h2 className='font-bold text-lg'>Fallas</h2>
-            <form className="relative w-3/4 bg-zinc-400 p-4 pb-12 mb-10 rounded drop-shadow-md" >
+            <form className="relative w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
               <Tabla3 columnas={columnasFallas} datos={datos} />
-              
-              <div className='absolute right-16'>
-                <Button width={32}><Link to='/aplicaciones/fallas' >Añadir Falla</Link></Button>
-              </div>
 
               {/* {paginacion ? ( <Paginacion />) : (null)} */}
             </form>

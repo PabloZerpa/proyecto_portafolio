@@ -1,18 +1,22 @@
-const { obtenerDatos, obtenerBusqueda, crearBaseDatos, actualizarBaseDatos, aplicacion, general, servidor } = require("../controllers/bases_datos");
+const { obtenerDatos, obtenerBusqueda, crearBaseDatos, actualizarBaseDatos, aplicacion, general, servidor, obtenerBaseDatos } = require("../controllers/bases_datos");
 
 const router = require("express").Router();
 
 
-
+// *************** RUTA PARA OBTENER INFORMACION GENERAL LAS BASES DE DATOS *************** 
 router.get("/", obtenerDatos);
 
-// router.get("/:id", obtenerBaseDatos);
+// *************** RUTA PARA OBTENER INFORMACION POR ID DE UNA BASE DE DATOS *************** 
+router.get("/:id", obtenerBaseDatos);
 
+// *************** RUTA PARA OBTENER INFORMACION POR BUSQUEDA *************** 
 router.post("/busqueda", obtenerBusqueda);
 
+// *************** RUTA PARA REGISTRAR UNA BASES DE DATOS *************** 
 router.post("/", crearBaseDatos);
 
-router.put("/:id", actualizarBaseDatos);
+// *************** RUTA PARA ACTUALIZAR UNA BASES DE DATOS *************** 
+router.patch("/:id", actualizarBaseDatos);
 
 // router.delete("/:id", actualizarBaseDatos);
 

@@ -1,12 +1,17 @@
 
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { Button, Checkbox, Container, Input, Select } from '../../components';
 import Autorizacion from '../../services/auth.service';
-import { useState } from 'react';
+import Usuarios from '../../services/user.service';
+import { useEffect, useState } from 'react';
 
-function CrearBD() {
+function ActualizarBD() {
 
+    const { id } = useParams();
     const navigate = useNavigate();
+    const [load, setLoad] = useState(true);
+    const [valor, setValor] = useState('');
+
     const [registrarServidor, setRegistrarServidor] = useState(false);
     const habilitarServidor = () => {
         setRegistrarServidor(!registrarServidor)
@@ -24,7 +29,6 @@ function CrearBD() {
         version_manejador: '',
         tipo_ambiente: '',
         cantidad_usuarios: '',
-
         select_aplicacion: '',
         select_servidor: '',
         creador: Autorizacion.obtenerUsuario().indicador,
@@ -40,19 +44,28 @@ function CrearBD() {
             setDatos({ ...datos, [e.target.name] : e.target.value })
     }
 
+    useEffect(() => {
+        async function fetchData(){
+            try {
+                const valores = await Usuarios.obtenerGeneralBD(id);
+                setValor(valores); 
+                console.log(valores);
+                setLoad(false); 
+
+            }catch (error) { console.log(error); }
+        } 
+        fetchData();  
+    }, []);
+
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
-    async function createData(e) {
+    async function updateData(e) {
         e.preventDefault();
 
         try {
           console.log('TRY DEL CREATE');
           if(Autorizacion.obtenerUsuario().rol === 'admin'){
-
-            //console.log('DENTRO DEL TRY CREATE');
-            //console.log(datos);
             
-            await Autorizacion.crearDatosDB(datos);
-            //navigate("/dashboard");
+            await Autorizacion.actualizarDatosDB(id,datos);
           }
         }
         catch (error) { 
@@ -65,14 +78,13 @@ function CrearBD() {
     
     return (
         <Container>
-            <h1 className='font-bold text-lg'>Registro de Base de datos</h1>
+            <h1 className='font-bold text-lg'>Actualizacion de Base de datos</h1>
 
-            <form className="flex flex-col relative w-3/4 bg-zinc-400 p-4 pb-24 mb-10 rounded drop-shadow-md" onSubmit={createData}>
+            <form className="flex flex-col relative w-3/4 bg-zinc-400 p-4 pb-24 mb-10 rounded drop-shadow-md" onSubmit={updateData}>
                 
                 <h2 className='font-bold text-base mb-6'>Informacion General</h2>
 
                 <Input campo='Nombre' name='base_nombre' editable={true} area={true} manejador={handleInputChange} />
-
                 <div className="relative grid grid-cols-2 gap-4 mb-0">
                     <Select campo='Estatus' name='estatus' opciones={['SELECCIONE','DESARROLLO','ESTABILIZACION','MANTENIMIENTO']} manejador={handleInputChange}/>
                     <Select campo='Tipo' name='tipo' opciones={['SELECCIONE','RELACIONAL','NO RELACIONAL','DISTRIBUIDA']} manejador={handleInputChange} />
@@ -100,24 +112,9 @@ function CrearBD() {
                     <Checkbox id='registrar_servidor' name='registrar_servidor' opciones={['Registrar nuevo']} manejador={habilitarServidor} />
                 </div>
 
-                {/* <div style={registrarServidor ? {display: 'grid'} : {display: 'none'}} className="grid grid-cols-2 gap-4">
-                    <Input campo='Nombre' name='servidor' editable={true} manejador={handleInputChange} />
-                    <Select campo='Estatus' name='ser_estatus' opciones={['SELECCIONE','SI','NO']} manejador={handleInputChange}/>
-                    <Input campo='Direccion' name='ser_direccion' editable={true} manejador={handleInputChange} />
-                    <Input campo='Sistema' name='ser_sistema' editable={true} manejador={handleInputChange} />
-                    <Input campo='Version Sis' name='ser_sistemas_version' editable={true} manejador={handleInputChange} />
-                    <Input campo='Modelo' name='ser_modelo' editable={true} manejador={handleInputChange} />
-                    <Input campo='Marca' name='ser_marca' editable={true} manejador={handleInputChange} />
-                    <Input campo='Serial' name='ser_serial' editable={true} manejador={handleInputChange} />
-                    <Input campo='Cantidad' name='ser_cantidad_cpu' editable={true} manejador={handleInputChange} />
-                    <Input campo='Velocidad' name='ser_velocidad_cpu' editable={true} manejador={handleInputChange} />
-                    <Input campo='Memoria' name='ser_memoria' editable={true} manejador={handleInputChange} />
-                    <Select campo='Region' name='ser_region' opciones={['SELECCIONE','SI','NO']} manejador={handleInputChange} />
-                    <Select campo='Localidad' name='ser_localidad' opciones={['SELECCIONE','SI','NO']} manejador={handleInputChange} />
-                </div> */}
                     
                 <div className="absolute bottom-4 right-1/3">
-                    <Button width={32}>Registrar</Button>
+                    <Button width={32}>Actualizar</Button>
                 </div>
                 <div className="absolute bottom-4 left-1/3">
                     <Button color='red' width={32} >Cancelar</Button>
@@ -130,4 +127,4 @@ function CrearBD() {
     )
 };
 
-export default CrearBD;
+export default ActualizarBD;

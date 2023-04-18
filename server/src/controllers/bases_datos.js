@@ -11,7 +11,6 @@ JOIN versiones_manejadores ON manejadores.manejador_id = versiones_manejadores.m
 // *********************************** OBTENER TODOS LOS DATOS ***********************************
 const obtenerDatos = async (req,res) => {
     try {
-        console.log('OBTENER DATOS');
         const data = await pool.query(`
             SELECT
                 bases_datos.base_datos_id,base_datos,bas_estatus,tipo,manejador,version_manejador,
@@ -32,21 +31,38 @@ const obtenerDatos = async (req,res) => {
     }
 };
 
+// *********************************** OBTENER TODOS LOS DATOS ***********************************
+const obtenerBaseDatos = async (req,res) => {
+    try {
+        const {id} = req.params;
+
+        const data = await pool.query(`
+            SELECT
+                bases_datos.base_datos_id,base_datos,bas_estatus,tipo,manejador,version_manejador,
+		        bas_cantidad_usuarios,bas_tipo_ambiente
+            FROM bases_datos
+                JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.base_datos_id
+                JOIN manejadores ON manejadores.manejador_id = bases_datos.base_datos_id
+                JOIN versiones_manejadores ON manejadores.manejador_id = versiones_manejadores.manejador_id
+            WHERE bases_datos.base_datos_id = ?;`, [id]);
+
+        res.send(data[0]);
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+    }
+};
+
 
 // *********************************** OBTENER LOS DATOS POR TERMINO DE BUSQUEDA ***********************************
 const obtenerBusqueda = async (req,res) => {
     try {
-        console.log('OBTENER BUSQUEDA');
         const { term,count,orden,region } = req.body;
         const termino = '%' + term + '%';
         let data;
 
-        console.log(term,count,orden);
-
         if (term === undefined || null)
         return res.status(404).json({ message: "Error al recibir consulta" });
-        
-        
+    
         data = await pool.query(`
             ${query}
             WHERE 
@@ -71,73 +87,49 @@ const obtenerBusqueda = async (req,res) => {
 const crearBaseDatos = async (req,res) => {
     try {
         const {
-            apl_acronimo,apl_nombre,apl_descripcion,apl_region,
-            apl_version,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
-            apl_codigo_fuente,apl_direccion,apl_cantidad_usuarios,
-            plataforma,lenguaje,lenguaje2,lenguaje3, framework,framework2,framework3, select_base, select_servidor,
-            base_datos,base_estatus,base_cantidad_usuarios, base_tipo, base_manejador, bas_manejador_version, base_tipo_ambiente,
-            servidor, ser_estatus,ser_direccion, ser_sistema,ser_region,ser_localidad,base_servidor,
-            ser_sistemas_version,ser_marca,ser_modelo,ser_serial,ser_cantidad_cpu,ser_velocidad_cpu,ser_memoria,
-            man_frecuencia,man_horas_prom,man_horas_anuales, 
-            doc_descripcion,doc_tipo, doc_direccion, apl_fecha_registro,
-
-            funcional_nombre,funcional_apellido,funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
-            funcional_gerencia,funcional_region,funcional_localidad,
-            tecnico_nombre,tecnico_apellido,tecnico_indicador,tecnico_cedula,tecnico_cargo,tecnico_telefono,
-            tecnico_gerencia,tecnico_region,tecnico_localidad,
+            select_aplicacion, select_servidor,
+            base_datos,estatus,cantidad_usuarios, tipo, manejador, manejador_version,
+            tipo_ambiente
         } = req.body;
 
-        console.log(
-            apl_acronimo,apl_nombre,apl_descripcion,apl_region,
-            apl_version,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
-            apl_codigo_fuente,apl_direccion,apl_cantidad_usuarios,
-            plataforma,lenguaje,lenguaje2,lenguaje3, framework,framework2,framework3, select_base, select_servidor,
-            base_datos,base_estatus,base_cantidad_usuarios, base_tipo, base_manejador, bas_manejador_version,
-            base_tipo_ambiente,servidor, ser_estatus,ser_direccion, ser_sistema,ser_region,ser_localidad,base_servidor,
-            ser_sistemas_version,ser_marca,ser_modelo,ser_serial,ser_cantidad_cpu,ser_velocidad_cpu,ser_memoria,
-            man_frecuencia,man_horas_prom,man_horas_anuales, 
-            doc_descripcion,doc_tipo, doc_direccion, apl_fecha_registro,
-
-            funcional_nombre,funcional_apellido,funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
-            funcional_gerencia,funcional_region,funcional_localidad,
-            tecnico_nombre,tecnico_apellido,tecnico_indicador,tecnico_cedula,tecnico_cargo,tecnico_telefono,
-            tecnico_gerencia,tecnico_region,tecnico_localidad,
-        );
-
         const query = await pool.query(
-            `SELECT * FROM aplicaciones WHERE apl_acronimo = ? OR apl_nombre = ?`, 
-            [apl_acronimo,apl_nombre]);
-        const app = query[0][0];
+            `SELECT * FROM bases_datos WHERE base_datos = ?`, [base_datos]);
+        const bd = query[0][0];
 
         // ****************************** VERIFICA QUE LA APLICACION NO EXISTA ******************************
-        if(app){
-            console.log('ERROR, APLICACION YA EXISTE');
+        if(bd){
+            console.log('ERROR, BASE DE DATOS YA EXISTE');
             return res.status(401).json({ message: 'ERROR, APLICACION YA EXISTE' });
         }
         else{
-            const aplicacion_id = await verificarAplicacion(
-                apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
-                apl_codigo_fuente,apl_version,apl_direccion,apl_cantidad_usuarios,apl_region,apl_fecha_registro
+
+            // crea los datos del manejador de la bd
+            let manejador_id;
+            const datos_manejador = await pool.query(
+                `INSERT INTO manejadores (manejador) VALUES (?)`, 
+                [manejador]
             );
-
-            await verificarPlataforma(aplicacion_id, plataforma);          
-            await verificarLenguaje(aplicacion_id, lenguaje, lenguaje2, lenguaje3);          
-            await verificarFramework(aplicacion_id, framework, framework2, framework3);
-
-            await verificarServidor(aplicacion_id,select_servidor,servidor,ser_estatus,ser_direccion,ser_sistema,ser_sistemas_version,ser_marca,ser_modelo,ser_serial,
-                ser_cantidad_cpu, ser_velocidad_cpu, ser_memoria, ser_region, ser_localidad);
-            await verificarBase(aplicacion_id,select_base,base_datos,base_manejador,bas_manejador_version,base_tipo,base_estatus,
-                base_tipo_ambiente,base_cantidad_usuarios,base_servidor);
-
-            await verificarResponsable('funcional',aplicacion_id,funcional_nombre,funcional_apellido,
-                funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
-                funcional_gerencia,funcional_region,funcional_localidad);    
-            await verificarResponsable('tecnico',aplicacion_id,tecnico_nombre,tecnico_apellido,
-                tecnico_indicador,tecnico_cedula,tecnico_cargo,tecnico_telefono,
-                tecnico_gerencia,tecnico_region,tecnico_localidad); 
-
-            await verificarMantenimiento(aplicacion_id,man_frecuencia,man_horas_prom,man_horas_anuales);          
-            await verificarDocumentacion(aplicacion_id,doc_descripcion,doc_direccion,doc_tipo);
+            const selectMan = await pool.query(`SELECT * FROM manejadores ORDER BY manejador_id DESC LIMIT 1`);
+            manejador_id = selectMan[0][0].manejador_id;
+            console.log('MANEJADOR REGISTRADO: ' + manejador_id);
+            
+            // crea los datos del tipo de bd
+            let tipo_base_id;
+            const datos_tipoBases = await pool.query(
+                `INSERT INTO tipos_bases (tipo) VALUES (?)`, 
+                [tipo]
+            );
+            const selectTipo = await pool.query(`SELECT * FROM tipos_bases ORDER BY tipo_base_id DESC LIMIT 1`);
+            tipo_base_id = selectTipo[0][0].tipo_base_id;
+            console.log('TIPO DE BD REGISTRADO: ' + tipo_base_id);
+            
+            // crea los datos de la base de datos
+            const datos_basedatos = await pool.query(
+                `INSERT INTO bases_datos (base_datos,bas_estatus,bas_tipo,bas_manejador,
+                    bas_tipo_ambiente,bas_cantidad_usuarios) 
+                VALUES (?,?,?,?,?,?);`, 
+                [base_datos,estatus,tipo_base_id,manejador_id,tipo_ambiente,cantidad_usuarios]
+            );
 
             console.log('CREACION EXITOSA');
             res.send('CREACION EXITOSA');
@@ -153,44 +145,35 @@ const actualizarBaseDatos = async (req,res) => {
     try {
         console.log('EN EN UPDATE DEL SERVER');
         const { id } = req.params;
+
         const {
-            apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,apl_version,apl_cliente,
-            apl_cantidad_usuarios,apl_critico,apl_licencia,apl_direccion,apl_codigo_fuente,apl_alcance,
-            apl_fecha_registro,plataforma,lenguaje,framework,fra_version,
-            servidor,ser_estatus,ser_direccion,ser_sistema,ser_sistema_version,
-            ser_marca,ser_modelo,ser_serial,ser_cantidad_cpu,ser_velocidad_cpu,ser_memoria,
-            base_datos,base_estatus,base_direccion,base_manejador,
-            base_tipo,base_tipo_ambiente,base_cantidad,base_servidor,
-            doc_descripcion,doc_direccion,doc_tipo,
-            man_frecuencia,man_horas_prom,man_horas_anuales
+            select_aplicacion, select_servidor,
+            base_datos,estatus,cantidad_usuarios, tipo, manejador, manejador_version,
+            tipo_ambiente
         } = req.body;
 
-        console.log(apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,apl_version,apl_cliente,
-            apl_cantidad_usuarios,apl_critico,apl_licencia,apl_direccion,apl_codigo_fuente,apl_alcance,
-            apl_fecha_registro,plataforma,lenguaje,framework,fra_version,
-            servidor,ser_estatus,ser_direccion,ser_sistema,ser_sistema_version,
-            ser_marca,ser_modelo,ser_serial,ser_cantidad_cpu,ser_velocidad_cpu,ser_memoria,
-            base_datos,base_estatus,base_direccion,base_manejador,
-            base_tipo,base_tipo_ambiente,base_cantidad,base_servidor,
-            doc_descripcion,doc_direccion,doc_tipo,
-            man_frecuencia,man_horas_prom,man_horas_anuales);
+        console.log(
+            select_aplicacion, select_servidor,
+            base_datos,estatus,cantidad_usuarios, tipo, manejador, manejador_version,
+            tipo_ambiente
+        );
 
-        // ACTUALIZAR EL ID DEL CLIENTE EN APLICACIONES
-        // const [result] = await pool.query(
-        //     `UPDATE aplicaciones  SET 
-        //         apl_acronimo = ?,apl_nombre = ?,apl_descripcion = ?,apl_estatus = ?,apl_prioridad = ?,apl_critico = ?,
-        //         apl_licencia = ?,apl_codigo_fuente = ?,apl_alcance = ?,cliente_id = ?,apl_fecha_registro = ?
-        //     WHERE 
-        //         aplicacion_id = ?`,
-        //     [
-        //         apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,apl_critico,
-        //         apl_licencia,apl_codigo_fuente,apl_alcance,cliente_id,,apl_fecha_registro,id
-        //     ]
-        // );
-        // console.log('ACTUALIZACION EXITOSA');
+        // ACTUALIZAR LA BASE DE DATOS
+        const [result] = await pool.query(
+            `UPDATE base_datos  SET 
+                base_datos = ?,bas_estatus = ?,bas_cantidad_usuarios = ?,
+                bas_tipo = (SELECT tipo_base_id FROM tipos_bases WHERE tipo = ?),
+                bas_manejador = (SELECT manejador_id FROM manejadores WHERE manejador = ?),
+                bas_manejador_version = ?,bas_tipo_ambiente = ?
+            WHERE 
+                base_datos_id = ?`,
+            [   
+                base_datos,estatus,cantidad_usuarios, tipo, 
+                manejador,manejador_version,tipo_ambiente,id
+            ]
+        );
+        console.log('ACTUALIZACION EXITOSA');
             
-        //const [rows] = await pool.query("SELECT * FROM apps WHERE id = ?", [id]);
-        //res.json(rows[0]);
         res.json('UPDATE EXITOSO');
 
     } catch (error) {
@@ -206,7 +189,6 @@ const actualizarBaseDatos = async (req,res) => {
 const general = async (req,res) => {
     try {
         const { id } = req.params;
-        console.log(id);
 
         const data = await pool.query(`
         SELECT 
@@ -219,9 +201,7 @@ const general = async (req,res) => {
         WHERE bases_datos.base_datos_id = ?`, [id]);
 
         res.send(data[0]);
-        console.log(data[0]);
 
-        //res.send(respuestas);
     } catch (error) {
         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
     }
@@ -232,7 +212,6 @@ const general = async (req,res) => {
 const aplicacion = async (req,res) => {
     try {
         const { id } = req.params;
-        console.log(id);
 
         const data = await pool.query(`
             SELECT 
@@ -247,14 +226,7 @@ const aplicacion = async (req,res) => {
             [id]);
 
         res.send(data[0]);
-        //console.log(data[0]);
 
-        // const respuestas = {
-        //     datos: data[0],
-        //     plataformas: plataformas[0],
-        //     lenguajes: lenguajes[0],
-        // }    
-        // res.send(respuestas);
     } catch (error) {
         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
     }
@@ -265,8 +237,7 @@ const aplicacion = async (req,res) => {
 const servidor = async (req,res) => {
     try {
         const { id } = req.params;
-        console.log(id);
-
+        
         const data = await pool.query(`
             SELECT 
                 servidores.servidor_id,servidor,ser_direccion,ser_estatus,sistema,sistema_version,region, localidad
@@ -307,6 +278,7 @@ const servidor = async (req,res) => {
 
 module.exports = { 
     obtenerDatos,
+    obtenerBaseDatos,
     obtenerBusqueda,
     crearBaseDatos,
     actualizarBaseDatos,

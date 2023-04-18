@@ -19,27 +19,14 @@ const login = async (req, res) => {
             return res.status(401).json({ message: 'USUARIO INCORRECTO' });
         }
 
-        // ********** VERIFICA QUE LA CONTRASEÑA SEA CORRECTA **********
-        // if(password != user.password){
-        //     console.log('CONTRASEÑA INCORRECTA');
-        //     return res.status(401).json({ message: 'CONTRASEÑA INCORRECTA' });
-        // }
-
         const passwordVerificado = await comparar(password, user.password);
         if (!passwordVerificado) {
             console.log('CONTRASEÑA INCORRECTA');
             return res.status(401).json({ message: 'CONTRASEÑA INCORRECTA' });
         }
 
-        // ********** VERIFICA QUE EN ROL SEA CORRECTO **********
-        // if(rol != user.rol){
-        //     console.log('ROL INCORRECTO');
-        //     return res.status(401).json({ message: 'ROL INCORRECTO' });
-        // }
-
         // ********** GENERA EL TOKEN DEL USUARIO **********
         const token = await generarToken(indicador,rol);
-        
         const datos = {
             indicador,
             rol,
@@ -62,7 +49,6 @@ const registrar = async (req, res) => {
   
     const password = await encriptar(req.body.password);
     const datos = {...req.body, password };
-    console.log(datos.indicador);
 
     const buscarUsuario = await pool.query('SELECT * FROM usuarios WHERE indicador = ?', [datos.indicador]);
     const user = buscarUsuario[0][0];

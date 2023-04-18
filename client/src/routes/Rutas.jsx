@@ -20,7 +20,9 @@ import {
   BaseDatos, 
   VistaDB,
   CrearBD,
-  Fallas
+  Fallas,
+  RegistroFalla,
+  ActualizarBD
 } from '../pages';
 
 function Rutas() {
@@ -57,11 +59,13 @@ function Rutas() {
             <Route path="/aplicaciones/:id" element={<Vista />} />
             <Route path="/aplicaciones/diagramas" element={<Diagramas />} />
             <Route path="/aplicaciones/fallas" element={<Fallas />} />
+            <Route path="/aplicaciones/fallas/registro" element={<RegistroFalla />} />
               
             {/* MODULO DE ADMINISTRACION */}
             <Route path="/basedatos" element={<BaseDatos />} />
             <Route path="/basedatos/:id" element={<VistaDB />} />
             <Route path="/basedatos/registro" element={<CrearBD />} />
+            <Route path="/basedatos/actualizacion/:id" element={<ActualizarBD />} />
             
           </Route> 
 
