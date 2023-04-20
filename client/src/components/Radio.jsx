@@ -13,7 +13,7 @@ function Radio({label, name=label, opciones, manejador, size='small'}) {
 
     return(
         <div className="flex flex-col items-center justify-center text-sm font-medium">
-            <h4>{label}</h4>
+            <span className="text-xs font-medium text-gray-900">{label}</span>
 
             <ul className="flex text-sm m-0 p-2 mr-1">
 

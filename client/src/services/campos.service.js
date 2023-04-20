@@ -114,7 +114,10 @@ export const localidadCentroOccidente = ['SELECCIONE','MIRANDA', 'PUERTO AYACUCH
 
 export const localidadOrienteNorte = ['SELECCIONE','ANACO', 'SAN ORQUE', 'BARCELONA', 'CARUPANO','CUMANA', 'NUEVA ESPARTA'];
 
-export const localidadOrienteSur = ['SELECCIONE','MATURIN', 'MORICHAL', 'QUIRIQUIRE', 'TEMBLADOR'];export const localidadOccidente = ['SELECCIONE','ALTAGRACIA', 'BARINAS', 'BARQUISIMETO', 'CIUDAD OJEDA','INTERNACIONAL', 'MARACAIBO', 'MERIDA'];
+export const localidadOrienteSur = ['SELECCIONE','MATURIN', 'MORICHAL', 'QUIRIQUIRE', 'TEMBLADOR'];
+
+export const localidadOccidente = ['SELECCIONE','ALTAGRACIA', 'BARINAS', 'BARQUISIMETO', 'CIUDAD OJEDA','INTERNACIONAL', 
+'MARACAIBO', 'MERIDA'];
 
 export const localidadFaja = 
 ['SELECCIONE','AYACUCHO','PETRORITUPANO','OBC','PETROPIAR', 'SAN TOME', 'CARABOBO','MORICHAL', 'PUERTO ORDAZ','SINOVENSA',
@@ -126,7 +129,7 @@ export const localidadMetropolitana =
 
 export const opcionGerencia = ['SELECCIONE','AIT', 'SERVIDORES', 'TELECOMUNICACIONES'];
 
-export const opcionCount = [10,20,30,40,50];
+export const opcionCount = ['SELECCIONE',10,20,30,40,50];
 
 export const opcionPlataforma = ['SELECCIONE','TODAS', 'WEB', 'ESCRITORIO', 'MOVIL', 'CLIENTE-SERVIDOR', 'STAND ALONE', 'MINI', 'MAINFRAME'];
 

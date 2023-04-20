@@ -2,104 +2,105 @@
 const router = require("express").Router();
 const { obtenerDatos, obtenerDato, crearAplicacion, actualizarAplicacion, eliminarAplicacion, 
     obtenerBusqueda, obtenerCampo, obtenerPorGraficos, actualizarCampo, obtenerLenguajes,
-    obtenerFrameworks, obtenerBaseDatos, obtenerServidores, obtenerCantidadTotal, general, tecno, basedatos, servidor, responsable, documentacion, fallas, obtenerResponsables, registrarFalla, buscarFalla, actualizarFalla } = require("../controllers/aplicaciones");
+    obtenerFrameworks, obtenerBaseDatos, obtenerServidores, obtenerCantidadTotal, 
+    general, tecno, basedatos, servidor, responsable, documentacion, obtenerResponsables } = require("../controllers/aplicaciones");
 const { auth, authAdmin } = require("../middlewares/auth");
 const { autenticarUser } = require("../middlewares/ad");
+const { fallas, registrarFalla, actualizarFalla, buscarFalla } = require("../controllers/fallas");
 const { validatorCreateItem, validatorGetItem } = require("../validators/aplicaciones");
 
 
 
-
 // *************** RUTA PARA OBTENER TODOS LOS DATOS *************** 
-router.get("/", obtenerDatos);
+router.get("/", auth, obtenerDatos);
 
 // *************** RUTA PARA OBTENER LOS DATOS POR ID *************** 
-router.get("/:id", obtenerDato);
+router.get("/:id", auth, obtenerDato);
 
 // *************** RUTA PARA OBTENER LOS DATOS POR TERMINO DE BUSQUEDA *************** 
-router.post("/busqueda", obtenerBusqueda);
+router.post("/busqueda", auth, obtenerBusqueda);
 
 // *************** RUTA PARA OBTENER LOS DATOS POR CAMPO *************** 
-router.post("/campo", obtenerCampo); 
+router.post("/campo", auth, obtenerCampo); 
 
 // *************** RUTA PARA OBTENER CANTIDAD DE REGISTROS *************** 
-router.get("/total", obtenerCantidadTotal);
+router.get("/total", auth, obtenerCantidadTotal);
 
 
 
 
 
 // *************** RUTA REGISTRAR UNA APLICACION *************** 
-router.post("/", crearAplicacion);
+router.post("/", auth, crearAplicacion);
 
 // *************** RUTA PARA ACTUALIZAR UNA APLICACION *************** 
-router.put("/:id", actualizarAplicacion);
+router.put("/:id", auth, actualizarAplicacion);
 
 // *************** RUTA PARA ACTUALIZAR LOS DATOS POR CAMPO *************** 
-router.patch("/:id", actualizarCampo);
+router.patch("/:id", auth, actualizarCampo);
 
 // *************** RUTA PARA ELIMINAR DATOS POR ID *************** 
-router.delete("/:id", eliminarAplicacion);
+router.delete("/:id", auth, eliminarAplicacion);
 
 // *************** RUTA PARA OBTENER LOS DATOS PARA LOS GRAFICOS *************** 
-router.post("/grafico", obtenerPorGraficos); 
+router.post("/grafico", auth, obtenerPorGraficos); 
 
 
 
 
 
 // *************** RUTA PARA OBTENER LENGUAJES *************** 
-router.get("/lenguajes", obtenerLenguajes);
+router.get("/lenguajes", auth, obtenerLenguajes);
 
 // *************** RUTA PARA OBTENER FRAMEWORKS *************** 
-router.get("/frameworks", obtenerFrameworks);
+router.get("/frameworks", auth, obtenerFrameworks);
 
 // *************** RUTA PARA OBTENER BASES DE DATOS *************** 
-router.get("/basesdatos", obtenerBaseDatos);
+router.get("/basesdatos", auth, obtenerBaseDatos);
 
 // *************** RUTA PARA OBTENER SERVIDORES *************** 
-router.get("/servidores", obtenerServidores);
+router.get("/servidores", auth, obtenerServidores);
 
 // *************** RUTA PARA OBTENER RESPONSABLES *************** 
-router.get("/responsables", obtenerResponsables);
+router.get("/responsables", auth, obtenerResponsables);
 
 
 
 
 
 // *************** RUTA PARA OBTENER INFORMACION GENERAL *************** 
-router.get("/general/:id", general);
+router.get("/general/:id", auth, general);
 
 // *************** RUTA PARA OBTENER INFORMACION TECNOLOGIAS *************** 
-router.get("/tecnologia/:id", tecno);
+router.get("/tecnologia/:id", auth, tecno);
 
 // *************** RUTA PARA OBTENER INFORMACION BASE DE DATOS *************** 
-router.get("/basedatos/:id", basedatos);
+router.get("/basedatos/:id", auth, basedatos);
 
 // *************** RUTA PARA OBTENER INFORMACION SERVIDOR *************** 
-router.get("/servidor/:id", servidor);
+router.get("/servidor/:id", auth, servidor);
 
 // *************** RUTA PARA OBTENER INFORMACION RESPONSABLE *************** 
-router.get("/responsable/:id", responsable);
+router.get("/responsable/:id", auth, responsable);
 
 // *************** RUTA PARA OBTENER INFORMACION DE LA DOCUMENTACION *************** 
-router.get("/documentacion/:id", documentacion); 
+router.get("/documentacion/:id", auth, documentacion); 
 
 
 
 
 
 // *************** RUTA PARA OBTENER INFORMACION DE LAS FALLAS *************** 
-router.get("/fallas/:id", fallas);
+router.get("/fallas/:id", auth, fallas);
 
 // *************** RUTA PARA REGISTRAR FALLA *************** 
-router.post("/fallas/", registrarFalla);
+router.post("/fallas/", auth, registrarFalla);
 
 // *************** RUTA PARA ACTUALIZAR FALLA *************** 
-router.patch("/fallas/:id", actualizarFalla);
+router.patch("/fallas/:id", auth, actualizarFalla);
 
 // *************** RUTA PARA BUSCAR FALLA *************** 
-router.post("/fallas/busqueda", buscarFalla);
+router.post("/fallas/busqueda", auth, buscarFalla);
 
 
 

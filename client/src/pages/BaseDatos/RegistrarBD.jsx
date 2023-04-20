@@ -2,9 +2,11 @@
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { Button, Checkbox, Container, Input, Select } from '../../components';
 import Autorizacion from '../../services/auth.service';
+import Base from '../../services/basedatos.service';
 import { useState } from 'react';
+import { Notificacion } from '../../utils/Notificacion';
 
-function CrearBD() {
+function RegistrarBD() {
 
     const navigate = useNavigate();
     const [registrarServidor, setRegistrarServidor] = useState(false);
@@ -12,7 +14,6 @@ function CrearBD() {
         setRegistrarServidor(!registrarServidor)
         if(!registrarServidor){
             setDatos({ ...datos, select_servidor : null })
-            console.log(datos.select_servidor);
         }
     }
 
@@ -31,8 +32,6 @@ function CrearBD() {
     });
 
     const handleInputChange = (e) => {
-        console.log(e.target.name)
-        console.log(e.target.value)
 
         if(e.target.value === 'TODAS')
             setDatos({ ...datos, [e.target.name] : null })
@@ -45,18 +44,16 @@ function CrearBD() {
         e.preventDefault();
 
         try {
-          console.log('TRY DEL CREATE');
           if(Autorizacion.obtenerUsuario().rol === 'admin'){
-
-            //console.log('DENTRO DEL TRY CREATE');
-            //console.log(datos);
             
-            await Autorizacion.crearDatosDB(datos);
+            await Base.crearDatosDB(datos);
+            Notificacion('REGISTRO EXITOSO', 'success');
             //navigate("/dashboard");
           }
         }
         catch (error) { 
             console.log('ERROR AL ACTUALIZAR APL_ACT'); 
+            Notificacion('ERROR AL REGISTRAR', 'error');
         }
       }
 
@@ -71,7 +68,7 @@ function CrearBD() {
                 
                 <h2 className='font-bold text-base mb-6'>Informacion General</h2>
 
-                <Input campo='Nombre' name='base_nombre' editable={true} area={true} manejador={handleInputChange} />
+                <Input campo='Nombre' name='base_datos' editable={true} area={true} manejador={handleInputChange} />
 
                 <div className="relative grid grid-cols-2 gap-4 mb-0">
                     <Select campo='Estatus' name='estatus' opciones={['SELECCIONE','DESARROLLO','ESTABILIZACION','MANTENIMIENTO']} manejador={handleInputChange}/>
@@ -130,4 +127,4 @@ function CrearBD() {
     )
 };
 
-export default CrearBD;
+export default RegistrarBD;

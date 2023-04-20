@@ -46,7 +46,8 @@ const obtenerBaseDatos = async (req,res) => {
                 JOIN versiones_manejadores ON manejadores.manejador_id = versiones_manejadores.manejador_id
             WHERE bases_datos.base_datos_id = ?;`, [id]);
 
-        res.send(data[0]);
+        console.log(data[0][0]);
+        res.send(data[0][0]);
     } catch (error) {
         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
     }
@@ -160,19 +161,19 @@ const actualizarBaseDatos = async (req,res) => {
 
         // ACTUALIZAR LA BASE DE DATOS
         const [result] = await pool.query(
-            `UPDATE base_datos  SET 
+            `UPDATE bases_datos  SET 
                 base_datos = ?,bas_estatus = ?,bas_cantidad_usuarios = ?,
-                bas_tipo = (SELECT tipo_base_id FROM tipos_bases WHERE tipo = ?),
-                bas_manejador = (SELECT manejador_id FROM manejadores WHERE manejador = ?),
-                bas_manejador_version = ?,bas_tipo_ambiente = ?
+                bas_tipo = (SELECT tipo_base_id FROM tipos_bases WHERE tipo = ? LIMIT 1),
+                bas_manejador = (SELECT manejador_id FROM manejadores WHERE manejador = ? LIMIT 1),
+                bas_tipo_ambiente = ?
             WHERE 
                 base_datos_id = ?`,
             [   
                 base_datos,estatus,cantidad_usuarios, tipo, 
-                manejador,manejador_version,tipo_ambiente,id
+                manejador,tipo_ambiente,id
             ]
         );
-        console.log('ACTUALIZACION EXITOSA');
+        console.log('ACTUALIZACION EXITOSA'); 
             
         res.json('UPDATE EXITOSO');
 

@@ -5,7 +5,7 @@ import { useDebounce } from "use-debounce";
 import { BiLoaderAlt } from "react-icons/bi";
 import Barra from "../../chart/Barra";
 import Circulo from "../../chart/Circulo";
-import Usuarios from "../../services/user.service";
+import Aplicacion from "../../services/aplicacion.service";
 import Radio from "../../components/Radio";
 
 const opcionCategoria = ['Plataforma', 'Region', 'Estatus', 'Prioridad', 'Registro', 'Modificacion'];
@@ -44,20 +44,14 @@ function Diagramas() {
         const { categoria, orden } = datos;
         const cat = categoria.toLowerCase();
         const ord = orden.toLowerCase();
-        console.log(cat,ord)
         onSearch(cat,ord);
     }
 
     const onSearch = async (categoria,orden) => {
-        console.log(categoria);
-        console.log(orden);
       try {
-        const datos = await Usuarios.datosGraficos(categoria,orden);
-        console.log(Object.keys(datos.data).length);
-        console.log(categoria,orden);
-  
+        const datos = await Aplicacion.datosGraficos(categoria,orden);
         setResultados(datos.data);
-        console.log(resultados); 
+        
       } catch (error) { console.log('ERROR AL BUSCAR DATOS') }
     }
       

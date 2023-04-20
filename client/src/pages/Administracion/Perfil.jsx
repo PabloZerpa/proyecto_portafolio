@@ -1,4 +1,4 @@
-import { Button, Container, Input, Select } from "../../components/";
+import { Container, Input } from "../../components/";
 
 function Perfil({tipo='admin'}) {
 

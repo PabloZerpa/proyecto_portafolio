@@ -1,0 +1,273 @@
+
+import axios from 'axios';
+import authHeader from './header.service';
+import Autorizacion from "../services/auth.service";
+const baseUrl = "http://localhost:3001/api/";
+
+class Aplicacion {
+
+    // ---------------- CREATE DE LA INFO DE NUEVA APP ------------------
+    async crearDatos(datos) {
+        console.log('AFUERA DE CREAR DATOS SERVICE')
+        console.log(datos);
+        try { 
+            console.log('EN EL TRY DE CREAR DATOS SERVICE')
+            const respuesta = await axios.post(`${baseUrl}aplicaciones/`, datos, { headers: authHeader() });
+            console.log('DESPUES DE CREAR DATOS SERVICE')
+            return respuesta;
+        } catch (error) {
+            console.log('ERROR AL CREAR auth.service');
+            Autorizacion.logout();
+        }
+    }
+
+    // ---------------- UPDATE DE TODOS LOS DATOS ------------------
+    async actualizarDatos(id, datosModificacion) {
+        console.log('AFUERA DE ACTUALIZAR DATOS SERVICE');
+        console.log(id);
+        try { 
+            console.log('EN EL TRY DE ACTUALIZAR DATOS SERVICE');
+            const respuesta = await axios.put(`${baseUrl}aplicaciones/${id}`, datosModificacion, { headers: authHeader() });
+            console.log('DESPUES DE ACTUALIZAR DATOS SERVICE');
+            return respuesta;
+        } catch (error) {
+            console.log('ERROR AL ACTUALIZAR auth.service');
+            Autorizacion.logout();
+        }
+    }
+ 
+    // ---------------- UPDATE DE UN CAMPO EN ESPECIFICO ------------------
+    async actualizarDato(id, datoModificacion) {
+        try { 
+            const id = datoModificacion.edicion;
+            console.log(id);
+            console.log(datoModificacion);
+            const respuesta = await axios.patch(`${baseUrl}aplicaciones/${id}`, datoModificacion, { headers: authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log('ERROR AL ACTUALIZAR auth.service');
+            Autorizacion.logout();
+        }
+    }
+
+
+
+
+
+
+
+    // =============== OBTIENE OPCIONES DE LA TABLA "NOMBRE" ===============
+    async obtenerOpciones(nombre) { 
+        try { 
+            console.log('ALO');
+            const respuesta = await axios.get(`${baseUrl}aplicaciones/${nombre}`, { headers: authHeader() });
+            console.log(respuesta);
+            return respuesta;
+        } catch (error) {
+            console.log('Error al obtener datos'); 
+            Autorizacion.logout();
+        }
+        //return axios.get(`${baseUrl}aplicaciones`, { headers: this.authHeader() });
+    }
+
+    // =============== OBTIENE TODOS LOS DATOS DE LAS APPS ===============
+    async obtenerDatos() { 
+        try {   
+            const respuesta = await axios.get(`${baseUrl}aplicaciones`, { headers: authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log(error.response.data); 
+            Autorizacion.logout();
+        }
+        //return axios.get(`${baseUrl}aplicaciones`, { headers: this.authHeader() });
+    }
+
+    // =============== OBTIENE EL DATO DE UNA APP POR SU ID ===============
+    async obtenerCantidadTotal() {
+        try {
+            const respuesta = await axios.get(`${baseUrl}aplicaciones/total`, { headers: authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log('Error al obtener dato'); 
+            Autorizacion.logout();
+        }
+    }   
+
+    // =============== OBTIENE EL DATO DE UNA APP POR SU ID ===============
+    async obtenerDato(id) {
+        try {
+            console.log(`OBTENIENDO DATO: ${id}`)
+            const respuesta = await axios.get(`${baseUrl}aplicaciones/${id}`, { headers: authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log('Error al obtener dato'); 
+            Autorizacion.logout();
+        }
+    }   
+
+    // =============== OBTIENE LOS DATOS POR EL CAMPO A ACTUALIZAR ESPECIFICO ===============
+    async obtenerPorCampo(term,campo,pagina) { 
+        try {
+            return axios.post(`${baseUrl}aplicaciones/campo`, {term,campo,pagina}, { headers: authHeader() });
+        } catch (error) {
+            console.log('Error al obtener dato');
+            Autorizacion.logout();
+        }
+    }
+
+    // =============== OBTIENE LOS DATOS PARA GENERAR LOS GRAFICOS ===============
+    async datosGraficos(categoria,orden) {
+        //console.log(categoria);
+        //console.log(orden);
+        try {
+            return axios.post(`${baseUrl}aplicaciones/grafico`, {categoria,orden}, { headers: authHeader() });
+        } catch (error) {
+            console.log('Error al obtener dato');
+            Autorizacion.logout();
+        }
+    }
+    
+    // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
+    async obtenerPorBusqueda(term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
+        critico,codigo,count,order,pagina) {
+        try {
+            //console.log('OBTENER_BUSQUEDA PAGINA: :' + pagina);
+            console.log(term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
+                critico,codigo,count,order,pagina);
+
+            return axios.post(`${baseUrl}aplicaciones/busqueda`, 
+            {term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
+                critico,codigo,count,order,pagina}, { headers: authHeader() });
+        } catch (error) {
+            console.log('Error al obtener dato');
+            Autorizacion.logout();
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // =============== OBTIENE INFORMACION GENERAL ===============
+    async obtenerTodo(id) { 
+        try { 
+            const general = await this.obtenerGeneral(id);
+            const tecnologia = await this.obtenerTecnologia(id);
+            const plataformas = await tecnologia.data.plataformas[0];
+            const lenguajes = await tecnologia.data.lenguajes[0];
+            const basedatos = await this.obtenerBaseDatos(id);
+            const servidor = await this.obtenerServidor(id);
+            const modelos = await servidor.data.modelos[0];
+            const responsable = await this.obtenerResponsable(id);
+            const funcional = await responsable.data.funcional[0];
+            const tecnico = await responsable.data.tecnico[0];
+            const documentacion = await this.obtenerDocumentacion(id);
+
+            const respuesta = {
+                general: general.data[0],
+                tecnologia: tecnologia.data.datos[0],
+                plataformas: plataformas,
+                lenguajes: lenguajes,
+                basedatos: basedatos.data.datos[0],
+                servidor: servidor.data.datos[0],
+                modelos: modelos,
+                funcional: funcional,
+                tecnico: tecnico,
+                documentacion: documentacion.data.datos[0],
+            } 
+
+            //console.log(respuesta);
+            return respuesta;
+        } catch (error) {
+            console.log('Error al obtener datos'); 
+        }
+    }
+  
+    // =============== OBTIENE INFORMACION GENERAL ===============
+    async obtenerGeneral(id) { 
+        try { 
+            const respuesta = await axios.get(`${baseUrl}aplicaciones/general/${id}`, { headers: authHeader() });
+            //console.log(respuesta);
+            return respuesta;
+        } catch (error) {
+            console.log('Error al obtener datos'); 
+        }
+    }
+
+    // =============== OBTIENE INFORMACION TECNOLOGIA ===============
+    async obtenerTecnologia(id) { 
+        try { 
+            const respuesta = await axios.get(`${baseUrl}aplicaciones/tecnologia/${id}`, { headers: authHeader() });
+            //console.log(respuesta);
+            return respuesta;
+        } catch (error) {
+            console.log('Error al obtener datos'); 
+        }
+    }
+
+    // =============== OBTIENE INFORMACION TECNOLOGIA ===============
+    async obtenerBaseDatos(id) { 
+        try { 
+            const respuesta = await axios.get(`${baseUrl}aplicaciones/basedatos/${id}`, { headers: authHeader() });
+            //console.log(respuesta); 
+            return respuesta;
+        } catch (error) {
+            console.log('Error al obtener datos'); 
+        }
+    }
+
+    // =============== OBTIENE INFORMACION SERVIDOR ===============
+    async obtenerServidor(id) { 
+        try { 
+            const respuesta = await axios.get(`${baseUrl}aplicaciones/servidor/${id}`, { headers: authHeader() });
+            //console.log(respuesta);
+            return respuesta;
+        } catch (error) {
+            console.log('Error al obtener datos'); 
+        }
+    }
+
+    // =============== OBTIENE INFORMACION RESPONSABLE ===============
+    async obtenerResponsable(id) { 
+        try { 
+            const respuesta = await axios.get(`${baseUrl}aplicaciones/responsable/${id}`, { headers: authHeader() });
+            console.log(respuesta);
+            return respuesta;
+        } catch (error) {
+            console.log('Error al obtener datos'); 
+        }
+    }
+
+    // =============== OBTIENE INFORMACION RESPONSABLE ===============
+    async obtenerDocumentacion(id) { 
+        try { 
+            const respuesta = await axios.get(`${baseUrl}aplicaciones/documentacion/${id}`, { headers: authHeader() });
+            //console.log(respuesta);
+            return respuesta;
+        } catch (error) { 
+            console.log('Error al obtener datos'); 
+        }
+    }
+
+    // =============== OBTIENE INFORMACION RESPONSABLE ===============
+    async obtenerFallas(id) { 
+        try { 
+            const respuesta = await axios.get(`${baseUrl}aplicaciones/fallas/${id}`, { headers: authHeader() });
+            //console.log(respuesta);
+            return respuesta;
+        } catch (error) { 
+            console.log('Error al obtener datos'); 
+        }
+    }
+
+}
+
+export default new Aplicacion();

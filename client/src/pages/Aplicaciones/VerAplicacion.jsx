@@ -4,12 +4,12 @@ import { FaEye, FaPlus } from 'react-icons/fa';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { Button, Container, Input, Radio } from '../../components';
 import Tabla3 from '../../components/Table3';
-import Usuarios from '../../services/user.service';
+import Aplicacion from '../../services/aplicacion.service';
 
 const opcionesVista = ['General','Tecnologia',
   'Base de datos','Servidor','Responsables','Documentacion','Fallas'];
 
-function Vista() {
+function VerAplicacion() {
 
   const { id } = useParams();
   const [valor, setValor] = useState('');
@@ -30,13 +30,13 @@ function Vista() {
   useEffect(() => {
     async function fetchData(){
       try {
-        const gen = await Usuarios.obtenerGeneral(id);
-        const tec = await Usuarios.obtenerTecnologia(id);
-        const bas = await Usuarios.obtenerBaseDatos(id);
-        const ser = await Usuarios.obtenerServidor(id);
-        const res = await Usuarios.obtenerResponsable(id);
-        const doc = await Usuarios.obtenerDocumentacion(id);
-        const fal = await Usuarios.obtenerFallas(id);
+        const gen = await Aplicacion.obtenerGeneral(id);
+        const tec = await Aplicacion.obtenerTecnologia(id);
+        const bas = await Aplicacion.obtenerBaseDatos(id);
+        const ser = await Aplicacion.obtenerServidor(id);
+        const res = await Aplicacion.obtenerResponsable(id);
+        const doc = await Aplicacion.obtenerDocumentacion(id);
+        const fal = await Aplicacion.obtenerFallas(id);
 
         setGeneral(gen.data[0]);
         setTecnologia(tec);
@@ -208,4 +208,4 @@ function Vista() {
     )
 
 };
-export default Vista;
+export default VerAplicacion;

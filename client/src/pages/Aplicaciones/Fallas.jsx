@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { Container, Select, Radio, Tabla, Button } from "../../components";
 import { useDebounce } from 'use-debounce';
 import { FaCheckCircle, FaEdit, FaPlus, FaSearch } from 'react-icons/fa';
-import Usuarios from "../../services/user.service";
 import Autorizacion from "../../services/auth.service";
+import Falla from "../../services/falla.service";
 import { Link } from "react-router-dom";
 
 const columnas = ['Editar','ID','Clase','Impacto','Descripcion','Solucion','Aplicacion'];
@@ -39,8 +39,6 @@ function Fallas() {
         setImpacto(dato.fal_impacto);
         setDescripcion(dato.fal_descripcion);
         setSolucion(dato.fal_solucion);
-        console.log(edicion,clase,impacto,descripcion,solucion);
-        console.log(dato);
     }
 
     // VARIABLES PARA LA PAGINA
@@ -60,7 +58,7 @@ function Fallas() {
     // FUNCION PARA BUSCAR DATOS EN LA DATABASE
     const onSearch = async (termino) => {
         try {
-            const datos = await Usuarios.obtenerFallaPorBusqueda(termino);
+            const datos = await Falla.obtenerFallaPorBusqueda(termino);
             setResultados(datos.data); 
            
         } catch (error) { 
@@ -76,7 +74,7 @@ function Fallas() {
         if(Autorizacion.obtenerUsuario().rol === 'admin'){
 
             const datoModificacion = { edicion, clase, impacto, descripcion, solucion };
-            await Autorizacion.actualizarFalla(datoModificacion); 
+            await Falla.actualizarFalla(datoModificacion); 
             habilitar('','','');
         }
         }
@@ -85,7 +83,7 @@ function Fallas() {
     }
 
     // SELECT PERSONALIZADO
-    const selectCampo = (opciones,valor,elemento) => {
+    const selectCampo = (opciones,elemento) => {
         return (
             <select 
                 className={`w-full p-2 bg-gray-50 border border-solid border-blue-500 text-gray-900 text-xs text-center rounded-md`} 
@@ -102,7 +100,7 @@ function Fallas() {
     }
 
     // FUNCION PARA VERIFICAR Y ELEGIR SELECT SEGUN LA OPCION SELECCIONADA
-    const verificarCampo = (campo, dato, valor) => {
+    const verificarCampo = (campo, valor) => {
         if(campo === 'Clase')
             return (selectCampo(['SELECCIONE','CLASE1','CLASE2','CLASE3'],valor,setClase));
         else if(campo === 'Impacto')

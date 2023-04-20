@@ -19,6 +19,13 @@ const login = async (req, res) => {
             return res.status(401).json({ message: 'USUARIO INCORRECTO' });
         }
 
+        // ********** VERIFICA QUE EL USUARIO POSEA UN ROL **********
+        if(!user.rol){
+            console.log('USUARIO NO EXISTE');
+            return res.status(401).json({ message: 'USUARIO INCORRECTO' });
+        }
+
+        // ********** VERIFICA LA CONTRASEÑA **********
         const passwordVerificado = await comparar(password, user.password);
         if (!passwordVerificado) {
             console.log('CONTRASEÑA INCORRECTA');
@@ -30,12 +37,12 @@ const login = async (req, res) => {
         const datos = {
             indicador,
             rol,
-            token
+            token 
         }
 
         console.log('LOGIN COMPLETADO');
-        console.log(datos);
-        console.log('Token: ' + token);
+        // console.log(datos);
+        // console.log('Token: ' + token);
         res.status(200).json(datos);
 
     }

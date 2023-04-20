@@ -4,24 +4,21 @@ import { Protegida, ProtegidaAdm, ProtegidaSuper } from "./Protegida";
 import { 
   Login, 
   Dashboard,
-  Administracion,
-  Actualizacion,
-  Registro,
-  Solicitudes,
-  Solicitud,
-  CrearSolicitud,
+  ActualizarCampo,
+  ActualizarApp,
+  RegistrarApp,
   Perfil,
   Permisos,
   CrearUsuario,
   BuscarUsuario,
   Aplicaciones,
-  Vista,
+  VerAplicacion,
   Diagramas,
   BaseDatos, 
-  VistaDB,
-  CrearBD,
+  VerBD,
+  RegistrarBD,
   Fallas,
-  RegistroFalla,
+  RegistrarFalla,
   ActualizarBD
 } from '../pages';
 
@@ -42,29 +39,29 @@ function Rutas() {
             {/* MODULO DE ADMINISTRACION */}
             <Route element={<ProtegidaAdm />} >
               {/* REGISTRO Y PERMISOS SOLO PUEDE ACCERDER LOS ADMIN */}
-              <Route path="/administracion/permisos" element={<Permisos />} />
+              <Route path="/administracion/permisos" element={<BuscarUsuario />} />
               <Route path="/administracion/permisos/crear" element={<CrearUsuario />} />
-              <Route path="/administracion/permisos/buscar" element={<BuscarUsuario />} />
-              <Route path="/administracion/registro" element={<Registro />} />
+              {/* <Route path="/administracion/permisos/buscar" element={<BuscarUsuario />} /> */}
+              <Route path="/administracion/registro" element={<RegistrarApp />} />
             </Route>
 
             <Route element={<ProtegidaSuper />} >
               {/* ADMINISTRACION POR CAMPO Y ACTUALIZACION POR ID PUEDEN ACCERDER SUPERUSER Y ADMIN */}
-              <Route path="/administracion" element={<Administracion />} />
-              <Route path="/administracion/actualizacion/:id" element={<Actualizacion />} />
+              <Route path="/administracion" element={<ActualizarCampo />} />
+              <Route path="/administracion/actualizacion/:id" element={<ActualizarApp />} />
             </Route>
             
             {/* MODULO DE APLICACIONES */}
             <Route path="/aplicaciones/" element={<Aplicaciones />} />
-            <Route path="/aplicaciones/:id" element={<Vista />} />
+            <Route path="/aplicaciones/:id" element={<VerAplicacion />} />
             <Route path="/aplicaciones/diagramas" element={<Diagramas />} />
             <Route path="/aplicaciones/fallas" element={<Fallas />} />
-            <Route path="/aplicaciones/fallas/registro" element={<RegistroFalla />} />
+            <Route path="/aplicaciones/fallas/registro" element={<RegistrarFalla />} />
               
             {/* MODULO DE ADMINISTRACION */}
             <Route path="/basedatos" element={<BaseDatos />} />
-            <Route path="/basedatos/:id" element={<VistaDB />} />
-            <Route path="/basedatos/registro" element={<CrearBD />} />
+            <Route path="/basedatos/:id" element={<VerBD />} />
+            <Route path="/basedatos/registro" element={<RegistrarBD />} />
             <Route path="/basedatos/actualizacion/:id" element={<ActualizarBD />} />
             
           </Route> 

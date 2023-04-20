@@ -1,10 +1,10 @@
 
 import { useState, useEffect } from "react";
-import { Container, Notificacion, Select, Tabla } from "../../components/";
+import { Container } from "../../components/";
 import { FaCheckCircle, FaEdit, FaSearch } from "react-icons/fa";
 import { useDebounce } from "use-debounce";
 import Autorizacion from '../../services/auth.service';
-import Usuarios from "../../services/user.service";
+import Usuario from "../../services/usuario.service";
 import { Link } from "react-router-dom";
 import { opcionGerencia, opcionRol } from "../../services/campos.service";
 
@@ -25,12 +25,11 @@ function BuscarUsuario() {
     setEdicion(dato.usuario_id); 
     setRol(dato.rol); 
     setGerencia(dato.gerencia);
-    console.log(edicion,rol,gerencia);
   }
 
   // VARIABLES PARA LA PAGINA
   const [pagina, setPagina] = useState(1);
-  const obtenerPagina = (respuesta) => {setPagina(respuesta); console.log('PAGINA EN ADMINISTRACION: ' + pagina)};
+  const obtenerPagina = (respuesta) => {setPagina(respuesta);};
   
 
   // FUNCION PARA BUSCAR AL ESCRIBIR EN EL INPUT
@@ -46,9 +45,8 @@ function BuscarUsuario() {
   // FUNCION PARA BUSCAR DATOS EN LA DATABASE
   const onSearch = async (termino) => {
     try {
-      const datos = await Usuarios.obtenerUsuarios(termino,pagina);
+      const datos = await Usuario.obtenerUsuarios(termino,pagina);
       setResultados(datos.data); 
-      console.log(resultados);
     } catch (error) { 
       console.log('ERROR AL BUSCAR DATOS') 
     }
@@ -62,23 +60,17 @@ function BuscarUsuario() {
       if(Autorizacion.obtenerUsuario().rol === 'admin'){
 
         const datoModificacion = { edicion, rol, gerencia };
-        await Autorizacion.actualizarUsuario(4, datoModificacion); 
+        await Usuario.actualizarUsuario(4, datoModificacion); 
         habilitar('','','');
-
-        // setOpcion('exito');
-        // setMensaje('Campo modificado exitosamente');
-        // setShow(true);
       }
     }
     catch (error) { 
-        // setMensaje(error.response.data.message);
-        // setOpcion('error');
-        // setShow(true);
+      console.log(error);
     }
   }
 
   // SELECT PERSONALIZADO
-  const selectCampo = (opciones,valor,elemento) => {
+  const selectCampo = (opciones,elemento) => {
     return (
         <select 
             className={`w-full p-2 bg-gray-50 border border-solid border-blue-500 text-gray-900 text-xs text-center rounded-md`} 
@@ -95,7 +87,7 @@ function BuscarUsuario() {
   }
 
   // FUNCION PARA VERIFICAR Y ELEGIR SELECT SEGUN LA OPCION SELECCIONADA
-  const verificarCampo = (campo, dato, valor) => {
+  const verificarCampo = (campo, valor) => {
     
     if(campo === 'Rol')
       return (selectCampo(opcionRol,valor,setRol));
@@ -183,15 +175,6 @@ function BuscarUsuario() {
       ) : (
           <div></div>
       )}
-
-      {/* {resultados ? (
-        <Tabla
-          columnas={columnas} 
-          datos={resultados} 
-          devolverPagina={obtenerPagina} />
-      ) : (
-        <div></div>
-      )} */}
 
     </Container>
   )

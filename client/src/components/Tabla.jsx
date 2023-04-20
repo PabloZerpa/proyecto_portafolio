@@ -20,30 +20,26 @@ function Tabla({columnas, datos, opciones, paginacion=false, count=10, devolverP
     }
 
     useEffect(() => {
-        // if(Object.keys(datos).length === 0){
-        //     console.log(Object.keys(datos).length);
-        // }
         cambioPagina();
-
     }, [pagina, datos])
      
     return (
         <div>
-            <div className="relative overflow-x-auto w-[960px] mx-8 mb-4 sm:rounded">
+            <div className="relative overflow-x-auto w-[960px] mx-8 mb-4 rounded">
 
-                <table className="table-auto border-separate w-full text-xs text-center text-gray-700 shadow-md">
-                    <thead className="text-xs text-gray-700 font-bold bg-zinc-200 uppercase">
+                <table className="w-full text-xs text-left text-gray-500">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                         
-                        <tr className="bg-zinc-200 border-b hover:bg-zinc-300">
+                        <tr className="bg-zinc-200 border-b hover:bg-gray-600 hover:text-gray-100">
                             {opciones ? (
                                 columnas.map((dato,index) => { 
                                     if(index===0)
-                                        return  <td key={index} scope="col" className="px-1 py-1">{dato}</td> 
+                                        return  <td key={index} scope="col" className="px-3 py-3">{dato}</td> 
                                     else
-                                        return  <td key={index} scope="col" className="px-1 py-1">{dato}</td> 
+                                        return  <td key={index} scope="col" className="px-3 py-3">{dato}</td> 
                                 })
                             ) : (
-                                columnas.map((dato, index) => { return  <td key={index} scope="col" className="px-1 py-1">{dato}</td> })
+                                columnas.map((dato, index) => { return  <td key={index} scope="col" className="px-3 py-3">{dato}</td> })
                             )}    
                         </tr>
                         
@@ -66,7 +62,7 @@ function Tabla({columnas, datos, opciones, paginacion=false, count=10, devolverP
                             return (
                                 <tr key={index} className="bg-white border-b hover:bg-gray-100">
                                     {valor.map((valor, index) => {
-                                            return ( <td key={index} className="px-2 py-2">{valor}</td> );
+                                            return ( <td key={index} className="px-3 py-3">{valor}</td> );
                                     })}
                                 </tr>
                             );

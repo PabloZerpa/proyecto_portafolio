@@ -375,12 +375,12 @@ const crearAplicacion = async (req,res) => {
             await verificarServidor(aplicacion_id,select_servidor);
             await verificarBase(aplicacion_id,select_base);
 
-            await verificarResponsable('funcional',aplicacion_id,funcional_nombre,funcional_apellido,
-                funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
-                funcional_gerencia,funcional_region,funcional_localidad);    
-            await verificarResponsable('tecnico',aplicacion_id,tecnico_nombre,tecnico_apellido,
-                tecnico_indicador,tecnico_cedula,tecnico_cargo,tecnico_telefono,
-                tecnico_gerencia,tecnico_region,tecnico_localidad); 
+            // await verificarResponsable('funcional',aplicacion_id,funcional_nombre,funcional_apellido,
+            //     funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
+            //     funcional_gerencia,funcional_region,funcional_localidad);    
+            // await verificarResponsable('tecnico',aplicacion_id,tecnico_nombre,tecnico_apellido,
+            //     tecnico_indicador,tecnico_cedula,tecnico_cargo,tecnico_telefono,
+            //     tecnico_gerencia,tecnico_region,tecnico_localidad); 
 
             await verificarMantenimiento(aplicacion_id,man_frecuencia,man_horas_prom,man_horas_anuales);          
             await verificarDocumentacion(aplicacion_id,doc_descripcion,doc_direccion,doc_tipo);
@@ -902,105 +902,6 @@ const documentacion = async (req,res) => {
     }
 };
 
-// *********************************** OBTENER FALLAS ***********************************
-const fallas = async (req,res) => {
-    try {
-        const { id } = req.params;
-
-        const data = await pool.query(`
-            SELECT 
-                falla_id,fal_clase,fal_descripcion,fal_solucion,fal_impacto
-            FROM aplicaciones
-                JOIN fallas on aplicaciones.aplicacion_id = fallas.aplicacion_id
-            WHERE aplicaciones.aplicacion_id = ?;`, 
-            [id]); 
-            
-        const respuestas = {
-            datos: data[0],
-        }
-                
-        res.send(respuestas);
-    } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
-    }
-};
-
-// *********************************** OBTENER FALLAS ***********************************
-const registrarFalla = async (req,res) => {
-    try {
-        
-        const { aplicacion,clase,impacto,descripcion,solucion } = req.body;
-
-        const data = await pool.query(`
-            INSERT INTO fallas
-                (aplicacion_id,fal_numero,fal_clase,fal_descripcion,fal_solucion,fal_impacto)
-            VALUES
-                (?,?,?,?,?,?);`, 
-            [aplicacion,10,clase,descripcion,solucion,impacto]); 
-                
-        console.log('FALLA REGISTRADA CORRECTAMENTE');
-        res.send('FALLA REGISTRADA CORRECTAMENTE');
-    } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
-    }
-};
-
-
-// *********************************** OBTENER FALLAS ***********************************
-const buscarFalla = async (req,res) => {
-    const { term } = req.body;
-    const termino = `%${term}%`;
-
-    if (term === undefined || null)
-        return res.status(404).json({ message: "Error al recibir consulta" });
-
-    try{
-        const data = await pool.query(`
-            SELECT falla_id, fal_clase, fal_impacto, fal_descripcion, fal_solucion, aplicaciones.aplicacion_id
-            FROM fallas 
-                JOIN aplicaciones ON aplicaciones.aplicacion_id = fallas.aplicacion_id
-            WHERE 
-                aplicaciones.aplicacion_id LIKE ? OR
-                falla_id LIKE ? OR 
-                fal_clase = ? OR 
-                fal_impacto LIKE ? OR 
-                fal_descripcion LIKE ? OR 
-                fal_solucion LIKE ?
-            ORDER BY falla_id ASC;`,
-            [termino,termino,termino,termino,termino,termino]
-        );
-        res.send(data[0]);
-
-    }
-    catch (error) {
-        return res.status(401).json({ message: 'ERROR' });
-    }
-};
-
-
-// *************** CAMBIAR PERMISOS ***************
-const actualizarFalla = async (req,res) => {
-    const { id } = req.params;
-    const { clase, impacto, descripcion, solucion } = req.body;
-   
-    try {
-        const query = await pool.query(`
-        UPDATE 
-            fallas 
-        SET 
-            fal_clase = ?, 
-            fal_impacto = ?,
-            fal_descripcion = ?, 
-            fal_solucion = ?
-        WHERE falla_id = ?`, [clase, impacto, descripcion, solucion, id]
-        );
-        
-        res.send('ACTUALIZACION EXITOSA');
-    } catch (error) {
-        return res.status(401).json({ message: 'ERROR' });
-    }
- }
-
 
 module.exports = { 
     obtenerDatos, 
@@ -1020,7 +921,5 @@ module.exports = {
     obtenerCantidadTotal,
     general,tecno,basedatos,
     servidor,responsable,
-    documentacion,fallas,
-    registrarFalla,buscarFalla,
-    actualizarFalla,
+    documentacion,
  };

@@ -4,8 +4,8 @@ import { FaEdit, FaCheckCircle } from "react-icons/fa";
 import { opcionEstatus, opcionPrioridad, opcionAlcance, 
     opcionPlataforma, opcionRegion, opcionSiNo } from '../services/campos.service';
 import Autorizacion from '../services/auth.service';
-import Usuarios from "../services/user.service";
-import Notificacion from "./Notificacion";
+import Aplicacion from '../services/aplicacion.service';
+import { Notificacion } from '../utils/Notificacion';
 import Paginacion from "./Paginacion";
   
 function Tabla2({columnas, datos, paginacion=false, campo, devolverPagina=null}) {
@@ -25,11 +25,6 @@ function Tabla2({columnas, datos, paginacion=false, campo, devolverPagina=null})
     const [edicion, setEdicion] = useState(null);
     const habilitar = (id) => {setEdicion(id)}
 
-    // VARIABLES PARA LA INFO DE NOTIFICACION
-    const [show, setShow] = useState(false);
-    const [opcion, setOpcion] = useState('error');
-    const [mensaje, setMensaje] = useState('error');
-
     // FUNCION PARA CAMBIAR DE RANGO DE RESULTADOS
     const cambioPagina = () => {
         setPrimer([pagina-1]*20);
@@ -41,15 +36,14 @@ function Tabla2({columnas, datos, paginacion=false, campo, devolverPagina=null})
     // -------------------- FUNCION PARA CAMBIAR DE PAGINA --------------------
     useEffect(() => {
         cambioPagina();
-        console.log(pagina);
     }, [pagina, datos]);
 
     // -------------------- FUNCION OBTENER LOS VALORES DE LENGUAJE-FRAMEWORK --------------------
     useEffect(() => {
         async function fetchData(){
             try {
-                const datosLenguajes = await Usuarios.obtenerOpciones('lenguajes');
-                const datosFrameworks = await Usuarios.obtenerOpciones('frameworks');
+                const datosLenguajes = await Aplicacion.obtenerOpciones('lenguajes');
+                const datosFrameworks = await Aplicacion.obtenerOpciones('frameworks');
 
                 let lenguajes = [];
                 for (let i = 0; i < Object.keys(datosLenguajes.data).length; i++) {
@@ -71,12 +65,6 @@ function Tabla2({columnas, datos, paginacion=false, campo, devolverPagina=null})
         fetchData();
     }, []);
 
-    // -------------------- FUNCION PARA DESAPARECER LA NOTIFICACION --------------------
-    useEffect(() => {
-        if(show)
-            setTimeout(() => { setShow(!show) }, "2000");
-    }, [show]);
-
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
     async function updateData(e) {
         e.preventDefault();
@@ -85,18 +73,13 @@ function Tabla2({columnas, datos, paginacion=false, campo, devolverPagina=null})
             if(Autorizacion.obtenerUsuario().rol === 'admin'){
 
                 const datoModificacion = { edicion, campo, valor, pagina };
-                await Autorizacion.actualizarDato(4, datoModificacion); 
+                await Aplicacion.actualizarDato(4, datoModificacion); 
+                Notificacion('ACTUALIZACION EXITOSA', 'success');
                 habilitar();
-
-                setOpcion('exito');
-                setMensaje('Campo modificado exitosamente');
-                setShow(true);
             }
         }
         catch (error) { 
-            setMensaje(error.response.data.message);
-            setOpcion('error');
-            setShow(true);
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
@@ -153,16 +136,12 @@ function Tabla2({columnas, datos, paginacion=false, campo, devolverPagina=null})
     }
 
     return (
-        <div className="relative mx-8 mb-4 sm:rounded">
-
-            <div style={show ? {display: 'block'} : {display: 'none'}} className='fixed top-24' >
-                <Notificacion opcion={opcion} titulo='ACTUALIZACION' mensaje={mensaje} />
-            </div>
+        <div className="relative mx-8 mb-4 rounded">
 
             <table className="table-auto border-separate w-full text-xs text-center text-gray-700 shadow-md ">
                 <thead className="text-xs text-gray-700 font-bold bg-zinc-200 uppercase">
                     
-                    <tr className="bg-zinc-200 border-b hover:bg-zinc-300">
+                    <tr className="bg-zinc-200 border-b hover:bg-gray-600 hover:text-gray-100">
                         {columnas.map((dato,index) => { return  <td key={index} scope="col" className="px-2 py-2">{dato}</td> }) }
                     </tr> 
                     
@@ -170,7 +149,6 @@ function Tabla2({columnas, datos, paginacion=false, campo, devolverPagina=null})
                 <tbody>
 
                     {datos.map((dato,index) => { 
-                        //console.log(dato);
                         const valor = Object.values(dato);
                         return (
                         <tr key={index} className="bg-white border-b hover:bg-gray-100">

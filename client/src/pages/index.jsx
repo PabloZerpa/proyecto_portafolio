@@ -1,39 +1,39 @@
 import Login from './Login';
 import Dashboard from './Dashboard';
-import Administracion from './Administracion/Administracion';
-import Actualizacion from './Administracion/Actualizacion';
-import Registro from './Administracion/Registro';
+import ActualizarCampo from './Administracion/ActualizarCampo';
+import ActualizarApp from './Administracion/ActualizarApp';
+import RegistrarApp from './Administracion/RegistrarApp';
 import Perfil from './Administracion/Perfil';
 import Permisos from './Administracion/Permisos';
 import CrearUsuario from './Administracion/CrearUsuario';
 import BuscarUsuario from './Administracion/BuscarUsuario';
 import Aplicaciones from './Aplicaciones/Aplicaciones';
-import Vista from './Aplicaciones/Vista';
+import VerAplicacion from './Aplicaciones/VerAplicacion';
 import Diagramas from './Aplicaciones/Diagramas';
 import Fallas from './Aplicaciones/Fallas';
-import RegistroFalla from './Aplicaciones/RegistroFalla';
+import RegistrarFalla from './Aplicaciones/RegistrarFalla';
 import BaseDatos from './BaseDatos/BaseDatos';
-import VistaDB from './BaseDatos/VistaBD';
-import CrearBD from './BaseDatos/CrearBD';
+import VerBD from './BaseDatos/VerBD';
+import RegistrarBD from './BaseDatos/RegistrarBD';
 import ActualizarBD from './BaseDatos/ActualizarBD';
 
 export {
     Login, 
     Dashboard,
-    Administracion,
-    Actualizacion,
-    Registro,
+    ActualizarCampo,
+    ActualizarApp,
+    RegistrarApp,
     Perfil,
     Permisos,
     CrearUsuario,
     BuscarUsuario,
     Aplicaciones,
-    Vista,
+    VerAplicacion,
     Diagramas,
     Fallas,
     BaseDatos,
-    VistaDB,
-    CrearBD,
-    RegistroFalla,
+    VerBD,
+    RegistrarBD,
+    RegistrarFalla,
     ActualizarBD,
 };

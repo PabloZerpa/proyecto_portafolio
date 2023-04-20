@@ -1,28 +1,87 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
-import { Button, Container, Input, Notificacion, Select } from '../../components';
+import { Button, Container, Input, Select } from '../../components';
 import { campos, opcionEstatus, opcionRegion, opcionPlataforma, opcionAlcance, opcionMantenimiento,
         opcionLocalidad, opcionGerencia, opcionLenguaje, frameworkPhp, frameworkJS, frameworkJAVA, 
         frameworkCPP, frameworkCS, frameworkPY ,opcionBasedatos, opcionServidor, localidadCentro, 
         localidadCentroOccidente, localidadCentroSur, localidadFaja, localidadMetropolitana, 
         localidadOccidente, localidadOrienteNorte, localidadOrienteSur } from '../../services/campos.service';
 import Autorizacion from '../../services/auth.service';
-import Usuarios from "../../services/user.service";
+import Aplicacion from '../../services/aplicacion.service';
 import Checkbox from '../../components/Checkbox';
+import { Notificacion } from '../../utils/Notificacion';
 
-function Registro() {
+const defaultState = {
+    lenguaje: "",
+    framework: "",
+};
+
+function Row({ onRemove, numero }) {
+    
+    const [opcion, setOpcion] = useState(opcionLocalidad);
+    const [datos, setDatos] = useState({
+        lenguaje: "",
+        framework: "",
+    });
+
+    const handleInputChange = (e) => {
+
+        if(e.target.value === 'TODAS')
+            setDatos({ ...datos, [e.target.name] : null })
+        else
+            setDatos({ ...datos, [e.target.name] : e.target.value })
+
+        if(e.target.name === `lenguajes${numero}`)
+            cambioDeOpcion(e.target.value, setOpcion);
+
+    }
+
+    function cambioDeOpcion(valor, elemento){
+        if(valor === 'PHP')
+            elemento(frameworkPhp);
+        else if(valor === 'JAVASCRIPT')
+            elemento(frameworkJS);
+        else if(valor === 'JAVA')
+            elemento(frameworkJAVA);
+        else if(valor === 'C++')
+            elemento(frameworkCPP);
+        else if(valor === 'C#')
+            elemento(frameworkCS);
+        else if(valor === 'PYTHON')
+            elemento(frameworkPY);
+    }
+    
+    return (
+      <div className="flex justify-center items-center gap-8">
+        <Select campo='Lenguaje' name={`lenguajes${numero}`} opciones={opcionLenguaje} manejador={handleInputChange} />
+        <Select campo='Framework' name={`framework${numero}`} opciones={opcion} manejador={handleInputChange} />
+        <Button color="red" accion={onRemove}>Remover</Button>
+      </div>
+    );
+}
+
+function RegistrarApp() {
 
     const navigate = useNavigate();
     const [datos, setDatos] = useState(campos);
+    const [inputs, setInputs] = useState([defaultState]);
+
+    const agregarInput = (e) => {
+        setInputs(inputs.concat(defaultState));
+    };
+    
+    const removerInput = index => {
+        if(index > 0){
+            const copyinputs = [...inputs];
+            copyinputs.splice(index, 1);
+            setInputs(copyinputs);
+        }
+    };
 
     // OPCIONES DE SELECT ANIDADOS
     const [opcion1, setOpcion1] = useState(opcionLocalidad);
     const [opcion2, setOpcion2] = useState(opcionLocalidad);
-    const [opcion3, setOpcion3] = useState(opcionLocalidad);
-    const [opcion4, setOpcion4] = useState(frameworkPhp);
-    const [opcion5, setOpcion5] = useState(frameworkPhp);
-    const [opcion6, setOpcion6] = useState(frameworkPhp);
 
     // OPCIONES BUSCADAS DE LA BASE DE DATOS
     const [opcionResponsable, setResponsable] = useState([]);
@@ -30,13 +89,11 @@ function Registro() {
     // VARIABLES PARA ACTIVAR/DESACTIVAR
     const [registrarBase, setRegistrarBase] = useState(false);
     const [registrarServidor, setRegistrarServidor] = useState(false);
-    const [masLenguajes, setMasLenguajes] = useState(false);
 
     const habilitarBase = () => {
         setRegistrarBase(!registrarBase)
         if(!registrarBase){
             setDatos({ ...datos, select_base : null })
-            console.log(datos.select_base);
         }
     }
 
@@ -44,35 +101,12 @@ function Registro() {
         setRegistrarServidor(!registrarServidor)
         if(!registrarServidor){
             setDatos({ ...datos, select_servidor : null })
-            console.log(datos.select_servidor);
-        }
-    }
-    
-    const habilitarMasLenguajes = () => {
-        setMasLenguajes(!masLenguajes)
-        if(!masLenguajes){
-            setDatos({ ...datos, lenguaje2 : null })
-            setDatos({ ...datos, lenguaje3 : null })
-            setDatos({ ...datos, framework2 : null })
-            setDatos({ ...datos, framework3 : null })
-            console.log(datos.lenguaje2);
-            console.log(datos.framework3);
         }
     }
 
-    const [show, setShow] = useState(false);
-    const [opcion, setOpcion] = useState('error');
-    const [mensaje, setMensaje] = useState('error');
-
-    useEffect(() => {
-        if(show)
-            setTimeout(() => { setShow(!show) }, "2000");
-    }, [show]);
 
     // FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS
     const handleInputChange = (e) => {
-        console.log(e.target.name)
-        console.log(e.target.value)
 
         if(e.target.value === 'TODAS')
             setDatos({ ...datos, [e.target.name] : null })
@@ -83,20 +117,10 @@ function Registro() {
             cambioDeOpcion(e.target.value, setOpcion1);
         else if(e.target.name === 'tecnico_region')
             cambioDeOpcion(e.target.value, setOpcion2);
-        else if(e.target.name === 'ser_region')
-            cambioDeOpcion(e.target.value, setOpcion3);
-        else if(e.target.name === 'lenguaje')
-            cambioDeOpcion(e.target.value, setOpcion4);
-        else if(e.target.name === 'lenguaje2')
-            cambioDeOpcion(e.target.value, setOpcion5);
-        else if(e.target.name === 'lenguaje3')
-            cambioDeOpcion(e.target.value, setOpcion6);
 
     }
 
     function cambioDeOpcion(valor, elemento){
-
-        console.log(valor);
 
         if(valor === 'PHP')
             elemento(frameworkPhp);
@@ -139,24 +163,15 @@ function Registro() {
         e.preventDefault();
 
         try {
-          console.log('TRY DEL CREATE');
           if(Autorizacion.obtenerUsuario().rol === 'admin'){
-
-            //console.log('DENTRO DEL TRY CREATE');
-            //console.log(datos);
-            
-            await Autorizacion.crearDatos(datos);
-            setOpcion('exito');
-            setMensaje('Aplicacion registrada exitosamente');
-            setShow(true);
+            await Aplicacion.crearDatos(datos);
+            Notificacion('REGISTRO EXITOSO', 'success');
             //navigate("/dashboard");
           }
         }
         catch (error) { 
-            console.log('ERROR AL ACTUALIZAR APL_ACT'); 
-            setMensaje(error.response.data.message);
-            setOpcion('error');
-            setShow(true);
+            console.log('ERROR AL ACTUALIZAR APL_ACT');
+            Notificacion('ERROR AL REGISTRAR APP', 'error'); 
         }
       }
 
@@ -165,10 +180,6 @@ function Registro() {
     
     return (
         <Container>
-            
-            <div style={show ? {display: 'block'} : {display: 'none'}} className='fixed top-24' >
-                <Notificacion opcion={opcion} titulo='REGISTRO' mensaje={mensaje} />
-            </div>
 
             <h1 className='font-bold text-lg'>Registro de Aplicacion</h1>
 
@@ -258,23 +269,15 @@ function Registro() {
                     <Select campo='Codigo Fuente' name='apl_codigo_fuente' opciones={['SELECCIONE','SI','NO']} manejador={handleInputChange} />
                     
                     <div>
-                        <Select campo='Lenguaje' name='lenguaje' opciones={opcionLenguaje} manejador={handleInputChange} />
-                        <div style={masLenguajes ? {display: 'block'} : {display: 'none'}} >
-                            <Select campo='Lenguaje 2' name='lenguaje2' opciones={opcionLenguaje} manejador={handleInputChange} />
-                            <Select campo='Lenguaje 3' name='lenguaje3' opciones={opcionLenguaje} manejador={handleInputChange} />
-                        </div>
-
-                        <button type='button' className='flex justify-center w-8 h-8 bg-blue-600 text-white text-lg font-bold rounded cursor-pointer hover:blue-500' onClick={habilitarMasLenguajes} >
-                            {masLenguajes ? '-' : '+'}
-                        </button>
-                    </div>
-
-                    <div>
-                        <Select campo='Framework' name='framework' opciones={opcion4} manejador={handleInputChange} />
-                        <div style={masLenguajes ? {display: 'block'} : {display: 'none'}} >
-                            <Select campo='Framework 2' name='framework2' opciones={opcion5} manejador={handleInputChange} />
-                            <Select campo='Framework 3' name='framework3' opciones={opcion6} manejador={handleInputChange} />
-                        </div>
+                        {inputs.map((row, index) => (
+                            <Row
+                                {...row}
+                                onRemove={() => removerInput(index)}
+                                numero={index+1}
+                                key={index}
+                            />
+                        ))}
+                        <Button tipo='button' accion={agregarInput}>Agregar</Button>
                     </div>
                     
                 </div>
@@ -328,4 +331,4 @@ function Registro() {
     )
 };
 
-export default Registro;
+export default RegistrarApp;

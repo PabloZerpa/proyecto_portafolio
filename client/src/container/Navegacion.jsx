@@ -9,11 +9,9 @@ function Navegacion() {
     const [open1, setOpen1] = useState(false);
     const [open2, setOpen2] = useState(false);
     const [open3, setOpen3] = useState(false);
-    const [open4, setOpen4] = useState(false);
     const openMenu1 = () => setOpen1(!open1);
     const openMenu2 = () => setOpen2(!open2);
     const openMenu3 = () => setOpen3(!open3);
-    const openMenu4 = () => setOpen4(!open4);
 
     if (Autorizacion.obtenerUsuario() === null)
         return null
@@ -46,13 +44,13 @@ function Navegacion() {
                                         className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                             Permisos
                                     </Link>
-                                    <Link to="/administracion" 
-                                        className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
-                                            Actualizacion
-                                    </Link>
                                     <Link to="/administracion/registro" 
                                         className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                             Registro
+                                    </Link>
+                                    <Link to="/administracion" 
+                                        className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
+                                            Actualizar Campo
                                     </Link>
                                 </div>
                             )} 
@@ -71,13 +69,13 @@ function Navegacion() {
                                     className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                     Busqueda
                                 </Link>
-                                <Link to="/aplicaciones/diagramas" 
-                                    className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
-                                    Visualizacion
-                                </Link>
                                 <Link to="/aplicaciones/fallas" 
                                     className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                     Fallas
+                                </Link>
+                                <Link to="/aplicaciones/diagramas" 
+                                    className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
+                                    Charts
                                 </Link>
                             </div>
                         </li>
@@ -100,30 +98,10 @@ function Navegacion() {
                                 </Link>
                                 <Link to="/basedatos" 
                                     className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
-                                    Visualizacion
+                                    Servidores
                                 </Link>
                             </div>
                         </li>
-
-                        {/* <li>
-                            <div className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg cursor-pointer hover:bg-gray-800 hover:text-gray-100" 
-                                onClick={openMenu4}>
-                                <FaListAlt />
-                                <span className="px-2">Solicitudes</span>
-                                {open3 ? <FaChevronUp /> : <FaChevronDown />}
-                            </div>
-
-                            <div style={open4 ? {display: 'block'} : {display: 'none'}} className='pl-4'>
-                                <Link to="/solicitudes" 
-                                    className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
-                                    Lista de Solicitudes
-                                </Link>
-                                <Link to="/solicitudes/crear" 
-                                    className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
-                                    Crear Solicitud
-                                </Link>
-                            </div>
-                        </li> */}
                         
                     </ul>
                     

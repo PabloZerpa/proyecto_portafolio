@@ -1,19 +1,12 @@
 
-import { useState, useEffect } from "react";
-import { Button, Container, Input, Notificacion, Select } from "../../components/";
+import { useState } from "react";
+import { Button, Container, Input, Select } from "../../components/";
+import { Notificacion } from "../../utils/Notificacion";
 import Autorizacion from "../../services/auth.service";
+import Usuario from "../../services/usuario.service";
 import { opcionGerencia } from "../../services/campos.service";
 
 function Permisos() {
-    const [show, setShow] = useState(false);
-    const [opcion, setOpcion] = useState('error');
-    const [mensaje, setMensaje] = useState('error');
-
-    useEffect(() => {
-        if(show){
-            setTimeout(() => { setShow(!show) }, "2000");
-        }
-    }, [show])
 
     const [datos, setDatos] = useState({
         indicador: '',
@@ -25,8 +18,6 @@ function Permisos() {
     });
 
     const handleInputChange = (e) => {
-        console.log(e.target.name)
-        console.log(e.target.value)
 
         if(e.target.value === 'TODAS')
             setDatos({ ...datos, [e.target.name] : null })
@@ -40,31 +31,19 @@ function Permisos() {
         try {
             console.log('TRY DEL CREATE USER');
             if(Autorizacion.obtenerUsuario().rol === 'admin'){
-      
-                console.log('DENTRO DEL TRY CREATE');
-                console.log(datos);
                   
-                await Autorizacion.crearUsuario(datos);
-                setOpcion('exito');
-                setMensaje('Usuario registrado exitosamente');
-                setShow(true);
+                await Usuario.crearUsuario(datos);
+                Notificacion('USUARIO REGISTRADO EXITOSAMENTE', 'success');
                 //navigate("/dashboard");
           }
         }
         catch (error) { 
-            console.log('ERROR AL ACTUALIZAR APL_ACT'); 
-            setMensaje(error.response.data.message);
-            setOpcion('error');
-            setShow(true);
+            Notificacion(error.response.data.message, 'success');
         }
     }
 
     return(
         <Container>
-
-            <div style={show ? {display: 'block'} : {display: 'none'}} className='fixed top-24' >
-                <Notificacion opcion={opcion} titulo='CREACION DE USUARIO' mensaje={mensaje} />
-            </div>
 
             <form className="flex flex-col items-center gap-8 pb-4" onSubmitCapture={crearUsuario}>
 

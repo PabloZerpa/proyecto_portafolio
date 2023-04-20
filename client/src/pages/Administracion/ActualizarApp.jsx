@@ -4,14 +4,14 @@ import { useParams, useNavigate, Navigate, Link } from 'react-router-dom';
 import { Button, Container, Input, Select } from '../../components';
 import { BiLoaderAlt } from "react-icons/bi";
 import Autorizacion from '../../services/auth.service';
-import Usuarios from '../../services/user.service';
+import Aplicacion from '../../services/aplicacion.service';
 import { campos, opcionEstatus, opcionRegion, opcionPlataforma, opcionAlcance, opcionMantenimiento,
   opcionLocalidad, opcionGerencia, opcionLenguaje, frameworkPhp, frameworkJS, frameworkJAVA, 
   frameworkCPP, frameworkCS, frameworkPY ,opcionBasedatos, opcionServidor, localidadCentro, 
   localidadCentroOccidente, localidadCentroSur, localidadFaja, localidadMetropolitana, 
   localidadOccidente, localidadOrienteNorte, localidadOrienteSur } from '../../services/campos.service';
 
-function Actualizacion() {
+function ActualizarApp() {
   
     const navigate = useNavigate();
     const { id } = useParams();
@@ -33,7 +33,7 @@ function Actualizacion() {
     useEffect(() => {
         async function fetchData(){
             try {
-                const valores = await Usuarios.obtenerTodo(id);
+                const valores = await Aplicacion.obtenerTodo(id);
                 setValor(valores); 
                 console.log(valores);
                 setLoad(false); 
@@ -303,4 +303,4 @@ function Actualizacion() {
   }
 };
 
-export default Actualizacion;
+export default ActualizarApp;

@@ -1,8 +1,11 @@
+
 import { useState } from "react";
 import { Button, Container, Input, Select } from "../../components";
 import Autorizacion from "../../services/auth.service";
+import Falla from "../../services/falla.service";
+import { Notificacion } from "../../utils/Notificacion";
 
-function RegistroFalla() {
+function RegistrarFalla() {
 
     const [datos, setDatos] = useState({
         aplicacion: '',
@@ -15,8 +18,6 @@ function RegistroFalla() {
     });
 
     const handleInputChange = (e) => {
-        console.log(e.target.name)
-        console.log(e.target.value)
 
         if(e.target.value === 'TODAS')
             setDatos({ ...datos, [e.target.name] : null })
@@ -29,25 +30,16 @@ function RegistroFalla() {
         
         try {
             console.log(datos);
-        	if(Autorizacion.obtenerUsuario().rol !== 'user')
-            	await Autorizacion.registrarFalla(datos);
+        	if(Autorizacion.obtenerUsuario().rol !== 'user'){
+            	await Falla.registrarFalla(datos);
+                Notificacion('REGISTRO EXITOSO', 'success');
+            }
         }
         catch (error) { 
             console.log('ERROR AL ACTUALIZAR APL_ACT');
+            Notificacion('ERROR AL REGISTRAR', 'error');
         }
     }
-
-    // async function actualizarFalla(e){
-    // 	e.preventDefault();
-            
-    //     try {
-    //     	if(Autorizacion.obtenerUsuario().rol !== 'user')
-    //             await Autorizacion.actualizarFalla(datos);
-    //     }
-    //     catch (error) { 
-    //        console.log('ERROR AL ACTUALIZAR APL_ACT');
-    //     }
-    // }
 
     return (
         <Container>
@@ -75,4 +67,4 @@ function RegistroFalla() {
     )
 };
 
-export default RegistroFalla;
+export default RegistrarFalla;

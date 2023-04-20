@@ -3,10 +3,11 @@ import { useState, useEffect } from 'react';
 import { useDebounce } from 'use-debounce';
 import { FaSearch } from 'react-icons/fa';
 import { Select, Radio } from '../components';
-import Usuarios from "../services/user.service";
+import Aplicacion from "../services/aplicacion.service";
 import { opcionEstatus, opcionRegion, opcionPlataforma, opcionAlcance, opcionMantenimiento, opcionCount, opcionLocalidad } from '../services/campos.service';
  
-   
+// HACER RESET TODOS LOS FILTROS EXEPTO EL ULTIMO SELECCIONADO CUANDO MAS DE 1 FILTRO SE HAYA ACTIVADO
+
 function Busqueda({manejarBusqueda, manejarCount, pagina}) {
      
     const [searchTerm, setSearchTerm] = useState("");
@@ -44,8 +45,6 @@ function Busqueda({manejarBusqueda, manejarCount, pagina}) {
             setDatos({ ...datos, [e.target.name] : null })
         else
             setDatos({ ...datos, [e.target.name] : e.target.value })
-        
-        console.log(datos);
     }
 
     useEffect(() => {
@@ -63,11 +62,7 @@ function Busqueda({manejarBusqueda, manejarCount, pagina}) {
             const { estatus,plataforma,prioridad,region,alcance,mantenimiento,
                 critico,codigo,registros,orden } = datos;
 
-            console.log(estatus,plataforma,prioridad,region,alcance,mantenimiento,
-                critico,codigo,registros,orden);
-
-            console.log('PAGINA EN BUSQUEDA: ' + pagina);
-            const respuesta = await Usuarios.obtenerPorBusqueda
+            const respuesta = await Aplicacion.obtenerPorBusqueda
             (value,estatus,plataforma,prioridad,region,alcance,mantenimiento,
                 critico,codigo,registros,orden,pagina);
 

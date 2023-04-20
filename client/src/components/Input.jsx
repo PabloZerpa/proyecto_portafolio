@@ -1,13 +1,10 @@
 
-import { useState } from "react";
 
 function Input({campo, name, area=false, direccion='col', editable=false, propiedad=null, manejador, size='small', detalles=false, peticionEstado}) {
 
-    const clase = `flex flex-${direccion} items-center gap-2 text-xs font-medium text-gray-900 mb-4`;
+    const clase = `flex flex-${direccion} items-start gap-2 text-xs font-medium text-gray-900 mb-4`;
     const labelClase = `w-20`;
     const inputClase = 'w-full p-2 bg-gray-50 border-none text-gray-900 text-xs rounded focus:ring-blue-500 focus:border-blue-500' 
-    const [open, setOpen] = useState(false);
-    const handleDetalles = () => { setOpen(!open); peticionEstado(open); }
 
     const onHandle = (e) => manejador(e);
 

@@ -1,20 +1,14 @@
 
 import { useState, useEffect } from 'react';
-import { FaPlus } from 'react-icons/fa';
 import { BiLoaderAlt } from "react-icons/bi";
-import { useParams, Navigate, Link } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
 import { Container, Input, Radio } from '../../components';
 import Tabla3 from '../../components/Table3';
-import Usuarios from '../../services/user.service';
+import Base from '../../services/basedatos.service';
 
 const opcionesVista = ['General','Aplicacion','Servidor'];
 
-/*
-  * HACER QUE EL ACRONIMO/NOMBRE SEA UN LINK QUE REDIRECCIONE A LA VISTA DE LA RESPECTIVA APLICACION/BASE DE DATOS
-  * HACER UNA OPCION PARA CREAR, BUSCAR Y LISTAR LAS FALLAS SIGUIENDO DE EJEMPLO EL MODULO DE USUARIOS/PERMISOS
-*/
-
-function VistaBD() {
+function VerBD() {
 
   const { id } = useParams();
   const [valor, setValor] = useState('');
@@ -32,14 +26,13 @@ function VistaBD() {
   useEffect(() => {
     async function fetchData(){
       try {
-        const gen = await Usuarios.obtenerGeneralBD(id);
-        const apl = await Usuarios.obtenerAplicacionBD(id);
-        const ser = await Usuarios.obtenerServidorBD(id);
+        const gen = await Base.obtenerGeneralBD(id);
+        const apl = await Base.obtenerAplicacionBD(id);
+        const ser = await Base.obtenerServidorBD(id);
 
         setGeneral(gen.data);
         setAplicacion(apl.data);
         setServidor(ser);
-        console.log(general); 
 
         setLoad(false);
           
@@ -119,4 +112,4 @@ function VistaBD() {
     )
 
 };
-export default VistaBD;
+export default VerBD;

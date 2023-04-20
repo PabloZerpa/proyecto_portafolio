@@ -1,29 +1,18 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaUserCircle, FaUser, FaLock, FaHardHat, FaEye, FaEyeSlash } from 'react-icons/fa';
-import { Notificacion } from '../components/';
+import { FaUserCircle, FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import Autorizacion from '../services/auth.service';
+import { Notificacion } from '../utils/Notificacion';
 
 function Login() {
   
   const [password, setPassword] = useState('');
   const [indicador, setIndicador] = useState('');
   const [showPass, setShowPass] = useState(false);
-  
-  const [show, setShow] = useState(false);
-  const [opcion, setOpcion] = useState('error');
-  const [mensaje, setMensaje] = useState('error');
 
   const navigate = useNavigate();
   const handlePass = () => {setShowPass(!showPass)}
-
-  useEffect(() => {
-    if(show){
-        setTimeout(() => { setShow(!show) }, "2000");
-    }
-  }, [show])
-
 
   // -------------------- FUNCION PARA INICIAR SESION --------------------
   async function handleLogin(e) {
@@ -32,9 +21,7 @@ function Login() {
     if(password.length > 7 && indicador !== ''){
       try {
         await Autorizacion.login(indicador,password);
-        setOpcion('exito');
-        setMensaje(`Bienvenido/a ${indicador}`);
-        setShow(true);
+        Notificacion('LOGIN EXITOSO', 'success');
         
         setTimeout(() => {
           window.location.reload();
@@ -43,21 +30,15 @@ function Login() {
       } 
       catch (error) {
         if(error.response)
-          setMensaje(error.response.data.message);
+          Notificacion(error.response.data.message, 'error');
         else
-          setMensaje('No responde el servidor');
-        setOpcion('error');
-        setShow(true);
+          Notificacion('No responde el servidor', 'error');
       }
     }
   } 
 
   return (
     <div className='relative flex flex-col justify-center items-center w-full h-screen bg-zinc-300'>
-
-      <div style={show ? {display: 'block'} : {display: 'none'}} className='fixed top-24' >
-        <Notificacion opcion={opcion} titulo='LOGIN' mensaje={mensaje} />
-      </div>
 
       <form
         className='flex justify-center items-center flex-col gap-6 w-96 mt-20 px-13 py-4 

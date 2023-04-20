@@ -1,37 +1,27 @@
 
-/*
- EL ORDEN PARA OBTENER LOS DATOS DEL DASHBOARD:
-    1) MODIFICAR LA CONSULTA OBTENER DATOS DEL SERVIDOR
-    2) SE RECIBE EN OBTENER DATOS DE LA CLASE USUARIO
-    3) LOS DATOS SE GUARDAN EN DASHBOARD Y SE PASAN AL COMPONENTE TABLA
-    4) EN LA TABLA LOS VALORES DE "CAMPO" DEBEN COINCIDIR CON LOS CAMPOS LA CONSULTA
-*/
 
 import { useState, useEffect } from "react";
 import { Tabla, Container } from "../components";
 import { BiLoaderAlt } from "react-icons/bi";
-import Usuarios from "../services/user.service";
+import Aplicacion from "../services/aplicacion.service";
 import Linea from "../chart/Linea";
-import { columnasUserSimple, columnasAdminSimple } from "../services/campos.service";
+import { columnasUserSimple } from "../services/campos.service";
 
 function Dashboard() {
   
   const [datos, setDatos] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [load, setLoad] = useState(false);
 
   useEffect(() => {
 
     async function fetchData(){
       try {
-        const data = await Usuarios.obtenerDatos();
-        setIsLoading(false);
+        const data = await Aplicacion.obtenerDatos();
+        setLoad(false);
         setDatos(data.data);
-
-        // console.log('DASHBOARD OBTENER DATOS');
-        console.log(datos);
       }
       catch (error) {
-        console.log(error)
+        console.log(error.message);
       }
     }
     fetchData();
@@ -42,7 +32,7 @@ function Dashboard() {
   return (
     <Container>
 
-        {isLoading ? (
+        {load ? (
             <BiLoaderAlt className='text-6xl text-blue-500 animate-spin' />
         ) : (
           <>

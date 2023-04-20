@@ -1,15 +1,15 @@
 
 import { useState, useEffect } from "react";
-import { Container, Notificacion, Select, Tabla } from "../../components/";
+import { Container } from "../../components";
 import { FaSearch } from "react-icons/fa";
 import { useDebounce } from "use-debounce";
-import Usuarios from "../../services/user.service";
+import Aplicacion from "../../services/aplicacion.service";
 import Tabla2 from "../../components/Tabla2";
 
 const campos = ['Seleccione','Acronimo', 'Nombre', 'Estatus', 'Prioridad','Alcance','Codigo_Fuente', 
 'Critico','Cantidad_Usuarios','Region','Plataforma','Lenguaje','Framework'];
 
-function Administracion() {
+function ActualizarCampo() {
 
   // VARIABLES PARA LA BUSQUEDA
   const [searchTerm, setSearchTerm] = useState("");
@@ -22,7 +22,7 @@ function Administracion() {
 
   // VARIABLES PARA LA PAGINA
   const [pagina, setPagina] = useState(1);
-  const obtenerPagina = (respuesta) => {setPagina(respuesta); console.log('PAGINA EN ADMINISTRACION: ' + pagina)};
+  const obtenerPagina = (respuesta) => {setPagina(respuesta);};
 
   // FUNCION PARA ASIGNAR DATOS DEL SELECT
   const handleInputChange = (e) => {
@@ -51,9 +51,8 @@ function Administracion() {
   // FUNCION PARA BUSCAR DATOS EN LA DATABASE
   const onSearch = async (value,campo) => {
     try {
-      const datos = await Usuarios.obtenerPorCampo(value,campo,pagina);
+      const datos = await Aplicacion.obtenerPorCampo(value,campo,pagina);
       setResultados(datos.data); 
-      console.log(resultados);
     } catch (error) { 
       console.log('ERROR AL BUSCAR DATOS') 
     }
@@ -110,4 +109,4 @@ function Administracion() {
   )
 
 };
-export default Administracion;
+export default ActualizarCampo;

@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { Container, Select, Radio, Tabla } from "../../components";
 import { useDebounce } from 'use-debounce';
 import { FaEdit, FaEye, FaSearch } from 'react-icons/fa';
-import Usuarios from "../../services/user.service";
 import Autorizacion from "../../services/auth.service";
+import Base from "../../services/basedatos.service";
 import { opcionEstatus, opcionRegion, opcionPlataforma, opcionAlcance, 
     opcionMantenimiento, opcionCount, opcionLocalidad } from '../../services/campos.service';
 import { Link } from "react-router-dom";
@@ -55,8 +55,6 @@ function BaseDatos() {
             setDatos({ ...datos, [e.target.name] : null })
         else
             setDatos({ ...datos, [e.target.name] : e.target.value })
-        
-        console.log(datos);
     }
 
     useEffect(() => {
@@ -76,7 +74,7 @@ function BaseDatos() {
             console.log(estatus,plataforma,prioridad,region,alcance,mantenimiento,
                 basedatos,servidor,critico,codigo,licencia,registros,orden);
 
-            const respuesta = await Usuarios.obtenerBDPorBusqueda(
+            const respuesta = await Base.obtenerBDPorBusqueda(
                 value,registros,orden);
 
             setResultado(respuesta.data);
