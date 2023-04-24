@@ -5,32 +5,33 @@ import { FaCheckCircle, FaEdit, FaSearch } from "react-icons/fa";
 import { useDebounce } from "use-debounce";
 import Autorizacion from '../../services/auth.service';
 import Usuario from "../../services/usuario.service";
-import { Link } from "react-router-dom";
-import { opcionGerencia, opcionRol } from "../../services/campos.service";
+import { Notificacion } from "../../utils/Notificacion";
+import { opcionCargo, opcionGerencia, opcionRol } from "../../services/campos.service";
 
-const columnas = ['Editar','ID','Indicador','Rol','Gerencia'];
+const columnas = ['Editar','ID','Indicador','Rol','Gerencia','Cargo'];
 
 function BuscarUsuario() {
 
   // VARIABLES PARA LA BUSQUEDA
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState("a");
   const [resultados, setResultados] = useState([]);
   const [debounceValue] = useDebounce(searchTerm, 500);
 
   const [rol, setRol] = useState("");
   const [gerencia, setGerencia] = useState("");
-  const [edicion, setEdicion] = useState(null);
+  const [cargo, setCargo] = useState("");
+  const [edicion, setEdicion] = useState("");
 
   const habilitar = (dato) => {
     setEdicion(dato.usuario_id); 
     setRol(dato.rol); 
     setGerencia(dato.gerencia);
+    setCargo(dato.cargo);
   }
 
   // VARIABLES PARA LA PAGINA
   const [pagina, setPagina] = useState(1);
   const obtenerPagina = (respuesta) => {setPagina(respuesta);};
-  
 
   // FUNCION PARA BUSCAR AL ESCRIBIR EN EL INPUT
   useEffect(() => {
@@ -46,6 +47,7 @@ function BuscarUsuario() {
   const onSearch = async (termino) => {
     try {
       const datos = await Usuario.obtenerUsuarios(termino,pagina);
+      console.log(datos.data);
       setResultados(datos.data); 
     } catch (error) { 
       console.log('ERROR AL BUSCAR DATOS') 
@@ -59,13 +61,15 @@ function BuscarUsuario() {
       
       if(Autorizacion.obtenerUsuario().rol === 'admin'){
 
-        const datoModificacion = { edicion, rol, gerencia };
-        await Usuario.actualizarUsuario(4, datoModificacion); 
-        habilitar('','','');
+        const datoModificacion = { edicion, rol, gerencia, cargo };
+        await Usuario.actualizarUsuario(datoModificacion); 
+        Notificacion('USUARIO MODDIFICADO EXITOSAMENTE', 'success');
+        habilitar('','','','');
       }
     }
     catch (error) { 
       console.log(error);
+      Notificacion(error.response.data.message, 'error');
     }
   }
 
@@ -88,13 +92,15 @@ function BuscarUsuario() {
 
   // FUNCION PARA VERIFICAR Y ELEGIR SELECT SEGUN LA OPCION SELECCIONADA
   const verificarCampo = (campo, valor) => {
-    
+
     if(campo === 'Rol')
-      return (selectCampo(opcionRol,valor,setRol));
+      return (selectCampo(opcionRol,setRol));
     else if(campo === 'Gerencia')
-      return (selectCampo(opcionGerencia,valor,setGerencia));
+      return (selectCampo(opcionGerencia,setGerencia));
+    else if(campo === 'Cargo')
+      return (selectCampo(opcionCargo,setCargo));
     else
-      return (<td key={campo} className="px-2 py-2">{valor}</td>)
+      return (<td key={campo} className="px-2 py-2 flex justify-center items-center">{valor}</td>)
   }
 
 
@@ -134,34 +140,30 @@ function BuscarUsuario() {
             {resultados.map((dato, index) => { 
               let valores = Object.values(dato);
 
-              {edicion===dato.usuario_id ? 
+              {edicion === dato.usuario_id ? 
                 valores.unshift(
-                <Link to='' className='text-lg' state={dato} >
                   <FaCheckCircle
                     onClick={updateData}
                     className="ml-3 text-green-500 text-lg cursor-pointer"
-                  />
-                  </Link>)
+                  />)
                 :
                   valores.unshift(
-                  <Link to='' className='text-lg' state={dato} >
                     <FaEdit 
                       onClick={(e) => habilitar(dato)}
                       className="ml-3 text-blue-500 text-lg cursor-pointer" 
-                    />
-                  </Link>)
+                    />)
               }
 
               return (
                 <tr key={index} className="bg-white border-b hover:bg-gray-100">
                   {valores.map((valor, index) => {
-                    
+
                     return (
-                      <td>
-                        {edicion!==dato.usuario_id ? (
-                          <td key={index} className="px-2 py-2">{valor}</td>
+                      <td key={index}>
+                        {edicion === dato.usuario_id ? (
+                          verificarCampo(columnas[index],valor)
                         ) : (
-                          verificarCampo(columnas[index],dato,valor)
+                          <td className="px-2 py-2 flex justify-center items-center">{valor}</td>
                         )}
                       </td>
                     );

@@ -1,9 +1,9 @@
 
 
-function Input({campo, name, direccion='col', editable=true, propiedad=null, manejador, required=false}) {
+function TextArea({campo, name, direccion='col', editable=true, propiedad=null, manejador, required=false}) {
 
     const clase = `flex flex-${direccion} items-start gap-2 text-xs font-medium text-gray-900 mb-4`;
-    const labelClase = `w-full`;
+    const labelClase = `w-20`;
     const inputClase = 'w-full p-2 bg-gray-50 border-none text-gray-900 text-xs rounded focus:ring-blue-500 focus:border-blue-500' 
 
     if(editable===true){
@@ -11,8 +11,8 @@ function Input({campo, name, direccion='col', editable=true, propiedad=null, man
             return (
                 <div className={clase}>
                     <label className={labelClase}>{campo}</label>
-                    <input
-                        type='text'
+                    <textarea
+                        rows={3}
                         name={name}
                         className={inputClase} 
                         placeholder={campo} 
@@ -27,8 +27,8 @@ function Input({campo, name, direccion='col', editable=true, propiedad=null, man
             return (
                 <div className={clase}>
                     <label className={labelClase}>{campo}</label>
-                    <input
-                        type='text'
+                    <textarea
+                        rows={3}
                         name={name}
                         className={inputClase} 
                         placeholder={campo} 
@@ -43,8 +43,8 @@ function Input({campo, name, direccion='col', editable=true, propiedad=null, man
         return (
             <div className={clase}>
                 <label className={labelClase}>{campo}</label>
-                <input
-                    type='text'
+                <textarea
+                    rows={3}
                     className={inputClase}  
                     value={propiedad ? propiedad : ''} 
                     readOnly 
@@ -52,8 +52,10 @@ function Input({campo, name, direccion='col', editable=true, propiedad=null, man
             </div>
         );
     }
+    
+
 
     
 }
 
-export default Input;
+export default TextArea;

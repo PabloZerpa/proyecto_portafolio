@@ -11,8 +11,13 @@ const login = async (req, res) => {
         const {indicador, password } = body;
         const query = await pool.query('SELECT * FROM usuarios WHERE indicador = ?', [indicador]);
         const user = query[0][0];
-        const rol = user.rol;
-        
+        let rol = null;
+
+        if(user){
+            const query2 = await pool.query('SELECT rol FROM roles WHERE rol_id = ?', [user.rol_id]);
+            rol = query2[0][0].rol;
+        }
+
         // ********** VERIFICA QUE EL USUARIO EXISTA **********
         if(!user){
             console.log('USUARIO NO EXISTE');
@@ -20,7 +25,7 @@ const login = async (req, res) => {
         }
 
         // ********** VERIFICA QUE EL USUARIO POSEA UN ROL **********
-        if(!user.rol){
+        if(!rol){
             console.log('USUARIO NO EXISTE');
             return res.status(401).json({ message: 'USUARIO INCORRECTO' });
         }
@@ -53,26 +58,46 @@ const login = async (req, res) => {
 
 // *************** CREAR USUARIO ***************
 const registrar = async (req, res) => {
-  
-    const password = await encriptar(req.body.password);
-    const datos = {...req.body, password };
-
-    const buscarUsuario = await pool.query('SELECT * FROM usuarios WHERE indicador = ?', [datos.indicador]);
-    const user = buscarUsuario[0][0];
+    try {
+        const password = await encriptar(req.body.password);
+        const datos = {...req.body, password };
         
-    // ********** VERIFICA QUE EL USUARIO EXISTA **********
-    if(user){
-        console.log('USUARIO YA EXISTENTE');
-        return res.status(401).json({ message: 'USUARIO YA REGISTRADO' });
+        const buscarUsuario = await pool.query('SELECT * FROM usuarios WHERE indicador = ?', [datos.indicador]);
+        const user = buscarUsuario[0][0];
+            
+        // ********** VERIFICA QUE EL USUARIO EXISTA **********
+        if(user){
+            console.log('USUARIO YA EXISTENTE');
+            return res.status(401).json({ message: 'USUARIO YA REGISTRADO' });
+        }
+
+        const query = await pool.query(
+            `INSERT INTO usuarios 
+                (indicador, password, nombre, apellido, rol_id, cargo_id, gerencia_id) 
+            VALUES (?,?,?,?,?,?,?);`, 
+            [datos.indicador, datos.password, datos.nombre, datos.apellido, datos.rol, datos.cargo, datos.gerencia]
+        );
+
+        console.log('USUARIO CREADO SATISFACTORIAMENTE');
+        res.status(200).json(datos);
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR AL REGISTRAR USUARIO' });
     }
-
-    const query = await pool.query(
-        `INSERT INTO usuarios (indicador, password, rol, gerencia_id) VALUES (?,?,?,?)`, 
-            [datos.indicador, datos.password, datos.rol, 1]
-    );
-
-    console.log('USUARIO CREADO SATISFACTORIAMENTE');
-    res.status(200).json(datos);
+    
  }
 
-module.exports = { login, registrar };
+
+// *************** OBTENER USUARIO ***************
+const obtenerTotal = async (req,res) => {
+    try{
+        const data = await pool.query(`
+            SELECT usuario_id FROM usuarios`);
+        res.send(data[0]);
+    }
+    catch (error) {
+        return res.status(401).json({ message: 'ERROR' });
+    }
+ }
+
+
+module.exports = { login, registrar, obtenerTotal };

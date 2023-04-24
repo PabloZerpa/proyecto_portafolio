@@ -1,13 +1,13 @@
 
 const router = require("express").Router();
 const { obtenerDatos, obtenerDato, crearAplicacion, actualizarAplicacion, eliminarAplicacion, 
-    obtenerBusqueda, obtenerCampo, obtenerPorGraficos, actualizarCampo, obtenerLenguajes,
+    obtenerBusqueda, obtenerCampo, obtenerPorGraficos, actualizarCampo, obtenerLenguajes,obtenerPlataformas,
     obtenerFrameworks, obtenerBaseDatos, obtenerServidores, obtenerCantidadTotal, 
     general, tecno, basedatos, servidor, responsable, documentacion, obtenerResponsables } = require("../controllers/aplicaciones");
 const { auth, authAdmin } = require("../middlewares/auth");
 const { autenticarUser } = require("../middlewares/ad");
 const { fallas, registrarFalla, actualizarFalla, buscarFalla } = require("../controllers/fallas");
-const { validatorCreateItem, validatorGetItem } = require("../validators/aplicaciones");
+const { validatorCreateItem, validatorGetItem, validatorApp } = require("../validators/aplicaciones");
 
 
 
@@ -31,7 +31,7 @@ router.get("/total", auth, obtenerCantidadTotal);
 
 
 // *************** RUTA REGISTRAR UNA APLICACION *************** 
-router.post("/", auth, crearAplicacion);
+router.post("/", auth, validatorApp, crearAplicacion);
 
 // *************** RUTA PARA ACTUALIZAR UNA APLICACION *************** 
 router.put("/:id", auth, actualizarAplicacion);
@@ -48,6 +48,8 @@ router.post("/grafico", auth, obtenerPorGraficos);
 
 
 
+// *************** RUTA PARA OBTENER LENGUAJES *************** 
+router.get("/plataformas", auth, obtenerPlataformas);
 
 // *************** RUTA PARA OBTENER LENGUAJES *************** 
 router.get("/lenguajes", auth, obtenerLenguajes);

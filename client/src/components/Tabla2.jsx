@@ -6,15 +6,8 @@ import { opcionEstatus, opcionPrioridad, opcionAlcance,
 import Autorizacion from '../services/auth.service';
 import Aplicacion from '../services/aplicacion.service';
 import { Notificacion } from '../utils/Notificacion';
-import Paginacion from "./Paginacion";
   
 function Tabla2({columnas, datos, paginacion=false, campo, devolverPagina=null}) {
-
-    // VARIABLES PARA LA PAGINA
-    const [pagina, setPagina] = useState(1);
-    const [primerResultado, setPrimer] = useState([pagina-1]*20);
-    const [ultimoResultado, setUltimo] = useState([pagina*20] - 1);
-    const obtenerPagina = (respuesta) => {setPagina(respuesta); console.log('PAGINA EN TABLA 2: ' + pagina)};
 
     // VARIABLES LAS OPCIONES DE LENGUAJE-FRAMEWORK
     const [opcionLenguaje, setLenguajes] = useState([]);
@@ -24,19 +17,6 @@ function Tabla2({columnas, datos, paginacion=false, campo, devolverPagina=null})
     const [valor, setValor] = useState('');
     const [edicion, setEdicion] = useState(null);
     const habilitar = (id) => {setEdicion(id)}
-
-    // FUNCION PARA CAMBIAR DE RANGO DE RESULTADOS
-    const cambioPagina = () => {
-        setPrimer([pagina-1]*20);
-        setUltimo([pagina*20] - 1);
-        if(devolverPagina)
-            devolverPagina(pagina);
-    }
-
-    // -------------------- FUNCION PARA CAMBIAR DE PAGINA --------------------
-    useEffect(() => {
-        cambioPagina();
-    }, [pagina, datos]);
 
     // -------------------- FUNCION OBTENER LOS VALORES DE LENGUAJE-FRAMEWORK --------------------
     useEffect(() => {
@@ -72,7 +52,7 @@ function Tabla2({columnas, datos, paginacion=false, campo, devolverPagina=null})
             
             if(Autorizacion.obtenerUsuario().rol === 'admin'){
 
-                const datoModificacion = { edicion, campo, valor, pagina };
+                const datoModificacion = { edicion, campo, valor };
                 await Aplicacion.actualizarDato(4, datoModificacion); 
                 Notificacion('ACTUALIZACION EXITOSA', 'success');
                 habilitar();
@@ -183,13 +163,6 @@ function Tabla2({columnas, datos, paginacion=false, campo, devolverPagina=null})
                 </tbody>
             </table>
 
-            {paginacion ? ( 
-                <Paginacion
-                    del={primerResultado+1} 
-                    al={ultimoResultado+1} 
-                    total={100}
-                    devolver={obtenerPagina} />
-            ) : (null)}
             
         </div>
     );

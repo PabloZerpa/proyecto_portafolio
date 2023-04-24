@@ -1,12 +1,15 @@
 const pool = require('../config');
 
-const query = `SELECT
-bases_datos.base_datos_id,base_datos,bas_estatus,tipo,manejador,version_manejador,
-bas_cantidad_usuarios,bas_tipo_ambiente
-FROM bases_datos
-JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.base_datos_id
-JOIN manejadores ON manejadores.manejador_id = bases_datos.base_datos_id
-JOIN versiones_manejadores ON manejadores.manejador_id = versiones_manejadores.manejador_id`
+const query = `
+    SELECT
+        bases_datos.base_datos_id,base_datos,bas_estatus,tipo,manejador,estatus,
+        bas_cantidad_usuarios,tipo_ambiente,bas_fecha_actualizacion,indicador
+    FROM bases_datos
+        JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.bas_tipo
+        JOIN manejadores ON manejadores.manejador_id = bases_datos.bas_manejador
+        JOIN tipos_ambientes ON tipos_ambientes.tipo_ambiente_id = bases_datos.bas_tipo_ambiente
+        JOIN estatus ON estatus.estatus_id = bases_datos.bas_estatus
+        JOIN usuarios ON usuarios.usuario_id = bases_datos.bas_usuario_actualizo`;
 
 // *********************************** OBTENER TODOS LOS DATOS ***********************************
 const obtenerDatos = async (req,res) => {
@@ -57,24 +60,56 @@ const obtenerBaseDatos = async (req,res) => {
 // *********************************** OBTENER LOS DATOS POR TERMINO DE BUSQUEDA ***********************************
 const obtenerBusqueda = async (req,res) => {
     try {
-        const { term,count,orden,region } = req.body;
+        const { term,estatus,tipo,manejador,ambiente,count,orden } = req.body;
         const termino = '%' + term + '%';
         let data;
 
         if (term === undefined || null)
         return res.status(404).json({ message: "Error al recibir consulta" });
-    
-        data = await pool.query(`
-            ${query}
-            WHERE 
-                (bases_datos.base_datos_id LIKE ? OR 
-                base_datos LIKE ? OR 
-                bas_cantidad_usuarios LIKE ? OR 
-                bas_estatus LIKE ? OR 
-                bas_tipo_ambiente LIKE ? OR 
-                tipo LIKE ? OR 
-                manejador LIKE ? ) ORDER BY bases_datos.base_datos_id ${orden} LIMIT 10`, 
-            [termino,termino,termino,termino,termino,termino,termino,parseInt(count)]);
+
+
+        if(estatus){
+            data = await pool.query(
+                `${query}
+                WHERE (bases_datos.base_datos_id LIKE ? OR 
+                    base_datos LIKE ? )
+                    AND estatus LIKE ? ORDER BY bases_datos.base_datos_id ${orden};`, 
+            [termino,termino,estatus]);
+        }
+        else if(tipo){
+            data = await pool.query(
+                `${query}
+                WHERE (bases_datos.base_datos_id LIKE ? OR 
+                    base_datos LIKE ? )
+                    AND tipo LIKE ? ORDER BY bases_datos.base_datos_id ${orden};`, 
+            [termino,termino,tipo]);
+        }
+        else if(manejador){
+            data = await pool.query(
+                `${query}
+                WHERE (bases_datos.base_datos_id LIKE ? OR 
+                    base_datos LIKE ? )
+                    AND manejador LIKE ? ORDER BY bases_datos.base_datos_id ${orden};`, 
+            [termino,termino,manejador]);
+        }
+        else if(ambiente){
+            data = await pool.query(
+                `${query}
+                WHERE (bases_datos.base_datos_id LIKE ? OR 
+                    base_datos LIKE ? )
+                    AND tipo_ambiente LIKE ? ORDER BY bases_datos.base_datos_id ${orden};`, 
+            [termino,termino,ambiente]);
+        }
+        else{
+            data = await pool.query(`
+                ${query}
+                WHERE 
+                    (bases_datos.base_datos_id LIKE ? OR 
+                    base_datos LIKE ? ) 
+                ORDER BY bases_datos.base_datos_id ${orden}`, 
+                [termino,termino,parseInt(count)]
+            );
+        }
 
         res.json(data[0]);
         
@@ -88,9 +123,9 @@ const obtenerBusqueda = async (req,res) => {
 const crearBaseDatos = async (req,res) => {
     try {
         const {
+            base_datos,estatus,cantidad_usuarios, tipo, manejador, 
+            version_manejador,tipo_ambiente, usuario_registro,
             select_aplicacion, select_servidor,
-            base_datos,estatus,cantidad_usuarios, tipo, manejador, manejador_version,
-            tipo_ambiente
         } = req.body;
 
         const query = await pool.query(
@@ -103,34 +138,63 @@ const crearBaseDatos = async (req,res) => {
             return res.status(401).json({ message: 'ERROR, APLICACION YA EXISTE' });
         }
         else{
+            console.log(base_datos,estatus,cantidad_usuarios, tipo, manejador, 
+                version_manejador,tipo_ambiente, usuario_registro,
+                select_aplicacion, select_servidor);
 
-            // crea los datos del manejador de la bd
-            let manejador_id;
-            const datos_manejador = await pool.query(
-                `INSERT INTO manejadores (manejador) VALUES (?)`, 
-                [manejador]
-            );
-            const selectMan = await pool.query(`SELECT * FROM manejadores ORDER BY manejador_id DESC LIMIT 1`);
-            manejador_id = selectMan[0][0].manejador_id;
-            console.log('MANEJADOR REGISTRADO: ' + manejador_id);
-            
-            // crea los datos del tipo de bd
-            let tipo_base_id;
-            const datos_tipoBases = await pool.query(
-                `INSERT INTO tipos_bases (tipo) VALUES (?)`, 
-                [tipo]
-            );
-            const selectTipo = await pool.query(`SELECT * FROM tipos_bases ORDER BY tipo_base_id DESC LIMIT 1`);
-            tipo_base_id = selectTipo[0][0].tipo_base_id;
-            console.log('TIPO DE BD REGISTRADO: ' + tipo_base_id);
-            
-            // crea los datos de la base de datos
+            if(version_manejador){
+                const datos_version = await pool.query(
+                    `INSERT INTO versiones_manejadores (version_manejador,manejador_id) 
+                    VALUES 
+                        (?,?);`, 
+                    [version_manejador,manejador]
+                );
+                console.log('REGISTRO MANEJADOR');
+            }
+
             const datos_basedatos = await pool.query(
-                `INSERT INTO bases_datos (base_datos,bas_estatus,bas_tipo,bas_manejador,
-                    bas_tipo_ambiente,bas_cantidad_usuarios) 
-                VALUES (?,?,?,?,?,?);`, 
-                [base_datos,estatus,tipo_base_id,manejador_id,tipo_ambiente,cantidad_usuarios]
+                `INSERT INTO bases_datos 
+                    (base_datos,bas_estatus,bas_tipo,bas_manejador,bas_tipo_ambiente,bas_cantidad_usuarios,
+                    bas_usuario_registro,bas_usuario_actualizo) 
+                VALUES 
+                    (?,?,?,?,?,?,
+                    (SELECT usuario_id FROM usuarios WHERE indicador = ?),
+                    (SELECT usuario_id FROM usuarios WHERE indicador = ?)
+                );`, 
+                [base_datos,estatus,tipo,manejador,tipo_ambiente,cantidad_usuarios,usuario_registro,usuario_registro]
             );
+            console.log('REGISTRO GENERAL BASE DE DATOS');
+
+            const selectBase = await pool.query(`SELECT * FROM bases_datos ORDER BY base_datos_id DESC LIMIT 1`);
+            let base_datos_id = selectBase[0][0].base_datos_id;
+
+            if(select_aplicacion){
+                const selectAplicacion = await pool.query(`
+                    SELECT 
+                        aplicacion_id FROM aplicaciones 
+                    WHERE 
+                        apl_acronimo = ? OR apl_nombre = ?`, 
+                    [select_aplicacion,select_aplicacion]);
+
+                const aplicacion_id = selectAplicacion[0][0].aplicacion_id;
+                
+                const bas_apl = await pool.query(
+                    `INSERT INTO aplicacion_basedatos (aplicacion_id,base_datos_id) VALUES (?,?);`, 
+                    [aplicacion_id, base_datos_id]
+                );
+                console.log('RELACION BASE-APP');
+            }
+            if(select_servidor){
+                const selectServidor = await pool.query(`SELECT servidor_id FROM servidores WHERE servidor = ?`, [select_servidor]);
+                const servidor_id = selectServidor[0][0].servidor_id;
+                
+                const bas_ser = await pool.query(
+                    `INSERT INTO basedatos_servidor (base_datos_id,servidor_id) VALUES (?,?);`, 
+                    [base_datos_id, servidor_id]
+                );
+                console.log('RELACION BASE-SERVIDOR');
+            }
+            
 
             console.log('CREACION EXITOSA');
             res.send('CREACION EXITOSA');

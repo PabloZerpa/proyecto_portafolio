@@ -1,22 +1,84 @@
 
 import { useEffect, useState } from "react";
-import { Container, Select, Radio, Tabla, Button } from "../../components";
+import { Container, Button } from "../../components";
 import { useDebounce } from 'use-debounce';
-import { FaCheckCircle, FaEdit, FaPlus, FaSearch } from 'react-icons/fa';
+import { FaCheckCircle, FaEdit, FaSearch } from 'react-icons/fa';
 import Autorizacion from "../../services/auth.service";
 import Falla from "../../services/falla.service";
 import { Link } from "react-router-dom";
+import { Notificacion } from "../../utils/Notificacion";
+import DataTable from "react-data-table-component";
 
-const columnas = ['Editar','ID','Clase','Impacto','Descripcion','Solucion','Aplicacion'];
+const columnas = ['Editar','Falla_ID','Acronimo','Nombre','Clase','Impacto','Descripcion','Solucion'];
+
+const columns = [
+    {
+        name: 'Editar',
+        button: true,
+        cell: row => 
+        <div className="flex gap-8">
+            <Link to={`/dashboard`} >
+                <FaEdit className="text-blue-500 text-lg" />
+            </Link>
+        </div>,
+    },
+    {
+        name: 'Falla ID',
+        selector: row => row.falla_id,
+        sortable: true,
+        center: true,
+    },
+    {
+        name: 'APP Acronimo',
+        selector: row => row.apl_acronimo,
+        sortable: true,
+        left: true
+    },
+    {
+        name: 'APP Nombre',
+        selector: row => row.apl_nombre,
+        sortable: true,
+        left: true
+    },
+    {
+        name: 'Clase',
+        selector: row => row.fal_clase,
+        sortable: true,
+        left: true
+    },
+    {
+      name: 'Impacto',
+      selector: row => row.fal_impacto,
+      sortable: true,
+      left: true
+    },
+    {
+        name: 'Descripcion',
+        selector: row => row.fal_descripcion,
+        sortable: true,
+        left: true
+    },
+    {
+        name: 'Solucion',
+        selector: row => row.fal_solucion,
+        sortable: true,
+        left: true
+    },
+];
+
+const paginacionOpciones = {
+    rowsPerPageText: 'Filas por Pagina',
+    rangeSeparatorText: 'de',
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'Todos'
+}
 
 function Fallas() {
 
     const [searchTerm, setSearchTerm] = useState("");
     const [resultados, setResultados] = useState('');
     const [debounceValue] = useDebounce(searchTerm, 500);
-    const rol = Autorizacion.obtenerUsuario().rol;
 
-    const [avanzados, setAvanzados] = useState(false);
     const [datos, setDatos] = useState({
         aplicacion: '',
         clase: '',
@@ -47,7 +109,6 @@ function Fallas() {
 
     // FUNCION PARA BUSCAR AL ESCRIBIR EN EL INPUT
     useEffect(() => {
-
         if (debounceValue)
             onSearch(debounceValue);
         else
@@ -59,8 +120,8 @@ function Fallas() {
     const onSearch = async (termino) => {
         try {
             const datos = await Falla.obtenerFallaPorBusqueda(termino);
-            setResultados(datos.data); 
-           
+            setResultados(datos.data);
+            console.log(resultados);
         } catch (error) { 
             console.log('ERROR AL BUSCAR DATOS') 
         }
@@ -70,15 +131,15 @@ function Fallas() {
     async function updateData(e) {
         e.preventDefault();
         try {
-        
-        if(Autorizacion.obtenerUsuario().rol === 'admin'){
-
-            const datoModificacion = { edicion, clase, impacto, descripcion, solucion };
-            await Falla.actualizarFalla(datoModificacion); 
-            habilitar('','','');
-        }
+            if(Autorizacion.obtenerUsuario().rol === 'admin'){
+                const datoModificacion = { edicion, clase, impacto, descripcion, solucion };
+                await Falla.actualizarFalla(datoModificacion); 
+                Notificacion('FALLA MODDIFICADA EXITOSAMENTE', 'success');
+                habilitar('','','');
+            }
         }
         catch (error) {
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
@@ -102,9 +163,9 @@ function Fallas() {
     // FUNCION PARA VERIFICAR Y ELEGIR SELECT SEGUN LA OPCION SELECCIONADA
     const verificarCampo = (campo, valor) => {
         if(campo === 'Clase')
-            return (selectCampo(['SELECCIONE','CLASE1','CLASE2','CLASE3'],valor,setClase));
+            return (selectCampo(['SELECCIONE','CLASE1','CLASE2','CLASE3'],setClase));
         else if(campo === 'Impacto')
-            return (selectCampo(['SELECCIONE','ALTA','MEDIA','BAJA'],valor,setImpacto));
+            return (selectCampo(['SELECCIONE','ALTA','MEDIA','BAJA'],setImpacto));
         else if(campo === 'Descripcion'){
             return (
                 <input type='text' defaultValue={valor}
@@ -146,6 +207,21 @@ function Fallas() {
             </form>
 
             {resultados ? (
+                
+                // <div className="w-[1080px]">
+                //     <DataTable
+                //         columnas={columns}
+                //         data={resultados}
+                //         pagination
+                //         paginationComponentOptions={paginacionOpciones}
+                //         fixedHeader
+                //         fixedHeaderScrollHeight="600px"
+                //         highlightOnHover
+                //         pointerOnHover
+                //         dense
+                //     />
+                // </div>
+
                 <table className="w-1/2 table-auto border-separate w-full text-xs text-center text-gray-700 shadow-md">
                 <thead className="text-xs text-gray-700 font-bold bg-zinc-200 uppercase">
                                 
@@ -161,7 +237,7 @@ function Fallas() {
                     {resultados.map((dato, index) => { 
                     let valores = Object.values(dato);
 
-                    {edicion===dato.falla_id ? 
+                    {edicion === dato.falla_id ? 
                         valores.unshift(
                         <Link to='' className='text-lg' state={dato} >
                         <FaCheckCircle
@@ -184,11 +260,11 @@ function Fallas() {
                         {valores.map((valor, index) => {
                             
                             return (
-                            <td>
-                                {edicion!==dato.falla_id ? (
-                                    <td key={index} className="px-2 py-2">{valor}</td>
+                            <td key={index}>
+                                {edicion == dato.falla_id ? (
+                                    verificarCampo(columnas[index],valor)
                                 ) : (
-                                    verificarCampo(columnas[index],dato,valor)
+                                    <td className="px-2 py-2 flex justify-center items-center">{valor}</td>
                                 )}
                             </td>
                             );

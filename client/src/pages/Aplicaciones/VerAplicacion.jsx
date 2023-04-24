@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { FaEye, FaPlus } from 'react-icons/fa';
 import { useParams, Navigate, Link } from 'react-router-dom';
-import { Button, Container, Input, Radio } from '../../components';
+import { Button, Container, Input, Radio, TextArea } from '../../components';
 import Tabla3 from '../../components/Table3';
 import Aplicacion from '../../services/aplicacion.service';
 
@@ -60,24 +60,24 @@ function VerAplicacion() {
             <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
     
               <div className='grid gap-6 mb-6 md:grid-cols-2'>
-                <Input campo='Acronimo' propiedad={general.apl_acronimo} />
-                <Input campo='Estatus' propiedad={general.apl_estatus} />
-                <Input campo='Version' propiedad={general.apl_version} />
-                <Input campo='Direccion' propiedad={general.apl_direccion} />
+                <Input campo='Acronimo' propiedad={general.apl_acronimo} editable={false} />
+                <Input campo='Estatus' propiedad={general.apl_estatus} editable={false} />
+                <Input campo='Version' propiedad={general.apl_version} editable={false} />
+                <Input campo='Direccion' propiedad={general.apl_direccion} editable={false} />
               </div>
     
               <div className='flex flex-col gap-2 text-sm font-medium text-gray-900 mb-6'>
-                <Input campo='Nombre' area={true} propiedad={general.apl_nombre} />
-                <Input campo='Descripcion' area={true} propiedad={general.apl_descripcion} />
+                <TextArea campo='Nombre' propiedad={general.apl_nombre} editable={false} />
+                <TextArea campo='Descripcion' propiedad={general.apl_descripcion} editable={false} />
               </div>
                 
               <div className='grid gap-6 mb-6 md:grid-cols-2'>
-                <Input campo='Prioridad' propiedad={general.apl_prioridad} />
-                <Input campo='Alcance' propiedad={general.apl_alcance} />
-                <Input campo='Critico' propiedad={general.apl_critico} />
-                <Input campo='Codigo Fuente' propiedad={general.apl_codigo_fuente} />
-                <Input campo='N° Usuarios' propiedad={general.apl_cantidad_usuarios} />
-                <Input campo='Region' propiedad={general.region} /> 
+                <Input campo='Prioridad' propiedad={general.apl_prioridad} editable={false} />
+                <Input campo='Alcance' propiedad={general.apl_alcance} editable={false} />
+                <Input campo='Critico' propiedad={general.apl_critico} editable={false} />
+                <Input campo='Codigo Fuente' propiedad={general.apl_codigo_fuente} editable={false} />
+                <Input campo='N° Usuarios' propiedad={general.apl_cantidad_usuarios} editable={false} />
+                <Input campo='Region' propiedad={general.region} editable={false} /> 
               </div>
             </form>
           </>
@@ -187,8 +187,6 @@ function VerAplicacion() {
             <h2 className='font-bold text-lg'>Fallas</h2>
             <form className="relative w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
               <Tabla3 columnas={columnasFallas} datos={datos} />
-
-              {/* {paginacion ? ( <Paginacion />) : (null)} */}
             </form>
           </>
         )

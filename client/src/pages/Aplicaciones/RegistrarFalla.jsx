@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Button, Container, Input, Select } from "../../components";
+import { Button, Container, Input, Select, TextArea } from "../../components";
 import Autorizacion from "../../services/auth.service";
 import Falla from "../../services/falla.service";
 import { Notificacion } from "../../utils/Notificacion";
@@ -50,11 +50,11 @@ function RegistrarFalla() {
                     <div className="grid grid-cols-2 w-[900px] gap-4 p-4 bg-zinc-400 rounded border-2 border-dashed border-blue-500">
                         <Input campo='Aplicacion' name='aplicacion' direccion="col" editable={true} manejador={handleInputChange} />
                         <Input campo='Usuario' name='usuario' direccion="col" editable={true} manejador={handleInputChange} />
-                        <Input campo='Clase' name='clase' direccion="col" editable={true} manejador={handleInputChange} />
+                        <Select campo='Clase' name='clase' direccion="col" opciones={['SELECCIONE','CLASE 1','CLASE 2','CLASE 3']} manejador={handleInputChange} />
                         <Select campo='Impacto' name='impacto' opciones={['SELECCIONE','ALTA','MEDIA','BAJA']} manejador={handleInputChange}/>
                         <div className="col-span-2">
-                            <Input campo='Descripcion' name='descripcion' area={true} direccion="col" editable={true} manejador={handleInputChange} />
-                            <Input campo='Solucion' name='solucion' area={true} direccion="col" editable={true} manejador={handleInputChange} />
+                            <TextArea campo='Descripcion' name='descripcion' area={true} direccion="col" editable={true} manejador={handleInputChange} />
+                            <TextArea campo='Solucion' name='solucion' area={true} direccion="col" editable={true} manejador={handleInputChange} />
                         </div>
                     </div>
                 </div>

@@ -72,19 +72,6 @@ export const campos = {
     fal_solucion: '',
     fal_impacto: '',
 
-    // usu_indicador: '',
-    // usu_password: '',
-    // usu_rol: '',
-    // usu_gerencia: '',
-
-    // sol_numero: '',
-    // sol_estatus: '',
-    // sol_tipo: '',
-    // sol_elemento: '',
-    // sol_descripcion: '',
-    // sol_aprobador: '',
-    // sol_solicitante: '',
-
 }
 
 
@@ -92,13 +79,19 @@ export const campos = {
 
 export const opcionRol = ['SELECCIONE','admin','superuser', 'user'];
 
-export const opcionEstatus = ['SELECCIONE','TODAS', 'DESARROLLO', 'MANTENIMIENTO', 'DESINCORPORADA', 'ESTABILIZACION',
-    'SIN USO', 'VISAULIZACION', 'PRUEBA'];
+export const opcionEstatus = ['SELECCIONE','TODAS','DESARROLLO', 'MANTENIMIENTO', 'DESINCORPORADA', 'ESTABILIZACION',
+    'SIN USO', 'VISUALIZACION', 'PRUEBA'];
+
+export const selectEstatus = ['SELECCIONE','DESARROLLO', 'MANTENIMIENTO', 'DESINCORPORADA', 'ESTABILIZACION',
+    'SIN USO', 'VISUALIZACION', 'PRUEBA'];
 
 export const opcionPrioridad = ['ALTA', 'MEDIA', 'BAJA'];
 
-export const opcionRegion = ['SELECCIONE','TODAS', 'CENTRO', 'CENTRO SUR', 'CENTRO OCCIDENTE','ORIENTE NORTE', 
+export const opcionRegion = ['SELECCIONE','TODAS','CENTRO', 'CENTRO SUR', 'CENTRO OCCIDENTE','ORIENTE NORTE', 
 'ORIENTE SUR', 'OCCIDENTE','FAJA','METROPOLITANA',];
+
+export const selectRegion = ['SELECCIONE','ORIENTE SUR', 'ORIENTE NORTE','CENTRO', 'CENTRO SUR', 
+'CENTRO OCCIDENTE', 'OCCIDENTE','FAJA','METROPOLITANA',];
 
 export const opcionLocalidad = ['SELECCIONE'];
 export const localidadCentro = 
@@ -129,26 +122,32 @@ export const localidadMetropolitana =
 
 export const opcionGerencia = ['SELECCIONE','AIT', 'SERVIDORES', 'TELECOMUNICACIONES'];
 
+export const opcionCargo = ['SELECCIONE','ANALISTA', 'ESPECIALISTA', 'GERENTE'];
+
 export const opcionCount = ['SELECCIONE',10,20,30,40,50];
 
 export const opcionPlataforma = ['SELECCIONE','TODAS', 'WEB', 'ESCRITORIO', 'MOVIL', 'CLIENTE-SERVIDOR', 'STAND ALONE', 'MINI', 'MAINFRAME'];
+export const selectPlataforma = ['SELECCIONE','WEB', 'ESCRITORIO', 'MOVIL', 'CLIENTE-SERVIDOR', 'STAND ALONE', 'MINI', 'MAINFRAME'];
 
 export const opcionAlcance = ['SELECCIONE','TODAS', 'LOCAL', 'REGIONAL', 'CORPORATIVO'];
+export const selectAlcance = ['SELECCIONE','LOCAL', 'REGIONAL', 'CORPORATIVO'];
 
 export const opcionSiNo = ['SI', 'NO'];
 
-export const opcionMantenimiento = ['SELECCIONE','TODAS', 'DIARIO', 'SEMANAL', 'QUINCENAL', 'MENSUAL',
+export const opcionMantenimiento = ['SELECCIONE','TODAS','DIARIO', 'SEMANAL', 'QUINCENAL', 'MENSUAL',
+    'BIMENSUAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL', 'NO APLICA'];
+export const selectMantenimiento = ['SELECCIONE','DIARIO', 'SEMANAL', 'QUINCENAL', 'MENSUAL',
     'BIMENSUAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL', 'NO APLICA'];
 
-export const opcionManejadores = ['SELECCIONE','MYSQL', 'POSTGRESS', 'MARIADB','ORACLE','MONGODB'];
+export const opcionManejadores = ['SELECCIONE','TODAS','MYSQL', 'POSTGRESS', 'MARIADB','ORACLE','MONGODB'];
 
-export const opcionTipoBD = ['SELECCIONE','RELACIONAL', 'NO RELACIONAL', 'DISTRIBUIDA','OBJETO'];
+export const opcionTipoBD = ['SELECCIONE','TODAS','RELACIONAL', 'NO RELACIONAL', 'DISTRIBUIDA','OBJETO'];
+
+export const selectTipoAmbiente = ['SELECCIONE','TODAS','CALIDAD', 'CONTINGENCIA', 'DESARROLLO', 'DESINCORPORADO', 
+'MANTENIMIENTO', 'PRODUCCION', 'POR DETERMINAR'];
 
 export const opcionLenguaje = ['SELECCIONE','PHP', 'JAVASCRIPT', 'JAVA', 'C++', 'C#','VISUAL BASIC',
     'TYPESCRIPT','PYTHON','GO','RUST'];
-
-// export const opcionFramework = ['LARAVEL', 'CODEIGNITER', 'REACT', 'VUE', 'ANGULAR','SPRING',
-//     'BOOTSTRAP','MATERIAL DESIGN'];
 
 export const frameworkPhp = ['SELECCIONE','LARAVEL', 'CODEIGNITER', 'SIMPHONY'];
 export const frameworkJS = ['SELECCIONE','REACT', 'VUE', 'ANGULAR','BOOTSTRAP','MATERIAL DESIGN'];
@@ -160,8 +159,6 @@ export const frameworkPY = ['SELECCIONE','TENSERFLOW','NUMPHY','FLASK'];
 export const opcionBasedatos = ['SELECCIONE','PRIMERA DATABASE', 'SEGUNDA DATABASE', 'TERCERA DATABASE'];
 
 export const opcionServidor = ['SELECCIONE','SERVIDOR 1', 'SERVIDOR 2', 'SERVIDOR 3'];
-
-
 
 
 

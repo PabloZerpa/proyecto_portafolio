@@ -6,8 +6,8 @@ import {
   Dashboard,
   ActualizarCampo,
   ActualizarApp,
+  Registrar,
   RegistrarApp,
-  Perfil,
   Permisos,
   CrearUsuario,
   BuscarUsuario,
@@ -19,7 +19,8 @@ import {
   RegistrarBD,
   Fallas,
   RegistrarFalla,
-  ActualizarBD
+  ActualizarBD,
+  RegistrarServidor
 } from '../pages';
 
 function Rutas() {
@@ -34,21 +35,25 @@ function Rutas() {
 
             <Route path='*' element={<Dashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/perfil" element={<Perfil />} />
+            {/* <Route path="/perfil" element={<Perfil />} /> */}
 
             {/* MODULO DE ADMINISTRACION */}
             <Route element={<ProtegidaAdm />} >
               {/* REGISTRO Y PERMISOS SOLO PUEDE ACCERDER LOS ADMIN */}
-              <Route path="/administracion/permisos" element={<BuscarUsuario />} />
+              <Route path="/administracion/permisos" element={<Permisos />} />
               <Route path="/administracion/permisos/crear" element={<CrearUsuario />} />
-              {/* <Route path="/administracion/permisos/buscar" element={<BuscarUsuario />} /> */}
-              <Route path="/administracion/registro" element={<RegistrarApp />} />
+              <Route path="/administracion/permisos/buscar" element={<BuscarUsuario />} />
             </Route>
 
             <Route element={<ProtegidaSuper />} >
               {/* ADMINISTRACION POR CAMPO Y ACTUALIZACION POR ID PUEDEN ACCERDER SUPERUSER Y ADMIN */}
               <Route path="/administracion" element={<ActualizarCampo />} />
               <Route path="/administracion/actualizacion/:id" element={<ActualizarApp />} />
+
+              <Route path="/administracion/registro" element={<Registrar />} />
+              <Route path="/administracion/registro/aplicacion" element={<RegistrarApp />} />
+              <Route path="/administracion/registro/basedatos" element={<RegistrarBD />} />
+              <Route path="/administracion/registro/servidor" element={<RegistrarServidor />} />
             </Route>
             
             {/* MODULO DE APLICACIONES */}
@@ -61,7 +66,7 @@ function Rutas() {
             {/* MODULO DE ADMINISTRACION */}
             <Route path="/basedatos" element={<BaseDatos />} />
             <Route path="/basedatos/:id" element={<VerBD />} />
-            <Route path="/basedatos/registro" element={<RegistrarBD />} />
+            {/* <Route path="/basedatos/registro" element={<RegistrarBD />} /> */}
             <Route path="/basedatos/actualizacion/:id" element={<ActualizarBD />} />
             
           </Route> 

@@ -8,8 +8,7 @@ function Radio({label, name=label, opciones, manejador, size='small'}) {
     const big = `flex items-center justify-center w-28 h-10 p-2 text-gray-500 bg-white border border-gray-100 cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100`;
     const bigLeft = `flex items-center justify-center w-28 h-10 p-2 text-gray-500 bg-white border border-gray-100 rounded-l cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100`;
     const bigRight = `flex items-center justify-center w-28 h-10 p-2 text-gray-500 bg-white border border-gray-100 rounded-r cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100`;
-
-    const onHandle = (e) => manejador(e);
+    
 
     return(
         <div className="flex flex-col items-center justify-center text-sm font-medium">
@@ -29,7 +28,7 @@ function Radio({label, name=label, opciones, manejador, size='small'}) {
                                     value={opcion}
                                     className="hidden peer" 
                                     defaultChecked
-                                    onChange={(e) => {onHandle(e)}}
+                                    onChange={(e) => {manejador(e)}}
                                 />
                                 <label htmlFor={labelId} className={size==='small' ? smallLeft : bigLeft} >                           
                                     <div className="text-sm font-semibold">{opcion}</div>
@@ -46,7 +45,7 @@ function Radio({label, name=label, opciones, manejador, size='small'}) {
                                     name={name}
                                     value={opcion}
                                     className="hidden peer" 
-                                    onChange={(e) => {onHandle(e)}}
+                                    onChange={(e) => {manejador(e)}}
                                 />
                                 <label htmlFor={labelId} className={size==='small' ? smallRight : bigRight} >                           
                                     <div className="text-sm font-semibold">{opcion}</div>
@@ -63,7 +62,7 @@ function Radio({label, name=label, opciones, manejador, size='small'}) {
                                     name={name}
                                     value={opcion}
                                     className="hidden peer" 
-                                    onChange={(e) => {onHandle(e)}}
+                                    onChange={(e) => {manejador(e)}}
                                 />
                                 <label htmlFor={labelId} className={size==='small' ? small : big} >                           
                                     <div className="text-sm font-semibold">{opcion}</div>

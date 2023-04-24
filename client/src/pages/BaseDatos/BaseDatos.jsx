@@ -6,35 +6,117 @@ import { FaEdit, FaEye, FaSearch } from 'react-icons/fa';
 import Autorizacion from "../../services/auth.service";
 import Base from "../../services/basedatos.service";
 import { opcionEstatus, opcionRegion, opcionPlataforma, opcionAlcance, 
-    opcionMantenimiento, opcionCount, opcionLocalidad } from '../../services/campos.service';
+    opcionMantenimiento, opcionCount, opcionLocalidad, opcionTipoBD, opcionManejadores } from '../../services/campos.service';
 import { Link } from "react-router-dom";
+import DataTable from "react-data-table-component";
+import { selectTipoAmbiente } from "../../services/campos.service";
 
-const columnasUserSimple = ['Ver','ID','Nombre','Estatus','Tipo','Manejador','Version',
-'N° Usuarios','Ambiente'];
+
+// const columnasUserSimple = ['Ver','ID','Nombre','Estatus','Tipo','Manejador','Version',
+// 'N° Usuarios','Ambiente'];
     
-const columnasAdminSimple = ['Ver','Editar','ID','Nombre','Estatus','Tipo','Manejador','Version',
-'N° Usuarios','Ambiente'];
+// const columnasAdminSimple = ['Ver','Editar','ID','Nombre','Estatus','Tipo','Manejador','Version',
+// 'N° Usuarios','Ambiente'];
 
 const opciones = true;
 
+const columns = [
+    {
+        name: 'Acciones',
+        button: true,
+        cell: row => 
+        <div className="flex gap-8">
+            <Link to={row ? `/basedatos/${row.base_datos_id}` : `/dashboard`} >
+                <FaEye className="text-blue-500 text-lg" />
+            </Link>
+            
+            {Autorizacion.obtenerUsuario.rol !== 'user' ? 
+                <Link to={row ? `/administracion/actualizacion/${row.aplicacion_id}` : `/dashboard`} >
+                <FaEdit className="text-blue-500 text-lg" />
+                </Link>
+            : 
+                null
+            }
+        </div>,
+    },
+    {
+        name: 'ID',
+        selector: row => row.base_datos_id,
+        sortable: true,
+        left: true,
+        width: '60px'
+    },
+    {
+        name: 'Nombre',
+        selector: row => row.base_datos,
+        sortable: true,
+        left: true
+    },
+    {
+        name: 'Estatus',
+        selector: row => row.estatus,
+        sortable: true,
+        left: true
+    },
+    {
+        name: 'Tipo',
+        selector: row => row.tipo,
+        sortable: true,
+        left: true
+    },
+    {
+        name: 'Manejador',
+        selector: row => row.manejador,
+        sortable: true,
+        left: true
+    },
+    {
+      name: 'N° de Usuarios',
+      selector: row => row.bas_cantidad_usuarios,
+      sortable: true,
+      left: true
+    },
+    {
+      name: 'Ambiente',
+      selector: row => row.tipo_ambiente,
+      sortable: true,
+      left: true
+    },
+    {
+        name: 'Ultima Actualizacion',
+        selector: row => row.bas_fecha_actualizacion,
+        sortable: true,
+        grow: 2,
+        left: true
+    },
+    {
+      name: 'Por',
+      selector: row => row.indicador,
+      sortable: true,
+      grow: 1,
+      left: true
+  },
+];
+  
+  const paginacionOpciones = {
+    rowsPerPageText: 'Filas por Pagina',
+    rangeSeparatorText: 'de',
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'Todos'
+  }
+
 function BaseDatos() {
 
-    const [searchTerm, setSearchTerm] = useState("");
+    const [searchTerm, setSearchTerm] = useState("a");
     const [resultado, setResultado] = useState('');
-    const rol = Autorizacion.obtenerUsuario().rol;
     const [debounceValue] = useDebounce(searchTerm, 500);
 
     const [avanzados, setAvanzados] = useState(false);
     const [datos, setDatos] = useState({
         estatus: '',
-        plataforma: '', 
-        prioridad: '',
-        region: '',
-        alcance: '',
-        mantenimiento: '',
-        fecha: '',
-        critico: '',
-        codigo: '',
+        tipo: '',
+        manejador: '',
+        ambiente: '', 
         registros: 10,
         orden: 'ASC',
     }); 
@@ -48,6 +130,8 @@ function BaseDatos() {
             else
                 datos[clave] = '';
         }
+        setAvanzados(false);
+        onSearch(debounceValue)
     }
 
     const handleInputChange = (e) => {
@@ -55,6 +139,7 @@ function BaseDatos() {
             setDatos({ ...datos, [e.target.name] : null })
         else
             setDatos({ ...datos, [e.target.name] : e.target.value })
+            
     }
 
     useEffect(() => {
@@ -68,15 +153,10 @@ function BaseDatos() {
 
     const onSearch = async (value) => {
         try {
-            const { estatus,plataforma,prioridad,region,alcance,mantenimiento,
-                basedatos,servidor,critico,codigo,licencia,registros,orden } = datos;
-
-            console.log(estatus,plataforma,prioridad,region,alcance,mantenimiento,
-                basedatos,servidor,critico,codigo,licencia,registros,orden);
-
+            const { estatus,tipo,manejador,ambiente,registros,orden } = datos;
+            console.log(estatus,tipo,manejador,ambiente,registros,orden);
             const respuesta = await Base.obtenerBDPorBusqueda(
-                value,registros,orden);
-
+                value,estatus,tipo,manejador,ambiente,registros,orden);
             setResultado(respuesta.data);
             
         } catch (error) {
@@ -92,41 +172,16 @@ function BaseDatos() {
                 <div className='flex flex-col gap-4 w-full py-2 border-solid'>
 
                     <div className="border-solid">
-                        <p className="text-sm font-500">Base de datos</p>
-                        <div className="grid grid-cols-4 gap-0">
-                            <Select campo='Estatus' name='estatus' busqueda={true} opciones={opcionEstatus} manejador={handleInputChange} />
-                            <Select campo='Tipo' name='tipo' busqueda={true} opciones={opcionRegion} manejador={handleInputChange} />
-                            <Select campo='Manejador' name='manejador' busqueda={true} opciones={opcionPlataforma} manejador={handleInputChange} />
-                            <Select campo='Ambiente' name='ambiente' busqueda={true} opciones={opcionCount} manejador={handleInputChange} />
+                        <div className="grid grid-cols-4 gap-4">
+                            <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={opcionEstatus} manejador={handleInputChange} />
+                            <Select campo='Tipo' name='tipo' busqueda={true} byId={false} opciones={opcionTipoBD} manejador={handleInputChange} />
+                            <Select campo='Manejador' name='manejador' busqueda={true} byId={false} opciones={opcionManejadores} manejador={handleInputChange} />
+                            <Select campo='Ambiente' name='ambiente' busqueda={true} byId={false} opciones={selectTipoAmbiente} manejador={handleInputChange} />
                         </div>
                     </div>
 
-                    <div style={avanzados ? {display: 'block'} : {display: 'none'}}>
-                        <p className="text-sm font-500">Servidor</p>
-                        <div className="grid grid-cols-4 gap-0">
-                            <Select campo='Region' name='region' busqueda={true} opciones={opcionRegion} manejador={handleInputChange} />
-                            <Select campo='Localidad' name='localidad' busqueda={true} opciones={opcionLocalidad} manejador={handleInputChange} />
-                            <Select campo='Marca' name='marca' busqueda={true} opciones={opcionMantenimiento} manejador={handleInputChange} />
-                            <Select campo='Fecha' name='fecha' busqueda={true} opciones={['2023','2022','2021','2020','2019','2018']} />
-                        </div>
-
-                        <p className="text-sm font-500">Aplicacion</p>
-                        <div className="grid grid-cols-4 gap-0">
-                            <Select campo='Region' name='region' busqueda={true} opciones={opcionRegion} manejador={handleInputChange} />
-                            <Select campo='Localidad' name='localidad' busqueda={true} opciones={opcionLocalidad} manejador={handleInputChange} />
-                            <Select campo='Plataforma' name='plataforma' busqueda={true} opciones={opcionPlataforma} manejador={handleInputChange} />
-                            <Select campo='Alcance' name='alcance' busqueda={true} opciones={opcionAlcance} manejador={handleInputChange} />
-                        </div>
-                    </div>
-                    
                     <div className="radioArea">
-                        <div className="flex flex-wrap justify-center items-center">
-                            <Radio label='Orden' name='orden' opciones={['ASC', 'DESC']} manejador={handleInputChange} />
-                            <Radio label='Prioridad' name='prioridad' opciones={['TODAS', 'ALTA', 'MEDIA', 'BAJA']} manejador={handleInputChange} />
-                        </div>
-
                         <div className='mt-8 flex justify-center items-center gap-4'>
-
                             <div className="relative w-96">
                                 <input 
                                     type="search" 
@@ -138,11 +193,6 @@ function BaseDatos() {
                                     className="absolute top-0 right-0 p-2.5 text-sm font-medium text-white bg-blue-600 rounded-r border border-blue-700 hover:bg-blue-700">
                                     <FaSearch />
                                 </button>
-                            </div>
-                            
-                            <div>
-                                <input className='mx-2 rounded' type="checkbox" onChange={(e) => setAvanzados(e.target.checked)} /> 
-                                <label className='text-sm' >Avanzados</label>
                             </div>
 
                             <input type='reset' value='Restablecer' 
@@ -157,6 +207,24 @@ function BaseDatos() {
             </form>
 
             {resultado ? (
+                <div className="w-[1080px]">
+                <DataTable
+                    columns={columns}
+                    data={resultado}
+                    pagination
+                    paginationComponentOptions={paginacionOpciones}
+                    paginationRowsPerPageOptions={[10,20,30,50,100]}
+                    noDataComponent={"SIN RESULTADOS"}
+                    fixedHeader
+                    fixedHeaderScrollHeight="600px"
+                    highlightOnHover
+                    pointerOnHover
+                    dense
+                />
+                </div>
+            ) : (null)}
+
+            {/* {resultado ? (
             <table className="table-auto border-separate w-4/3 text-xs text-center text-gray-700 shadow-md">
                 <thead className="text-xs text-gray-700 font-bold bg-zinc-200 uppercase">
                     
@@ -202,14 +270,7 @@ function BaseDatos() {
             </table>
             ) : (
                 <div></div>
-            )}
-
-            {/* <Tabla
-                columnas={rol === 'admin' ? columnasAdminSimple : columnasUserSimple}
-                datos={resultado} 
-                opciones={(Autorizacion.obtenerUsuario().rol==='admin') ? true : false} 
-                paginacion={true}
-            /> */}
+            )} */}
 
         </Container>
         

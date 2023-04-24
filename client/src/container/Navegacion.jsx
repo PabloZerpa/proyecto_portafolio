@@ -29,18 +29,21 @@ function Navegacion() {
                                 <span className="ml-2">Inicio</span>
                             </Link>
                         </li>
-                        <li style={Autorizacion.obtenerUsuario().rol!=='admin' ? {pointerEvents: 'none'} : {pointerEvents: 'auto'} } >
-                            <div className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg cursor-pointer hover:bg-gray-800 hover:text-gray-100" onClick={openMenu2}>
-                                <FaKey/>
-                                <span className="px-2">Administracion</span>
-                                {open2 ? <FaChevronUp /> : <FaChevronDown />}
-                            </div>
+                        
                             
-                            {Autorizacion.obtenerUsuario().rol!=='admin' ? (
-                                <div></div>
-                            ) : (
+                        {Autorizacion.obtenerUsuario().rol==='user' ? (
+                            null
+                        ) : (
+                            <li>
+                                <div className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg cursor-pointer hover:bg-gray-800 hover:text-gray-100" onClick={openMenu2}>
+                                    <FaKey/>
+                                    <span className="px-2">Administracion</span>
+                                    {open2 ? <FaChevronUp /> : <FaChevronDown />}
+                                </div>
                                 <div style={open2 ? {display: 'block'} : {display: 'none'}} className='pl-4'>
-                                    <Link to="/administracion/permisos" 
+                                    <Link 
+                                        style={Autorizacion.obtenerUsuario().rol!=='admin' ? {pointerEvents: 'none', display: 'none'} : {pointerEvents: 'auto'} }
+                                        to="/administracion/permisos" 
                                         className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                             Permisos
                                     </Link>
@@ -53,9 +56,8 @@ function Navegacion() {
                                             Actualizar Campo
                                     </Link>
                                 </div>
-                            )} 
-
-                        </li>
+                            </li>
+                        )} 
                         <li>
                             <div className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg cursor-pointer hover:bg-gray-800 hover:text-gray-100" 
                                 onClick={openMenu1}>
@@ -91,10 +93,6 @@ function Navegacion() {
                                 <Link to="/basedatos" 
                                     className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                     Busqueda
-                                </Link>
-                                <Link to="/basedatos/registro" 
-                                    className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
-                                    Registro
                                 </Link>
                                 <Link to="/basedatos" 
                                     className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >

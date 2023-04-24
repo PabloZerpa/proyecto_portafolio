@@ -9,7 +9,7 @@ class Base {
     async crearDatosDB(datos) {
         console.log('AFUERA DE CREAR DATOS SERVICE')
         console.log(datos);
-        try { 
+        try {  
             console.log('EN EL TRY DE CREAR DATOS SERVICE')
             const respuesta = await axios.post(`${baseUrl}basedatos/`, datos, { headers: authHeader() });
             console.log('DESPUES DE CREAR DATOS SERVICE')
@@ -79,12 +79,10 @@ class Base {
     }
 
     // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
-    async obtenerBDPorBusqueda(term,count,orden) {
+    async obtenerBDPorBusqueda(term,estatus,tipo,manejador,ambiente,count,orden) {
         try {
-            console.log('OBTENER_BUSQUEDA');
-            console.log(term,count,orden);
- 
-            return axios.post(`${baseUrl}basedatos/busqueda`, {term,count,orden}, { headers: authHeader() });
+            return axios.post(`${baseUrl}basedatos/busqueda`, 
+            {term,estatus,tipo,manejador,ambiente,count,orden}, { headers: authHeader() });
         } catch (error) {
             console.log('Error al obtener dato');
         }

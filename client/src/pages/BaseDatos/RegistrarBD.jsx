@@ -1,21 +1,22 @@
 
+import { useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { Button, Checkbox, Container, Input, Select } from '../../components';
+import { Button, Container, Input, Select, TextArea } from '../../components';
 import Autorizacion from '../../services/auth.service';
+import Usuario from '../../services/usuario.service';
 import Base from '../../services/basedatos.service';
-import { useState } from 'react';
 import { Notificacion } from '../../utils/Notificacion';
 
 function RegistrarBD() {
 
     const navigate = useNavigate();
-    const [registrarServidor, setRegistrarServidor] = useState(false);
-    const habilitarServidor = () => {
-        setRegistrarServidor(!registrarServidor)
-        if(!registrarServidor){
-            setDatos({ ...datos, select_servidor : null })
-        }
-    }
+    function navegar(ruta) { navigate(ruta) }
+
+    const [opcionServidores, setOpcionServidores] = useState('');
+    const [opcionMane, setOpcionMane] = useState('');
+    const [opcionTipos, setOpcionTipos] = useState('');
+    const [opcionEstatus, setOpcionEstatus] = useState('');
+    const [opcionAmbientes, setOpcionAmbientes] = useState('');
 
     const [datos, setDatos] = useState({
         base_datos: '',
@@ -25,14 +26,35 @@ function RegistrarBD() {
         version_manejador: '',
         tipo_ambiente: '',
         cantidad_usuarios: '',
+        usuario_registro: Autorizacion.obtenerUsuario().indicador,
+        usuario_actualizo: Autorizacion.obtenerUsuario().indicador,
 
         select_aplicacion: '',
         select_servidor: '',
-        creador: Autorizacion.obtenerUsuario().indicador,
     });
 
-    const handleInputChange = (e) => {
+    async function getData(ruta, elemento){
+        const respuesta = await Usuario.obtenerOpcion(ruta);
+        const data = respuesta.data;
+        let opciones = ['SELECCIONE'];
 
+        for (let i = 0; i < data.length; i++) {
+            const valor = Object.values(data[i]);
+            opciones.push(valor[0]);
+        }
+        elemento(opciones);
+    }
+
+    useEffect(() => {
+        getData('manejadores',setOpcionMane);
+        getData('tipos',setOpcionTipos);
+        getData('ambientes',setOpcionAmbientes);
+        getData('estatus',setOpcionEstatus);
+        getData('servidores',setOpcionServidores);
+    }, []);
+
+    const handleInputChange = (e) => {
+        console.log(e.target.value);
         if(e.target.value === 'TODAS')
             setDatos({ ...datos, [e.target.name] : null })
         else
@@ -68,56 +90,40 @@ function RegistrarBD() {
                 
                 <h2 className='font-bold text-base mb-6'>Informacion General</h2>
 
-                <Input campo='Nombre' name='base_datos' editable={true} area={true} manejador={handleInputChange} />
+                <TextArea campo='Nombre' name='base_datos' editable={true} area={true} manejador={handleInputChange} />
 
                 <div className="relative grid grid-cols-2 gap-4 mb-0">
-                    <Select campo='Estatus' name='estatus' opciones={['SELECCIONE','DESARROLLO','ESTABILIZACION','MANTENIMIENTO']} manejador={handleInputChange}/>
-                    <Select campo='Tipo' name='tipo' opciones={['SELECCIONE','RELACIONAL','NO RELACIONAL','DISTRIBUIDA']} manejador={handleInputChange} />
-                    <Select campo='Manejador' name='manejador' opciones={['SELECCIONE','MYSQL','POSTGRESS','ORACLE',]} manejador={handleInputChange} />
+                    <Select campo='Estatus' name='estatus' required={true} opciones={opcionEstatus ? opcionEstatus : ['SELECCIONE']} manejador={handleInputChange}/>
+                    <Select campo='Tipo' name='tipo' required={true} opciones={opcionTipos ? opcionTipos : ['SELECCIONE']} manejador={handleInputChange} />
+                    <Select campo='Manejador' name='manejador' required={true} opciones={opcionMane ? opcionMane : ['SELECCIONE']} manejador={handleInputChange} />
                     <Input campo='Version' name='version_manejador' editable={true} manejador={handleInputChange} />
-                    <Select campo='Ambiente' name='tipo_ambiente' opciones={['SELECCIONE','DESARROLLO','ESTABILIZACION','MANTENIMIENTO']} manejador={handleInputChange} />
+                    <Select campo='Ambiente' name='tipo_ambiente' required={true} opciones={opcionAmbientes ? opcionAmbientes : ['SELECCIONE']} manejador={handleInputChange} />
                     <Input campo='N° Usuario' name='cantidad_usuarios' editable={true} manejador={handleInputChange} />
                 </div>
 
                 {/* --------------- APLICACION --------------- */}
                 <p className='font-bold text-base my-4'>Aplicacion</p>
                 <div className="grid grid-cols-2 gap-4">
-                    <Select campo='Seleccione Aplicacion' name='select_aplicacion' opciones={['SELECCIONE',1,2,3,4,5,6,7,8,9,10]} manejador={handleInputChange}/>
+                    <Input campo='Aplicacion' required={true} name='select_aplicacion' manejador={handleInputChange}/>
                     <div className='mt-6'>
-                        <Button width={32}><Link to={`/administracion/registro`} target="_blank">Registrar Nueva</Link></Button>
+                        <Button tipo='button' width={32}><Link to={`/administracion/registro/aplicacion`} target="_blank">Registrar Nueva</Link></Button>
                     </div>
-                </div>
+                </div> 
 
                 {/* --------------- SERVIDOR --------------- */}
                 <p className='font-bold text-base my-4'>Servidor</p>
                 <div className="grid grid-cols-2 gap-4">
-                    <div style={registrarServidor ? {display: 'none'} : {display: 'block'}}>
-                        <Select campo='Seleccione Servidor' name='select_servidor' opciones={['SELECCIONE','SERVIDOR 1','SERVIDOR 2','SERVIDOR 3']} manejador={handleInputChange}/>
+                    <Select campo='Seleccione Servidor' required={true} name='select_servidor' byId={false} opciones={opcionServidores ? opcionServidores : ['SELECCIONE']} manejador={handleInputChange}/>
+                    <div className='mt-6'>
+                        <Button tipo='button' width={32}><Link to={`/administracion/registro/servidor`} target="_blank">Registrar Nuevo</Link></Button>
                     </div>
-                    <Checkbox id='registrar_servidor' name='registrar_servidor' opciones={['Registrar nuevo']} manejador={habilitarServidor} />
                 </div>
-
-                {/* <div style={registrarServidor ? {display: 'grid'} : {display: 'none'}} className="grid grid-cols-2 gap-4">
-                    <Input campo='Nombre' name='servidor' editable={true} manejador={handleInputChange} />
-                    <Select campo='Estatus' name='ser_estatus' opciones={['SELECCIONE','SI','NO']} manejador={handleInputChange}/>
-                    <Input campo='Direccion' name='ser_direccion' editable={true} manejador={handleInputChange} />
-                    <Input campo='Sistema' name='ser_sistema' editable={true} manejador={handleInputChange} />
-                    <Input campo='Version Sis' name='ser_sistemas_version' editable={true} manejador={handleInputChange} />
-                    <Input campo='Modelo' name='ser_modelo' editable={true} manejador={handleInputChange} />
-                    <Input campo='Marca' name='ser_marca' editable={true} manejador={handleInputChange} />
-                    <Input campo='Serial' name='ser_serial' editable={true} manejador={handleInputChange} />
-                    <Input campo='Cantidad' name='ser_cantidad_cpu' editable={true} manejador={handleInputChange} />
-                    <Input campo='Velocidad' name='ser_velocidad_cpu' editable={true} manejador={handleInputChange} />
-                    <Input campo='Memoria' name='ser_memoria' editable={true} manejador={handleInputChange} />
-                    <Select campo='Region' name='ser_region' opciones={['SELECCIONE','SI','NO']} manejador={handleInputChange} />
-                    <Select campo='Localidad' name='ser_localidad' opciones={['SELECCIONE','SI','NO']} manejador={handleInputChange} />
-                </div> */}
                     
                 <div className="absolute bottom-4 right-1/3">
                     <Button width={32}>Registrar</Button>
                 </div>
                 <div className="absolute bottom-4 left-1/3">
-                    <Button color='red' width={32} >Cancelar</Button>
+                    <Button tipo='button' color='red' width={32} accion={(e) => navegar(-1)} >Cancelar</Button>
                 </div>
 
             </form>

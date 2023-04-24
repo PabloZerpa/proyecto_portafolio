@@ -1,8 +1,6 @@
 
 function Checkbox({id, name, opciones, manejador}) {
 
-    const onHandle = (e) => manejador(e);
-
     return(
         <div className="flex gap-2 list-none">
             {opciones.map((opcion,index) => {
@@ -13,7 +11,7 @@ function Checkbox({id, name, opciones, manejador}) {
                             id={id}
                             name={name}
                             value={id}
-                            onChange={(e) => {onHandle(e)}}
+                            onChange={(e) => {manejador(e)}}
                         />
                         <label htmlFor={id}>                           
                             <div className="text-sm font-semibold">{opcion}</div>

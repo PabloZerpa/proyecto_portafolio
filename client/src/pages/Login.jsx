@@ -1,8 +1,9 @@
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaUserCircle, FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import Autorizacion from '../services/auth.service';
+import Usuario from '../services/usuario.service';
 import { Notificacion } from '../utils/Notificacion';
 
 function Login() {
@@ -13,6 +14,35 @@ function Login() {
 
   const navigate = useNavigate();
   const handlePass = () => {setShowPass(!showPass)}
+
+  async function iniciarUsuario(){
+    try {
+      const data = await Autorizacion.obtenerTotal();
+      const total = data.data; 
+
+      if(!total[0]){
+
+        const datos = {
+          indicador: 'admin',
+          rol: 1,
+          password: '12345678',
+          nombre: 'USUARIO',
+          apellido: 'DE INICIO',
+          cargo: 1,
+          gerencia: 1,
+        }
+        await Usuario.crearUsuario(datos);
+
+      }
+    }
+    catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  useEffect(() => {
+    iniciarUsuario();
+  }, []);
 
   // -------------------- FUNCION PARA INICIAR SESION --------------------
   async function handleLogin(e) {
@@ -34,6 +64,9 @@ function Login() {
         else
           Notificacion('No responde el servidor', 'error');
       }
+    }
+    else{
+      Notificacion('DATOS INCOMPLETOS', 'warning');
     }
   } 
 
@@ -81,13 +114,6 @@ function Login() {
             className="text-black absolute inset-y-0 right-5 flex items-center bg-trasparent cursor-pointer "
             onClick={handlePass} >
             { showPass ? <FaEye/> : <FaEyeSlash /> }
-          </div>
-        </li>
-
-        <li>
-          <div className='flex gap-2 items-center text-sm font-bold'>
-            <input type="checkbox" className='bg-gray-400 rounded' name="recordar" value="Recordar" />
-            <span>Recordar</span>
           </div>
         </li>
 

@@ -34,8 +34,9 @@ function ActualizarCampo() {
     
     setCampoTabla(e.target.value);
     onSearch(searchTerm,campo);
+    
   }
-  
+
 
   // FUNCION PARA BUSCAR AL ESCRIBIR EN EL INPUT
   useEffect(() => {

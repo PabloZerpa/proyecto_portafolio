@@ -30,6 +30,15 @@ class Autorizacion {
         return JSON.parse(localStorage.getItem('user'));
     }
 
+    // =============== OBTIENE LOS DATOS DE LOS USUARIOS ===============
+    async obtenerTotal() { 
+        try { 
+            return axios.get(`${baseUrl}login/total`);
+        } catch (error) {
+            console.log('Error al obtener dato');
+        }
+    }
+
 }
 
 export default new Autorizacion();

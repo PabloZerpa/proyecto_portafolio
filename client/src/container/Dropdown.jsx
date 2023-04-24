@@ -26,10 +26,6 @@ function Dropdown({ user }) {
 
           <div style={open ? {display: 'block'} : {display: 'none'}} className="z-1 absolute top-16 bg-zinc-300 divide-y divide-gray-100 rounded-lg shadow w-44">
               <ul className="m-0 p-0 text-sm text-center list-none text-gray-700">
-                
-                <Link className="flex justify-center items-center gap-2 px-2 py-2 text-black no-underline rounded-sm hover:bg-blue-400" to="/perfil" >
-                  <FaCog className="text-lg cursor-pointer" />Configuracion
-                </Link>
                 <Link className="flex justify-center items-center gap-2 px-2 py-2 text-black no-underline rounded-sm hover:bg-blue-400" onClick={Autorizacion.logout} to="/" >
                   <FaSignOutAlt className="text-lg cursor-pointer" />Cerrar Sesion
                 </Link>

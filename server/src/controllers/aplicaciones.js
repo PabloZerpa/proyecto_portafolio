@@ -1,22 +1,20 @@
 
 const pool = require('../config');
 
-const { verificarAplicacion, verificarPlataforma, 
-        verificarLenguaje, verificarFramework, verificarServidor, 
-        verificarBase, verificarMantenimiento, verificarDocumentacion, verificarResponsable } = require('../helpers/verificaciones');
+const { insertarAplicacion, insertarPlataforma, insertarLenguaje, insertarFramework, 
+        insertarMantenimiento, insertarDocumentacion, insertarServidor, insertarBase, insertarResponsable } = require('../helpers/verificaciones');
 const { selectSimple } = require('../helpers/consultas');
-
-
 const query = `
 SELECT 
     aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_version,
-    apl_alcance,apl_estatus,apl_prioridad,apl_direccion,region,plataforma,
+    alcance,estatus,prioridad,apl_direccion,region,
     apl_codigo_fuente,apl_critico,man_frecuencia
 FROM aplicaciones
-    JOIN regiones ON aplicaciones.apl_region = regiones.region_id
-    JOIN aplicacion_plataforma ON aplicaciones.aplicacion_id = aplicacion_plataforma.aplicacion_id
-    JOIN plataformas ON aplicacion_plataforma.plataforma_id = plataformas.plataforma_id
-    JOIN mantenimientos ON aplicaciones.aplicacion_id = mantenimientos.aplicacion_id
+    LEFT JOIN estatus ON aplicaciones.apl_estatus = estatus.estatus_id
+    LEFT JOIN prioridades ON aplicaciones.apl_prioridad = prioridades.prioridad_id
+    LEFT JOIN alcances ON aplicaciones.apl_alcance = alcances.alcance_id
+    LEFT JOIN regiones ON aplicaciones.apl_region = regiones.region_id
+    LEFT JOIN mantenimientos ON aplicaciones.aplicacion_id = mantenimientos.aplicacion_id
 `;
 
 
@@ -29,7 +27,15 @@ FROM aplicaciones
 // *********************************** OBTENER TODOS LOS DATOS ***********************************
 const obtenerDatos = async (req,res) => {
     try {
-        const data = await pool.query(selectSimple);
+        const data = await pool.query(`
+            SELECT 
+                aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,
+                estatus,apl_direccion,apl_fecha_actualizacion,indicador
+            FROM aplicaciones 
+                JOIN estatus ON aplicaciones.apl_estatus = estatus.estatus_id
+                JOIN usuarios ON aplicaciones.apl_usuario_actualizo = usuarios.usuario_id
+            ORDER BY apl_fecha_actualizacion ASC LIMIT 5;
+        `);
         res.send(data[0]);
     } catch (error) {
         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
@@ -43,10 +49,9 @@ const obtenerDato = async (req,res) => {
 // *********************************** OBTENER LOS DATOS POR TERMINO DE BUSQUEDA ***********************************
 const obtenerBusqueda = async (req,res) => {
     try {
-        const { term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
+        const { term,estatus,prioridad,region,alcance,mantenimiento,
                 critico,codigo,count,order,pagina } = req.body;
         const termino = '%' + term + '%';
-        const offset = (pagina-1)*10;
         let data;
 
         if (term === undefined || null)
@@ -57,137 +62,63 @@ const obtenerBusqueda = async (req,res) => {
                 `${query}
                 WHERE (aplicaciones.aplicacion_id LIKE ? OR 
                     apl_acronimo LIKE ? OR 
-                    apl_nombre LIKE ? OR
-                    apl_prioridad LIKE ? OR
-                    apl_estatus LIKE ? OR
-                    apl_alcance LIKE ? OR
-                    apl_critico LIKE ? OR 
-                    apl_codigo_fuente LIKE ? OR 
-                    man_frecuencia LIKE ? OR 
-                    plataforma LIKE ?)
-                    AND region LIKE ? ORDER BY aplicaciones.aplicacion_id ${order} LIMIT ? OFFSET ?;`, 
-            [termino,termino,termino,termino,termino,termino,termino,termino,
-            termino,termino,region,parseInt(count),offset]);
+                    apl_nombre LIKE ? )
+                    AND region LIKE ? ORDER BY aplicaciones.aplicacion_id ${order};`, 
+            [termino,termino,termino,region]);
         }
         else if(alcance){
             data = await pool.query(
                 `${query}
                 WHERE (aplicaciones.aplicacion_id LIKE ? OR 
                     apl_acronimo LIKE ? OR 
-                    apl_nombre LIKE ? OR
-                    apl_prioridad LIKE ? OR
-                    apl_estatus LIKE ? OR 
-                    apl_critico LIKE ? OR 
-                    apl_codigo_fuente LIKE ? OR 
-                    man_frecuencia LIKE ? OR 
-                    region LIKE ? OR
-                    plataforma LIKE ?)
-                    AND apl_alcance LIKE ? ORDER BY aplicaciones.aplicacion_id ${order} LIMIT ? OFFSET ?;`, 
-            [termino,termino,termino,termino,termino,termino,termino,termino,
-            termino,termino,alcance,parseInt(count),offset]);
+                    apl_nombre LIKE ? )
+                    AND alcance LIKE ? ORDER BY aplicaciones.aplicacion_id ${order};`, 
+            [termino,termino,termino,alcance]);
         }
         else if(mantenimiento){
             data = await pool.query(
                 `${query}
                 WHERE (aplicaciones.aplicacion_id LIKE ? OR 
                     apl_acronimo LIKE ? OR 
-                    apl_nombre LIKE ? OR
-                    apl_prioridad LIKE ? OR
-                    apl_estatus LIKE ? OR
-                    apl_alcance LIKE ? OR 
-                    apl_critico LIKE ? OR 
-                    apl_codigo_fuente LIKE ? OR 
-                    man_frecuencia LIKE ? OR 
-                    region LIKE ? OR
-                    plataforma LIKE ?)
-                    AND man_frecuencia LIKE ? ORDER BY aplicaciones.aplicacion_id ${order} LIMIT ? OFFSET ?;`, 
-            [termino,termino,termino,termino,termino,termino,termino,termino,
-            termino,termino,mantenimiento,parseInt(count),offset]);
+                    apl_nombre LIKE ? )
+                    AND man_frecuencia LIKE ? ORDER BY aplicaciones.aplicacion_id ${order};`, 
+            [termino,termino,termino,mantenimiento]);
         }
         else if(critico){
             data = await pool.query(
                 `${query}
                 WHERE (aplicaciones.aplicacion_id LIKE ? OR 
                     apl_acronimo LIKE ? OR 
-                    apl_nombre LIKE ? OR
-                    apl_prioridad LIKE ? OR
-                    apl_estatus LIKE ? OR
-                    apl_alcance LIKE ? OR 
-                    apl_codigo_fuente LIKE ? OR 
-                    man_frecuencia LIKE ? OR 
-                    region LIKE ? OR 
-                    plataforma LIKE ?)
-                    AND apl_critico LIKE ? ORDER BY aplicaciones.aplicacion_id ${order} LIMIT ? OFFSET ?;`, 
-            [termino,termino,termino,termino,termino,termino,termino,termino,
-            termino,termino,critico,parseInt(count),offset]);
+                    apl_nombre LIKE ? )
+                    AND apl_critico LIKE ? ORDER BY aplicaciones.aplicacion_id ${order};`, 
+            [termino,termino,termino,critico]);
         }
         else if(codigo){
             data = await pool.query(
                 `${query}
                 WHERE (aplicaciones.aplicacion_id LIKE ? OR 
                     apl_acronimo LIKE ? OR 
-                    apl_nombre LIKE ? OR
-                    apl_prioridad LIKE ? OR
-                    apl_estatus LIKE ? OR
-                    apl_alcance LIKE ? OR 
-                    apl_critico LIKE ? OR 
-                    man_frecuencia LIKE ? OR 
-                    region LIKE ? OR
-                    plataforma LIKE ?)
-                    AND apl_codigo_fuente LIKE ? ORDER BY aplicaciones.aplicacion_id ${order} LIMIT ? OFFSET ?;`, 
-            [termino,termino,termino,termino,termino,termino,termino,termino,
-            termino,termino,codigo,parseInt(count),offset]);
+                    apl_nombre LIKE ? )
+                    AND apl_codigo_fuente LIKE ? ORDER BY aplicaciones.aplicacion_id ${order};`, 
+            [termino,termino,termino,codigo]);
         }
         else if(estatus){
             data = await pool.query(
                 `${query}
                 WHERE (aplicaciones.aplicacion_id LIKE ? OR 
                     apl_acronimo LIKE ? OR 
-                    apl_nombre LIKE ? OR
-                    apl_prioridad LIKE ? OR
-                    apl_alcance LIKE ? OR 
-                    apl_critico LIKE ? OR 
-                    apl_codigo_fuente LIKE ? OR 
-                    man_frecuencia LIKE ? OR 
-                    region LIKE ? OR 
-                    plataforma LIKE ?)
-                    AND apl_estatus LIKE ? ORDER BY aplicaciones.aplicacion_id ${order} LIMIT ? OFFSET ?;`, 
-            [termino,termino,termino,termino,termino,termino,termino,termino,
-            termino,termino,estatus,parseInt(count),offset]);
+                    apl_nombre LIKE ? )
+                    AND estatus LIKE ? ORDER BY aplicaciones.aplicacion_id ${order};`, 
+            [termino,termino,termino,estatus]);
         }
         else if(prioridad){
             data = await pool.query(
                 `${query}
                 WHERE (aplicaciones.aplicacion_id LIKE ? OR 
                     apl_acronimo LIKE ? OR 
-                    apl_nombre LIKE ? OR 
-                    apl_estatus LIKE ? OR 
-                    apl_alcance LIKE ? OR 
-                    apl_critico LIKE ? OR 
-                    apl_codigo_fuente LIKE ? OR 
-                    man_frecuencia LIKE ? OR 
-                    region LIKE ? OR 
-                    plataforma LIKE ?)
-                    AND apl_prioridad LIKE ? ORDER BY aplicaciones.aplicacion_id ${order} LIMIT ? OFFSET ?`,
-                [termino,termino,termino,termino,termino,termino,termino,termino,
-                termino,termino,prioridad,parseInt(count),offset]);
-        }
-        else if(plataforma){
-            data = await pool.query(
-                `${query}
-                WHERE (aplicaciones.aplicacion_id LIKE ? OR 
-                    apl_nombre LIKE ? OR 
-                    apl_acronimo LIKE ? OR 
-                    apl_estatus LIKE ? OR 
-                    apl_prioridad LIKE ? OR 
-                    apl_alcance LIKE ? OR 
-                    apl_critico LIKE ? OR 
-                    apl_codigo_fuente LIKE ? OR 
-                    man_frecuencia LIKE ? OR 
-                    region LIKE ? )
-                    AND plataforma LIKE ? ORDER BY aplicaciones.aplicacion_id ${order} LIMIT ? OFFSET ?`,
-                [termino,termino,termino,termino,termino,termino,termino,termino,
-                termino,termino,plataforma,parseInt(count),offset]);
+                    apl_nombre LIKE ? )
+                    AND prioridad LIKE ? ORDER BY aplicaciones.aplicacion_id ${order}`,
+                [termino,termino,termino,prioridad]);
         }
         else{
             data = await pool.query(
@@ -195,17 +126,8 @@ const obtenerBusqueda = async (req,res) => {
                 WHERE 
                     (aplicaciones.aplicacion_id LIKE ? OR 
                     apl_nombre LIKE ? OR 
-                    apl_acronimo LIKE ? OR 
-                    apl_estatus LIKE ? OR 
-                    apl_prioridad LIKE ? OR 
-                    apl_alcance LIKE ? OR 
-                    apl_critico LIKE ? OR 
-                    apl_codigo_fuente LIKE ? OR 
-                    man_frecuencia LIKE ? OR 
-                    region LIKE ? OR 
-                    plataforma LIKE ? ) ORDER BY aplicaciones.aplicacion_id ${order} LIMIT ? OFFSET ?`, 
-                [termino,termino,termino,termino,termino,termino,termino,
-                termino,termino,termino,termino,parseInt(count),offset]);
+                    apl_acronimo LIKE ? ) ORDER BY aplicaciones.aplicacion_id ${order}`, 
+                [termino,termino,termino]);
         }
 
         res.json(data[0]);
@@ -233,7 +155,7 @@ const obtenerCampo = async (req,res) => {
                 JOIN plataformas ON plataformas.plataforma_id = aplicacion_plataforma.plataforma_id
                 WHERE ${campo} LIKE ? OR
                 aplicaciones.aplicacion_id LIKE ? OR apl_nombre LIKE ? OR apl_acronimo LIKE ? 
-                ORDER BY aplicaciones.aplicacion_id ASC LIMIT 10 OFFSET ?;`, 
+                ORDER BY aplicaciones.aplicacion_id ASC LIMIT 20;`, 
                 [termino,termino,termino,termino,offset]
             );
         }
@@ -245,7 +167,7 @@ const obtenerCampo = async (req,res) => {
                 JOIN lenguajes ON lenguajes.lenguaje_id = aplicacion_lenguaje.lenguaje_id
                 WHERE ${campo} LIKE ? OR
                 aplicaciones.aplicacion_id LIKE ? OR apl_nombre LIKE ? OR apl_acronimo LIKE ? 
-                ORDER BY aplicaciones.aplicacion_id ASC LIMIT 10 OFFSET ?;`, 
+                ORDER BY aplicaciones.aplicacion_id ASC LIMIT 20;`, 
                 [termino,termino,termino,termino,offset]
             );
         }
@@ -257,7 +179,7 @@ const obtenerCampo = async (req,res) => {
                 JOIN frameworks ON frameworks.framework_id = aplicacion_framework.framework_id
                 WHERE ${campo} LIKE ? OR
                 aplicaciones.aplicacion_id LIKE ? OR apl_nombre LIKE ? OR apl_acronimo LIKE ? 
-                ORDER BY aplicaciones.aplicacion_id ASC LIMIT 10 OFFSET ?;`, 
+                ORDER BY aplicaciones.aplicacion_id ASC LIMIT 20;`, 
                 [termino,termino,termino,termino,offset]
             );
         }
@@ -268,7 +190,7 @@ const obtenerCampo = async (req,res) => {
                 JOIN regiones ON aplicaciones.aplicacion_id = regiones.region_id
                 WHERE ${campo} LIKE ? OR
                 aplicaciones.aplicacion_id LIKE ? OR apl_nombre LIKE ? OR apl_acronimo LIKE ? 
-                ORDER BY aplicaciones.aplicacion_id ASC LIMIT 10 OFFSET ?;`, 
+                ORDER BY aplicaciones.aplicacion_id ASC LIMIT 20;`, 
                 [termino,termino,termino,termino,offset]
             );
         }
@@ -277,7 +199,7 @@ const obtenerCampo = async (req,res) => {
                 `SELECT aplicaciones.aplicacion_id, apl_acronimo, apl_nombre, ${campo}
                 FROM aplicaciones 
                 WHERE ${campo} LIKE ? OR
-                aplicaciones.aplicacion_id LIKE ? OR apl_nombre LIKE ? OR apl_acronimo LIKE ? LIMIT 3 OFFSET ?;`, 
+                aplicaciones.aplicacion_id LIKE ? OR apl_nombre LIKE ? OR apl_acronimo LIKE ? LIMIT 20;`, 
                 [termino,termino,termino,termino,offset]
             );
         }
@@ -340,12 +262,15 @@ const crearAplicacion = async (req,res) => {
         const {
             apl_acronimo,apl_nombre,apl_descripcion,apl_region,
             apl_version,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
-            apl_codigo_fuente,apl_direccion,apl_cantidad_usuarios,
-            plataforma,lenguaje,lenguaje2,lenguaje3, framework,framework2,framework3, 
+            apl_codigo_fuente,apl_direccion,apl_cantidad_usuarios,apl_usuario_registro,
+            plataforma,lenguaje1,lenguaje2,lenguaje3, 
+            version1, version2, version3,
+            framework1,framework2,framework3, 
             select_base, select_servidor,
             man_frecuencia,man_horas_prom,man_horas_anuales, 
-            doc_descripcion,doc_tipo, doc_direccion, apl_fecha_registro,
-
+            doc_descripcion,doc_tipo, doc_direccion,
+ 
+            select_funcional, select_tecnico,
             funcional_nombre,funcional_apellido,funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
             funcional_gerencia,funcional_region,funcional_localidad,
             tecnico_nombre,tecnico_apellido,tecnico_indicador,tecnico_cedula,tecnico_cargo,tecnico_telefono,
@@ -363,27 +288,40 @@ const crearAplicacion = async (req,res) => {
             return res.status(401).json({ message: 'ERROR, APLICACION YA EXISTE' });
         }
         else{
-            const aplicacion_id = await verificarAplicacion(
+
+            if(!lenguaje1 && !lenguaje2 && !lenguaje3)
+                return res.status(401).json({ message: 'ERROR, NINGUN LENGUAJE SELECCIONADO' });
+            if(!select_servidor)
+                return res.status(401).json({ message: 'ERROR, SERVIDOR SIN SELECCIONAR' });
+            if(!select_base)
+                return res.status(401).json({ message: 'ERROR, BASE DE DATOS SIN SELECCIONAR' });
+
+            const aplicacion_id = await insertarAplicacion(
                 apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
-                apl_codigo_fuente,apl_version,apl_direccion,apl_cantidad_usuarios,apl_region,apl_fecha_registro
+                apl_codigo_fuente,apl_version,apl_direccion,apl_cantidad_usuarios,apl_region,
+                apl_usuario_registro
             );
 
-            await verificarPlataforma(aplicacion_id, plataforma);          
-            await verificarLenguaje(aplicacion_id, lenguaje, lenguaje2, lenguaje3);          
-            await verificarFramework(aplicacion_id, framework, framework2, framework3);
+            await insertarPlataforma(aplicacion_id, plataforma);
+            
+            await insertarLenguaje(aplicacion_id, lenguaje1, lenguaje2, lenguaje3, version1, version2, version3);    
+            
+            if(framework1 || framework2 || framework3)
+                await insertarFramework(aplicacion_id, framework1, framework2, framework3);
 
-            await verificarServidor(aplicacion_id,select_servidor);
-            await verificarBase(aplicacion_id,select_base);
+            await insertarServidor(aplicacion_id,select_servidor);
+            await insertarBase(aplicacion_id,select_base);
 
-            // await verificarResponsable('funcional',aplicacion_id,funcional_nombre,funcional_apellido,
-            //     funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
-            //     funcional_gerencia,funcional_region,funcional_localidad);    
-            // await verificarResponsable('tecnico',aplicacion_id,tecnico_nombre,tecnico_apellido,
-            //     tecnico_indicador,tecnico_cedula,tecnico_cargo,tecnico_telefono,
-            //     tecnico_gerencia,tecnico_region,tecnico_localidad); 
+            await insertarResponsable('funcional',aplicacion_id,select_funcional,funcional_nombre,funcional_apellido,
+                funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
+                funcional_gerencia,funcional_region,funcional_localidad);
+                
+            await insertarResponsable('tecnico',aplicacion_id,select_tecnico,tecnico_nombre,tecnico_apellido,
+                tecnico_indicador,tecnico_cedula,tecnico_cargo,tecnico_telefono,
+                tecnico_gerencia,tecnico_region,tecnico_localidad);
 
-            await verificarMantenimiento(aplicacion_id,man_frecuencia,man_horas_prom,man_horas_anuales);          
-            await verificarDocumentacion(aplicacion_id,doc_descripcion,doc_direccion,doc_tipo);
+            await insertarMantenimiento(aplicacion_id,man_frecuencia,man_horas_prom,man_horas_anuales);          
+            await insertarDocumentacion(aplicacion_id,doc_descripcion,doc_direccion,doc_tipo);
 
             console.log('CREACION EXITOSA');
             res.send('CREACION EXITOSA');
@@ -641,10 +579,24 @@ const obtenerPorGraficos = async (req,res) => {
     ***********************************                             ***********************************
 */
 
+
+// *********************************** LISTA DE PLATAFORMAS PARA SELECTS ***********************************
+const obtenerPlataformas = async (req,res) => {
+    try{
+        console.log('AQUI');
+        const data = await pool.query(`SELECT plataformas FROM plataforma`);
+        res.send(data[0]);
+    }
+    catch (error) {
+        return res.status(401).json({ message: 'ERROR' });
+    }
+}
+
 // *********************************** LISTA DE LENGUAJES PARA SELECTS ***********************************
 const obtenerLenguajes = async (req,res) => {
     try {
         const data = await pool.query(`SELECT lenguaje FROM lenguajes`);
+        console.log(data[0]);
         res.send(data[0]);
     } catch (error) {
         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
@@ -918,6 +870,7 @@ module.exports = {
     obtenerBaseDatos,
     obtenerServidores,
     obtenerResponsables,
+    obtenerPlataformas,
     obtenerCantidadTotal,
     general,tecno,basedatos,
     servidor,responsable,

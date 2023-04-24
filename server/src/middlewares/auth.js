@@ -10,8 +10,8 @@ const auth = async (req, res, next) => {
 
     try {
         const token = await verificarToken(authorization);
-        console.log('Token Verificado');
-        console.log(token);
+        // console.log('Token Verificado');
+        // console.log(token);
 
         if(token)
             next();

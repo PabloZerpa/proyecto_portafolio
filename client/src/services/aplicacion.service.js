@@ -1,24 +1,25 @@
 
 import axios from 'axios';
 import authHeader from './header.service';
-import Autorizacion from "../services/auth.service";
 const baseUrl = "http://localhost:3001/api/";
 
 class Aplicacion {
 
     // ---------------- CREATE DE LA INFO DE NUEVA APP ------------------
     async crearDatos(datos) {
-        console.log('AFUERA DE CREAR DATOS SERVICE')
         console.log(datos);
-        try { 
-            console.log('EN EL TRY DE CREAR DATOS SERVICE')
-            const respuesta = await axios.post(`${baseUrl}aplicaciones/`, datos, { headers: authHeader() });
-            console.log('DESPUES DE CREAR DATOS SERVICE')
-            return respuesta;
-        } catch (error) {
-            console.log('ERROR AL CREAR auth.service');
-            Autorizacion.logout();
-        }
+        // try { 
+        //     const respuesta = await axios.post(`${baseUrl}aplicaciones/`, datos, { headers: authHeader() });
+        //     return respuesta;
+        // } catch (error) {
+        //     console.log('ERROR AL CREAR auth.service');
+            
+        // }
+
+        return await axios.post(`${baseUrl}aplicaciones/`, datos, { headers: authHeader() })
+        .then(response => {
+            return response.data;
+        });
     }
 
     // ---------------- UPDATE DE TODOS LOS DATOS ------------------
@@ -32,7 +33,7 @@ class Aplicacion {
             return respuesta;
         } catch (error) {
             console.log('ERROR AL ACTUALIZAR auth.service');
-            Autorizacion.logout();
+            
         }
     }
  
@@ -46,7 +47,7 @@ class Aplicacion {
             return respuesta;
         } catch (error) {
             console.log('ERROR AL ACTUALIZAR auth.service');
-            Autorizacion.logout();
+            
         }
     }
 
@@ -55,19 +56,14 @@ class Aplicacion {
 
 
 
-
     // =============== OBTIENE OPCIONES DE LA TABLA "NOMBRE" ===============
-    async obtenerOpciones(nombre) { 
+    async obtenerOpcion(nombre) {
         try { 
-            console.log('ALO');
             const respuesta = await axios.get(`${baseUrl}aplicaciones/${nombre}`, { headers: authHeader() });
-            console.log(respuesta);
             return respuesta;
         } catch (error) {
-            console.log('Error al obtener datos'); 
-            Autorizacion.logout();
+            console.log('ERROR AL OBTENER ROLES');
         }
-        //return axios.get(`${baseUrl}aplicaciones`, { headers: this.authHeader() });
     }
 
     // =============== OBTIENE TODOS LOS DATOS DE LAS APPS ===============
@@ -77,7 +73,7 @@ class Aplicacion {
             return respuesta;
         } catch (error) {
             console.log(error.response.data); 
-            Autorizacion.logout();
+            //Autorizacion.logout();
         }
         //return axios.get(`${baseUrl}aplicaciones`, { headers: this.authHeader() });
     }
@@ -89,7 +85,7 @@ class Aplicacion {
             return respuesta;
         } catch (error) {
             console.log('Error al obtener dato'); 
-            Autorizacion.logout();
+            
         }
     }   
 
@@ -101,7 +97,7 @@ class Aplicacion {
             return respuesta;
         } catch (error) {
             console.log('Error al obtener dato'); 
-            Autorizacion.logout();
+            
         }
     }   
 
@@ -111,7 +107,7 @@ class Aplicacion {
             return axios.post(`${baseUrl}aplicaciones/campo`, {term,campo,pagina}, { headers: authHeader() });
         } catch (error) {
             console.log('Error al obtener dato');
-            Autorizacion.logout();
+            
         }
     }
 
@@ -123,7 +119,7 @@ class Aplicacion {
             return axios.post(`${baseUrl}aplicaciones/grafico`, {categoria,orden}, { headers: authHeader() });
         } catch (error) {
             console.log('Error al obtener dato');
-            Autorizacion.logout();
+            
         }
     }
     
@@ -140,7 +136,7 @@ class Aplicacion {
                 critico,codigo,count,order,pagina}, { headers: authHeader() });
         } catch (error) {
             console.log('Error al obtener dato');
-            Autorizacion.logout();
+            
         }
     }
 
@@ -156,7 +152,7 @@ class Aplicacion {
 
 
 
-    // =============== OBTIENE INFORMACION GENERAL ===============
+    // =============== OBTIENE TOTAL LLAMANDO A LAS OTRAS FUNCIONES ===============
     async obtenerTodo(id) { 
         try { 
             const general = await this.obtenerGeneral(id);

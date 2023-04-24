@@ -7,26 +7,24 @@ class Usuario {
 
     // =============== OBTIENE LOS DATOS DE LOS USUARIOS ===============
     async obtenerUsuarios(term,pagina) { 
-        try { console.log('alo');
+        try { 
             return axios.post(`${baseUrl}usuarios/busqueda`, {term,pagina}, { headers: authHeader() });
         } catch (error) {
             console.log('Error al obtener dato');
         }
     }
 
+    
     async crearUsuario(datos) {
-        try {
-            console.log('ANTES DE CREAR USUARIO')
-            const respuesta = await axios.post(`${baseUrl}login/registro`, datos, { headers: authHeader() })
-            console.log('DESPUES DE CREAR USUARIO')
-            return respuesta;
-        } catch (error) {
-            console.log('ERROR AL CREAR USUARIO');
-        }
+        console.log('AQUI');
+        return await axios.post(`${baseUrl}login/registro`, datos) 
+        .then(response => {
+            return response.data;
+        });
     }
 
     // ---------------- UPDATE DE UN CAMPO DE UN USUARIO ------------------
-    async actualizarUsuario(id, datoModificacion) {
+    async actualizarUsuario(datoModificacion) {
         try { 
             const id = datoModificacion.edicion;
             console.log(id);
@@ -35,6 +33,16 @@ class Usuario {
             return respuesta;
         } catch (error) {
             console.log('ERROR AL ACTUALIZAR auth.service');
+        }
+    }
+
+    // ---------------- UPDATE DE UN CAMPO DE UN USUARIO ------------------
+    async obtenerOpcion(nombre) {
+        try { 
+            const respuesta = await axios.get(`${baseUrl}usuarios/${nombre}`, { headers: authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log('ERROR AL OBTENER ROLES');
         }
     }
 

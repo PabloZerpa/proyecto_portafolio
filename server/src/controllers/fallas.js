@@ -56,19 +56,22 @@ const buscarFalla = async (req,res) => {
 
     try{
         const data = await pool.query(`
-            SELECT falla_id, fal_clase, fal_impacto, fal_descripcion, fal_solucion, aplicaciones.aplicacion_id
+            SELECT falla_id, apl_acronimo, apl_nombre, fal_clase, fal_impacto, fal_descripcion, fal_solucion
             FROM fallas 
                 JOIN aplicaciones ON aplicaciones.aplicacion_id = fallas.aplicacion_id
             WHERE 
-                aplicaciones.aplicacion_id LIKE ? OR
+                aplicaciones.apl_acronimo LIKE ? OR
+                aplicaciones.apl_nombre LIKE ? OR
                 falla_id LIKE ? OR 
-                fal_clase = ? OR 
+                fal_clase LIKE ? OR 
                 fal_impacto LIKE ? OR 
                 fal_descripcion LIKE ? OR 
                 fal_solucion LIKE ?
             ORDER BY falla_id ASC;`,
-            [termino,termino,termino,termino,termino,termino]
+            [termino,termino,termino,termino,termino,termino,termino]
         );
+        console.log(data[0][0]);
+
         res.send(data[0]);
 
     }

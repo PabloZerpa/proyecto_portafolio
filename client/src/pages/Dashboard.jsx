@@ -1,11 +1,74 @@
 
 
 import { useState, useEffect } from "react";
-import { Tabla, Container } from "../components";
+import { Container } from "../components";
 import { BiLoaderAlt } from "react-icons/bi";
 import Aplicacion from "../services/aplicacion.service";
 import Linea from "../chart/Linea";
-import { columnasUserSimple } from "../services/campos.service";
+import DataTable from 'react-data-table-component';
+import { FaEye } from "react-icons/fa";
+import { Link } from "react-router-dom";
+
+const columns = [
+	{
+		name: 'Ver',
+		button: true,
+		cell: row => 
+    <Link to={row ? `/aplicaciones/${row.aplicacion_id}` : `/dashboard`} >
+      <FaEye className="text-blue-500 text-lg" />
+    </Link>,
+	},
+  {
+      name: 'ID',
+      selector: row => row.aplicacion_id,
+      sortable: true,
+      grow: 0,
+      left: true,
+      width: "60px" 
+  },
+  {
+      name: 'Acronimo',
+      selector: row => row.apl_acronimo,
+      sortable: true,
+      grow: 0.5,
+      left: true
+  },
+  {
+      name: 'Nombre',
+      selector: row => row.apl_nombre,
+      sortable: true,
+      grow: 1,
+      left: true
+  },
+  {
+      name: 'Estatus',
+      selector: row => row.estatus,
+      grow: 1,
+      left: true
+  },
+  {
+      name: 'Direccion',
+      cell: row => (<a href={row.apl_direccion} target="_blank">{row.apl_direccion}</a>),
+      grow: 2,
+      left: true
+  },
+  {
+      name: 'Ultima Actualizacion',
+      selector: row => row.apl_fecha_actualizacion,
+      sortable: true,
+      grow: 2,
+      left: true
+  },
+  {
+    name: 'Por',
+    selector: row => row.indicador,
+    sortable: true,
+    grow: 1,
+    left: true
+},
+];
+
+
 
 function Dashboard() {
   
@@ -37,7 +100,16 @@ function Dashboard() {
         ) : (
           <>
             <h3 className='font-bold text-lg'>Modificaciones Recientes</h3>
-            <Tabla columnas={columnasUserSimple} datos={datos} opciones={false} />
+            
+            <div className="w-4/3">
+              <DataTable
+                  columns={columns}
+                  data={datos}
+                  highlightOnHover
+                  pointerOnHover
+                  dense
+              />
+            </div>
             
             <Linea />
           </>
@@ -49,11 +121,3 @@ function Dashboard() {
 };
 
 export default Dashboard;
-
-
-
-// DEBE LLEGAR MAXIMO HASTA DONDE SEA EL TOTAL DE RESULTADOS
-
-//LOS SELECT ANIDADOS DEBEN AFECTARSE SOLO 1 A 1
-
-// VERIFICAR OTRAS OPCIONES DE UPDATE

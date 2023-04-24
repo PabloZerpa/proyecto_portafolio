@@ -2,8 +2,8 @@ import Login from './Login';
 import Dashboard from './Dashboard';
 import ActualizarCampo from './Administracion/ActualizarCampo';
 import ActualizarApp from './Administracion/ActualizarApp';
+import Registrar from './Administracion/Registrar';
 import RegistrarApp from './Administracion/RegistrarApp';
-import Perfil from './Administracion/Perfil';
 import Permisos from './Administracion/Permisos';
 import CrearUsuario from './Administracion/CrearUsuario';
 import BuscarUsuario from './Administracion/BuscarUsuario';
@@ -16,14 +16,15 @@ import BaseDatos from './BaseDatos/BaseDatos';
 import VerBD from './BaseDatos/VerBD';
 import RegistrarBD from './BaseDatos/RegistrarBD';
 import ActualizarBD from './BaseDatos/ActualizarBD';
+import RegistrarServidor from './Servidores/RegistrarServidor';
 
 export {
     Login, 
     Dashboard,
     ActualizarCampo,
     ActualizarApp,
+    Registrar,
     RegistrarApp,
-    Perfil,
     Permisos,
     CrearUsuario,
     BuscarUsuario,
@@ -36,4 +37,5 @@ export {
     RegistrarBD,
     RegistrarFalla,
     ActualizarBD,
+    RegistrarServidor,
 };
