@@ -120,10 +120,10 @@ function RegistrarBD() {
                 </div>
                     
                 <div className="absolute bottom-4 right-1/3">
-                    <Button width={32}>Registrar</Button>
+                    <Button tipo='submit' color='blue' width={32}>Registrar</Button>
                 </div>
                 <div className="absolute bottom-4 left-1/3">
-                    <Button tipo='button' color='red' width={32} accion={(e) => navegar(-1)} >Cancelar</Button>
+                    <Button tipo='button' color='red' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
                 </div>
 
             </form>

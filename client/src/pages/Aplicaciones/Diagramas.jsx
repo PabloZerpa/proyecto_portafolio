@@ -63,7 +63,7 @@ function Diagramas() {
             <form className='grid gap-2 grid-cols-1 p-4 bg-zinc-400 border-solid rounded'>
                 <Radio label='Categoria' name='categoria' opciones={opcionCategoria} manejador={handleInputChange} size='big' />
                 <Radio label='Ordernar' name='orden' opciones={opcionOrden} manejador={handleInputChange} size='big' />
-                <Button accion={handleSearch}>Generar</Button>
+                <Button color='blue' manejador={handleSearch}>Generar</Button>
             </form>
 
             {isLoading ? (

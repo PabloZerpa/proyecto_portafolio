@@ -1,15 +1,14 @@
 const pool = require('../config');
 
 const query = `
-    SELECT
-        bases_datos.base_datos_id,base_datos,bas_estatus,tipo,manejador,estatus,
-        bas_cantidad_usuarios,tipo_ambiente,bas_fecha_actualizacion,indicador
-    FROM bases_datos
-        JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.bas_tipo
-        JOIN manejadores ON manejadores.manejador_id = bases_datos.bas_manejador
-        JOIN tipos_ambientes ON tipos_ambientes.tipo_ambiente_id = bases_datos.bas_tipo_ambiente
-        JOIN estatus ON estatus.estatus_id = bases_datos.bas_estatus
-        JOIN usuarios ON usuarios.usuario_id = bases_datos.bas_usuario_actualizo`;
+SELECT 
+bases_datos.base_datos_id, base_datos, bas_estatus, tipo, manejador, tipo_ambiente, 
+bas_cantidad_usuarios, bas_fecha_actualizacion, indicador 
+FROM bases_datos
+JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.bas_tipo
+JOIN manejadores ON manejadores.manejador_id = bases_datos.bas_manejador
+JOIN tipos_ambientes ON tipos_ambientes.tipo_ambiente_id = bases_datos.bas_tipo_ambiente
+JOIN usuarios ON usuarios.usuario_id = bases_datos.bas_usuario_actualizo`;
 
 // *********************************** OBTENER TODOS LOS DATOS ***********************************
 const obtenerDatos = async (req,res) => {
@@ -64,6 +63,8 @@ const obtenerBusqueda = async (req,res) => {
         const termino = '%' + term + '%';
         let data;
 
+        console.log(term,estatus,tipo,manejador,ambiente,count,orden);
+
         if (term === undefined || null)
         return res.status(404).json({ message: "Error al recibir consulta" });
 
@@ -107,10 +108,10 @@ const obtenerBusqueda = async (req,res) => {
                     (bases_datos.base_datos_id LIKE ? OR 
                     base_datos LIKE ? ) 
                 ORDER BY bases_datos.base_datos_id ${orden}`, 
-                [termino,termino,parseInt(count)]
+                    [termino,termino,parseInt(count)]
             );
         }
-
+        
         res.json(data[0]);
         
     } catch (error) {

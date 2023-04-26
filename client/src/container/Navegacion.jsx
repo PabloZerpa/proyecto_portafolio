@@ -94,7 +94,7 @@ function Navegacion() {
                                     className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                     Busqueda
                                 </Link>
-                                <Link to="/basedatos" 
+                                <Link to="/servidores" 
                                     className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                     Servidores
                                 </Link>

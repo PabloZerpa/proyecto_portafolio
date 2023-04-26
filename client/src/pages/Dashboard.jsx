@@ -24,26 +24,26 @@ const columns = [
       sortable: true,
       grow: 0,
       left: true,
-      width: "60px" 
+      width: "60px"
   },
   {
       name: 'Acronimo',
       selector: row => row.apl_acronimo,
       sortable: true,
-      grow: 0.5,
+      grow: 0,
       left: true
   },
   {
       name: 'Nombre',
       selector: row => row.apl_nombre,
       sortable: true,
-      grow: 1,
+      grow: 2,
       left: true
   },
   {
       name: 'Estatus',
       selector: row => row.estatus,
-      grow: 1,
+      grow: 2,
       left: true
   },
   {
@@ -67,7 +67,6 @@ const columns = [
     left: true
 },
 ];
-
 
 
 function Dashboard() {

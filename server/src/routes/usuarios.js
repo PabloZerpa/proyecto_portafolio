@@ -5,7 +5,7 @@ const { cambiarPermisos, cambiarPassword,
     obtenerUsuarios, obtenerPorBusqueda, obtenerRoles, obtenerCargos, 
     obtenerGerencias, obtenerResponsables, obtenerLenguajes, obtenerPlataformas, 
     obtenerBasesDatos, obtenerServidores, obtenerAlcance, obtenerEstatus, 
-    obtenerRegiones, obtenerMantenimientos, obtenerAmbientes, obtenerMane, obtenerTipos, obtenerSistemas, obtenerMarcas, obtenerTotal } = require("../controllers/usuarios");
+    obtenerRegiones, obtenerMantenimientos, obtenerAmbientes, obtenerMane, obtenerTipos, obtenerSistemas, obtenerMarcas, obtenerTotal, eliminarAplicacion } = require("../controllers/usuarios");
 
 router.get("/", auth, obtenerUsuarios);
 
@@ -37,5 +37,7 @@ router.post("/busqueda", auth, obtenerPorBusqueda);
 router.patch("/permisos/:id", auth, cambiarPermisos);
 
 router.patch("/password/:id", auth, cambiarPassword);
+
+router.delete("/eliminar/:id", auth, eliminarAplicacion);
 
 module.exports = router;  

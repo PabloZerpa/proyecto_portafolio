@@ -5,10 +5,13 @@ import { Button, Container, Input, Select } from "../../components/";
 import { Notificacion } from "../../utils/Notificacion";
 import Autorizacion from "../../services/auth.service";
 import Usuario from "../../services/usuario.service";
+import { FaArrowLeft } from "react-icons/fa";
 
 function CrearUsuario() {
 
     const navigate = useNavigate();
+    function navegar(ruta) { navigate(ruta) }
+
     const [opcionRoles, setOpcionRoles] = useState('');
     const [opcionGerencias, setOpcionGerencias] = useState('');
     const [opcionCargos, setOpcionCargos] = useState('');
@@ -59,7 +62,7 @@ function CrearUsuario() {
             try {
                 await Usuario.crearUsuario(datos);
                 Notificacion('USUARIO REGISTRADO EXITOSAMENTE', 'success');
-                setTimeout(() => { navigate("/dashboard") }, "2000");
+                setTimeout(() => { navigate("/administracion/permisos/buscar") }, "2000");
             }
             catch (error) { 
                 Notificacion(error.response.data.message, 'error');
@@ -85,7 +88,10 @@ function CrearUsuario() {
                     </div> 
                 </div>
 
-                <Button color='blue' width={32}>Crear Usuario</Button>
+                <div className="flex gap-16">
+                    <Button color='blue' width={32} manejador={(e) => navegar(-1)} ><FaArrowLeft />Volver</Button>
+                    <Button color='blue' tipo="submit" width={32}>Crear Usuario</Button>
+                </div>
 
             </form>
 

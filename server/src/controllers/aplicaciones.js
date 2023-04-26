@@ -34,7 +34,7 @@ const obtenerDatos = async (req,res) => {
             FROM aplicaciones 
                 JOIN estatus ON aplicaciones.apl_estatus = estatus.estatus_id
                 JOIN usuarios ON aplicaciones.apl_usuario_actualizo = usuarios.usuario_id
-            ORDER BY apl_fecha_actualizacion ASC LIMIT 5;
+            ORDER BY apl_fecha_actualizacion DESC LIMIT 5;
         `);
         res.send(data[0]);
     } catch (error) {
@@ -448,7 +448,8 @@ const actualizarCampo = async (req,res) => {
                 ON aplicaciones.aplicacion_id = aplicacion_plataforma.aplicacion_id
                 SET 
                     aplicacion_plataforma.plataforma_id = 
-                    (SELECT plataforma_id FROM plataformas WHERE plataforma = ?)
+                    (SELECT plataforma_id FROM plataformas WHERE plataforma = ?),
+                    apl_fecha_actualizacion = now()
                 WHERE aplicaciones.aplicacion_id = ?;`, 
                 [valor,id]
             );
@@ -460,7 +461,8 @@ const actualizarCampo = async (req,res) => {
                 ON aplicaciones.aplicacion_id = aplicacion_lenguaje.aplicacion_id
                 SET 
                     aplicacion_lenguaje.lenguaje_id = 
-                    (SELECT lenguaje_id FROM lenguajes WHERE lenguaje = ?)
+                    (SELECT lenguaje_id FROM lenguajes WHERE lenguaje = ?),
+                    apl_fecha_actualizacion = now()
                 WHERE aplicaciones.aplicacion_id = ?;`, 
                 [valor,id]
             );
@@ -472,7 +474,8 @@ const actualizarCampo = async (req,res) => {
                 ON aplicaciones.aplicacion_id = aplicacion_framework.aplicacion_id
                 SET 
                     aplicacion_framework.framework_id = 
-                    (SELECT framework_id FROM frameworks WHERE framework = ?)
+                    (SELECT framework_id FROM frameworks WHERE framework = ?),
+                    apl_fecha_actualizacion = now()
                 WHERE aplicaciones.aplicacion_id = ?;`, 
                 [valor,id]
             );
@@ -483,7 +486,8 @@ const actualizarCampo = async (req,res) => {
                 JOIN regiones
                 ON aplicaciones.aplicacion_id = regiones.region_id
                 SET 
-                    apl_region_id = (SELECT region_id FROM regiones WHERE region = ?)
+                    apl_region_id = (SELECT region_id FROM regiones WHERE region = ?),
+                    apl_fecha_actualizacion = now()
                 WHERE aplicaciones.aplicacion_id = ?;`, 
                 [valor,id]
             );
@@ -492,7 +496,8 @@ const actualizarCampo = async (req,res) => {
             data = await pool.query(
                 `UPDATE aplicaciones 
                 SET 
-                    ${campo} = ?
+                    ${campo} = ?,
+                    apl_fecha_actualizacion = now()
                 WHERE aplicacion_id = ?`, 
                 [valor,id]
             );

@@ -24,10 +24,11 @@ class Servidor {
     }
 
     // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
-    async obtenerServidorPorBusqueda(term,count,orden) {
+    async obtenerServidorPorBusqueda(term,estatus,region,sistema,marca,orden) {
         try {
-            console.log(term,count,orden);
-            return axios.post(`${baseUrl}basedatos/busqueda`, {term,count,orden}, { headers: authHeader() });
+            console.log(term,estatus,region,sistema,marca,orden);
+            return axios.post(`${baseUrl}servidores/busqueda`, 
+            {term,estatus,region,sistema,marca,orden}, { headers: authHeader() });
         } catch (error) {
             console.log('Error al obtener dato');
         }

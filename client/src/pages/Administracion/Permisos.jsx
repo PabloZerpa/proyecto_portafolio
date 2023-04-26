@@ -5,6 +5,7 @@ import { FaUserEdit, FaUserPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 function Permisos() {
+
     return(
         <Container>
             <ul className="grid grid-cols-2 gap-4">

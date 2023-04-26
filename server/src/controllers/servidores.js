@@ -1,29 +1,67 @@
 const pool = require('../config');
 
-
+const query = `
+SELECT 
+                servidores.servidor_id,servidor,ser_estatus,ser_direccion,sistema,modelo,marca,
+                region,localidad,ser_fecha_actualizacion,indicador
+            FROM servidores
+                JOIN sistemas_operativos ON sistemas_operativos.sistema_id = servidores.ser_sistema
+                JOIN modelos ON modelos.modelo_id = servidores.ser_modelo
+                JOIN marcas ON marcas.marca_id = modelos.mod_marca
+                JOIN regiones ON regiones.region_id = servidores.ser_region_id
+                JOIN localidades ON localidades.localidad_id = servidores.ser_localidad_id
+                JOIN usuarios ON usuarios.usuario_id = servidores.ser_usuario_actualizo`;
 
 // *********************************** OBTENER LOS DATOS POR TERMINO DE BUSQUEDA ***********************************
 const obtenerBusqueda = async (req,res) => {
     try {
-        const { term,count,orden,region } = req.body;
+        const { term,estatus,region,sistema,marca,orden } = req.body;
         const termino = '%' + term + '%';
         let data;
 
-        if (term === undefined || null)
-        return res.status(404).json({ message: "Error al recibir consulta" });
-    
-        data = await pool.query(`
-            ${query}
-            WHERE 
-                (bases_datos.base_datos_id LIKE ? OR 
-                base_datos LIKE ? OR 
-                bas_cantidad_usuarios LIKE ? OR 
-                bas_estatus LIKE ? OR 
-                bas_tipo_ambiente LIKE ? OR 
-                tipo LIKE ? OR 
-                manejador LIKE ? ) ORDER BY bases_datos.base_datos_id ${orden} LIMIT 10`, 
-            [termino,termino,termino,termino,termino,termino,termino,parseInt(count)]);
+        //console.log(term,estatus,region,sistema,marca,orden);
 
+        if (term === undefined || null)
+            return res.status(404).json({ message: "Error al recibir consulta" });
+    
+
+        if(estatus){
+            data = await pool.query(
+                `${query}
+                WHERE (servidores.servidor_id LIKE ? OR servidor LIKE ? ) 
+                    AND estatus LIKE ? ORDER BY servidores.servidor_id ${orden};`, 
+            [termino,termino,estatus]);
+        }
+        else if(region){
+            data = await pool.query(
+                `${query}
+                WHERE (servidores.servidor_id LIKE ? OR servidor LIKE ? ) 
+                    AND region LIKE ? ORDER BY servidores.servidor_id ${orden};`, 
+            [termino,termino,region]);
+        }
+        else if(sistema){
+            data = await pool.query(
+                `${query}
+                WHERE (servidores.servidor_id LIKE ? OR servidor LIKE ? ) 
+                    AND sistema LIKE ? ORDER BY servidores.servidor_id ${orden};`, 
+            [termino,termino,sistema]);
+        }
+        else if(marca){
+            data = await pool.query(
+                `${query}
+                WHERE (servidores.servidor_id LIKE ? OR servidor LIKE ? ) 
+                    AND marca LIKE ? ORDER BY servidores.servidor_id ${orden};`, 
+            [termino,termino,marca]);
+        }
+        else{
+            data = await pool.query(`
+                ${query}
+                WHERE (servidores.servidor_id LIKE ? OR servidor LIKE ? ) 
+                ORDER BY servidores.servidor_id ${orden}`, 
+                [termino,termino]);
+        }
+
+        //console.log(data[0]);
         res.json(data[0]);
         
     } catch (error) {

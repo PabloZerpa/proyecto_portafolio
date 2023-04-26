@@ -16,6 +16,7 @@ import BaseDatos from './BaseDatos/BaseDatos';
 import VerBD from './BaseDatos/VerBD';
 import RegistrarBD from './BaseDatos/RegistrarBD';
 import ActualizarBD from './BaseDatos/ActualizarBD';
+import Servidores from './Servidores/Servidores';
 import RegistrarServidor from './Servidores/RegistrarServidor';
 
 export {
@@ -37,5 +38,6 @@ export {
     RegistrarBD,
     RegistrarFalla,
     ActualizarBD,
+    Servidores,
     RegistrarServidor,
 };

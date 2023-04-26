@@ -9,6 +9,10 @@ import Autorizacion from '../../services/auth.service';
 import Aplicacion from '../../services/aplicacion.service';
 import Usuario from '../../services/usuario.service';
 import { Notificacion } from '../../utils/Notificacion';
+import Table from '../../components/Table';
+import Modal from '../../components/Modal';
+import DataTable from 'react-data-table-component';
+import { FaTimesCircle } from 'react-icons/fa';
 
 
 function RegistrarApp() {
@@ -211,15 +215,75 @@ function RegistrarApp() {
         }
     }
 
+
+    const [isOpen, setIsOpen] = useState(false);
+    const [tableData, setData] = useState([]);
+    //const [selecciones, setSelecciones] = useState([]);
+    const [id, setId] = useState('');
+    const [nombre, setNombre] = useState('');
+
+
+    const obtenerSelecciones = (respuesta) => {
+
+        const x = respuesta[0];
+        console.log(x);
+
+        setId(x.base_datos_id);
+        setNombre(x.base_datos);
+
+        console.log(id);
+        console.log(nombre);
+        console.log(tableData);
+
+        setData(tableData => [...tableData, { base_datos_id: x.base_datos_id, base_datos: x.base_datos}]);
+    };
+
+    const columns = [
+        {
+            name: 'Base de datos ID',
+            selector: row => row.base_datos_id,
+            left: true,
+            width: "160px"
+        },
+        {
+            name: 'Base de datos Nombre',
+            selector: row => row.base_datos,
+            left: true
+        },
+        {
+            name: 'Remover',
+            button: true,
+            cell: row => 
+                <FaTimesCircle className="text-red-500 text-lg" />,
+            left: true
+        },
+    ];
+    
+
+    const addRow = (base_datos_id,base_datos) => {
+        setData(tableData => [...tableData, { base_datos_id: base_datos_id, base_datos: base_datos}]);
+        console.log(tableData);
+    }
+
+
     if(Autorizacion.obtenerUsuario().rol !== 'admin')
         return <Navigate to='/' />
     
     return (
         <Container>
 
+            {/* --------------- VENTANA MODAL PARA REGISTRAR BASES DE DATOS --------------- */}
+            {isOpen ? (
+                <Modal setIsOpen={setIsOpen}>
+                    <Table
+                        devolverSelecciones={obtenerSelecciones}
+                    /> 
+                </Modal> 
+            ) : (null) }
+
             <h1 className='font-bold text-lg'>Registro de Aplicacion</h1>
 
-            <form className="flex flex-col justify-center items-center relative w-full p-4 pb-24 mb-10" onSubmitCapture={createData} >
+            <form className="flex flex-col justify-center items-center relative w-full p-4 pb-24 mb-10 z-40" onSubmitCapture={createData} >
                 
                 {/* --------------- INFORMACION BASICA --------------- */}
                 <div className="flex flex-col relative w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
@@ -274,11 +338,23 @@ function RegistrarApp() {
 
                     {/* --------------- BASE DE DATOS --------------- */}
                     <p className='font-bold text-base my-4'>Base de datos</p>
-                    <div className="grid grid-cols-2 gap-4">
-                        <Select campo='Seleccione Base de datos' name='select_base' byId={false} opciones={opcionBaseDatos ? opcionBaseDatos : ['SELECCIONE']} manejador={handleInputChange}/>
-                        <div className='mt-6'>
-                            <Button width={32}><Link to={`/administracion/registro/basedatos`} target="_blank">Registrar Nueva</Link></Button>
+                    <div className='flex flex-col justify-center items-center gap-4'>
+
+                        <button type='button' className="p-1 bg-blue-600 text-white rounded" 
+                            onClick={(e) => {setIsOpen(!isOpen)}} >
+                            Agregar
+                        </button>
+
+                        <div className="w-full">
+                            <DataTable
+                                columns={columns}
+                                data={tableData}
+                                highlightOnHover
+                                pointerOnHover
+                                dense
+                            />
                         </div>
+
                     </div>
 
                     {/* --------------- SERVIDOR --------------- */}
@@ -367,10 +443,10 @@ function RegistrarApp() {
                 </div>
 
                 <div className="absolute bottom-16 right-1/3">
-                    <Button width={32}>Registrar</Button>
+                    <Button tipo='submit' color='blue' width={32}>Registrar</Button>
                 </div>
                 <div className="absolute bottom-16 left-1/3">
-                    <Button tipo='button' color='red' width={32} accion={(e) => navegar(-1)} >Cancelar</Button>
+                    <Button tipo='button' color='red' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
                 </div>
 
             </form>

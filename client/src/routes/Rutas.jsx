@@ -20,6 +20,7 @@ import {
   Fallas,
   RegistrarFalla,
   ActualizarBD,
+  Servidores,
   RegistrarServidor
 } from '../pages';
 
@@ -63,11 +64,12 @@ function Rutas() {
             <Route path="/aplicaciones/fallas" element={<Fallas />} />
             <Route path="/aplicaciones/fallas/registro" element={<RegistrarFalla />} />
               
-            {/* MODULO DE ADMINISTRACION */}
+            {/* MODULO DE BASE DE DATOS */}
             <Route path="/basedatos" element={<BaseDatos />} />
             <Route path="/basedatos/:id" element={<VerBD />} />
             {/* <Route path="/basedatos/registro" element={<RegistrarBD />} /> */}
             <Route path="/basedatos/actualizacion/:id" element={<ActualizarBD />} />
+            <Route path="/servidores" element={<Servidores />} />
             
           </Route> 
 

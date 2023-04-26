@@ -1,16 +1,19 @@
 
 import { useState, useEffect } from "react";
-import { Container } from "../../components/";
-import { FaCheckCircle, FaEdit, FaSearch } from "react-icons/fa";
+import { Button, Container } from "../../components/";
+import { FaArrowLeft, FaCheckCircle, FaEdit, FaSearch, FaTimesCircle } from "react-icons/fa";
 import { useDebounce } from "use-debounce";
 import Autorizacion from '../../services/auth.service';
 import Usuario from "../../services/usuario.service";
 import { Notificacion } from "../../utils/Notificacion";
 import { opcionCargo, opcionGerencia, opcionRol } from "../../services/campos.service";
-
-const columnas = ['Editar','ID','Indicador','Rol','Gerencia','Cargo'];
+import { useNavigate } from "react-router-dom";
+import DataTable from "react-data-table-component";
 
 function BuscarUsuario() {
+
+  const navigate = useNavigate();
+  function navegar(ruta) { navigate(ruta) }
 
   // VARIABLES PARA LA BUSQUEDA
   const [searchTerm, setSearchTerm] = useState("a");
@@ -63,6 +66,7 @@ function BuscarUsuario() {
 
         const datoModificacion = { edicion, rol, gerencia, cargo };
         await Usuario.actualizarUsuario(datoModificacion); 
+        onSearch(debounceValue);
         Notificacion('USUARIO MODDIFICADO EXITOSAMENTE', 'success');
         habilitar('','','','');
       }
@@ -103,6 +107,108 @@ function BuscarUsuario() {
       return (<td key={campo} className="px-2 py-2 flex justify-center items-center">{valor}</td>)
   }
 
+  const deleteUser = async (id) => {
+    
+    try {
+      
+      if(Autorizacion.obtenerUsuario().rol === 'admin'){
+
+        await Usuario.eliminarUsuario(id); 
+        onSearch(debounceValue);
+        Notificacion('USUARIO ELIMINADO EXITOSAMENTE', 'success');
+      }
+    }
+    catch (error) { 
+      console.log(error);
+      Notificacion(error.response.data.message, 'error');
+    }
+  }
+
+  const columns = [
+    {
+      name: 'Editar',
+      button: true,
+      cell: row => 
+        <div>
+          {edicion === row.usuario_id ?
+            (<FaCheckCircle 
+              onClick={updateData} 
+              className="ml-3 text-green-500 text-lg cursor-pointer"
+            />)
+              :
+            (<FaEdit 
+              onClick={(e) => habilitar(row)}
+              className="text-blue-500 text-lg" 
+            />)
+          }
+        </div>
+    },
+    {
+        name: 'ID',
+        selector: row => row.usuario_id,
+        sortable: true,
+        left: true,
+        width: "60px"
+    },
+    {
+        name: 'Indicador',
+        selector: row => row.indicador,
+        sortable: true,
+        left: true
+    },
+    {
+        name: 'Rol',
+        selector: row => 
+          <did>
+            {edicion === row.usuario_id ? 
+              ( verificarCampo('Rol',row.rol) ) 
+              : 
+              ( row.rol )
+            }
+          </did>,
+        sortable: true,
+        left: true
+    },
+    {
+        name: 'Gerencia',
+        selector: row =>
+          <did>
+            {edicion === row.usuario_id ? 
+              ( verificarCampo('Gerencia',row.gerencia) ) 
+              : 
+              ( row.gerencia )
+            }
+          </did>,
+        sortable: true,
+        left: true
+    },
+    {
+        name: 'Cargo',
+        selector: row =>
+          <did>
+            {edicion === row.usuario_id ? 
+              ( verificarCampo('Cargo',row.cargo) ) 
+              : 
+              ( row.cargo )
+            }
+          </did>,
+        sortable: true,
+        left: true
+    },
+    {
+      name: 'Remover',
+      button: true,
+      cell: row => 
+        <div>
+          <FaTimesCircle
+              onClick={() => deleteUser(row.usuario_id)} 
+              className="ml-3 text-red-500 text-lg cursor-pointer"
+          />
+        </div>,
+      center: true
+    },
+  ];
+
 
   return (
     <Container>
@@ -114,7 +220,8 @@ function BuscarUsuario() {
           <input 
             type="search"
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="block p-2 pr-12 w-96 text-xs text-black bg-white rounded border-none outline-none" placeholder="Buscar" />
+            className="block p-2 pr-12 w-96 text-xs text-black bg-white rounded border-none outline-none" 
+            placeholder="Buscar" />
           <button 
             type="button" 
             className="absolute top-0 right-0 p-2 h-8 text-xs font-medium text-white bg-blue-600 rounded-r border border-blue-700 hover:bg-blue-700">          
@@ -125,58 +232,21 @@ function BuscarUsuario() {
       </form>
 
       {resultados ? (
-        <table className="w-1/2 table-auto border-separate w-full text-xs text-center text-gray-700 shadow-md">
-          <thead className="text-xs text-gray-700 font-bold bg-zinc-200 uppercase">
-                          
-            <tr className="bg-zinc-200 border-b hover:bg-zinc-300">
-              {columnas.map((dato,index) => { 
-                  return  <td key={index} scope="col" className="px-1 py-1">{dato}</td> 
-              })}    
-            </tr>
-                          
-          </thead>
-              
-          <tbody>
-            {resultados.map((dato, index) => { 
-              let valores = Object.values(dato);
+        <div className="w-2/3">
+          <DataTable
+            columns={columns}
+            data={resultados}
+            highlightOnHover
+            pointerOnHover
+            dense
+          />
+        </div>
+      ) : 
+      (null)}
 
-              {edicion === dato.usuario_id ? 
-                valores.unshift(
-                  <FaCheckCircle
-                    onClick={updateData}
-                    className="ml-3 text-green-500 text-lg cursor-pointer"
-                  />)
-                :
-                  valores.unshift(
-                    <FaEdit 
-                      onClick={(e) => habilitar(dato)}
-                      className="ml-3 text-blue-500 text-lg cursor-pointer" 
-                    />)
-              }
-
-              return (
-                <tr key={index} className="bg-white border-b hover:bg-gray-100">
-                  {valores.map((valor, index) => {
-
-                    return (
-                      <td key={index}>
-                        {edicion === dato.usuario_id ? (
-                          verificarCampo(columnas[index],valor)
-                        ) : (
-                          <td className="px-2 py-2 flex justify-center items-center">{valor}</td>
-                        )}
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-
-          </tbody>
-        </table>
-      ) : (
-          <div></div>
-      )}
+      <div className="flex gap-16">
+        <Button color='blue' width={32} manejador={(e) => navegar(-1)} ><FaArrowLeft />Volver</Button>
+      </div>
 
     </Container>
   )

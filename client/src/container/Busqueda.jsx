@@ -24,10 +24,9 @@ function Busqueda({manejarBusqueda, manejarCount, pagina}) {
         region: '',
         alcance: '',
         mantenimiento: '',
-        fecha: '',
         critico: '',
         codigo: '',
-        registros: 10,
+        cantidad_usuarios: '',
         orden: 'ASC',
     }); 
 
@@ -96,9 +95,9 @@ function Busqueda({manejarBusqueda, manejarCount, pagina}) {
 
                 <div style={avanzados ? {display: 'block'} : {display: 'none'}} className="selectArea">
                     <div className="flex flex-wrap justify-center items-center gap-4">
-                        <Select campo='Registros' name='registros' busqueda={true} byId={false} opciones={opcionCount} manejador={handleInputChange} />
                         <Select campo='Alcance' name='alcance' busqueda={true} byId={false} opciones={opcionAlcance} manejador={handleInputChange} />
                         <Select campo='Mantenimiento' name='mantenimiento' busqueda={true} byId={false} opciones={opcionMantenimiento} manejador={handleInputChange} />
+                        <Select campo='N° Usuarios' name='cantidad_usuarios' busqueda={true} byId={false} opciones={opcionCount} manejador={handleInputChange} />
                     </div>
                 </div>
                 

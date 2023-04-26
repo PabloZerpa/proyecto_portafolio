@@ -81,6 +81,8 @@ class Base {
     // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
     async obtenerBDPorBusqueda(term,estatus,tipo,manejador,ambiente,count,orden) {
         try {
+            console.log('ALO');
+            console.log(term,estatus,tipo,manejador,ambiente,count,orden);
             return axios.post(`${baseUrl}basedatos/busqueda`, 
             {term,estatus,tipo,manejador,ambiente,count,orden}, { headers: authHeader() });
         } catch (error) {

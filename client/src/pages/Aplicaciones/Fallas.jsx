@@ -202,7 +202,7 @@ function Fallas() {
                     </button>
                 </div>
 
-                <Button><Link to={`/aplicaciones/fallas/registro`}>Registrar +</Link></Button>
+                <Button color='blue' ><Link to={`/aplicaciones/fallas/registro`}>Registrar +</Link></Button>
 
             </form>
 

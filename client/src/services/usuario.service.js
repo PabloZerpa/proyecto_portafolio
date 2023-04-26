@@ -37,6 +37,17 @@ class Usuario {
     }
 
     // ---------------- UPDATE DE UN CAMPO DE UN USUARIO ------------------
+    async eliminarUsuario(id) {
+        try { 
+            console.log(id);
+            const respuesta = await axios.delete(`${baseUrl}usuarios/eliminar/${id}`, { headers: authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log('ERROR AL ACTUALIZAR auth.service');
+        }
+    }
+
+    // ---------------- UPDATE DE UN CAMPO DE UN USUARIO ------------------
     async obtenerOpcion(nombre) {
         try { 
             const respuesta = await axios.get(`${baseUrl}usuarios/${nombre}`, { headers: authHeader() });

@@ -4,7 +4,7 @@ import { Container, Select, Radio, Tabla } from "../../components";
 import { useDebounce } from 'use-debounce';
 import { FaEdit, FaEye, FaSearch } from 'react-icons/fa';
 import Autorizacion from "../../services/auth.service";
-import Base from "../../services/basedatos.service";
+import Servidor from "../../services/servidor.service";
 import { opcionEstatus, opcionRegion, opcionPlataforma, opcionAlcance, 
     opcionMantenimiento, opcionCount, opcionLocalidad, opcionTipoBD, opcionManejadores } from '../../services/campos.service';
 import { Link } from "react-router-dom";
@@ -12,26 +12,20 @@ import DataTable from "react-data-table-component";
 import { selectTipoAmbiente } from "../../services/campos.service";
 
 
-// const columnasUserSimple = ['Ver','ID','Nombre','Estatus','Tipo','Manejador','Version',
-// 'N° Usuarios','Ambiente'];
-    
-// const columnasAdminSimple = ['Ver','Editar','ID','Nombre','Estatus','Tipo','Manejador','Version',
-// 'N° Usuarios','Ambiente'];
-
 const opciones = true;
 
 const columns = [
     {
-        name: 'Acciones',
+        name: 'Operaciones',
         button: true,
         cell: row => 
         <div className="flex gap-8">
-            <Link to={row ? `/basedatos/${row.base_datos_id}` : `/dashboard`} >
+            <Link to={row ? `/basedatos/${row.servidor_id}` : `/dashboard`} >
                 <FaEye className="text-blue-500 text-lg" />
             </Link>
             
             {Autorizacion.obtenerUsuario.rol !== 'user' ? 
-                <Link to={row ? `/administracion/actualizacion/${row.base_datos_id}` : `/dashboard`} >
+                <Link to={row ? `/administracion/actualizacion/${row.servidor_id}` : `/dashboard`} >
                 <FaEdit className="text-blue-500 text-lg" />
                 </Link>
             : 
@@ -41,50 +35,62 @@ const columns = [
     },
     {
         name: 'ID',
-        selector: row => row.base_datos_id,
+        selector: row => row.servidor_id,
         sortable: true,
         left: true,
         width: '60px'
     },
     {
         name: 'Nombre',
-        selector: row => row.base_datos,
+        selector: row => row.servidor,
         sortable: true,
         left: true
     },
     {
         name: 'Estatus',
-        selector: row => row.bas_estatus,
+        selector: row => row.ser_estatus,
         sortable: true,
         left: true
     },
     {
-        name: 'Tipo',
-        selector: row => row.tipo,
+        name: 'Direccion',
+        selector: row => row.ser_direccion,
         sortable: true,
         left: true
     },
     {
-        name: 'Manejador',
-        selector: row => row.manejador,
+        name: 'OS',
+        selector: row => row.sistema,
         sortable: true,
         left: true
     },
     {
-      name: 'N° de Usuarios',
-      selector: row => row.bas_cantidad_usuarios,
+      name: 'Modelo',
+      selector: row => row.modelo,
       sortable: true,
       left: true
     },
     {
-      name: 'Ambiente',
-      selector: row => row.tipo_ambiente,
+      name: 'Marca',
+      selector: row => row.marca,
       sortable: true,
       left: true
     },
+    {
+        name: 'Region',
+        selector: row => row.region,
+        sortable: true,
+        left: true
+      },
+      {
+        name: 'Localidad',
+        selector: row => row.localidad,
+        sortable: true,
+        left: true
+      },
     {
         name: 'Ultima Actualizacion',
-        selector: row => row.bas_fecha_actualizacion,
+        selector: row => row.ser_fecha_actualizacion,
         sortable: true,
         grow: 2,
         left: true
@@ -105,19 +111,18 @@ const columns = [
     selectAllRowsItemText: 'Todos'
   }
 
-function BaseDatos() {
+function Servidores() {
 
-    const [searchTerm, setSearchTerm] = useState("a");
+    const [searchTerm, setSearchTerm] = useState(" ");
     const [resultado, setResultado] = useState('');
     const [debounceValue] = useDebounce(searchTerm, 500);
 
     const [avanzados, setAvanzados] = useState(false);
     const [datos, setDatos] = useState({
         estatus: '',
-        tipo: '',
-        manejador: '',
-        ambiente: '', 
-        registros: 10,
+        region: '',
+        sistema: '',
+        marca: '', 
         orden: 'ASC',
     }); 
 
@@ -153,10 +158,10 @@ function BaseDatos() {
 
     const onSearch = async (value) => {
         try {
-            const { estatus,tipo,manejador,ambiente,registros,orden } = datos;
-            console.log(estatus,tipo,manejador,ambiente,registros,orden);
-            const respuesta = await Base.obtenerBDPorBusqueda(
-                value,estatus,tipo,manejador,ambiente,registros,orden);
+            const { estatus,region,sistema,marca,orden } = datos;
+            console.log(estatus,region,sistema,marca,orden);
+            const respuesta = await Servidor.obtenerServidorPorBusqueda(
+                value,estatus,region,sistema,marca,orden);
             setResultado(respuesta.data);
             console.log(respuesta.data);
             
@@ -175,9 +180,9 @@ function BaseDatos() {
                     <div className="border-solid">
                         <div className="grid grid-cols-4 gap-4">
                             <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={opcionEstatus} manejador={handleInputChange} />
-                            <Select campo='Tipo' name='tipo' busqueda={true} byId={false} opciones={opcionTipoBD} manejador={handleInputChange} />
-                            <Select campo='Manejador' name='manejador' busqueda={true} byId={false} opciones={opcionManejadores} manejador={handleInputChange} />
-                            <Select campo='Ambiente' name='ambiente' busqueda={true} byId={false} opciones={selectTipoAmbiente} manejador={handleInputChange} />
+                            <Select campo='Region' name='region' busqueda={true} byId={false} opciones={opcionRegion} manejador={handleInputChange} />
+                            <Select campo='Sistema' name='sistema' busqueda={true} byId={false} opciones={['SELECCIONE','TODAS','WINDOWS','RED HAT','DEBIAN','FEDORA','ARCH',]} manejador={handleInputChange} />
+                            <Select campo='Marca' name='marca' busqueda={true} byId={false} opciones={['SELECCIONE','TODAS','HP','VIT','LENOVO','ACER','ASUS']} manejador={handleInputChange} />
                         </div>
                     </div>
 
@@ -225,57 +230,9 @@ function BaseDatos() {
                 </div>
             ) : (null)}
 
-            {/* {resultado ? (
-            <table className="table-auto border-separate w-4/3 text-xs text-center text-gray-700 shadow-md">
-                <thead className="text-xs text-gray-700 font-bold bg-zinc-200 uppercase">
-                    
-                    <tr className="bg-zinc-200 border-b hover:bg-zinc-300">
-                        {opciones ? (
-                            columnasAdminSimple.map((dato,index) => { 
-                                if(index===0)
-                                    return  <td key={index} scope="col" className="px-1 py-1">{dato}</td> 
-                                else
-                                    return  <td key={index} scope="col" className="px-1 py-1">{dato}</td> 
-                            })
-                        ) : (
-                            columnasAdminSimple.map((dato, index) => { return  <td key={index} scope="col" className="px-1 py-1">{dato}</td> })
-                        )}    
-                    </tr>
-                    
-                </thead>
-                <tbody>
-                    {resultado.map((dato, index) => { 
-                        let valor = Object.values(dato);
-                        if(opciones){
-                            console.log(dato.base_datos_id);
-                            valor.unshift(
-                                <Link to={dato.base_datos_id ? `/basedatos/actualizacion/${dato.base_datos_id}` : `/dashboard`} className='text-lg' state={dato} >
-                                    <FaEdit className="text-blue-500" />
-                                </Link>
-                            )
-                        }
-                        valor.unshift(
-                            <Link to={dato.base_datos_id ? `/basedatos/${dato.base_datos_id}` : `/dashboard`} className='text-lg' state={dato} >
-                                <FaEye className="text-blue-500" />
-                            </Link>
-                        )
-                        return (
-                            <tr key={index} className="bg-white border-b hover:bg-gray-100">
-                                {valor.map((valor, index) => {
-                                        return ( <td key={index} className="px-2 py-2">{valor}</td> );
-                                })}
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
-            ) : (
-                <div></div>
-            )} */}
-
         </Container>
         
     )
 };
 
-export default BaseDatos;
+export default Servidores;

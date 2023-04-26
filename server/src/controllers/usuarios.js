@@ -17,6 +17,16 @@ const obtenerUsuarios = async (req,res) => {
     }
  }
 
+ // *************** ELIMINAR USUARIO ***************
+ const eliminarAplicacion = async (req,res) => {
+    try {
+        const { id } = req.params;
+        const [result] = await pool.query('DELETE FROM usuarios WHERE usuario_id = ?', [id]);
+        res.sendStatus(204);
+    } catch (error) {
+        console.log("ERROR_DELETE_ITEMS");
+    }
+};
  
 
  // *************** OBTENER USUARIO POR BUSQUEDA ***************
@@ -61,6 +71,7 @@ const cambiarPermisos = async (req,res) => {
                 rol_id = (SELECT rol_id FROM roles WHERE rol = ?),
                 gerencia_id = (SELECT gerencia_id FROM gerencias WHERE gerencia = ?),
                 cargo_id = (SELECT cargo_id FROM cargos WHERE cargo = ?) 
+                
             WHERE 
                 usuario_id = ?;`, [rol, gerencia, cargo, id]
         );
@@ -279,4 +290,4 @@ const obtenerGerencias = async (req,res) => {
 module.exports = { obtenerUsuarios, cambiarPermisos, cambiarPassword, obtenerPorBusqueda, obtenerRoles, 
     obtenerGerencias, obtenerCargos, obtenerResponsables, obtenerLenguajes, obtenerPlataformas, obtenerBasesDatos,
     obtenerServidores, obtenerEstatus, obtenerAlcance, obtenerMantenimientos, obtenerRegiones, obtenerTipos,
-    obtenerMane, obtenerAmbientes,obtenerMarcas,obtenerSistemas };
+    obtenerMane, obtenerAmbientes,obtenerMarcas,obtenerSistemas, eliminarAplicacion };
