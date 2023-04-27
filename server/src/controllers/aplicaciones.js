@@ -277,6 +277,22 @@ const crearAplicacion = async (req,res) => {
             tecnico_gerencia,tecnico_region,tecnico_localidad,
         } = req.body;
 
+        console.log(apl_acronimo,apl_nombre,apl_descripcion,apl_region,
+            apl_version,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
+            apl_codigo_fuente,apl_direccion,apl_cantidad_usuarios,apl_usuario_registro,
+            plataforma,lenguaje1,lenguaje2,lenguaje3, 
+            version1, version2, version3,
+            framework1,framework2,framework3, 
+            select_base, select_servidor,
+            man_frecuencia,man_horas_prom,man_horas_anuales, 
+            doc_descripcion,doc_tipo, doc_direccion,
+ 
+            select_funcional, select_tecnico,
+            funcional_nombre,funcional_apellido,funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
+            funcional_gerencia,funcional_region,funcional_localidad,
+            tecnico_nombre,tecnico_apellido,tecnico_indicador,tecnico_cedula,tecnico_cargo,tecnico_telefono,
+            tecnico_gerencia,tecnico_region,tecnico_localidad);
+
         const query = await pool.query(
             `SELECT * FROM aplicaciones WHERE apl_acronimo = ? OR apl_nombre = ?`, 
             [apl_acronimo,apl_nombre]);
@@ -296,32 +312,32 @@ const crearAplicacion = async (req,res) => {
             if(!select_base)
                 return res.status(401).json({ message: 'ERROR, BASE DE DATOS SIN SELECCIONAR' });
 
-            const aplicacion_id = await insertarAplicacion(
-                apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
-                apl_codigo_fuente,apl_version,apl_direccion,apl_cantidad_usuarios,apl_region,
-                apl_usuario_registro
-            );
+            // const aplicacion_id = await insertarAplicacion(
+            //     apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
+            //     apl_codigo_fuente,apl_version,apl_direccion,apl_cantidad_usuarios,apl_region,
+            //     apl_usuario_registro
+            // );
 
-            await insertarPlataforma(aplicacion_id, plataforma);
+            // await insertarPlataforma(aplicacion_id, plataforma);
             
-            await insertarLenguaje(aplicacion_id, lenguaje1, lenguaje2, lenguaje3, version1, version2, version3);    
+            // await insertarLenguaje(aplicacion_id, lenguaje1, lenguaje2, lenguaje3, version1, version2, version3);    
             
-            if(framework1 || framework2 || framework3)
-                await insertarFramework(aplicacion_id, framework1, framework2, framework3);
+            // if(framework1 || framework2 || framework3)
+            //     await insertarFramework(aplicacion_id, framework1, framework2, framework3);
 
-            await insertarServidor(aplicacion_id,select_servidor);
-            await insertarBase(aplicacion_id,select_base);
+            // await insertarServidor(aplicacion_id,select_servidor);
+            // await insertarBase(aplicacion_id,select_base);
 
-            await insertarResponsable('funcional',aplicacion_id,select_funcional,funcional_nombre,funcional_apellido,
-                funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
-                funcional_gerencia,funcional_region,funcional_localidad);
+            // await insertarResponsable('funcional',aplicacion_id,select_funcional,funcional_nombre,funcional_apellido,
+            //     funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
+            //     funcional_gerencia,funcional_region,funcional_localidad);
                 
-            await insertarResponsable('tecnico',aplicacion_id,select_tecnico,tecnico_nombre,tecnico_apellido,
-                tecnico_indicador,tecnico_cedula,tecnico_cargo,tecnico_telefono,
-                tecnico_gerencia,tecnico_region,tecnico_localidad);
+            // await insertarResponsable('tecnico',aplicacion_id,select_tecnico,tecnico_nombre,tecnico_apellido,
+            //     tecnico_indicador,tecnico_cedula,tecnico_cargo,tecnico_telefono,
+            //     tecnico_gerencia,tecnico_region,tecnico_localidad);
 
-            await insertarMantenimiento(aplicacion_id,man_frecuencia,man_horas_prom,man_horas_anuales);          
-            await insertarDocumentacion(aplicacion_id,doc_descripcion,doc_direccion,doc_tipo);
+            // await insertarMantenimiento(aplicacion_id,man_frecuencia,man_horas_prom,man_horas_anuales);          
+            // await insertarDocumentacion(aplicacion_id,doc_descripcion,doc_direccion,doc_tipo);
 
             console.log('CREACION EXITOSA');
             res.send('CREACION EXITOSA');
@@ -663,12 +679,18 @@ const general = async (req,res) => {
 
         const data = await pool.query(`
         SELECT 
-            aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,
-            apl_prioridad,apl_critico,apl_alcance,apl_codigo_fuente,
-            apl_version,apl_direccion,apl_cantidad_usuarios,region,apl_fecha_registro
+            aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_descripcion,
+            estatus,prioridad,apl_critico,alcance,apl_codigo_fuente,
+            apl_version,apl_direccion,apl_cantidad_usuarios,region,
+            (SELECT DATE_FORMAT
+                (apl_fecha_actualizacion, '%d-%m-%Y %H:%i') AS fecha FROM aplicaciones WHERE aplicacion_id = ?) as fecha
         FROM aplicaciones
-            JOIN regiones ON aplicaciones.apl_region = regiones.region_id
-        WHERE aplicaciones.aplicacion_id = ?`, [id]);
+            LEFT JOIN estatus ON aplicaciones.apl_estatus = estatus.estatus_id
+            LEFT JOIN prioridades ON aplicaciones.apl_prioridad = prioridades.prioridad_id
+            LEFT JOIN alcances ON aplicaciones.apl_alcance = alcances.alcance_id
+            LEFT JOIN regiones ON aplicaciones.apl_region = regiones.region_id
+            LEFT JOIN mantenimientos ON aplicaciones.aplicacion_id = mantenimientos.aplicacion_id
+        WHERE aplicaciones.aplicacion_id = ?`, [id,id]);
 
         res.send(data[0]);
     } catch (error) {
@@ -700,14 +722,13 @@ const tecno = async (req,res) => {
 
         const lenguajes = await pool.query(`
             SELECT 
-                lenguaje, version_lenguaje, framework
+                lenguaje, framework
             FROM aplicaciones
                 JOIN aplicacion_lenguaje ON aplicaciones.aplicacion_id = aplicacion_lenguaje.aplicacion_id
                 JOIN lenguajes ON aplicacion_lenguaje.lenguaje_id = lenguajes.lenguaje_id
-                JOIN versiones_lenguajes ON versiones_lenguajes.version_lenguaje_id = lenguajes.lenguaje_id
                 JOIN aplicacion_framework ON aplicaciones.aplicacion_id = aplicacion_framework.aplicacion_id
                 JOIN frameworks ON aplicacion_framework.framework_id = frameworks.framework_id
-            WHERE aplicaciones.aplicacion_id = ?`, 
+            WHERE aplicaciones.aplicacion_id = ?;`, 
         [id]);
 
         respuestas = {
@@ -729,19 +750,18 @@ const basedatos = async (req,res) => {
 
         const data = await pool.query(`
             SELECT 
-                base_datos,bas_estatus,tipo,
-                manejador,version_manejador,bas_cantidad_usuarios,
-                bas_tipo_ambiente,servidor
+                bases_datos.base_datos_id, base_datos, bas_estatus, 
+                tipo, manejador, tipo_ambiente,
+                bas_cantidad_usuarios, servidor, bas_fecha_actualizacion, servidores.servidor_id
             FROM aplicaciones
                 JOIN aplicacion_basedatos ON aplicaciones.aplicacion_id = aplicacion_basedatos.aplicacion_id
                 JOIN bases_datos ON bases_datos.base_datos_id = aplicacion_basedatos.base_datos_id
-                JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.base_datos_id
-                JOIN manejadores ON manejadores.manejador_id = bases_datos.base_datos_id
-                JOIN versiones_manejadores ON manejadores.manejador_id = versiones_manejadores.manejador_id
+                JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.bas_tipo
+                JOIN manejadores ON manejadores.manejador_id = bases_datos.bas_manejador
+                JOIN tipos_ambientes ON tipos_ambientes.tipo_ambiente_id = bases_datos.bas_tipo_ambiente
                 JOIN basedatos_servidor ON bases_datos.base_datos_id = basedatos_servidor.base_datos_id
                 JOIN servidores ON servidores.servidor_id = basedatos_servidor.servidor_id
-            WHERE aplicaciones.aplicacion_id = ?;`, 
-            [id]);
+            WHERE aplicaciones.aplicacion_id =?;`, [id]);
 
         const respuestas = {
             datos: data[0],
@@ -760,30 +780,33 @@ const servidor = async (req,res) => {
 
         const data = await pool.query(`
             SELECT 
-                servidor,ser_direccion,ser_estatus,sistema,sistema_version,region, localidad
+                servidores.servidor_id,servidor,ser_estatus,ser_direccion,sistema,modelo,marca,
+                region,localidad,ser_fecha_actualizacion
             FROM aplicaciones
-                JOIN aplicacion_servidor ON aplicaciones.aplicacion_id = aplicacion_servidor.aplicacion_id
-                JOIN servidores ON aplicacion_servidor.servidor_id = servidores.servidor_id
-                JOIN sistemas_operativos ON sistemas_operativos.sistema_id = servidores.ser_sistema
-                JOIN regiones ON servidores.ser_region_id = regiones.region_id
-                JOIN localidades ON servidores.ser_localidad_id = localidades.localidad_id
+                    JOIN aplicacion_servidor ON aplicaciones.aplicacion_id = aplicacion_servidor.aplicacion_id
+                    JOIN servidores ON aplicacion_servidor.servidor_id = servidores.servidor_id
+                    JOIN sistemas_operativos ON sistemas_operativos.sistema_id = servidores.ser_sistema
+                    JOIN modelos ON modelos.modelo_id = servidores.ser_modelo
+                    JOIN marcas ON marcas.marca_id = modelos.mod_marca
+                    JOIN regiones ON regiones.region_id = servidores.ser_region_id
+                    JOIN localidades ON localidades.localidad_id = servidores.ser_localidad_id
             WHERE aplicaciones.aplicacion_id = ?;`, 
             [id]);
 
-        const modelos = await pool.query(`
-            SELECT 
-                modelo,mod_marca,mod_serial,
-                mod_velocidad_cpu,mod_cantidad_cpu, mod_memoria
-            FROM aplicaciones
-                JOIN aplicacion_servidor ON aplicaciones.aplicacion_id = aplicacion_servidor.aplicacion_id
-                JOIN servidores ON aplicacion_servidor.servidor_id = servidores.servidor_id
-                JOIN modelos ON modelos.modelo_id = servidores.ser_modelo
-            WHERE aplicaciones.aplicacion_id = ?;`, 
-            [id]);
+        // const modelos = await pool.query(`
+        //     SELECT 
+        //         modelo,mod_marca,mod_serial,
+        //         mod_velocidad_cpu,mod_cantidad_cpu, mod_memoria
+        //     FROM aplicaciones
+        //         JOIN aplicacion_servidor ON aplicaciones.aplicacion_id = aplicacion_servidor.aplicacion_id
+        //         JOIN servidores ON aplicacion_servidor.servidor_id = servidores.servidor_id
+        //         JOIN modelos ON modelos.modelo_id = servidores.ser_modelo
+        //     WHERE aplicaciones.aplicacion_id = ?;`, 
+        //     [id]);
             
         const respuestas = {
             datos: data[0],
-            modelos: modelos[0],
+            //modelos: modelos[0],
         }
                 
         res.send(respuestas);
@@ -799,13 +822,14 @@ const responsable = async (req,res) => {
 
         const funcional = await pool.query(`
             SELECT 
-		        res_nombre, res_apellido, res_indicador, res_cedula, res_cargo, 
+                res_nombre, res_apellido, res_indicador, res_cedula, cargo, 
                 telefono, gerencia, region, localidad
             FROM aplicaciones
                 JOIN responsables_funcionales ON aplicaciones.aplicacion_id = responsables_funcionales.aplicacion_id
                 JOIN responsables ON responsables.responsable_id = responsables_funcionales.responsable_id 
                 JOIN telefonos ON responsables.responsable_id = telefonos.telefono_id 
                 JOIN gerencias ON responsables.res_gerencia_id = gerencias.gerencia_id 
+                JOIN cargos ON responsables.res_cargo_id = cargos.cargo_id 
                 JOIN regiones ON responsables.res_region_id = regiones.region_id 
                 JOIN localidades ON responsables.res_localidad_id = localidades.localidad_id 
             WHERE aplicaciones.aplicacion_id = ?;`, 
@@ -813,13 +837,14 @@ const responsable = async (req,res) => {
             
         const tecnico = await pool.query(`
             SELECT 
-		        res_nombre, res_apellido, res_indicador, res_cedula, res_cargo,
+                res_nombre, res_apellido, res_indicador, res_cedula, cargo, 
                 telefono, gerencia, region, localidad
             FROM aplicaciones
                 JOIN responsables_tecnicos ON aplicaciones.aplicacion_id = responsables_tecnicos.aplicacion_id
                 JOIN responsables ON responsables.responsable_id = responsables_tecnicos.responsable_id 
                 JOIN telefonos ON responsables.responsable_id = telefonos.telefono_id 
                 JOIN gerencias ON responsables.res_gerencia_id = gerencias.gerencia_id 
+                JOIN cargos ON responsables.res_cargo_id = cargos.cargo_id 
                 JOIN regiones ON responsables.res_region_id = regiones.region_id 
                 JOIN localidades ON responsables.res_localidad_id = localidades.localidad_id 
             WHERE aplicaciones.aplicacion_id = ?;`, 

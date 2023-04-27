@@ -68,7 +68,7 @@ function RegistrarApp() {
         framework2: '',
         framework3: '',
 
-        select_base: '',
+        select_base: [],
         select_servidor: '',
     });
 
@@ -204,6 +204,7 @@ function RegistrarApp() {
 
         if(Autorizacion.obtenerUsuario().rol === 'admin'){
             try {
+                console.log(datos);
                 await Aplicacion.crearDatos(datos);
                 Notificacion('REGISTRO EXITOSO', 'success');
                 //navigate("/dashboard");
@@ -218,24 +219,16 @@ function RegistrarApp() {
 
     const [isOpen, setIsOpen] = useState(false);
     const [tableData, setData] = useState([]);
-    //const [selecciones, setSelecciones] = useState([]);
-    const [id, setId] = useState('');
-    const [nombre, setNombre] = useState('');
-
 
     const obtenerSelecciones = (respuesta) => {
 
-        const x = respuesta[0];
-        console.log(x);
-
-        setId(x.base_datos_id);
-        setNombre(x.base_datos);
-
-        console.log(id);
-        console.log(nombre);
-        console.log(tableData);
-
-        setData(tableData => [...tableData, { base_datos_id: x.base_datos_id, base_datos: x.base_datos}]);
+        for (let i = 0; i < respuesta.length; i++) {
+            const x = respuesta[i];
+            setData(tableData => [...tableData, { base_datos_id: x.base_datos_id, base_datos: x.base_datos}]);
+            setDatos(datos.select_base.push(x.base_datos_id));
+            
+            console.log(datos);
+        }
     };
 
     const columns = [
@@ -254,17 +247,23 @@ function RegistrarApp() {
             name: 'Remover',
             button: true,
             cell: row => 
-                <FaTimesCircle className="text-red-500 text-lg" />,
+            <div>
+                <FaTimesCircle
+                    onClick={() => deleteRow(row)} 
+                    className="ml-3 text-red-500 text-lg cursor-pointer"
+                />
+            </div>,
             left: true
         },
     ];
-    
 
-    const addRow = (base_datos_id,base_datos) => {
-        setData(tableData => [...tableData, { base_datos_id: base_datos_id, base_datos: base_datos}]);
-        console.log(tableData);
-    }
-
+    const deleteRow = (row) => {
+		console.log(row);
+        if (window.confirm(`Estas seguro de querer eliminar al usuario: ${row.base_datos_id}?`)) {
+            const nuevo = tableData.filter((i) => i.base_datos_id != row.base_datos_id);
+            setData(nuevo);
+        }
+    };
 
     if(Autorizacion.obtenerUsuario().rol !== 'admin')
         return <Navigate to='/' />
@@ -274,11 +273,18 @@ function RegistrarApp() {
 
             {/* --------------- VENTANA MODAL PARA REGISTRAR BASES DE DATOS --------------- */}
             {isOpen ? (
-                <Modal setIsOpen={setIsOpen}>
-                    <Table
-                        devolverSelecciones={obtenerSelecciones}
-                    /> 
-                </Modal> 
+                <div className="fixed w-full max-w-2xl max-h-full z-50">
+                    <div className="relative bg-white rounded-lg shadow">
+
+                        <div className="p-4 space-y-4">
+                            <Table
+                                setIsOpen={setIsOpen}
+                                devolverSelecciones={obtenerSelecciones}
+                            /> 
+                        </div>
+        
+                    </div>
+                </div>
             ) : (null) }
 
             <h1 className='font-bold text-lg'>Registro de Aplicacion</h1>
@@ -351,6 +357,7 @@ function RegistrarApp() {
                                 data={tableData}
                                 highlightOnHover
                                 pointerOnHover
+                                noDataComponent={"SIN SELECCIONES"}
                                 dense
                             />
                         </div>
@@ -363,7 +370,7 @@ function RegistrarApp() {
                         <Select campo='Seleccione Servidor' name='select_servidor' byId={false} opciones={opcionServidores ? opcionServidores : ['SELECCIONE']} manejador={handleInputChange}/>
                         
                         <div className='mt-6'>
-                            <Button width={32}><Link to={`/administracion/registro/servidor`} target="_blank">Registrar Nuevo</Link></Button>
+                            <Button color='blue' width={32}><Link to={`/administracion/registro/servidor`} target="_blank">Registrar Nuevo</Link></Button>
                         </div>
                     </div>
                 </div>
@@ -446,7 +453,7 @@ function RegistrarApp() {
                     <Button tipo='submit' color='blue' width={32}>Registrar</Button>
                 </div>
                 <div className="absolute bottom-16 left-1/3">
-                    <Button tipo='button' color='red' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
+                    <Button tipo='button' color='blue' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
                 </div>
 
             </form>

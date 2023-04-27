@@ -8,74 +8,13 @@ import Falla from "../../services/falla.service";
 import { Link } from "react-router-dom";
 import { Notificacion } from "../../utils/Notificacion";
 import DataTable from "react-data-table-component";
+import { paginacionOpciones } from "../../utils/TablaOpciones"
 
 const columnas = ['Editar','Falla_ID','Acronimo','Nombre','Clase','Impacto','Descripcion','Solucion'];
 
-const columns = [
-    {
-        name: 'Editar',
-        button: true,
-        cell: row => 
-        <div className="flex gap-8">
-            <Link to={`/dashboard`} >
-                <FaEdit className="text-blue-500 text-lg" />
-            </Link>
-        </div>,
-    },
-    {
-        name: 'Falla ID',
-        selector: row => row.falla_id,
-        sortable: true,
-        center: true,
-    },
-    {
-        name: 'APP Acronimo',
-        selector: row => row.apl_acronimo,
-        sortable: true,
-        left: true
-    },
-    {
-        name: 'APP Nombre',
-        selector: row => row.apl_nombre,
-        sortable: true,
-        left: true
-    },
-    {
-        name: 'Clase',
-        selector: row => row.fal_clase,
-        sortable: true,
-        left: true
-    },
-    {
-      name: 'Impacto',
-      selector: row => row.fal_impacto,
-      sortable: true,
-      left: true
-    },
-    {
-        name: 'Descripcion',
-        selector: row => row.fal_descripcion,
-        sortable: true,
-        left: true
-    },
-    {
-        name: 'Solucion',
-        selector: row => row.fal_solucion,
-        sortable: true,
-        left: true
-    },
-];
-
-const paginacionOpciones = {
-    rowsPerPageText: 'Filas por Pagina',
-    rangeSeparatorText: 'de',
-    selectAllRowsItem: true,
-    selectAllRowsItemText: 'Todos'
-}
-
 function Fallas() {
 
-    const [searchTerm, setSearchTerm] = useState("");
+    const [searchTerm, setSearchTerm] = useState("a");
     const [resultados, setResultados] = useState('');
     const [debounceValue] = useDebounce(searchTerm, 500);
 
@@ -121,7 +60,6 @@ function Fallas() {
         try {
             const datos = await Falla.obtenerFallaPorBusqueda(termino);
             setResultados(datos.data);
-            console.log(resultados);
         } catch (error) { 
             console.log('ERROR AL BUSCAR DATOS') 
         }
@@ -134,6 +72,7 @@ function Fallas() {
             if(Autorizacion.obtenerUsuario().rol === 'admin'){
                 const datoModificacion = { edicion, clase, impacto, descripcion, solucion };
                 await Falla.actualizarFalla(datoModificacion); 
+                onSearch(debounceValue);
                 Notificacion('FALLA MODDIFICADA EXITOSAMENTE', 'success');
                 habilitar('','','');
             }
@@ -184,6 +123,99 @@ function Fallas() {
             return (<td key={campo} className="px-2 py-2">{valor}</td>)
     }
 
+
+    const columns = [
+        {
+          name: 'Editar',
+          button: true,
+          cell: row => 
+            <div>
+                {edicion === row.falla_id ?
+                    (<FaCheckCircle 
+                    onClick={updateData} 
+                    className="ml-3 text-green-500 text-lg cursor-pointer"
+                    />)
+                    :
+                    (<FaEdit
+                    onClick={(e) => habilitar(row)}
+                    className="text-blue-500 text-lg" 
+                    />)
+                }
+            </div>
+        },
+        {
+            name: 'Falla ID',
+            selector: row => row.falla_id,
+            sortable: true,
+            left: true,
+            width: "60px"
+        },
+        {
+            name: 'Acronimo',
+            selector: row => row.apl_acronimo,
+            sortable: true,
+            left: true
+        },
+        {
+            name: 'Nombre',
+            selector: row => row.apl_nombre,
+            sortable: true,
+            left: true
+        },
+        {
+            name: 'Clase',
+            selector: row => 
+                <did>
+                {edicion === row.falla_id ? 
+                ( verificarCampo('Clase',row.fal_clase) ) 
+                : 
+                ( row.fal_clase )
+                }
+                </did>,
+            sortable: true,
+            left: true
+        },
+        {
+            name: 'Impacto',
+            selector: row => 
+            <did>
+                {edicion === row.falla_id ? 
+                ( verificarCampo('Impacto',row.fal_impacto) ) 
+                : 
+                ( row.fal_impacto )
+                }
+            </did>,
+            sortable: true,
+            left: true
+        },
+        {
+            name: 'Descripcion',
+            selector: row => 
+            <did>
+                {edicion === row.falla_id ? 
+                ( verificarCampo('Descripcion',row.fal_descripcion) ) 
+                : 
+                ( row.fal_descripcion )
+                }
+            </did>,
+            sortable: true,
+            left: true
+        },
+        {
+            name: 'Solucion',
+            selector: row => 
+            <did>
+                {edicion === row.falla_id ? 
+                ( verificarCampo('Solucion',row.fal_solucion) ) 
+                : 
+                ( row.fal_solucion )
+                }
+            </did>,
+            sortable: true,
+            left: true
+        },
+      ];
+
     return(
         <Container>
             <h2 className='font-bold text-lg'>Buscar Falla</h2>
@@ -207,22 +239,23 @@ function Fallas() {
             </form>
 
             {resultados ? (
-                
-                // <div className="w-[1080px]">
-                //     <DataTable
-                //         columnas={columns}
-                //         data={resultados}
-                //         pagination
-                //         paginationComponentOptions={paginacionOpciones}
-                //         fixedHeader
-                //         fixedHeaderScrollHeight="600px"
-                //         highlightOnHover
-                //         pointerOnHover
-                //         dense
-                //     />
-                // </div>
+                <>
+                {console.log(resultados)}
+                <div className="w-[1080px]">
+                    <DataTable
+                        columns={columns}
+                        data={resultados}
+                        highlightOnHover
+                        pointerOnHover
+                        dense
+                        pagination
+                        paginationComponentOptions={paginacionOpciones}
+                        fixedHeader
+                        fixedHeaderScrollHeight="600px"
+                    />
+                </div>
 
-                <table className="w-1/2 table-auto border-separate w-full text-xs text-center text-gray-700 shadow-md">
+                {/* <table className="w-1/2 table-auto border-separate w-full text-xs text-center text-gray-700 shadow-md">
                 <thead className="text-xs text-gray-700 font-bold bg-zinc-200 uppercase">
                                 
                     <tr className="bg-zinc-200 border-b hover:bg-zinc-300">
@@ -274,7 +307,8 @@ function Fallas() {
                     })}
 
                 </tbody>
-                </table>
+                </table> */}
+                </>
             ) : (
                 <div></div>
             )}

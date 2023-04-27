@@ -6,10 +6,11 @@ import Autorizacion from "../../services/auth.service";
 import { FaEdit, FaEye } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import DataTable from "react-data-table-component";
+import { paginacionOpciones } from "../../utils/TablaOpciones"
 
 const columns = [
   {
-		name: 'Acciones',
+		name: 'Operaciones',
 		button: true,
 		cell: row => 
     <div className="flex gap-8">
@@ -17,7 +18,7 @@ const columns = [
         <FaEye className="text-blue-500 text-lg" />
       </Link>
       
-      {Autorizacion.obtenerUsuario.rol === 'user' ? 
+      {Autorizacion.obtenerUsuario.rol !== 'user' ? 
         <Link to={row ? `/administracion/actualizacion/${row.aplicacion_id}` : `/dashboard`} >
           <FaEdit className="text-blue-500 text-lg" />
         </Link>
@@ -104,13 +105,6 @@ const columns = [
       left: true
   },
 ];
-
-const paginacionOpciones = {
-  rowsPerPageText: 'Filas por Pagina',
-  rangeSeparatorText: 'de',
-  selectAllRowsItem: true,
-  selectAllRowsItemText: 'Todos'
-}
 
 function Aplicaciones() {
 

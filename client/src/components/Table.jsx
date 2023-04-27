@@ -7,6 +7,7 @@ import Base from '../services/basedatos.service';
 import DataTable from 'react-data-table-component';
 import { opcionEstatus, opcionManejadores, opcionTipoBD, selectTipoAmbiente } from '../services/campos.service';
 import {paginacionOpciones} from "../utils/TablaOpciones"
+import Button from './Button';
 
 
 const columns = [
@@ -56,7 +57,7 @@ const columns = [
 ];
 
 
-function Table({devolverSelecciones}) {
+function Table({devolverSelecciones, setIsOpen}) {
 
     const [searchTerm, setSearchTerm] = useState("a");
     const [resultado, setResultado] = useState('');
@@ -105,7 +106,7 @@ function Table({devolverSelecciones}) {
     const onSearch = async (value) => {
         try {
             const { estatus,tipo,manejador,ambiente,registros,orden } = datos;
-            console.log(estatus,tipo,manejador,ambiente,registros,orden);
+            //console.log(estatus,tipo,manejador,ambiente,registros,orden);
             const respuesta = await Base.obtenerBDPorBusqueda(
                 value,estatus,tipo,manejador,ambiente,registros,orden);
             
@@ -116,56 +117,51 @@ function Table({devolverSelecciones}) {
         }
     }
 
-    const [selectedRows, setSelectedRows] = useState([0]);
+    const [elementos, setElementos] = useState([0]);
 
 	const handleRowSelected = useCallback(state => {
-        setSelectedRows(selectedRows[0] = state.selectedRows);
+
+        // PRINT DEL ARREGLO CON LOS VALORES SELECCIONADOS
         // console.log(state.selectedRows);
-        console.log(selectedRows[0]);
 
-        console.log(selectedRows[0].length);
+        // PRINT DEL LA VARIABLE CON LAS SELECCIONES
+        setElementos(elementos[0] = state.selectedRows);
+        // console.log(elementos);
 
-        if(state.selectedRows.length > 0){
-            devolverSelecciones(state.selectedRows);
-        }
-        
 	}, []);
 
     const sendDatos = () => {
-        console.log('ALO');
-        devolverSelecciones(selectedRows[0]);
-        
+        devolverSelecciones(elementos);
     }
-
  
     return (
         <>
             <form className='flex justify-center items-center flex-col p-4 bg-zinc-400 border-solid rounded'>
                 <div className='flex flex-col gap-0 w-full py-2 border-solid'>
 
-                <div className="border-solid">
-                    <div className="grid grid-cols-4">
-                        <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={opcionEstatus} manejador={handleInputChange} />
-                        <Select campo='Tipo' name='tipo' busqueda={true} byId={false} opciones={opcionTipoBD} manejador={handleInputChange} />
-                        <Select campo='Manejador' name='manejador' busqueda={true} byId={false} opciones={opcionManejadores} manejador={handleInputChange} />
-                        <Select campo='Ambiente' name='ambiente' busqueda={true} byId={false} opciones={selectTipoAmbiente} manejador={handleInputChange} />
-                    </div>
-                </div>
-
-                <div className="radioArea">
-                    <div className='mt-8 flex justify-center items-center gap-4'>
-                        <div className="relative w-96">
-                            <input 
-                                type="search" 
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="block p-2 pr-12 w-96 text-sm text-black bg-white rounded border-none outline-none" placeholder="Buscar" />
-                            <button 
-                                type="submit" 
-                                onClick={(e) => {e.preventDefault(); onSearch(debounceValue)}}
-                                className="absolute top-0 right-0 p-2.5 text-sm font-medium text-white bg-blue-600 rounded-r border border-blue-700 hover:bg-blue-700">
-                                <FaSearch />
-                            </button>
+                    <div className="border-solid">
+                        <div className="grid grid-cols-4">
+                            <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={opcionEstatus} manejador={handleInputChange} />
+                            <Select campo='Tipo' name='tipo' busqueda={true} byId={false} opciones={opcionTipoBD} manejador={handleInputChange} />
+                            <Select campo='Manejador' name='manejador' busqueda={true} byId={false} opciones={opcionManejadores} manejador={handleInputChange} />
+                            <Select campo='Ambiente' name='ambiente' busqueda={true} byId={false} opciones={selectTipoAmbiente} manejador={handleInputChange} />
                         </div>
+                    </div>
+
+                    <div className="radioArea">
+                        <div className='mt-8 flex justify-center items-center gap-4'>
+                            <div className="relative w-96">
+                                <input 
+                                    type="search" 
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="block p-2 pr-12 w-96 text-sm text-black bg-white rounded border-none outline-none" placeholder="Buscar" />
+                                <button 
+                                    type="submit" 
+                                    onClick={(e) => {e.preventDefault(); onSearch(debounceValue)}}
+                                    className="absolute top-0 right-0 p-2.5 text-sm font-medium text-white bg-blue-600 rounded-r border border-blue-700 hover:bg-blue-700">
+                                    <FaSearch />
+                                </button>
+                            </div>
                             <input type='reset' value='Restablecer' 
                                 onClick={resetCampos}
                                 className='w-20 h-8 text-xs bg-blue-600 text-white border-none outline-none rounded cursor-pointer hover:bg-blue-500' size='small' 
@@ -173,7 +169,6 @@ function Table({devolverSelecciones}) {
                         </div>
                     </div>
                 </div>
-            
             </form>
 
             {resultado ? (
@@ -196,6 +191,11 @@ function Table({devolverSelecciones}) {
 
                 </div>
             ) : (null)}
+
+            <div className="flex items-center gap-4 p-2 space-x-2 border-t border-gray-200 rounded-b">
+                <Button color='blue' manejador={(e) => {sendDatos(); setIsOpen(false)}}>Agregar</Button>
+                <Button color='blue' manejador={(e) => setIsOpen(false)}>Cerrar</Button>
+            </div>
         </>
     );
 }

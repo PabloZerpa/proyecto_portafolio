@@ -2,15 +2,15 @@ const pool = require('../config');
 
 const query = `
 SELECT 
-                servidores.servidor_id,servidor,ser_estatus,ser_direccion,sistema,modelo,marca,
-                region,localidad,ser_fecha_actualizacion,indicador
-            FROM servidores
-                JOIN sistemas_operativos ON sistemas_operativos.sistema_id = servidores.ser_sistema
-                JOIN modelos ON modelos.modelo_id = servidores.ser_modelo
-                JOIN marcas ON marcas.marca_id = modelos.mod_marca
-                JOIN regiones ON regiones.region_id = servidores.ser_region_id
-                JOIN localidades ON localidades.localidad_id = servidores.ser_localidad_id
-                JOIN usuarios ON usuarios.usuario_id = servidores.ser_usuario_actualizo`;
+    servidores.servidor_id,servidor,ser_estatus,ser_direccion,sistema,modelo,marca,
+    region,localidad,ser_fecha_actualizacion,indicador
+FROM servidores
+    JOIN sistemas_operativos ON sistemas_operativos.sistema_id = servidores.ser_sistema
+    JOIN modelos ON modelos.modelo_id = servidores.ser_modelo
+    JOIN marcas ON marcas.marca_id = modelos.mod_marca
+    JOIN regiones ON regiones.region_id = servidores.ser_region_id
+    JOIN localidades ON localidades.localidad_id = servidores.ser_localidad_id
+    JOIN usuarios ON usuarios.usuario_id = servidores.ser_usuario_actualizo`;
 
 // *********************************** OBTENER LOS DATOS POR TERMINO DE BUSQUEDA ***********************************
 const obtenerBusqueda = async (req,res) => {

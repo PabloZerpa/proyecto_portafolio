@@ -10,9 +10,7 @@ import { opcionEstatus, opcionRegion, opcionPlataforma, opcionAlcance,
 import { Link } from "react-router-dom";
 import DataTable from "react-data-table-component";
 import { selectTipoAmbiente } from "../../services/campos.service";
-
-
-const opciones = true;
+import { paginacionOpciones } from "../../utils/TablaOpciones";
 
 const columns = [
     {
@@ -103,13 +101,6 @@ const columns = [
       left: true
   },
 ];
-  
-  const paginacionOpciones = {
-    rowsPerPageText: 'Filas por Pagina',
-    rangeSeparatorText: 'de',
-    selectAllRowsItem: true,
-    selectAllRowsItemText: 'Todos'
-  }
 
 function Servidores() {
 

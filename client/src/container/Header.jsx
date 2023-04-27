@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Dropdown } from "./";
 import Autorizacion from '../services/auth.service';
-
-const logo = "https://logodownload.org/wp-content/uploads/2019/03/pdvsa-logo.png";
+// import Logo from "../assets/logo.png";
+import Logo from "../components/logo_pdvsa.png";
 
 // -------------------- NAVEGACION --------------------
 function Header() {
@@ -19,7 +19,7 @@ function Header() {
     <div className="flex flex-row justify-between items-center w-full h-20 bg-gray-200 fixed z-50 drop-shadow-md" >
       
       <Link className="linkNav" to="/">
-        <img src={logo} alt="logo" className="ml-8 w-28" />
+        <img className="ml-8 w-28" src={Logo} alt="logo" />
       </Link>
 
       {user == null ? (

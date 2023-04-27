@@ -281,13 +281,16 @@ const aplicacion = async (req,res) => {
 
         const data = await pool.query(`
             SELECT 
-                aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,
-                apl_prioridad,apl_critico,apl_alcance,apl_codigo_fuente,
+                aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_descripcion,estatus,
+                prioridad,apl_critico,alcance,apl_codigo_fuente,
                 apl_version,apl_direccion,apl_cantidad_usuarios,region
             FROM aplicaciones
-                JOIN aplicacion_basedatos ON aplicaciones.aplicacion_id = aplicacion_basedatos.aplicacion_id
-                JOIN bases_datos ON bases_datos.base_datos_id = aplicacion_basedatos.base_datos_id
-                JOIN regiones ON aplicaciones.apl_region = regiones.region_id
+                LEFT JOIN estatus ON aplicaciones.apl_estatus = estatus.estatus_id
+                LEFT JOIN prioridades ON aplicaciones.apl_prioridad = prioridades.prioridad_id
+                LEFT JOIN alcances ON aplicaciones.apl_alcance = alcances.alcance_id
+                LEFT JOIN aplicacion_basedatos ON aplicaciones.aplicacion_id = aplicacion_basedatos.aplicacion_id
+                LEFT JOIN bases_datos ON bases_datos.base_datos_id = aplicacion_basedatos.base_datos_id
+                LEFT JOIN regiones ON aplicaciones.apl_region = regiones.region_id
             WHERE bases_datos.base_datos_id = ?;`, 
             [id]);
 
@@ -306,11 +309,13 @@ const servidor = async (req,res) => {
         
         const data = await pool.query(`
             SELECT 
-                servidores.servidor_id,servidor,ser_direccion,ser_estatus,sistema,sistema_version,region, localidad
+                servidores.servidor_id,servidor,ser_direccion,ser_estatus,sistema,modelo,marca,region, localidad
             FROM bases_datos
                 JOIN basedatos_servidor ON bases_datos.base_datos_id = basedatos_servidor.base_datos_id
                 JOIN servidores ON basedatos_servidor.servidor_id = servidores.servidor_id
                 JOIN sistemas_operativos ON sistemas_operativos.sistema_id = servidores.ser_sistema
+                JOIN modelos ON modelos.modelo_id = servidores.ser_modelo
+                JOIN marcas ON marcas.marca_id = modelos.mod_marca
                 JOIN regiones ON servidores.ser_region_id = regiones.region_id
                 JOIN localidades ON servidores.ser_localidad_id = localidades.localidad_id
             WHERE bases_datos.base_datos_id = ?;`, 

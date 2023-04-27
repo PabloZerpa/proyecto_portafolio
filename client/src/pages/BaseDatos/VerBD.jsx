@@ -1,10 +1,11 @@
 
 import { useState, useEffect } from 'react';
 import { BiLoaderAlt } from "react-icons/bi";
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams, Navigate, Link } from 'react-router-dom';
 import { Container, Input, Radio } from '../../components';
 import Tabla3 from '../../components/Table3';
 import Base from '../../services/basedatos.service';
+import DataTable from 'react-data-table-component';
 
 const opcionesVista = ['General','Aplicacion','Servidor'];
 
@@ -33,6 +34,8 @@ function VerBD() {
         setGeneral(gen.data);
         setAplicacion(apl.data);
         setServidor(ser);
+
+        console.log(aplicacion);
 
         setLoad(false);
           
@@ -77,16 +80,183 @@ function VerBD() {
         }
       } 
 
+      const columnsBD = [
+        {
+            name: 'ID',
+            selector: row => 
+              <Link className='text-blue-700' to={row ? `/aplicaciones/${row.aplicacion_id}` : `/dashboard`} >
+                {row.aplicacion_id}
+              </Link>,
+            sortable: true,
+            left: true,
+            width: '60px'
+        },
+        {
+          name: 'Acronimo',
+          selector: row => row.apl_acronimo,
+          sortable: true,
+          left: true,
+        },
+        {
+            name: 'Nombre',
+            selector: row => row.apl_nombre,
+            sortable: true,
+            left: true,
+            grow: 2
+        },
+        {
+          name: 'Descripcion',
+          selector: row => row.apl_descripcion,
+          sortable: true,
+          left: true,
+          grow: 2
+        },
+        {
+            name: 'Estatus',
+            selector: row => row.estatus,
+            sortable: true,
+            left: true,
+        },
+        {
+            name: 'Prioridad',
+            selector: row => row.prioridad,
+            sortable: true,
+            left: true,
+            grow: 1.5
+        },
+        {
+            name: 'Alcance',
+            selector: row => row.alcance,
+            sortable: true,
+            left: true
+        },
+        {
+            name: 'Codigo Fuente',
+            selector: row => row.apl_codigo_fuente,
+            sortable: true,
+            left: true,
+            grow: 2
+        },
+        {
+          name: 'Version',
+          selector: row => row.apl_version,
+          sortable: true,
+          left: true,
+          grow: 1.5
+        },
+        {
+          name: 'Direccion',
+          selector: row => 
+            <a className='text-blue-700' href={row.apl_direccion} target='_blank' >
+              {row.apl_direccion}
+            </a>,
+          sortable: true,
+          left: true,
+          grow: 1.5
+        },
+        {
+          name: 'N° Usuarios',
+          selector: row => row.apl_cantidad_usuarios,
+          sortable: true,
+          left: true,
+          grow: 1.5
+        },
+        {
+          name: 'Region',
+          selector: row => row.region,
+          sortable: true,
+          left: true,
+          grow: 1.5
+        },
+      ];
+
       function Aplicacion() {
         return(
           <> 
             <h2 className='font-bold text-lg'>Aplicacion</h2>
             <form className="flex justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-              <Tabla3 columnas={columnasApl} datos={aplicacion} />
+                <div className='w-[880px]'>
+                  <DataTable
+                    columns={columnsBD}
+                    data={aplicacion}
+                    noDataComponent={"SIN RESULTADOS"}
+                    fixedHeader
+                    fixedHeaderScrollHeight="600px"
+                    highlightOnHover
+                    pointerOnHover
+                    dense
+                  />
+                </div>
+              {/* <Tabla3 columnas={columnasApl} datos={aplicacion} /> */}
             </form>
           </>
         )
       }
+
+      const columnsSer = [
+        {
+            name: 'ID',
+            selector: row => 
+              <Link className='text-blue-700' to={row ? `/servidor/${row.servidor_id}` : `/dashboard`} >
+                {row.servidor_id}
+              </Link>,
+            sortable: true,
+            left: true,
+            width: '60px'
+        },
+        {
+            name: 'Nombre',
+            selector: row => row.servidor,
+            sortable: true,
+            left: true,
+        },
+        {
+            name: 'Estatus',
+            selector: row => row.ser_estatus,
+            sortable: true,
+            left: true,
+        },
+        {
+            name: 'OS',
+            selector: row => row.sistema,
+            sortable: true,
+            left: true,
+        },
+        {
+            name: 'Modelo',
+            selector: row => row.modelo,
+            sortable: true,
+            left: true
+        },
+        {
+            name: 'Marca',
+            selector: row => row.marca,
+            sortable: true,
+            left: true,
+        },
+        {
+          name: 'Direccion',
+          selector: row => 
+            <a className='text-blue-700' href={row.ser_direccion} target='_blank' >
+              {row.ser_direccion}
+            </a>,
+          sortable: true,
+          left: true,
+          grow: 2
+        },
+        {
+          name: 'Region',
+          selector: row => row.region,
+          sortable: true,
+          left: true,
+        },
+        {
+          name: 'Localidad',
+          selector: row => row.localidad,
+          sortable: true,
+          left: true,
+        },
+      ];
 
       function Servidor(){
         const datos = servidor.data.datos;
@@ -95,8 +265,20 @@ function VerBD() {
           <>
             <h2 className='font-bold text-lg'>Servidor</h2>
             <form className="flex flex-col justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-              <Tabla3 columnas={columnasSer} datos={datos} />
-              <Tabla3 columnas={columnasMod} datos={modelos} />
+                <div className='w-[880px]'>
+                  <DataTable
+                    columns={columnsSer}
+                    data={datos}
+                    noDataComponent={"SIN RESULTADOS"}
+                    fixedHeader
+                    fixedHeaderScrollHeight="600px"
+                    highlightOnHover
+                    pointerOnHover
+                    dense
+                  />
+                </div>
+              {/* <Tabla3 columnas={columnasSer} datos={datos} />
+              <Tabla3 columnas={columnasMod} datos={modelos} /> */}
             </form>
           </>
         )

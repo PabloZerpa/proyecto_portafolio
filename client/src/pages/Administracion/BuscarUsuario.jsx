@@ -50,8 +50,8 @@ function BuscarUsuario() {
   const onSearch = async (termino) => {
     try {
       const datos = await Usuario.obtenerUsuarios(termino,pagina);
-      console.log(datos.data);
       setResultados(datos.data); 
+      console.log(datos.data);
     } catch (error) { 
       console.log('ERROR AL BUSCAR DATOS') 
     }
@@ -107,15 +107,16 @@ function BuscarUsuario() {
       return (<td key={campo} className="px-2 py-2 flex justify-center items-center">{valor}</td>)
   }
 
-  const deleteUser = async (id) => {
-    
+  const deleteUser = async (row) => {
     try {
-      
+      console.log(row);
       if(Autorizacion.obtenerUsuario().rol === 'admin'){
 
-        await Usuario.eliminarUsuario(id); 
-        onSearch(debounceValue);
-        Notificacion('USUARIO ELIMINADO EXITOSAMENTE', 'success');
+        if (window.confirm(`Estas seguro eliminar: ${row.indicador}?`)){
+          await Usuario.eliminarUsuario(row.usuario_id); 
+          onSearch(debounceValue);
+          Notificacion('USUARIO ELIMINADO EXITOSAMENTE', 'success');
+        }
       }
     }
     catch (error) { 
@@ -201,7 +202,7 @@ function BuscarUsuario() {
       cell: row => 
         <div>
           <FaTimesCircle
-              onClick={() => deleteUser(row.usuario_id)} 
+              onClick={() => deleteUser(row)} 
               className="ml-3 text-red-500 text-lg cursor-pointer"
           />
         </div>,
