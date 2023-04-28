@@ -80,7 +80,7 @@ function VerAplicacion() {
                 <Input campo='Codigo Fuente' propiedad={general.apl_codigo_fuente} editable={false} />
                 <Input campo='N° Usuarios' propiedad={general.apl_cantidad_usuarios} editable={false} />
                 <Input campo='Region' propiedad={general.region} editable={false} /> 
-                <Input campo='Ultima Actualizacion' propiedad={general.fecha} editable={false} /> 
+                <Input campo='Ultima Actualizacion' propiedad={general.apl_fecha_actualizacion} editable={false} /> 
               </div>
             </form>
           </>

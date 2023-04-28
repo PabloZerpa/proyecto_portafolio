@@ -201,7 +201,8 @@ function BaseDatos() {
 
             {resultado ? (
                 <div className="w-[1080px]">
-                <DataTable
+                    <Tabla columnas={columns} datos={resultado} paginacion={true} />
+                {/* <DataTable
                     columns={columns}
                     data={resultado}
                     pagination
@@ -213,7 +214,7 @@ function BaseDatos() {
                     highlightOnHover
                     pointerOnHover
                     dense
-                />
+                /> */}
                 </div>
             ) : (null)}
 

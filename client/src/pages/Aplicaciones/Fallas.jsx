@@ -1,16 +1,12 @@
 
 import { useEffect, useState } from "react";
-import { Container, Button } from "../../components";
+import { Container, Button, Tabla } from "../../components";
 import { useDebounce } from 'use-debounce';
 import { FaCheckCircle, FaEdit, FaSearch } from 'react-icons/fa';
 import Autorizacion from "../../services/auth.service";
 import Falla from "../../services/falla.service";
 import { Link } from "react-router-dom";
 import { Notificacion } from "../../utils/Notificacion";
-import DataTable from "react-data-table-component";
-import { paginacionOpciones } from "../../utils/TablaOpciones"
-
-const columnas = ['Editar','Falla_ID','Acronimo','Nombre','Clase','Impacto','Descripcion','Solucion'];
 
 function Fallas() {
 
@@ -124,7 +120,7 @@ function Fallas() {
     }
 
 
-    const columns = [
+    const columnas = [
         {
           name: 'Editar',
           button: true,
@@ -242,72 +238,8 @@ function Fallas() {
                 <>
                 {console.log(resultados)}
                 <div className="w-[1080px]">
-                    <DataTable
-                        columns={columns}
-                        data={resultados}
-                        highlightOnHover
-                        pointerOnHover
-                        dense
-                        pagination
-                        paginationComponentOptions={paginacionOpciones}
-                        fixedHeader
-                        fixedHeaderScrollHeight="600px"
-                    />
+                    <Tabla columnas={columnas} datos={resultados} paginacion={true} />
                 </div>
-
-                {/* <table className="w-1/2 table-auto border-separate w-full text-xs text-center text-gray-700 shadow-md">
-                <thead className="text-xs text-gray-700 font-bold bg-zinc-200 uppercase">
-                                
-                    <tr className="bg-zinc-200 border-b hover:bg-zinc-300">
-                    {columnas.map((dato,index) => { 
-                        return  <td key={index} scope="col" className="px-1 py-1">{dato}</td> 
-                    })}    
-                    </tr>
-                                
-                </thead>
-                    
-                <tbody>
-                    {resultados.map((dato, index) => { 
-                    let valores = Object.values(dato);
-
-                    {edicion === dato.falla_id ? 
-                        valores.unshift(
-                        <Link to='' className='text-lg' state={dato} >
-                        <FaCheckCircle
-                            onClick={updateData}
-                            className="ml-3 text-green-500 text-lg cursor-pointer"
-                        />
-                        </Link>)
-                        :
-                        valores.unshift(
-                        <Link to='' className='text-lg' state={dato} >
-                            <FaEdit 
-                            onClick={(e) => habilitar(dato)}
-                            className="ml-3 text-blue-500 text-lg cursor-pointer" 
-                            />
-                        </Link>)
-                    }
-
-                    return (
-                        <tr key={index} className="bg-white border-b hover:bg-gray-100">
-                        {valores.map((valor, index) => {
-                            
-                            return (
-                            <td key={index}>
-                                {edicion == dato.falla_id ? (
-                                    verificarCampo(columnas[index],valor)
-                                ) : (
-                                    <td className="px-2 py-2 flex justify-center items-center">{valor}</td>
-                                )}
-                            </td>
-                            );
-                        })}
-                        </tr>
-                    );
-                    })}
-
-                </tbody>
-                </table> */}
                 </>
             ) : (
                 <div></div>

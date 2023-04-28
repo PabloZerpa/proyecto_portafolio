@@ -3,7 +3,7 @@ const pool = require('../config');
 const query = `
 SELECT 
     servidores.servidor_id,servidor,ser_estatus,ser_direccion,sistema,modelo,marca,
-    region,localidad,ser_fecha_actualizacion,indicador
+    region,localidad,DATE_FORMAT (ser_fecha_actualizacion, '%d-%m-%Y %H:%i') as ser_fecha_actualizacion,indicador
 FROM servidores
     JOIN sistemas_operativos ON sistemas_operativos.sistema_id = servidores.ser_sistema
     JOIN modelos ON modelos.modelo_id = servidores.ser_modelo

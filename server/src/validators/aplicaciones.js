@@ -15,17 +15,17 @@ const validatorApp = [
     check("apl_direccion").exists(),
     check("apl_cantidad_usuarios"),
     check("plataforma").exists().notEmpty().isInt(),
-    check("lenguaje1").exists(),
-    check("lenguaje2").exists(),
-    check("lenguaje3").exists(),
-    check("version1").exists(),
-    check("version2").exists(),
-    check("version3").exists(),
-    check("framework1").exists(),
-    check("framework2").exists(),
-    check("framework3").exists(),
-    check("select_base").exists().notEmpty().isString(),
-    check("select_servidor").exists().notEmpty().isString(),
+    // check("lenguaje1").exists(),
+    // check("lenguaje2").exists(),
+    // check("lenguaje3").exists(),
+    // check("version1").exists(),
+    // check("version2").exists(),
+    // check("version3").exists(),
+    // check("framework1").exists(),
+    // check("framework2").exists(),
+    // check("framework3").exists(),
+    //check("select_base").exists().notEmpty().isString(),
+    //check("select_servidor").exists().notEmpty().isString(),
     check("man_frecuencia").exists().notEmpty().isString(),
     check("man_horas_prom").exists(),
     check("man_horas_anuales").exists(),
@@ -46,3 +46,4 @@ const validatorApp = [
 ];
 
 module.exports = { validatorApp };
+

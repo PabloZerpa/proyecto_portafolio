@@ -6,17 +6,16 @@ const baseUrl = "http://localhost:3001/api/";
 class Aplicacion {
 
     // ---------------- CREATE DE LA INFO DE NUEVA APP ------------------
-    async crearDatos(datos) {
-        console.log(datos);
-        // try { 
-        //     const respuesta = await axios.post(`${baseUrl}aplicaciones/`, datos, { headers: authHeader() });
-        //     return respuesta;
-        // } catch (error) {
-        //     console.log('ERROR AL CREAR auth.service');
-            
-        // }
+    async crearDatos(datos, lenguajes, bases, servidores) {
+        console.log(datos, lenguajes, bases, servidores);
 
-        return await axios.post(`${baseUrl}aplicaciones/`, datos, { headers: authHeader() })
+        let datosServidor = datos;
+        datosServidor.select_lenguaje = lenguajes;
+        datosServidor.select_base = bases;
+        datosServidor.select_servidor = servidores;
+        console.log(datosServidor);
+
+        return await axios.post(`${baseUrl}aplicaciones/`, datosServidor, { headers: authHeader() })
         .then(response => {
             return response.data;
         });

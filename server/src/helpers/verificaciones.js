@@ -49,113 +49,16 @@ const insertarPlataforma = async (id, plataforma) => {
     // }  
 }
   
-const insertarLenguaje = async (id, lenguaje1,lenguaje2,lenguaje3,version1,version2,version3) => {
+const insertarLenguaje = async (id, select_lenguaje) => {
+    
+    for (const element of select_lenguaje) {
+        console.log(element.lenguaje_id);
 
-    console.log(id, lenguaje1,lenguaje2,lenguaje3,version1,version2,version3);
-
-    if(lenguaje1){
         const datos_len = await pool.query(
-            `INSERT INTO aplicacion_lenguaje (aplicacion_id,lenguaje_id) VALUES (?,?)`, 
-            [id,lenguaje1]
-        );
-
-        if(version1){
-            const datos_ver = await pool.query(
-                `INSERT INTO versiones_lenguajes (lenguaje_id,version_lenguaje) VALUES (?,?)`, 
-                [lenguaje1,version1]
-            );
-            console.log('VERSION 1 REGISTRADA: ' + version1);
-        }
-        console.log('LENGUAJE REGISTRADO: ' + lenguaje1);
+            `INSERT INTO aplicacion_lenguaje (aplicacion_id,lenguaje_id) VALUES (?,?)`,
+        [id,element.lenguaje_id]); 
     }
-    if(lenguaje2){
-        const datos_len = await pool.query(
-            `INSERT INTO aplicacion_lenguaje (aplicacion_id,lenguaje_id) VALUES (?,?)`, 
-            [id,lenguaje2]
-        );
-
-        if(version2){
-            const datos_ver = await pool.query(
-                `INSERT INTO versiones_lenguajes (lenguaje_id,version_lenguaje) VALUES (?,?)`, 
-                [lenguaje2,version2]
-            );
-            console.log('VERSION 1 REGISTRADA: ' + version2);
-        }
-        console.log('LENGUAJE REGISTRADO: ' + lenguaje2);
-    }
-    if(lenguaje3){
-        const datos_len = await pool.query(
-            `INSERT INTO aplicacion_lenguaje (aplicacion_id,lenguaje_id) VALUES (?,?)`, 
-            [id,lenguaje3]
-        );
-
-        if(version3){
-            const datos_ver = await pool.query(
-                `INSERT INTO versiones_lenguajes (lenguaje_id,version_lenguaje) VALUES (?,?)`, 
-                [lenguaje3,version3]
-            );
-            console.log('VERSION 1 REGISTRADA: ' + version3);
-        }
-        console.log('LENGUAJE REGISTRADO: ' + lenguaje3);
-    }
-
-    // if(lenguaje1){
-    //     const buscarLenguaje = await pool.query(`SELECT lenguaje_id FROM lenguajes WHERE lenguaje = ?`, [lenguaje]);
-    //     if(buscarLenguaje[0][0]){
-    //         const lenguaje_id = buscarLenguaje[0][0].lenguaje_id;
-    //         const datos_len = await pool.query(
-    //             `INSERT INTO aplicacion_lenguaje (aplicacion_id,lenguaje_id) VALUES (?,?)`, 
-    //             [id,lenguaje_id]
-    //         );
-
-    //         if(version1){
-    //             const datos_ver = await pool.query(
-    //                 `INSERT INTO versiones_lenguajes (lenguaje_id,version_lenguaje) VALUES (?,?)`, 
-    //                 [lenguaje_id,version1]
-    //             );
-    //             console.log('VERSION 1 REGISTRADA: ' + version1);
-    //         }
-    //         console.log('LENGUAJE REGISTRADO: ' + lenguaje_id);
-    //     }
-    // }
-    // if(lenguaje2){
-    //     const buscarLenguaje = await pool.query(`SELECT lenguaje_id FROM lenguajes WHERE lenguaje = ?`, [lenguaje2]);
-    //     if(buscarLenguaje[0][0]){
-    //         const lenguaje_id = buscarLenguaje[0][0].lenguaje_id;
-    //         const datos_len = await pool.query(
-    //             `INSERT INTO aplicacion_lenguaje (aplicacion_id,lenguaje_id) VALUES (?,?)`, 
-    //             [id,lenguaje_id]
-    //         );
-
-    //         if(version2){
-    //             const datos_ver = await pool.query(
-    //                 `INSERT INTO versiones_lenguajes (lenguaje_id,version_lenguaje) VALUES (?,?)`, 
-    //                 [lenguaje_id,version2]
-    //             );
-    //             console.log('VERSION 2 REGISTRADA: ' + version2);
-    //         }
-    //         console.log('LENGUAJE REGISTRADO: ' + lenguaje_id);
-    //     }
-    // }
-    // if(lenguaje3){
-    //     const buscarLenguaje = await pool.query(`SELECT lenguaje_id FROM lenguajes WHERE lenguaje = ?`, [lenguaje3]);
-    //     if(buscarLenguaje[0][0]){
-    //         const lenguaje_id = buscarLenguaje[0][0].lenguaje_id;
-    //         const datos_len = await pool.query(
-    //             `INSERT INTO aplicacion_lenguaje (aplicacion_id,lenguaje_id) VALUES (?,?)`, 
-    //             [id,lenguaje_id]
-    //         );
-
-    //         if(version3){
-    //             const datos_ver = await pool.query(
-    //                 `INSERT INTO versiones_lenguajes (lenguaje_id,version_lenguaje) VALUES (?,?)`, 
-    //                 [lenguaje_id,version3]
-    //             );
-    //             console.log('VERSION 3 REGISTRADA: ' + version3);
-    //         }
-    //         console.log('LENGUAJE REGISTRADO: ' + lenguaje_id);
-    //     }
-    // }
+    console.log('LENGUAJE REGISTRADO');
 	
 }
     
@@ -219,46 +122,28 @@ const insertarFramework = async (id, framework1,framework2,framework3) => {
     // }
 }
 
-
-
-
 const insertarServidor = async (id,select_servidor) => {
-    
-    console.log(select_servidor);
-    let servidor_id = null;
 
-    const buscarServidor = await pool.query(`SELECT servidor_id FROM servidores WHERE servidor = ?`, [select_servidor]);
-    if(buscarServidor[0][0])
-        servidor_id = buscarServidor[0][0].servidor_id;
-    else
-        return res.status(401).json({ message: 'ERROR, SERVIDOR NO ENCONTRADO' });
+    for (const element of select_servidor) {
+        console.log(element.servidor_id);
 
-    console.log(servidor_id)
-    // crea la relacion aplicacion-servidores
-    const app_servidor = await pool.query(
-        `INSERT INTO aplicacion_servidor (aplicacion_id,servidor_id) VALUES (?,?)`, 
-        [id,servidor_id]
-    );
-    console.log('SERVIDOR GENERAL REGISTRADO: ' + servidor_id);
+        const datos_ser = await pool.query(
+            `INSERT INTO aplicacion_servidor (aplicacion_id,servidor_id) VALUES (?,?)`,
+        [id,element.servidor_id]);
+    }
+    console.log('SERVIDOR GENERAL REGISTRADO');
 
 }
 
 const insertarBase = async (id,select_base) => {
-        
-    let base_datos_id = null;
 
-    const buscarBaseDatos = await pool.query(`SELECT * FROM bases_datos WHERE base_datos = ?`, [select_base]);
-    if(buscarBaseDatos[0][0])
-        base_datos_id = buscarBaseDatos[0][0].base_datos_id;
-    else
-        return res.status(401).json({ message: 'ERROR, BASE DE DATOS NO ENCONTRADA' });
+    for (const element of select_base) {
+        console.log(element.base_datos_id);
 
-    console.log(base_datos_id);
-    // crea la relacion aplicacion-base_de_datos
-    const datos_bas = await pool.query(
-        `INSERT INTO aplicacion_basedatos (aplicacion_id,base_datos_id) VALUES (?,?)`, 
-        [id,base_datos_id]
-    );
+        const datos_bas = await pool.query(
+            `INSERT INTO aplicacion_basedatos (aplicacion_id,base_datos_id) VALUES (?,?)`,
+        [id,element.base_datos_id]);
+    }
     console.log('BASE DE DATOS REGISTRADA');
 
 }

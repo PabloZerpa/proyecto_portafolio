@@ -2,13 +2,13 @@ const pool = require('../config');
 
 const query = `
 SELECT 
-bases_datos.base_datos_id, base_datos, bas_estatus, tipo, manejador, tipo_ambiente, 
-bas_cantidad_usuarios, bas_fecha_actualizacion, indicador 
+    bases_datos.base_datos_id, base_datos, bas_estatus, tipo, manejador, tipo_ambiente, 
+    bas_cantidad_usuarios, DATE_FORMAT (bas_fecha_actualizacion, '%d-%m-%Y %H:%i') as bas_fecha_actualizacion, indicador 
 FROM bases_datos
-JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.bas_tipo
-JOIN manejadores ON manejadores.manejador_id = bases_datos.bas_manejador
-JOIN tipos_ambientes ON tipos_ambientes.tipo_ambiente_id = bases_datos.bas_tipo_ambiente
-JOIN usuarios ON usuarios.usuario_id = bases_datos.bas_usuario_actualizo`;
+    JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.bas_tipo
+    JOIN manejadores ON manejadores.manejador_id = bases_datos.bas_manejador
+    JOIN tipos_ambientes ON tipos_ambientes.tipo_ambiente_id = bases_datos.bas_tipo_ambiente
+    JOIN usuarios ON usuarios.usuario_id = bases_datos.bas_usuario_actualizo`;
 
 // *********************************** OBTENER TODOS LOS DATOS ***********************************
 const obtenerDatos = async (req,res) => {

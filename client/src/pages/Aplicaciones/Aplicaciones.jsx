@@ -1,12 +1,10 @@
 
 import { useState } from "react";
-import { Container } from "../../components";
+import { Container, Tabla } from "../../components";
 import { Busqueda } from "../../container"
 import Autorizacion from "../../services/auth.service";
 import { FaEdit, FaEye } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import DataTable from "react-data-table-component";
-import { paginacionOpciones } from "../../utils/TablaOpciones"
 
 const columns = [
   {
@@ -76,7 +74,10 @@ const columns = [
   },
   {
       name: 'Direccion',
-      selector: row => row.apl_direccion,
+      selector: row => 
+        <a className="text-blue-400" href="row.apl_direccion" target="_blank" >
+          {row.apl_direccion}
+        </a>,
       sortable: true,
       left: true
   },
@@ -128,34 +129,9 @@ function Aplicaciones() {
 
       {resultado ? (
         <div className="w-[1080px]">
-          <DataTable
-            columns={columns}
-            data={resultado}
-            pagination
-            paginationComponentOptions={paginacionOpciones}
-            paginationRowsPerPageOptions={[10,20,30,50,100]}
-            noDataComponent={"SIN RESULTADOS"}
-            fixedHeader
-            fixedHeaderScrollHeight="600px"
-            highlightOnHover
-            pointerOnHover
-            dense
-          />
+          <Tabla columnas={columns} datos={resultado} paginacion={true} />
         </div>
       ) : (null)}
-
-      {/* {resultado ? (
-        <Tabla 
-          columnas={rol === 'admin' ? columnasAdminSimple : columnasUserSimple}
-          datos={resultado} 
-          opciones={(Autorizacion.obtenerUsuario().rol==='admin') ? true : false} 
-          paginacion={true} 
-          count={count}
-          manejarPagina={obtenerPagina}
-        />
-      ) : (
-        <div></div>
-      )} */}
 
     </Container>
   )

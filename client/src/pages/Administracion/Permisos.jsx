@@ -4,10 +4,23 @@ import { Container } from "../../components/";
 import { FaUserEdit, FaUserPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
+function prueba(){
+
+    const array = [1,2,3];
+    const datos = { dato1: 'hola', dato2: array, dato3: 'adios' }
+}
+
+
+
+
+
 function Permisos() {
 
     return(
         <Container>
+
+            <button onClick={prueba}>CLICK</button>
+
             <ul className="grid grid-cols-2 gap-4">
                 <Link to="/administracion/permisos/crear" className="flex items-center justify-between w-72 p-4 text-gray-600 bg-white border-2 border-white rounded-lg cursor-pointer hover:text-blue-500 hover:border-blue-500">            
                     <div className="block">

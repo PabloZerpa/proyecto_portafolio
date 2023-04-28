@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Button, Container } from "../../components/";
+import { Button, Container, Tabla } from "../../components/";
 import { FaArrowLeft, FaCheckCircle, FaEdit, FaSearch, FaTimesCircle } from "react-icons/fa";
 import { useDebounce } from "use-debounce";
 import Autorizacion from '../../services/auth.service';
@@ -234,13 +234,14 @@ function BuscarUsuario() {
 
       {resultados ? (
         <div className="w-2/3">
-          <DataTable
+          <Tabla columnas={columns} datos={resultados} />
+          {/* <DataTable
             columns={columns}
             data={resultados}
             highlightOnHover
             pointerOnHover
             dense
-          />
+          /> */}
         </div>
       ) : 
       (null)}

@@ -18,11 +18,15 @@ function RegistrarFalla() {
     });
 
     const handleInputChange = (e) => {
+        console.log(e.target.name);
+        console.log(e.target.value);
 
         if(e.target.value === 'TODAS')
             setDatos({ ...datos, [e.target.name] : null })
         else
             setDatos({ ...datos, [e.target.name] : e.target.value })
+
+        console.log(datos);
     }
 
 	async function registrarFalla(e){
@@ -30,7 +34,7 @@ function RegistrarFalla() {
         
         try {
             console.log(datos);
-        	if(Autorizacion.obtenerUsuario().rol !== 'user'){
+        	if(Autorizacion.obtenerUsuario().rol === 'admin'){
             	await Falla.registrarFalla(datos);
                 Notificacion('REGISTRO EXITOSO', 'success');
             }
@@ -49,7 +53,7 @@ function RegistrarFalla() {
                     <h2 className='font-bold text-base'>Datos de la Falla</h2>
                     <div className="grid grid-cols-2 w-[900px] gap-4 p-4 bg-zinc-400 rounded border-2 border-dashed border-blue-500">
                         <Input campo='Aplicacion' name='aplicacion' direccion="col" editable={true} manejador={handleInputChange} />
-                        <Input campo='Usuario' name='usuario' direccion="col" editable={true} manejador={handleInputChange} />
+                        <Input campo='Usuario' name='descartar' direccion="col" editable={true} manejador={handleInputChange} />
                         <Select campo='Clase' name='clase' direccion="col" opciones={['SELECCIONE','CLASE 1','CLASE 2','CLASE 3']} manejador={handleInputChange} />
                         <Select campo='Impacto' name='impacto' opciones={['SELECCIONE','ALTA','MEDIA','BAJA']} manejador={handleInputChange}/>
                         <div className="col-span-2">
@@ -59,7 +63,7 @@ function RegistrarFalla() {
                     </div>
                 </div>
 
-                <Button color='blue' width={32}>Registrar Falla</Button>
+                <Button tipo="submit" color='blue' width={32}>Registrar Falla</Button>
 
             </form>
             

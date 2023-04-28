@@ -63,7 +63,6 @@ function Table({devolverSelecciones, setIsOpen}) {
     const [resultado, setResultado] = useState('');
     const [debounceValue] = useDebounce(searchTerm, 500);
 
-    const [avanzados, setAvanzados] = useState(false);
     const [datos, setDatos] = useState({
         estatus: '',
         tipo: '',
@@ -82,7 +81,6 @@ function Table({devolverSelecciones, setIsOpen}) {
             else
                 datos[clave] = '';
         }
-        setAvanzados(false);
         onSearch(debounceValue)
     }
 
@@ -91,22 +89,20 @@ function Table({devolverSelecciones, setIsOpen}) {
             setDatos({ ...datos, [e.target.name] : null })
         else
             setDatos({ ...datos, [e.target.name] : e.target.value })
-            
     }
 
     useEffect(() => {
-		if (debounceValue) {
+		if (debounceValue)
             onSearch(debounceValue);
-        } else {
+        else
             setResultado(null);
-        }
 	}, [debounceValue, datos]); 
 
 
     const onSearch = async (value) => {
         try {
             const { estatus,tipo,manejador,ambiente,registros,orden } = datos;
-            //console.log(estatus,tipo,manejador,ambiente,registros,orden);
+
             const respuesta = await Base.obtenerBDPorBusqueda(
                 value,estatus,tipo,manejador,ambiente,registros,orden);
             

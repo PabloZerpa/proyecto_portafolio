@@ -30,7 +30,8 @@ const obtenerDatos = async (req,res) => {
         const data = await pool.query(`
             SELECT 
                 aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,
-                estatus,apl_direccion,apl_fecha_actualizacion,indicador
+                estatus,apl_direccion,
+                DATE_FORMAT (apl_fecha_actualizacion, '%d-%m-%Y %H:%i') as apl_fecha_actualizacion, indicador
             FROM aplicaciones 
                 JOIN estatus ON aplicaciones.apl_estatus = estatus.estatus_id
                 JOIN usuarios ON aplicaciones.apl_usuario_actualizo = usuarios.usuario_id
@@ -263,10 +264,10 @@ const crearAplicacion = async (req,res) => {
             apl_acronimo,apl_nombre,apl_descripcion,apl_region,
             apl_version,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
             apl_codigo_fuente,apl_direccion,apl_cantidad_usuarios,apl_usuario_registro,
-            plataforma,lenguaje1,lenguaje2,lenguaje3, 
+            plataforma,lenguaje1,lenguaje2,lenguaje3,  
             version1, version2, version3,
             framework1,framework2,framework3, 
-            select_base, select_servidor,
+            select_lenguaje, select_base, select_servidor,
             man_frecuencia,man_horas_prom,man_horas_anuales, 
             doc_descripcion,doc_tipo, doc_direccion,
  
@@ -283,15 +284,16 @@ const crearAplicacion = async (req,res) => {
             plataforma,lenguaje1,lenguaje2,lenguaje3, 
             version1, version2, version3,
             framework1,framework2,framework3, 
-            select_base, select_servidor,
-            man_frecuencia,man_horas_prom,man_horas_anuales, 
-            doc_descripcion,doc_tipo, doc_direccion,
+            select_lenguaje, select_base, select_servidor,
+            man_frecuencia, man_horas_prom,man_horas_anuales, 
+            doc_descripcion, doc_tipo, doc_direccion,
  
             select_funcional, select_tecnico,
             funcional_nombre,funcional_apellido,funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
             funcional_gerencia,funcional_region,funcional_localidad,
             tecnico_nombre,tecnico_apellido,tecnico_indicador,tecnico_cedula,tecnico_cargo,tecnico_telefono,
             tecnico_gerencia,tecnico_region,tecnico_localidad);
+        
 
         const query = await pool.query(
             `SELECT * FROM aplicaciones WHERE apl_acronimo = ? OR apl_nombre = ?`, 
@@ -305,39 +307,39 @@ const crearAplicacion = async (req,res) => {
         }
         else{
 
-            if(!lenguaje1 && !lenguaje2 && !lenguaje3)
+            if(!select_lenguaje[0])
                 return res.status(401).json({ message: 'ERROR, NINGUN LENGUAJE SELECCIONADO' });
-            if(!select_servidor)
+            if(!select_servidor[0])
                 return res.status(401).json({ message: 'ERROR, SERVIDOR SIN SELECCIONAR' });
-            if(!select_base)
+            if(!select_base[0])
                 return res.status(401).json({ message: 'ERROR, BASE DE DATOS SIN SELECCIONAR' });
 
-            // const aplicacion_id = await insertarAplicacion(
-            //     apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
-            //     apl_codigo_fuente,apl_version,apl_direccion,apl_cantidad_usuarios,apl_region,
-            //     apl_usuario_registro
-            // );
+            const aplicacion_id = await insertarAplicacion(
+                apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
+                apl_codigo_fuente,apl_version,apl_direccion,apl_cantidad_usuarios,apl_region,
+                apl_usuario_registro
+            );
 
-            // await insertarPlataforma(aplicacion_id, plataforma);
+            await insertarPlataforma(aplicacion_id, plataforma);
             
-            // await insertarLenguaje(aplicacion_id, lenguaje1, lenguaje2, lenguaje3, version1, version2, version3);    
+            await insertarLenguaje(aplicacion_id, select_lenguaje);    
             
-            // if(framework1 || framework2 || framework3)
-            //     await insertarFramework(aplicacion_id, framework1, framework2, framework3);
+            if(framework1 || framework2 || framework3)
+                await insertarFramework(aplicacion_id, framework1, framework2, framework3);
 
-            // await insertarServidor(aplicacion_id,select_servidor);
-            // await insertarBase(aplicacion_id,select_base);
+            await insertarServidor(aplicacion_id,select_servidor);
+            await insertarBase(aplicacion_id,select_base);
 
-            // await insertarResponsable('funcional',aplicacion_id,select_funcional,funcional_nombre,funcional_apellido,
-            //     funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
-            //     funcional_gerencia,funcional_region,funcional_localidad);
+            await insertarResponsable('funcional',aplicacion_id,select_funcional,funcional_nombre,funcional_apellido,
+                funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
+                funcional_gerencia,funcional_region,funcional_localidad);
                 
-            // await insertarResponsable('tecnico',aplicacion_id,select_tecnico,tecnico_nombre,tecnico_apellido,
-            //     tecnico_indicador,tecnico_cedula,tecnico_cargo,tecnico_telefono,
-            //     tecnico_gerencia,tecnico_region,tecnico_localidad);
+            await insertarResponsable('tecnico',aplicacion_id,select_tecnico,tecnico_nombre,tecnico_apellido,
+                tecnico_indicador,tecnico_cedula,tecnico_cargo,tecnico_telefono,
+                tecnico_gerencia,tecnico_region,tecnico_localidad);
 
-            // await insertarMantenimiento(aplicacion_id,man_frecuencia,man_horas_prom,man_horas_anuales);          
-            // await insertarDocumentacion(aplicacion_id,doc_descripcion,doc_direccion,doc_tipo);
+            await insertarMantenimiento(aplicacion_id,man_frecuencia,man_horas_prom,man_horas_anuales);          
+            await insertarDocumentacion(aplicacion_id,doc_descripcion,doc_direccion,doc_tipo);
 
             console.log('CREACION EXITOSA');
             res.send('CREACION EXITOSA');
@@ -682,15 +684,14 @@ const general = async (req,res) => {
             aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_descripcion,
             estatus,prioridad,apl_critico,alcance,apl_codigo_fuente,
             apl_version,apl_direccion,apl_cantidad_usuarios,region,
-            (SELECT DATE_FORMAT
-                (apl_fecha_actualizacion, '%d-%m-%Y %H:%i') AS fecha FROM aplicaciones WHERE aplicacion_id = ?) as fecha
+            DATE_FORMAT (apl_fecha_actualizacion, '%d-%m-%Y %H:%i') as apl_fecha_actualizacion
         FROM aplicaciones
             LEFT JOIN estatus ON aplicaciones.apl_estatus = estatus.estatus_id
             LEFT JOIN prioridades ON aplicaciones.apl_prioridad = prioridades.prioridad_id
             LEFT JOIN alcances ON aplicaciones.apl_alcance = alcances.alcance_id
             LEFT JOIN regiones ON aplicaciones.apl_region = regiones.region_id
             LEFT JOIN mantenimientos ON aplicaciones.aplicacion_id = mantenimientos.aplicacion_id
-        WHERE aplicaciones.aplicacion_id = ?`, [id,id]);
+        WHERE aplicaciones.aplicacion_id = ?`, [id]);
 
         res.send(data[0]);
     } catch (error) {
