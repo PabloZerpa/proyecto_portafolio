@@ -3,19 +3,18 @@ const pool = require('../config');
 
 const { insertarAplicacion, insertarPlataforma, insertarLenguaje, insertarFramework, 
         insertarMantenimiento, insertarDocumentacion, insertarServidor, insertarBase, insertarResponsable } = require('../helpers/verificaciones');
-const { selectSimple } = require('../helpers/consultas');
+        
 const query = `
-SELECT 
-    aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_version,
-    alcance,estatus,prioridad,apl_direccion,region,
-    apl_codigo_fuente,apl_critico,man_frecuencia
-FROM aplicaciones
-    LEFT JOIN estatus ON aplicaciones.apl_estatus = estatus.estatus_id
-    LEFT JOIN prioridades ON aplicaciones.apl_prioridad = prioridades.prioridad_id
-    LEFT JOIN alcances ON aplicaciones.apl_alcance = alcances.alcance_id
-    LEFT JOIN regiones ON aplicaciones.apl_region = regiones.region_id
-    LEFT JOIN mantenimientos ON aplicaciones.aplicacion_id = mantenimientos.aplicacion_id
-`;
+    SELECT 
+        aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_version,
+        alcance,estatus,prioridad,apl_direccion,region,
+        apl_codigo_fuente,apl_critico,man_frecuencia
+    FROM aplicaciones
+        LEFT JOIN estatus ON aplicaciones.apl_estatus = estatus.estatus_id
+        LEFT JOIN prioridades ON aplicaciones.apl_prioridad = prioridades.prioridad_id
+        LEFT JOIN alcances ON aplicaciones.apl_alcance = alcances.alcance_id
+        LEFT JOIN regiones ON aplicaciones.apl_region = regiones.region_id
+        LEFT JOIN mantenimientos ON aplicaciones.aplicacion_id = mantenimientos.aplicacion_id`;
 
 
 /* 
@@ -244,6 +243,43 @@ const obtenerCantidadTotal = async (req,res) => {
                 on responsables.responsable_id = responsables_funcionales.responsable_id
             `);
         res.send(data[0]);
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+    }
+};
+
+// *********************************** OBTENER FALLAS ***********************************
+const registrarResponsable = async (req,res) => {
+    try {
+        
+        const { nombre,apellido,indicador,cedula,telefono,cargo,gerencia,region,localidad,usuario_registro } = req.body;
+        console.log( nombre,apellido,indicador,cedula,telefono,cargo,gerencia,region,localidad,usuario_registro );
+
+        // const x = await pool.query(`SELECT usuario_id FROM usuarios WHERE indicador = ?`, [usuario]); 
+        // const usuario_id = x[0][0].usuario_id
+
+        const query = await pool.query(`SELECT responsable_id FROM responsables WHERE res_indicador = ?`, [indicador]); 
+        const res = query[0][0];
+        console.log(res);
+
+        // ****************************** VERIFICA QUE LA RESPONSABLE NO EXISTA ******************************
+        if(res){
+            console.log('ERROR, RESPONSABLE YA EXISTE');
+            return res.status(401).json({ message: 'ERROR, RESPONSABLE YA EXISTE' });
+        }
+        else{
+            const data = await pool.query(`
+                INSERT INTO responsables
+                    (res_nombre,res_apellido,res_indicador,res_cedula,res_cargo_id,res_gerencia_id,res_region_id,res_localidad_id)
+                VALUES
+                    (?,?,?,?,?,?,?,?);`, 
+                [nombre,apellido,indicador,cedula,cargo,gerencia,region,localidad]); 
+                    
+            console.log('RESPONSABLE REGISTRADO CORRECTAMENTE');
+        }
+
+        res.send('RESPONSABLE REGISTRADO CORRECTAMENTE');
+
     } catch (error) {
         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
     }
@@ -721,14 +757,12 @@ const tecno = async (req,res) => {
             WHERE aplicaciones.aplicacion_id = ?`, 
         [id]);
 
-        const lenguajes = await pool.query(`
+        const lenguajes = await pool.query(` 
             SELECT 
-                lenguaje, framework
+                lenguajes.lenguaje_id, lenguaje
             FROM aplicaciones
                 JOIN aplicacion_lenguaje ON aplicaciones.aplicacion_id = aplicacion_lenguaje.aplicacion_id
                 JOIN lenguajes ON aplicacion_lenguaje.lenguaje_id = lenguajes.lenguaje_id
-                JOIN aplicacion_framework ON aplicaciones.aplicacion_id = aplicacion_framework.aplicacion_id
-                JOIN frameworks ON aplicacion_framework.framework_id = frameworks.framework_id
             WHERE aplicaciones.aplicacion_id = ?;`, 
         [id]);
 
@@ -826,13 +860,13 @@ const responsable = async (req,res) => {
                 res_nombre, res_apellido, res_indicador, res_cedula, cargo, 
                 telefono, gerencia, region, localidad
             FROM aplicaciones
-                JOIN responsables_funcionales ON aplicaciones.aplicacion_id = responsables_funcionales.aplicacion_id
-                JOIN responsables ON responsables.responsable_id = responsables_funcionales.responsable_id 
-                JOIN telefonos ON responsables.responsable_id = telefonos.telefono_id 
-                JOIN gerencias ON responsables.res_gerencia_id = gerencias.gerencia_id 
-                JOIN cargos ON responsables.res_cargo_id = cargos.cargo_id 
-                JOIN regiones ON responsables.res_region_id = regiones.region_id 
-                JOIN localidades ON responsables.res_localidad_id = localidades.localidad_id 
+                LEFT JOIN responsables_funcionales ON aplicaciones.aplicacion_id = responsables_funcionales.aplicacion_id
+                LEFT JOIN responsables ON responsables.responsable_id = responsables_funcionales.responsable_id 
+                LEFT JOIN telefonos ON responsables.responsable_id = telefonos.responsable_id 
+                LEFT JOIN gerencias ON responsables.res_gerencia_id = gerencias.gerencia_id 
+                LEFT JOIN cargos ON responsables.res_cargo_id = cargos.cargo_id 
+                LEFT JOIN regiones ON responsables.res_region_id = regiones.region_id 
+                LEFT JOIN localidades ON responsables.res_localidad_id = localidades.localidad_id 
             WHERE aplicaciones.aplicacion_id = ?;`, 
             [id]);
             
@@ -841,13 +875,13 @@ const responsable = async (req,res) => {
                 res_nombre, res_apellido, res_indicador, res_cedula, cargo, 
                 telefono, gerencia, region, localidad
             FROM aplicaciones
-                JOIN responsables_tecnicos ON aplicaciones.aplicacion_id = responsables_tecnicos.aplicacion_id
-                JOIN responsables ON responsables.responsable_id = responsables_tecnicos.responsable_id 
-                JOIN telefonos ON responsables.responsable_id = telefonos.telefono_id 
-                JOIN gerencias ON responsables.res_gerencia_id = gerencias.gerencia_id 
-                JOIN cargos ON responsables.res_cargo_id = cargos.cargo_id 
-                JOIN regiones ON responsables.res_region_id = regiones.region_id 
-                JOIN localidades ON responsables.res_localidad_id = localidades.localidad_id 
+                LEFT JOIN responsables_tecnicos ON aplicaciones.aplicacion_id = responsables_tecnicos.aplicacion_id
+                LEFT JOIN responsables ON responsables.responsable_id = responsables_tecnicos.responsable_id 
+                LEFT JOIN telefonos ON responsables.responsable_id = telefonos.responsable_id 
+                LEFT JOIN gerencias ON responsables.res_gerencia_id = gerencias.gerencia_id 
+                LEFT JOIN cargos ON responsables.res_cargo_id = cargos.cargo_id 
+                LEFT JOIN regiones ON responsables.res_region_id = regiones.region_id 
+                LEFT JOIN localidades ON responsables.res_localidad_id = localidades.localidad_id 
             WHERE aplicaciones.aplicacion_id = ?;`, 
             [id]);
             
@@ -886,6 +920,8 @@ const documentacion = async (req,res) => {
 };
 
 
+
+
 module.exports = { 
     obtenerDatos, 
     obtenerDato, 
@@ -906,4 +942,5 @@ module.exports = {
     general,tecno,basedatos,
     servidor,responsable,
     documentacion,
+    registrarResponsable,
  };

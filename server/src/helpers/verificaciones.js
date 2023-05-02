@@ -5,9 +5,6 @@ const pool = require('../config');
 const insertarAplicacion = async (acronimo,nombre,descripcion,estatus,prioridad,critico,alcance,
     codigo_fuente,version,direccion,cantidad_usuarios,region,usuario_registro) => {
 
-    console.log(acronimo,nombre,descripcion,estatus,prioridad,critico,alcance,
-        codigo_fuente,version,direccion,cantidad_usuarios,region,usuario_registro);
-
     const datos_apl = await pool.query(
         `INSERT INTO aplicaciones (apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,
             apl_critico,apl_alcance,apl_codigo_fuente,apl_version,apl_direccion,
@@ -37,18 +34,8 @@ const insertarPlataforma = async (id, plataforma) => {
         [id,plataforma]
     );
     console.log('PLATAFORMA REGISTRADA: ' + plataforma);
-
-	// const buscarPlataforma = await pool.query(`SELECT plataforma_id FROM plataformas WHERE plataforma = ?`, [plataforma]);
-    // if(buscarPlataforma[0][0]){
-    //     const plataforma_id = buscarPlataforma[0][0].plataforma_id;
-    //     const datos_pla = await pool.query(
-    //         `INSERT INTO aplicacion_plataforma (aplicacion_id,plataforma_id) VALUES (?,?)`, 
-    //         [id,plataforma_id]
-    //      );
-    //      console.log('PLATAFORMA REGISTRADO: ' + plataforma_id);
-    // }  
 }
-  
+
 const insertarLenguaje = async (id, select_lenguaje) => {
     
     for (const element of select_lenguaje) {
@@ -85,41 +72,6 @@ const insertarFramework = async (id, framework1,framework2,framework3) => {
         );
         console.log('FRAMEWORK REGISTRADO: ' + framework2);  
     }
-
-
-    // if(framework){
-    //     const buscarFramework = await pool.query(`SELECT framework_id FROM frameworks WHERE framework = ?`, [framework]);
-    //     if(buscarFramework[0][0]){
-    //         const framework_id = buscarFramework[0][0].framework_id;
-    //         const datos_fra = await pool.query(
-    //             `INSERT INTO aplicacion_framework (aplicacion_id,framework_id) VALUES (?,?)`, 
-    //             [id,framework_id]
-    //         );
-    //         console.log('FRAMEWORK REGISTRADO: ' + framework_id);
-    //     }	  
-    // }
-    // if(framework2){
-    //     const buscarFramework = await pool.query(`SELECT framework_id FROM frameworks WHERE framework = ?`, [framework2]);
-    //     if(buscarFramework[0][0]){
-    //         const framework_id = buscarFramework[0][0].framework_id;
-    //         const datos_fra = await pool.query(
-    //             `INSERT INTO aplicacion_framework (aplicacion_id,framework_id) VALUES (?,?)`, 
-    //             [id,framework_id]
-    //         );
-    //         console.log('FRAMEWORK REGISTRADO: ' + framework_id);
-    //     }	  
-    // }
-    // if(framework3){
-    //     const buscarFramework = await pool.query(`SELECT framework_id FROM frameworks WHERE framework = ?`, [framework3]);
-    //     if(buscarFramework[0][0]){
-    //         const framework_id = buscarFramework[0][0].framework_id;
-    //         const datos_fra = await pool.query(
-    //             `INSERT INTO aplicacion_framework (aplicacion_id,framework_id) VALUES (?,?)`, 
-    //             [id,framework_id]
-    //         );
-    //         console.log('FRAMEWORK REGISTRADO: ' + framework_id);
-    //     }	  
-    // }
 }
 
 const insertarServidor = async (id,select_servidor) => {
@@ -150,9 +102,6 @@ const insertarBase = async (id,select_base) => {
 
 const insertarResponsable = async (tipo,id,select_responsable,nombre,apellido,indicador,cedula,
     cargo,telefono,gerencia,region,localidad) => {
-    
-    console.log(tipo,id,select_responsable,nombre,apellido,indicador,cedula,
-        cargo,telefono,gerencia,region,localidad);
 
     let responsable_id = null;
 
@@ -162,11 +111,9 @@ const insertarResponsable = async (tipo,id,select_responsable,nombre,apellido,in
         console.log('CONDICION TRUE DEL SELECT RESPONSABLE: ' + responsable_id);
     }
     else{
-        console.log('EN EL !SELECT RESPONSABLE');
         const buscarResponsable = await pool.query(`SELECT responsable_id FROM responsables WHERE res_indicador = ?`, [indicador]);
 
         if(buscarResponsable[0][0] === undefined){
-            console.log('EN EL BUSCAR RESPONSABLE');
 
             console.log(nombre,apellido,indicador,cedula,cargo,gerencia,region,localidad);
 
@@ -180,15 +127,13 @@ const insertarResponsable = async (tipo,id,select_responsable,nombre,apellido,in
                 [nombre,apellido,indicador,cedula,cargo,gerencia,region,localidad,region]
             );
         
-            console.log('EN EL BUSCAR RESPONSABLE');
-            const buscarResponsable = await pool.query(`SELECT responsable_id FROM responsables WHERE res_indicador = ?`, [indicador]);
+            const buscarResponsable = await pool.query(
+                `SELECT responsable_id FROM responsables WHERE res_indicador = ?`, [indicador]);
             responsable_id = buscarResponsable[0][0].responsable_id;
         
             // crea los datos del telefono
-            const datos_telefono = await pool.query(
-                `INSERT INTO telefonos (responsable_id,telefono) VALUES (?,?)`, 
-                [responsable_id,telefono]
-            );
+            const datos_telefono = await pool.query( 
+                `INSERT INTO telefonos (responsable_id,telefono) VALUES (?,?)`, [responsable_id,telefono] );
             console.log('TELEFONO REGISTRADO');
         }
         else{

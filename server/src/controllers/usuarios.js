@@ -156,6 +156,17 @@ const obtenerGerencias = async (req,res) => {
     }
 
     // *************** OBTENER CARGOS ***************
+    const obtenerFrameworksTabla = async (req,res) => {
+        try{
+            const data = await pool.query(`SELECT framework_id,framework FROM frameworks`);
+            res.send(data[0]);
+        }
+        catch (error) {
+            return res.status(401).json({ message: 'ERROR' });
+        }
+    }
+
+    // *************** OBTENER CARGOS ***************
     const obtenerLenguajes = async (req,res) => {
         try{
             const data = await pool.query(`SELECT lenguaje FROM lenguajes`);
@@ -297,8 +308,20 @@ const obtenerGerencias = async (req,res) => {
             return res.status(401).json({ message: 'ERROR' });
         }
     }
+    // *************** OBTENER CARGOS ***************
+    const obtenerAcronimos = async (req,res) => {
+        try{
+            const data = await pool.query(`SELECT apl_acronimo FROM aplicaciones`);
+            res.send(data[0]);
+        }
+        catch (error) {
+            return res.status(401).json({ message: 'ERROR' });
+        }
+    }
+
 
 module.exports = { obtenerUsuarios, cambiarPermisos, cambiarPassword, obtenerPorBusqueda, obtenerRoles, 
     obtenerGerencias, obtenerCargos, obtenerResponsables, obtenerLenguajes, obtenerPlataformas, obtenerBasesDatos,
     obtenerServidores, obtenerEstatus, obtenerAlcance, obtenerMantenimientos, obtenerRegiones, obtenerTipos,
-    obtenerMane, obtenerAmbientes,obtenerMarcas,obtenerSistemas, eliminarAplicacion, obtenerLenguajesTabla };
+    obtenerMane, obtenerAmbientes,obtenerMarcas,obtenerSistemas, eliminarAplicacion, obtenerLenguajesTabla, 
+    obtenerFrameworksTabla, obtenerAcronimos };

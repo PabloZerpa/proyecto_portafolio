@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { BiLoaderAlt } from "react-icons/bi";
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { Container, Input, Radio } from '../../components';
-import Tabla3 from '../../components/Table3';
 import Base from '../../services/basedatos.service';
 import DataTable from 'react-data-table-component';
 
@@ -29,13 +28,14 @@ function VerBD() {
       try {
         const gen = await Base.obtenerGeneralBD(id);
         const apl = await Base.obtenerAplicacionBD(id);
-        const ser = await Base.obtenerServidorBD(id);
-
+        const ser = await Base.obtenerServidorBD(id); 
+        
         setGeneral(gen.data);
         setAplicacion(apl.data);
         setServidor(ser);
-
-        console.log(aplicacion);
+        
+        console.log(gen);
+        console.log(general);
 
         setLoad(false);
           
@@ -54,7 +54,7 @@ function VerBD() {
       const columnasMod = ['Modelo','Marca','Serial','Cantidad CPU','Velocidad','Memoria'];
       
       function General(){
-        //const datos = general.data;
+        
         
         if(load){
           return <BiLoaderAlt className='text-6xl text-blue-500 animate-spin' />
@@ -64,15 +64,15 @@ function VerBD() {
             <>
               <h2 className='font-bold text-lg'>Base de datos</h2>
               <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-                <div className='grid gap-4 mb-6 md:grid-cols-2'>
-                  <Input campo='ID' propiedad={general[0].base_datos_id} />
-                  <Input campo='Nombre' propiedad={general[0].base_datos} />
-                  <Input campo='Estatus' propiedad={general[0].bas_estatus} />
-                  <Input campo='Tipo' propiedad={general[0].tipo} />
-                  <Input campo='Manejador' propiedad={general[0].manejador} />
-                  <Input campo='Version' propiedad={general[0].version_manejador} />
-                  <Input campo='N° Usuarios' propiedad={general[0].bas_cantidad_usuarios} />
-                  <Input campo='Ambiente' propiedad={general[0].bas_tipo_ambiente} />
+                <div className='grid gap-4 mb-6 md:grid-cols-2'> 
+                  <Input campo='ID' editable={false} propiedad={general[0].base_datos_id} />
+                  <Input campo='Nombre' editable={false} propiedad={general[0].base_datos} />
+                  <Input campo='Estatus' editable={false} propiedad={general[0].bas_estatus} />
+                  <Input campo='Tipo' editable={false} propiedad={general[0].tipo} />
+                  <Input campo='Manejador' editable={false} propiedad={general[0].manejador} />
+                  <Input campo='Version' editable={false} propiedad={general[0].version_manejador} />
+                  <Input campo='N° Usuarios' editable={false} propiedad={general[0].bas_cantidad_usuarios} />
+                  <Input campo='Ambiente' editable={false} propiedad={general[0].bas_tipo_ambiente} />
                 </div>
               </form>
             </>

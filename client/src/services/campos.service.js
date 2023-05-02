@@ -136,8 +136,8 @@ export const opcionSiNo = ['SI', 'NO'];
 
 export const opcionMantenimiento = ['SELECCIONE','TODAS','DIARIO', 'SEMANAL', 'QUINCENAL', 'MENSUAL',
     'BIMENSUAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL', 'NO APLICA'];
-export const selectMantenimiento = ['SELECCIONE','DIARIO', 'SEMANAL', 'QUINCENAL', 'MENSUAL',
-    'BIMENSUAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL', 'NO APLICA'];
+export const selectMantenimiento = ['SELECCIONE','SEMANAL', 'MENSUAL', 'QUINCENAL', 
+'TRIMENSUAL', 'SEMESTRAL', 'DIARIO'];
 
 export const opcionManejadores = ['SELECCIONE','TODAS','MYSQL', 'POSTGRESS', 'MARIADB','ORACLE','MONGODB'];
 

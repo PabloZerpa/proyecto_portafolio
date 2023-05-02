@@ -79,13 +79,15 @@ function Fallas() {
     }
 
     // SELECT PERSONALIZADO
-    const selectCampo = (opciones,elemento) => {
+    const selectCampo = (opciones,elemento,propiedad) => {
         return (
             <select 
                 className={`w-full p-2 bg-gray-50 border border-solid border-blue-500 text-gray-900 text-xs text-center rounded-md`} 
                 onChange={(e) => {elemento(e.target.value)}}
             >
                 {opciones.map((opcion, index) => {
+                    if(opcion === propiedad)
+                        return <option key={index} value={opcion} selected>{opcion}</option>
                     if(index === 0)
                         return <option key={index} value={opcion} disabled selected>{opcion}</option>
                     else
@@ -98,9 +100,9 @@ function Fallas() {
     // FUNCION PARA VERIFICAR Y ELEGIR SELECT SEGUN LA OPCION SELECCIONADA
     const verificarCampo = (campo, valor) => {
         if(campo === 'Clase')
-            return (selectCampo(['SELECCIONE','CLASE1','CLASE2','CLASE3'],setClase));
+            return (selectCampo(['SELECCIONE','CLASE1','CLASE2','CLASE3'],setClase,valor));
         else if(campo === 'Impacto')
-            return (selectCampo(['SELECCIONE','ALTA','MEDIA','BAJA'],setImpacto));
+            return (selectCampo(['SELECCIONE','ALTA','MEDIA','BAJA'],setImpacto,valor));
         else if(campo === 'Descripcion'){
             return (
                 <input type='text' defaultValue={valor}

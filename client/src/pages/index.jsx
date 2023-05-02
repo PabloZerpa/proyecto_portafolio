@@ -18,6 +18,7 @@ import RegistrarBD from './BaseDatos/RegistrarBD';
 import ActualizarBD from './BaseDatos/ActualizarBD';
 import Servidores from './Servidores/Servidores';
 import RegistrarServidor from './Servidores/RegistrarServidor';
+import RegistrarRespon from './Administracion/RegistrarRespon';
 
 export {
     Login, 
@@ -40,4 +41,5 @@ export {
     ActualizarBD,
     Servidores,
     RegistrarServidor,
+    RegistrarRespon,
 };

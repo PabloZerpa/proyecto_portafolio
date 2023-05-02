@@ -29,35 +29,35 @@ const obtenerBusqueda = async (req,res) => {
             data = await pool.query(
                 `${query}
                 WHERE (servidores.servidor_id LIKE ? OR servidor LIKE ? ) 
-                    AND estatus LIKE ? ORDER BY servidores.servidor_id ${orden};`, 
+                    AND estatus LIKE ? ORDER BY servidores.servidor_id ${orden ? orden : 'ASC'};`, 
             [termino,termino,estatus]);
         }
         else if(region){
             data = await pool.query(
                 `${query}
                 WHERE (servidores.servidor_id LIKE ? OR servidor LIKE ? ) 
-                    AND region LIKE ? ORDER BY servidores.servidor_id ${orden};`, 
+                    AND region LIKE ? ORDER BY servidores.servidor_id ${orden ? orden : 'ASC'};`, 
             [termino,termino,region]);
         }
         else if(sistema){
             data = await pool.query(
                 `${query}
                 WHERE (servidores.servidor_id LIKE ? OR servidor LIKE ? ) 
-                    AND sistema LIKE ? ORDER BY servidores.servidor_id ${orden};`, 
+                    AND sistema LIKE ? ORDER BY servidores.servidor_id ${orden ? orden : 'ASC'};`, 
             [termino,termino,sistema]);
         }
         else if(marca){
             data = await pool.query(
                 `${query}
                 WHERE (servidores.servidor_id LIKE ? OR servidor LIKE ? ) 
-                    AND marca LIKE ? ORDER BY servidores.servidor_id ${orden};`, 
+                    AND marca LIKE ? ORDER BY servidores.servidor_id ${orden ? orden : 'ASC'};`, 
             [termino,termino,marca]);
         }
         else{
             data = await pool.query(`
                 ${query}
                 WHERE (servidores.servidor_id LIKE ? OR servidor LIKE ? ) 
-                ORDER BY servidores.servidor_id ${orden}`, 
+                ORDER BY servidores.servidor_id ${orden ? orden : 'ASC'}`, 
                 [termino,termino]);
         }
 

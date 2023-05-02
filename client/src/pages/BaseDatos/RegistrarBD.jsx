@@ -1,11 +1,15 @@
 
 import { useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { Button, Container, Input, Select, TextArea } from '../../components';
+import { Button, Container, Input, Select, Tabla, TextArea } from '../../components';
 import Autorizacion from '../../services/auth.service';
 import Usuario from '../../services/usuario.service';
 import Base from '../../services/basedatos.service';
 import { Notificacion } from '../../utils/Notificacion';
+import { FaTimesCircle } from 'react-icons/fa';
+import Modal from '../../components/Modal';
+import TableRegistro from '../../components/TablaRegistro';
+import { columnasModalServidor } from '../../utils/columnas';
 
 function RegistrarBD() {
 
@@ -29,7 +33,6 @@ function RegistrarBD() {
         usuario_registro: Autorizacion.obtenerUsuario().indicador,
         usuario_actualizo: Autorizacion.obtenerUsuario().indicador,
 
-        select_aplicacion: '',
         select_servidor: '',
     });
 
@@ -66,28 +69,94 @@ function RegistrarBD() {
         e.preventDefault();
 
         try {
-          if(Autorizacion.obtenerUsuario().rol === 'admin'){
+            if(Autorizacion.obtenerUsuario().rol === 'admin'){
             
-            await Base.crearDatosDB(datos);
+            await Base.crearDatosDB(datos, tableDataServidor);
             Notificacion('REGISTRO EXITOSO', 'success');
-            //navigate("/dashboard");
-          }
+            navigate("/dashboard");
+            }
         }
         catch (error) { 
             console.log('ERROR AL ACTUALIZAR APL_ACT'); 
             Notificacion('ERROR AL REGISTRAR', 'error');
         }
-      }
+    }
+
+    const [isOpen, setIsOpen] = useState(false);
+    const [select_servidor, setSelectServidor] = useState([]);
+    const [tableDataServidor, setDataServidor] = useState([]);
+
+    const obtenerSeleccionesServidor = (respuesta) => {
+        console.log(respuesta);
+        setSelectServidor(select_servidor.push(respuesta));
+        console.log(select_servidor[0]);
+
+        for (let i = 0; i < respuesta.length; i++) {
+            const x = respuesta[i];
+            setDataServidor(tableDataServidor => [...tableDataServidor, { servidor_id: x.servidor_id, servidor: x.servidor}]);
+        }
+    };
+
+    const eliminarElemento = (row, elemento, tabla, setTabla) => {
+		console.log(row);
+        if (window.confirm(`Estas seguro de eliminar: ${row[elemento]}?`)) {
+            const nuevo = tabla.filter((i) => i[elemento] != row[elemento]);
+            setTabla(nuevo);
+        }
+    };
+
+    // -------------------- COLUMNAS PARA TABLAS DE ELEMENTOS SELECCIONADOS --------------------
+    const generarColumna = (titulo,key,width) => {
+        return{
+            name: titulo,
+            selector: row => row[key],
+            left: true,
+            width: width
+        }
+    }
+
+    const columnasServidor = [
+        generarColumna('Servidor ID','servidor_id','160px'),
+        generarColumna('Servidor Nombre','servidor',null),
+        {
+            name: 'Remover',
+            button: true,
+            cell: row => 
+            <div>
+                <FaTimesCircle
+                    onClick={() => eliminarElemento(row,'servidor_id',tableDataServidor,setDataServidor)} 
+                    className="ml-3 text-red-500 text-lg cursor-pointer"
+                />
+            </div>,
+            left: true
+        },
+    ];
+
+
 
     if(Autorizacion.obtenerUsuario().rol !== 'admin')
         return <Navigate to='/' />
     
     return (
         <Container>
+
+            {/* --------------- VENTANA MODAL PARA REGISTRAR SERVIDORES --------------- */}
+            {isOpen ? (
+                <Modal>
+                <TableRegistro
+                    setIsOpen={setIsOpen}
+                    devolverSelecciones={obtenerSeleccionesServidor}
+                    columnas={columnasModalServidor}
+                    objetivo='servidor'
+                    busqueda={true}
+                />
+            </Modal>
+            ) : (null) }
+
+
             <h1 className='font-bold text-lg'>Registro de Base de datos</h1>
 
             <form className="flex flex-col relative w-3/4 bg-zinc-400 p-4 pb-24 mb-10 rounded drop-shadow-md" onSubmit={createData}>
-                
                 <h2 className='font-bold text-base mb-6'>Informacion General</h2>
 
                 <TextArea campo='Nombre' name='base_datos' editable={true} area={true} manejador={handleInputChange} />
@@ -101,21 +170,17 @@ function RegistrarBD() {
                     <Input campo='N° Usuario' name='cantidad_usuarios' editable={true} manejador={handleInputChange} />
                 </div>
 
-                {/* --------------- APLICACION --------------- */}
-                <p className='font-bold text-base my-4'>Aplicacion</p>
-                <div className="grid grid-cols-2 gap-4">
-                    <Input campo='Aplicacion' required={true} name='select_aplicacion' manejador={handleInputChange}/>
-                    <div className='mt-6'>
-                        <Button tipo='button' width={32}><Link to={`/administracion/registro/aplicacion`} target="_blank">Registrar Nueva</Link></Button>
-                    </div>
-                </div> 
-
                 {/* --------------- SERVIDOR --------------- */}
-                <p className='font-bold text-base my-4'>Servidor</p>
-                <div className="grid grid-cols-2 gap-4">
-                    <Select campo='Seleccione Servidor' required={true} name='select_servidor' byId={false} opciones={opcionServidores ? opcionServidores : ['SELECCIONE']} manejador={handleInputChange}/>
-                    <div className='mt-6'>
-                        <Button tipo='button' width={32}><Link to={`/administracion/registro/servidor`} target="_blank">Registrar Nuevo</Link></Button>
+                <p className='font-bold text-sm my-4'>Servidor</p>
+                    <div className='flex flex-col justify-center items-center gap-4'>
+
+                        <button type='button' className="p-1 bg-blue-600 text-white rounded" 
+                            onClick={(e) => {setIsOpen(!isOpen)}} >
+                            Agregar
+                        </button>
+
+                        <div className="w-full">
+                        <Tabla columnas={columnasServidor} datos={tableDataServidor} />
                     </div>
                 </div>
                     
@@ -123,7 +188,7 @@ function RegistrarBD() {
                     <Button tipo='submit' color='blue' width={32}>Registrar</Button>
                 </div>
                 <div className="absolute bottom-4 left-1/3">
-                    <Button tipo='button' color='red' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
+                    <Button tipo='button' color='blue' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
                 </div>
 
             </form>

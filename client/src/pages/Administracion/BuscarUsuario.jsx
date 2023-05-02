@@ -8,23 +8,24 @@ import Usuario from "../../services/usuario.service";
 import { Notificacion } from "../../utils/Notificacion";
 import { opcionCargo, opcionGerencia, opcionRol } from "../../services/campos.service";
 import { useNavigate } from "react-router-dom";
-import DataTable from "react-data-table-component";
 
 function BuscarUsuario() {
 
   const navigate = useNavigate();
-  function navegar(ruta) { navigate(ruta) }
+  function navegar(ruta) { navigate(ruta) };
 
-  // VARIABLES PARA LA BUSQUEDA
+  // =================== VARIABLES PARA LA BUSQUEDA ===================
   const [searchTerm, setSearchTerm] = useState("a");
   const [resultados, setResultados] = useState([]);
   const [debounceValue] = useDebounce(searchTerm, 500);
 
+  // =================== VARIABLES PARA LA EDICION ===================
   const [rol, setRol] = useState("");
   const [gerencia, setGerencia] = useState("");
   const [cargo, setCargo] = useState("");
   const [edicion, setEdicion] = useState("");
 
+  // =================== FUNCION PARA HABILITAR LOS INPUTS DE EDICION ===================
   const habilitar = (dato) => {
     setEdicion(dato.usuario_id); 
     setRol(dato.rol); 
@@ -32,11 +33,7 @@ function BuscarUsuario() {
     setCargo(dato.cargo);
   }
 
-  // VARIABLES PARA LA PAGINA
-  const [pagina, setPagina] = useState(1);
-  const obtenerPagina = (respuesta) => {setPagina(respuesta);};
-
-  // FUNCION PARA BUSCAR AL ESCRIBIR EN EL INPUT
+  // =================== FUNCION PARA BUSCAR AL ESCRIBIR EN EL INPUT ===================
   useEffect(() => {
 
     if (debounceValue)
@@ -44,21 +41,20 @@ function BuscarUsuario() {
     else
       setResultados(null) 
     
-  }, [debounceValue, pagina]);
+  }, [debounceValue]);
 
-  // FUNCION PARA BUSCAR DATOS EN LA DATABASE
+  // =================== FUNCION PARA BUSCAR DATOS EN LA DATABASE ===================
   const onSearch = async (termino) => {
     try {
-      const datos = await Usuario.obtenerUsuarios(termino,pagina);
+      const datos = await Usuario.obtenerUsuarios(termino);
       setResultados(datos.data); 
-      console.log(datos.data);
     } catch (error) { 
       console.log('ERROR AL BUSCAR DATOS') 
     }
   }
 
-  // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
-  async function updateData(e) {
+  // =================== FUNCION PARA ACTUALIZAR DATOS ===================
+  async function actualizarDatos(e) {
     e.preventDefault();
     try {
       
@@ -77,14 +73,16 @@ function BuscarUsuario() {
     }
   }
 
-  // SELECT PERSONALIZADO
-  const selectCampo = (opciones,elemento) => {
+  // =================== SELECT PERSONALIZADO ===================
+  const selectCampo = (opciones,elemento,propiedad) => {
     return (
         <select 
             className={`w-full p-2 bg-gray-50 border border-solid border-blue-500 text-gray-900 text-xs text-center rounded-md`} 
             onChange={(e) => {elemento(e.target.value)}}
         >
             {opciones.map((opcion, index) => {
+                if(opcion === propiedad)
+                  return <option key={index} value={opcion} selected>{opcion}</option>
                 if(index === 0)
                     return <option key={index} value={opcion} disabled selected>{opcion}</option>
                 else
@@ -94,22 +92,22 @@ function BuscarUsuario() {
     )
   }
 
-  // FUNCION PARA VERIFICAR Y ELEGIR SELECT SEGUN LA OPCION SELECCIONADA
+  // =================== FUNCION PARA VERIFICAR Y ELEGIR SELECT SEGUN LA OPCION SELECCIONADA ===================
   const verificarCampo = (campo, valor) => {
-
+    console.log(valor);
     if(campo === 'Rol')
-      return (selectCampo(opcionRol,setRol));
+      return (selectCampo(opcionRol,setRol,valor));
     else if(campo === 'Gerencia')
-      return (selectCampo(opcionGerencia,setGerencia));
+      return (selectCampo(opcionGerencia,setGerencia,valor));
     else if(campo === 'Cargo')
-      return (selectCampo(opcionCargo,setCargo));
+      return (selectCampo(opcionCargo,setCargo,valor));
     else
       return (<td key={campo} className="px-2 py-2 flex justify-center items-center">{valor}</td>)
   }
 
-  const deleteUser = async (row) => {
+  // =================== FUNCION PARA ELIMINAR USUARIO ===================
+  const eliminarUsuario = async (row) => {
     try {
-      console.log(row);
       if(Autorizacion.obtenerUsuario().rol === 'admin'){
 
         if (window.confirm(`Estas seguro eliminar: ${row.indicador}?`)){
@@ -120,7 +118,6 @@ function BuscarUsuario() {
       }
     }
     catch (error) { 
-      console.log(error);
       Notificacion(error.response.data.message, 'error');
     }
   }
@@ -133,7 +130,7 @@ function BuscarUsuario() {
         <div>
           {edicion === row.usuario_id ?
             (<FaCheckCircle 
-              onClick={updateData} 
+              onClick={actualizarDatos} 
               className="ml-3 text-green-500 text-lg cursor-pointer"
             />)
               :
@@ -202,7 +199,7 @@ function BuscarUsuario() {
       cell: row => 
         <div>
           <FaTimesCircle
-              onClick={() => deleteUser(row)} 
+              onClick={() => eliminarUsuario(row)} 
               className="ml-3 text-red-500 text-lg cursor-pointer"
           />
         </div>,
@@ -235,13 +232,6 @@ function BuscarUsuario() {
       {resultados ? (
         <div className="w-2/3">
           <Tabla columnas={columns} datos={resultados} />
-          {/* <DataTable
-            columns={columns}
-            data={resultados}
-            highlightOnHover
-            pointerOnHover
-            dense
-          /> */}
         </div>
       ) : 
       (null)}

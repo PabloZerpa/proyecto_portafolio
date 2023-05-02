@@ -2,19 +2,16 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { Button, Container, Input, Select } from "../../components/";
+import { FaArrowLeft } from "react-icons/fa";
 import { Notificacion } from "../../utils/Notificacion";
 import Autorizacion from "../../services/auth.service";
 import Usuario from "../../services/usuario.service";
-import { FaArrowLeft } from "react-icons/fa";
-
+import Opciones from "../../utils/Opciones";
+ 
 function CrearUsuario() {
 
     const navigate = useNavigate();
-    function navegar(ruta) { navigate(ruta) }
-
-    const [opcionRoles, setOpcionRoles] = useState('');
-    const [opcionGerencias, setOpcionGerencias] = useState('');
-    const [opcionCargos, setOpcionCargos] = useState('');
+    function navegar(ruta) { navigate(ruta) };
 
     const [datos, setDatos] = useState({
         indicador: '',
@@ -27,42 +24,39 @@ function CrearUsuario() {
         creador: Autorizacion.obtenerUsuario().indicador,
     });
 
-    async function getData(ruta, elemento){
-        const respuesta = await Usuario.obtenerOpcion(ruta);
-        const data = respuesta.data;
-        let opciones = ['SELECCIONE'];
+    const [roles, setRoles] = useState('');
+    const [gerencias, setGerencias] = useState('');
+    const [cargos, setCargos] = useState('');
 
-        for (let i = 0; i < data.length; i++) {
-            const valor = Object.values(data[i]);
-            opciones.push(valor[0]);
-        }
-        elemento(opciones);
+    // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
+    async function establecerDatos(){
+        setRoles(await Opciones('roles'));
+        setGerencias(await Opciones('gerencias'));
+        setCargos(await Opciones('cargos'));
     }
 
     useEffect(() => {
-        getData('roles',setOpcionRoles);
-        getData('gerencias',setOpcionGerencias);
-        getData('cargos',setOpcionCargos);
+        establecerDatos();
     }, []);
 
 
-    const handleInputChange = (e) => {
+    // =================== FUNCION PARA OBTENER Y GUARDAR VALORES DEL LOS INPUTS ===================
+    const setValores = (e) => {
         if(e.target.value === 'TODAS')
             setDatos({ ...datos, [e.target.name] : null })
         else
             setDatos({ ...datos, [e.target.name] : e.target.value })
     }
 
-
+    // =================== CREAR USUARIOS ===================
     async function crearUsuario(e){
         e.preventDefault();
-        
-        console.log('TRY DEL CREATE USER');
+
         if(Autorizacion.obtenerUsuario().rol === 'admin'){
             try {
                 await Usuario.crearUsuario(datos);
                 Notificacion('USUARIO REGISTRADO EXITOSAMENTE', 'success');
-                setTimeout(() => { navigate("/administracion/permisos/buscar") }, "2000");
+                setTimeout(() => { navegar("/administracion/permisos/buscar") }, "2000");
             }
             catch (error) { 
                 Notificacion(error.response.data.message, 'error');
@@ -73,18 +67,18 @@ function CrearUsuario() {
     return(
         <Container>
 
-            <form className="flex flex-col items-center gap-8 pb-4" onSubmitCapture={crearUsuario}>
+            <form className="flex flex-col items-center gap-8 pb-4" onSubmit={crearUsuario}>
 
                 <div className="flex flex-col gap-2">
                     <h2 className='font-bold text-base'>Datos del Nuevo Usuario</h2>
                     <div className="grid grid-cols-2 w-[900px] gap-4 p-4 bg-zinc-400 rounded border-2 border-dashed border-blue-500">
-                        <Input campo='Indicador' name='indicador' direccion="col" required={true} editable={true} manejador={handleInputChange} />
-                        <Select campo='Rol' name='rol' direccion="col" required={true} opciones={opcionRoles ? opcionRoles : ['SELECCIONE']} manejador={handleInputChange} />
-                        <Input campo='Nombre' name='nombre' direccion="col" required={true} editable={true} manejador={handleInputChange} />
-                        <Input campo='Apellido' name='apellido' direccion="col" required={true} editable={true} manejador={handleInputChange} />
-                        <Input campo='Contraseña' name='password' direccion="col" required={true} editable={true} manejador={handleInputChange} />
-                        <Select campo='Gerencia' name='gerencia' direccion="col" required={true} opciones={opcionGerencias ? opcionGerencias : ['SELECCIONE']} manejador={handleInputChange} />
-                        <Select campo='Cargo' name='cargo' direccion="col" required={true} opciones={opcionCargos ? opcionCargos : ['SELECCIONE']} manejador={handleInputChange} />
+                        <Input campo='Indicador' name='indicador' direccion="col" required={true} editable={true} manejador={setValores} />
+                        <Select campo='Rol' name='rol' direccion="col" required={true} opciones={roles ? roles : ['SELECCIONE']} manejador={setValores} />
+                        <Input campo='Nombre' name='nombre' direccion="col" required={true} editable={true} manejador={setValores} />
+                        <Input campo='Apellido' name='apellido' direccion="col" required={true} editable={true} manejador={setValores} />
+                        <Input campo='Contraseña' name='password' direccion="col" required={true} editable={true} manejador={setValores} />
+                        <Select campo='Gerencia' name='gerencia' direccion="col" required={true} opciones={gerencias ? gerencias : ['SELECCIONE']} manejador={setValores} />
+                        <Select campo='Cargo' name='cargo' direccion="col" required={true} opciones={cargos ? cargos : ['SELECCIONE']} manejador={setValores} />
                     </div> 
                 </div>
 

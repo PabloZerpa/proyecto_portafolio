@@ -2,17 +2,18 @@
 import axios from 'axios';
 import authHeader from './header.service';
 const baseUrl = "http://localhost:3001/api/";
- 
+
 class Base {  
 
     // ---------------- CREATE DE LA INFO DE NUEVA APP ------------------
-    async crearDatosDB(datos) {
-        console.log('AFUERA DE CREAR DATOS SERVICE')
-        console.log(datos);
+    async crearDatosDB(datos, servidores) {
+        
+        console.log(datos, servidores);
+        let datosServidor = datos;
+        datosServidor.select_servidor = servidores;
         try {  
-            console.log('EN EL TRY DE CREAR DATOS SERVICE')
-            const respuesta = await axios.post(`${baseUrl}basedatos/`, datos, { headers: authHeader() });
-            console.log('DESPUES DE CREAR DATOS SERVICE')
+
+            const respuesta = await axios.post(`${baseUrl}basedatos/`, datosServidor, { headers: authHeader() });
             return respuesta;
         } catch (error) {
             console.log('ERROR AL CREAR auth.service');
@@ -81,8 +82,6 @@ class Base {
     // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
     async obtenerBDPorBusqueda(term,estatus,tipo,manejador,ambiente,count,orden) {
         try {
-            console.log('ALO');
-            console.log(term,estatus,tipo,manejador,ambiente,count,orden);
             return axios.post(`${baseUrl}basedatos/busqueda`, 
             {term,estatus,tipo,manejador,ambiente,count,orden}, { headers: authHeader() });
         } catch (error) {

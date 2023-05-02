@@ -25,7 +25,7 @@ const fallas = async (req,res) => {
     }
 };
 
-// *********************************** OBTENER FALLAS ***********************************
+// *********************************** REGISTRAR FALLAS ***********************************
 const registrarFalla = async (req,res) => {
     try {
         
@@ -33,14 +33,17 @@ const registrarFalla = async (req,res) => {
         console.log( aplicacion,clase,impacto,descripcion,solucion, usuario );
 
         const x = await pool.query(`SELECT usuario_id FROM usuarios WHERE indicador = ?`, [usuario]); 
-        const usuario_id = x[0][0].usuario_id
+        const usuario_id = x[0][0].usuario_id;
+
+        const query = await pool.query(`SELECT aplicacion_id FROM aplicaciones WHERE apl_acronimo = ?`, [aplicacion]); 
+        const aplicacion_id = query[0][0].aplicacion_id;
 
         const data = await pool.query(`
             INSERT INTO fallas
                 (aplicacion_id,fal_clase,fal_descripcion,fal_solucion,fal_impacto,fal_usuario_creador)
             VALUES
                 (?,?,?,?,?,?);`, 
-            [aplicacion,clase,descripcion,solucion,impacto, usuario_id]); 
+            [aplicacion_id,clase,descripcion,solucion,impacto, usuario_id]); 
                 
         console.log('FALLA REGISTRADA CORRECTAMENTE');
         res.send('FALLA REGISTRADA CORRECTAMENTE');

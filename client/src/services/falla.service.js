@@ -19,8 +19,6 @@ class Falla {
 
     // =============== REGISTRA LA FALLA ===============
     async registrarFalla(datos) {
-
-        //const { aplicacion_id, usuario_id, clase, impacto, descripcion, solucion } = datos;
         try {
             const respuesta = await axios.post(`${baseUrl}aplicaciones/fallas`, datos, { headers: authHeader() });
             return respuesta;

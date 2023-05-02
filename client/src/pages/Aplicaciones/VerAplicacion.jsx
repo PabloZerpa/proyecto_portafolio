@@ -2,14 +2,12 @@
 import { useState, useEffect } from 'react';
 import { FaEye, FaPlus } from 'react-icons/fa';
 import { useParams, Navigate, Link } from 'react-router-dom';
-import { Button, Container, Input, Radio, TextArea } from '../../components';
-import Tabla3 from '../../components/Table3';
+import { Button, Container, Input, Radio, Tabla, TextArea } from '../../components';
 import Aplicacion from '../../services/aplicacion.service';
-import { paginacionOpciones } from "../../utils/TablaOpciones"
 import DataTable from 'react-data-table-component';
 
-const opcionesVista = ['General','Tecnologia',
-  'Base de datos','Servidor','Responsables','Documentacion','Fallas'];
+const opcionesVista = ['General','Tecnologia', 'Base de datos',
+'Servidor','Responsables','Documentacion','Fallas'];
 
 function VerAplicacion() {
 
@@ -87,10 +85,56 @@ function VerAplicacion() {
         )
       }
 
+      const columnsMan = [
+        {
+            name: 'Frecuencia',
+            selector: row => row.man_frecuencia,
+            sortable: true,
+            left: true,
+            grow: 2
+        },
+        {
+            name: 'Horas Promedio',
+            selector: row => row.man_horas_prom,
+            sortable: true,
+            left: true,
+        },
+        {
+            name: 'Horas Anuales',
+            selector: row => row.man_horas_anuales,
+            sortable: true,
+            left: true,
+            grow: 1.5
+        },
+      ];
+
+      const columnsLen = [
+        {
+          name: 'Lenguaje ID',
+          selector: row => row.lenguaje_id,
+          sortable: true,
+          left: true,
+          grow: 2
+      },
+        {
+            name: 'Lenguaje',
+            selector: row => row.lenguaje,
+            sortable: true,
+            left: true,
+            grow: 2
+        },
+        {
+            name: 'Framework',
+            selector: row => row.framework,
+            sortable: true,
+            left: true,
+        },
+      ];
+
       function Tecnologia() {
         const datos = tecnologia.data.datos;
-        console.log(tecnologia.data.datos);
-        const plataformas = tecnologia.data.plataformas;
+        console.log(tecnologia.data);
+        const plataformas = tecnologia.data.plataformas[0].plataforma;
         const lenguajes = tecnologia.data.lenguajes;
 
         return(
@@ -98,12 +142,12 @@ function VerAplicacion() {
             <h2 className='font-bold text-lg'>Tecnologia</h2>
             <form className="grid grid-cols-2 justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
 
-              <div className='col-span-2'>
-                <Tabla3 columnas={['Mantenimiento','Horas Prom','Horas Anuales']} datos={datos} />
+              <div className='inline-grid grid-cols-1 gap-4 col-span-2'>
+                <Input campo='Plataforma' propiedad={plataformas} editable={false} />
+                <Tabla columnas={columnsLen} datos={lenguajes} />
+                <Tabla columnas={columnsMan} datos={datos} />
               </div>
-              
-              <Tabla3 columnas={['Plataformas']} datos={plataformas} />
-              <Tabla3 columnas={['Lenguaje', 'Framework']} datos={lenguajes} />
+
             </form>
           </>
         )
@@ -185,16 +229,7 @@ function VerAplicacion() {
           <>
             <h2 className='font-bold text-lg'>Base de datos</h2>
             <form className="flex justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-              <DataTable
-                columns={columnsBD}
-                data={datos}
-                noDataComponent={"SIN RESULTADOS"}
-                fixedHeader
-                fixedHeaderScrollHeight="600px"
-                highlightOnHover
-                pointerOnHover
-                dense
-              />
+              <Tabla columnas={columnsBD} datos={datos} />
             </form>
           </>
         )
@@ -275,16 +310,7 @@ function VerAplicacion() {
           <>
             <h2 className='font-bold text-lg'>Servidor</h2>
             <form className="flex flex-col justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-              <DataTable
-                columns={columnsSer}
-                data={datos}
-                noDataComponent={"SIN RESULTADOS"}
-                fixedHeader
-                fixedHeaderScrollHeight="600px"
-                highlightOnHover
-                pointerOnHover
-                dense
-              />
+              <Tabla columnas={columnsSer} datos={datos} />
             </form>
           </>
         )
@@ -358,6 +384,8 @@ function VerAplicacion() {
       function Responsable() {
         const funcional = responsables.data.funcional;
         const tecnico = responsables.data.tecnico;
+        console.log(funcional);
+        console.log(tecnico);
         return(
           <>
             <h2 className='font-bold text-lg'>Responsables</h2>
@@ -366,32 +394,14 @@ function VerAplicacion() {
               <div className="flex flex-col justify-center items-center gap-4 mb-8">
                 <h3 className='font-bold text-base'>Responsables Funcional</h3>
                 <div className='w-[880px]'>
-                  <DataTable
-                    columns={columnsRes}
-                    data={funcional}
-                    noDataComponent={"SIN RESULTADOS"}
-                    fixedHeader
-                    fixedHeaderScrollHeight="600px"
-                    highlightOnHover
-                    pointerOnHover
-                    dense
-                  />
+                  <Tabla columnas={columnsRes} datos={funcional} />
                 </div>
               </div>
 
               <div className="flex flex-col justify-center items-center gap-4">
                 <h3 className='font-bold text-base'>Responsables Tecnico</h3>
                 <div className='w-[880px]'>
-                  <DataTable
-                    columns={columnsRes}
-                    data={tecnico}
-                    noDataComponent={"SIN RESULTADOS"}
-                    fixedHeader
-                    fixedHeaderScrollHeight="600px"
-                    highlightOnHover
-                    pointerOnHover
-                    dense
-                  />
+                  <Tabla columnas={columnsRes} datos={tecnico} />
                 </div>
               </div>
 

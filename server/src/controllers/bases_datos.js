@@ -74,7 +74,7 @@ const obtenerBusqueda = async (req,res) => {
                 `${query}
                 WHERE (bases_datos.base_datos_id LIKE ? OR 
                     base_datos LIKE ? )
-                    AND estatus LIKE ? ORDER BY bases_datos.base_datos_id ${orden};`, 
+                    AND estatus LIKE ? ORDER BY bases_datos.base_datos_id ${orden ? orden : 'ASC'};`, 
             [termino,termino,estatus]);
         }
         else if(tipo){
@@ -82,7 +82,7 @@ const obtenerBusqueda = async (req,res) => {
                 `${query}
                 WHERE (bases_datos.base_datos_id LIKE ? OR 
                     base_datos LIKE ? )
-                    AND tipo LIKE ? ORDER BY bases_datos.base_datos_id ${orden};`, 
+                    AND tipo LIKE ? ORDER BY bases_datos.base_datos_id ${orden ? orden : 'ASC'};`, 
             [termino,termino,tipo]);
         }
         else if(manejador){
@@ -90,7 +90,7 @@ const obtenerBusqueda = async (req,res) => {
                 `${query}
                 WHERE (bases_datos.base_datos_id LIKE ? OR 
                     base_datos LIKE ? )
-                    AND manejador LIKE ? ORDER BY bases_datos.base_datos_id ${orden};`, 
+                    AND manejador LIKE ? ORDER BY bases_datos.base_datos_id ${orden ? orden : 'ASC'};`, 
             [termino,termino,manejador]);
         }
         else if(ambiente){
@@ -98,7 +98,7 @@ const obtenerBusqueda = async (req,res) => {
                 `${query}
                 WHERE (bases_datos.base_datos_id LIKE ? OR 
                     base_datos LIKE ? )
-                    AND tipo_ambiente LIKE ? ORDER BY bases_datos.base_datos_id ${orden};`, 
+                    AND tipo_ambiente LIKE ? ORDER BY bases_datos.base_datos_id ${orden ? orden : 'ASC'};`, 
             [termino,termino,ambiente]);
         }
         else{
@@ -107,11 +107,12 @@ const obtenerBusqueda = async (req,res) => {
                 WHERE 
                     (bases_datos.base_datos_id LIKE ? OR 
                     base_datos LIKE ? ) 
-                ORDER BY bases_datos.base_datos_id ${orden}`, 
+                ORDER BY bases_datos.base_datos_id ${orden ? orden : 'ASC'}`, 
                     [termino,termino,parseInt(count)]
             );
         }
         
+        console.log(data[0]);
         res.json(data[0]);
         
     } catch (error) {
@@ -125,8 +126,7 @@ const crearBaseDatos = async (req,res) => {
     try {
         const {
             base_datos,estatus,cantidad_usuarios, tipo, manejador, 
-            version_manejador,tipo_ambiente, usuario_registro,
-            select_aplicacion, select_servidor,
+            version_manejador,tipo_ambiente, usuario_registro, select_servidor,
         } = req.body;
 
         const query = await pool.query(
@@ -140,8 +140,7 @@ const crearBaseDatos = async (req,res) => {
         }
         else{
             console.log(base_datos,estatus,cantidad_usuarios, tipo, manejador, 
-                version_manejador,tipo_ambiente, usuario_registro,
-                select_aplicacion, select_servidor);
+                version_manejador,tipo_ambiente, usuario_registro, select_servidor);
 
             if(version_manejador){
                 const datos_version = await pool.query(
@@ -169,31 +168,27 @@ const crearBaseDatos = async (req,res) => {
             const selectBase = await pool.query(`SELECT * FROM bases_datos ORDER BY base_datos_id DESC LIMIT 1`);
             let base_datos_id = selectBase[0][0].base_datos_id;
 
-            if(select_aplicacion){
-                const selectAplicacion = await pool.query(`
-                    SELECT 
-                        aplicacion_id FROM aplicaciones 
-                    WHERE 
-                        apl_acronimo = ? OR apl_nombre = ?`, 
-                    [select_aplicacion,select_aplicacion]);
 
-                const aplicacion_id = selectAplicacion[0][0].aplicacion_id;
-                
-                const bas_apl = await pool.query(
-                    `INSERT INTO aplicacion_basedatos (aplicacion_id,base_datos_id) VALUES (?,?);`, 
-                    [aplicacion_id, base_datos_id]
-                );
-                console.log('RELACION BASE-APP');
-            }
             if(select_servidor){
-                const selectServidor = await pool.query(`SELECT servidor_id FROM servidores WHERE servidor = ?`, [select_servidor]);
+
+                for (const element of select_servidor) {
+                    console.log(element.servidor_id);
+            
+                    const datos_ser = await pool.query(
+                        `INSERT INTO basedatos_servidor (base_datos_id,servidor_id) VALUES (?,?);`,
+                    [base_datos_id,element.servidor_id]);
+                }
+                console.log('SERVIDOR GENERAL REGISTRADO');
+
+                /*const selectServidor = await pool.query(`SELECT servidor_id FROM servidores WHERE servidor = ?`, [select_servidor]);
                 const servidor_id = selectServidor[0][0].servidor_id;
                 
                 const bas_ser = await pool.query(
                     `INSERT INTO basedatos_servidor (base_datos_id,servidor_id) VALUES (?,?);`, 
                     [base_datos_id, servidor_id]
                 );
-                console.log('RELACION BASE-SERVIDOR');
+                console.log('RELACION BASE-SERVIDOR');*/
+
             }
             
 
@@ -258,12 +253,11 @@ const general = async (req,res) => {
 
         const data = await pool.query(`
         SELECT 
-            bases_datos.base_datos_id,base_datos,bas_estatus,tipo,manejador,version_manejador,
+            bases_datos.base_datos_id,base_datos,bas_estatus,tipo, manejador,
             bas_cantidad_usuarios,bas_tipo_ambiente
         FROM bases_datos
-            JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.base_datos_id
-            JOIN manejadores ON manejadores.manejador_id = bases_datos.base_datos_id
-            JOIN versiones_manejadores ON manejadores.manejador_id = versiones_manejadores.manejador_id
+            JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.bas_tipo
+            JOIN manejadores ON manejadores.manejador_id = bases_datos.bas_manejador
         WHERE bases_datos.base_datos_id = ?`, [id]);
 
         res.send(data[0]);
@@ -354,4 +348,4 @@ module.exports = {
     crearBaseDatos,
     actualizarBaseDatos,
     general,aplicacion,servidor
- };
+};

@@ -26,7 +26,6 @@ class Servidor {
     // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
     async obtenerServidorPorBusqueda(term,estatus,region,sistema,marca,orden) {
         try {
-            console.log(term,estatus,region,sistema,marca,orden);
             return axios.post(`${baseUrl}servidores/busqueda`, 
             {term,estatus,region,sistema,marca,orden}, { headers: authHeader() });
         } catch (error) {

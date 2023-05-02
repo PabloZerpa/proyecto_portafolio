@@ -92,8 +92,6 @@ function RegistrarServidor() {
             elemento(localidadFaja);
         else if(valor === '8')
             elemento(localidadMetropolitana);
-        // else if (valor === 'TODAS')
-        //     elemento(opcionLocalidad);
 
     }
 
@@ -149,7 +147,7 @@ function RegistrarServidor() {
                     <Button tipo='submit' color='blue' width={32}>Registrar</Button>
                 </div>
                 <div className="absolute bottom-4 left-1/3">
-                    <Button tipo='button' color='red' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
+                    <Button tipo='button' color='blue' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
                 </div>
 
             </form>

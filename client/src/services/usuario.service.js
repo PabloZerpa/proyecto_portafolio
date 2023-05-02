@@ -6,9 +6,9 @@ const baseUrl = "http://localhost:3001/api/";
 class Usuario {  
 
     // =============== OBTIENE LOS DATOS DE LOS USUARIOS ===============
-    async obtenerUsuarios(term,pagina) { 
+    async obtenerUsuarios(term) { 
         try { 
-            return axios.post(`${baseUrl}usuarios/busqueda`, {term,pagina}, { headers: authHeader() });
+            return axios.post(`${baseUrl}usuarios/busqueda`, {term}, { headers: authHeader() });
         } catch (error) {
             console.log('Error al obtener dato');
         }

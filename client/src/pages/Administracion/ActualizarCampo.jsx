@@ -4,7 +4,6 @@ import { Container } from "../../components";
 import { FaSearch } from "react-icons/fa";
 import { useDebounce } from "use-debounce";
 import Aplicacion from "../../services/aplicacion.service";
-import Tabla2 from "../../components/Tabla2";
 
 const campos = ['Seleccione','Acronimo', 'Nombre', 'Estatus', 'Prioridad','Alcance','Codigo_Fuente', 
 'Critico','Cantidad_Usuarios','Region','Plataforma','Lenguaje','Framework'];
@@ -95,7 +94,7 @@ function ActualizarCampo() {
 
       </form>
 
-      {resultados ? (
+      {/* {resultados ? (
         <Tabla2 
           columnas={['ID','Acronimo','Nombre',campoTabla, 'Editar']} 
           datos={resultados} 
@@ -104,7 +103,7 @@ function ActualizarCampo() {
           devolverPagina={obtenerPagina} />
       ) : (
         <div></div>
-      )}
+      )} */}
 
     </Container>
   )

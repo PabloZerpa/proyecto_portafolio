@@ -3,11 +3,11 @@ const router = require("express").Router();
 const { obtenerDatos, obtenerDato, crearAplicacion, actualizarAplicacion, eliminarAplicacion, 
     obtenerBusqueda, obtenerCampo, obtenerPorGraficos, actualizarCampo, obtenerLenguajes,obtenerPlataformas,
     obtenerFrameworks, obtenerBaseDatos, obtenerServidores, obtenerCantidadTotal, 
-    general, tecno, basedatos, servidor, responsable, documentacion, obtenerResponsables } = require("../controllers/aplicaciones");
+    general, tecno, basedatos, servidor, responsable, documentacion, obtenerResponsables, registrarResponsable } = require("../controllers/aplicaciones");
 const { auth, authAdmin } = require("../middlewares/auth");
 const { autenticarUser } = require("../middlewares/ad");
 const { fallas, registrarFalla, actualizarFalla, buscarFalla } = require("../controllers/fallas");
-const { validatorCreateItem, validatorGetItem, validatorApp } = require("../validators/aplicaciones");
+const { validatorResponsable, validatorApp } = require("../validators/aplicaciones");
 
 
 
@@ -45,6 +45,8 @@ router.delete("/:id", auth, eliminarAplicacion);
 // *************** RUTA PARA OBTENER LOS DATOS PARA LOS GRAFICOS *************** 
 router.post("/grafico", auth, obtenerPorGraficos); 
 
+// *************** RUTA REGISTRAR UN RESPONSABLE *************** 
+router.post("/responsable", auth, validatorResponsable, registrarResponsable);
 
 
 
@@ -65,6 +67,7 @@ router.get("/servidores", auth, obtenerServidores);
 
 // *************** RUTA PARA OBTENER RESPONSABLES *************** 
 router.get("/responsables", auth, obtenerResponsables);
+
 
 
 

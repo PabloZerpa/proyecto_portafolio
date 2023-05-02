@@ -21,7 +21,8 @@ import {
   RegistrarFalla,
   ActualizarBD,
   Servidores,
-  RegistrarServidor
+  RegistrarServidor,
+  RegistrarRespon
 } from '../pages';
 
 function Rutas() {
@@ -55,6 +56,7 @@ function Rutas() {
               <Route path="/administracion/registro/aplicacion" element={<RegistrarApp />} />
               <Route path="/administracion/registro/basedatos" element={<RegistrarBD />} />
               <Route path="/administracion/registro/servidor" element={<RegistrarServidor />} />
+              <Route path="/administracion/registro/responsable" element={<RegistrarRespon />} />
             </Route>
             
             {/* MODULO DE APLICACIONES */}

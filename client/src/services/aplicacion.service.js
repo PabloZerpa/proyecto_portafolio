@@ -13,7 +13,6 @@ class Aplicacion {
         datosServidor.select_lenguaje = lenguajes;
         datosServidor.select_base = bases;
         datosServidor.select_servidor = servidores;
-        console.log(datosServidor);
 
         return await axios.post(`${baseUrl}aplicaciones/`, datosServidor, { headers: authHeader() })
         .then(response => {
@@ -139,6 +138,14 @@ class Aplicacion {
         }
     }
 
+    // ---------------- REGISTRO DE LA INFO DEL RESPONSABLE ------------------
+    async registrarResponsable(datos) {
+        return await axios.post(`${baseUrl}aplicaciones/responsable`, datos, { headers: authHeader() })
+        .then(response => {
+            return response.data;
+        });
+    }
+
 
 
 
@@ -196,12 +203,13 @@ class Aplicacion {
             console.log('Error al obtener datos'); 
         }
     }
+    
 
     // =============== OBTIENE INFORMACION TECNOLOGIA ===============
     async obtenerTecnologia(id) { 
         try { 
             const respuesta = await axios.get(`${baseUrl}aplicaciones/tecnologia/${id}`, { headers: authHeader() });
-            //console.log(respuesta);
+            console.log(respuesta);
             return respuesta;
         } catch (error) {
             console.log('Error al obtener datos'); 
@@ -234,7 +242,6 @@ class Aplicacion {
     async obtenerResponsable(id) { 
         try { 
             const respuesta = await axios.get(`${baseUrl}aplicaciones/responsable/${id}`, { headers: authHeader() });
-            console.log(respuesta);
             return respuesta;
         } catch (error) {
             console.log('Error al obtener datos'); 

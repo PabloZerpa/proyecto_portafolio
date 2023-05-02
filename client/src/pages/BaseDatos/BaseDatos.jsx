@@ -8,7 +8,6 @@ import Base from "../../services/basedatos.service";
 import { opcionEstatus, opcionRegion, opcionPlataforma, opcionAlcance, 
     opcionMantenimiento, opcionCount, opcionLocalidad, opcionTipoBD, opcionManejadores } from '../../services/campos.service';
 import { Link } from "react-router-dom";
-import DataTable from "react-data-table-component";
 import { selectTipoAmbiente } from "../../services/campos.service";
 
 
@@ -89,13 +88,6 @@ const columns = [
       left: true
   },
 ];
-  
-  const paginacionOpciones = {
-    rowsPerPageText: 'Filas por Pagina',
-    rangeSeparatorText: 'de',
-    selectAllRowsItem: true,
-    selectAllRowsItemText: 'Todos'
-  }
 
 function BaseDatos() {
 
@@ -146,11 +138,10 @@ function BaseDatos() {
     const onSearch = async (value) => {
         try {
             const { estatus,tipo,manejador,ambiente,registros,orden } = datos;
-            console.log(estatus,tipo,manejador,ambiente,registros,orden);
+
             const respuesta = await Base.obtenerBDPorBusqueda(
                 value,estatus,tipo,manejador,ambiente,registros,orden);
             setResultado(respuesta.data);
-            console.log(respuesta.data);
             
         } catch (error) {
             console.log('ERROR AL BUSCAR DATOS');
@@ -200,21 +191,8 @@ function BaseDatos() {
             </form>
 
             {resultado ? (
-                <div className="w-[1080px]">
+                <div className="w-4/3">
                     <Tabla columnas={columns} datos={resultado} paginacion={true} />
-                {/* <DataTable
-                    columns={columns}
-                    data={resultado}
-                    pagination
-                    paginationComponentOptions={paginacionOpciones}
-                    paginationRowsPerPageOptions={[10,20,30,50,100]}
-                    noDataComponent={"SIN RESULTADOS"}
-                    fixedHeader
-                    fixedHeaderScrollHeight="600px"
-                    highlightOnHover
-                    pointerOnHover
-                    dense
-                /> */}
                 </div>
             ) : (null)}
 
