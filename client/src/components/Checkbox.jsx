@@ -2,10 +2,10 @@
 function Checkbox({id, name, opciones, manejador}) {
 
     return(
-        <div className="flex gap-2 list-none">
+        <div className="flex space-x-2 list-none">
             {opciones.map((opcion,index) => {
                 return(
-                    <li className="flex justify-center items-center gap-2 list-none" key={index}>
+                    <li className="flex justify-center items-center space-x-2 list-none" key={index}>
                         <input 
                             type="checkbox" 
                             id={id}

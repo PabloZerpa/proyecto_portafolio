@@ -100,8 +100,7 @@ const insertarBase = async (id,select_base) => {
 
 }
 
-const insertarResponsable = async (tipo,id,select_responsable,nombre,apellido,indicador,cedula,
-    cargo,telefono,gerencia,region,localidad) => {
+const insertarResponsable = async (tipo,id,select_responsable) => {
 
     let responsable_id = null;
 
@@ -110,48 +109,16 @@ const insertarResponsable = async (tipo,id,select_responsable,nombre,apellido,in
         responsable_id = buscarResponsable[0][0].responsable_id
         console.log('CONDICION TRUE DEL SELECT RESPONSABLE: ' + responsable_id);
     }
-    else{
-        const buscarResponsable = await pool.query(`SELECT responsable_id FROM responsables WHERE res_indicador = ?`, [indicador]);
-
-        if(buscarResponsable[0][0] === undefined){
-
-            console.log(nombre,apellido,indicador,cedula,cargo,gerencia,region,localidad);
-
-            // crea los datos del responsable
-            const datos_responsable = await pool.query(
-                `INSERT INTO responsables 
-                    (res_nombre,res_apellido,res_indicador,res_cedula,res_cargo_id,res_gerencia_id,res_region_id,res_localidad_id) 
-                VALUES 
-                    (?,?,?,?,?,?,?,
-                    (SELECT localidad_id FROM localidades WHERE localidad_id = ? AND localidades.region_id = ?));`,
-                [nombre,apellido,indicador,cedula,cargo,gerencia,region,localidad,region]
-            );
-        
-            const buscarResponsable = await pool.query(
-                `SELECT responsable_id FROM responsables WHERE res_indicador = ?`, [indicador]);
-            responsable_id = buscarResponsable[0][0].responsable_id;
-        
-            // crea los datos del telefono
-            const datos_telefono = await pool.query( 
-                `INSERT INTO telefonos (responsable_id,telefono) VALUES (?,?)`, [responsable_id,telefono] );
-            console.log('TELEFONO REGISTRADO');
-        }
-        else{
-            responsable_id = buscarResponsable[0][0].responsable_id;
-        }
-    }
 
     // crea los datos del tipo de responsable
     if(tipo === 'funcional'){
         const datos_tipo_responsable = await pool.query(
-            `INSERT INTO responsables_funcionales (aplicacion_id,responsable_id) VALUES (?,?)`,[id,responsable_id]
-        );
+            `INSERT INTO responsables_funcionales (aplicacion_id,responsable_id) VALUES (?,?)`,[id,responsable_id]);
         console.log('FUNCIONAL REGISTRADO');
     }
     else if(tipo === 'tecnico'){
         const datos_tipo_responsable = await pool.query(
-            `INSERT INTO responsables_tecnicos (aplicacion_id,responsable_id) VALUES (?,?)`,[id,responsable_id]
-        );
+            `INSERT INTO responsables_tecnicos (aplicacion_id,responsable_id) VALUES (?,?)`,[id,responsable_id]);
         console.log('TECNICO REGISTRADO');
     }
 
@@ -161,7 +128,6 @@ const insertarResponsable = async (tipo,id,select_responsable,nombre,apellido,in
 }
 
 const insertarMantenimiento = async (id,frecuencia,horas_prom,horas_anuales) => {
-    // registra un nuevo mantenimiento
     const datos_man = await pool.query(
         `INSERT INTO mantenimientos 
         (aplicacion_id,man_frecuencia,man_horas_prom,man_horas_anuales)

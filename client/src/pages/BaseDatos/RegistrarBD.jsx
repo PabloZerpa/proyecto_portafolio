@@ -23,17 +23,8 @@ function RegistrarBD() {
     const [opcionAmbientes, setOpcionAmbientes] = useState('');
 
     const [datos, setDatos] = useState({
-        base_datos: '',
-        estatus: '',
-        tipo: '',
-        manejador: '',
-        version_manejador: '',
-        tipo_ambiente: '',
-        cantidad_usuarios: '',
         usuario_registro: Autorizacion.obtenerUsuario().indicador,
         usuario_actualizo: Autorizacion.obtenerUsuario().indicador,
-
-        select_servidor: '',
     });
 
     async function getData(ruta, elemento){
@@ -57,7 +48,6 @@ function RegistrarBD() {
     }, []);
 
     const handleInputChange = (e) => {
-        console.log(e.target.value);
         if(e.target.value === 'TODAS')
             setDatos({ ...datos, [e.target.name] : null })
         else
@@ -77,7 +67,6 @@ function RegistrarBD() {
             }
         }
         catch (error) { 
-            console.log('ERROR AL ACTUALIZAR APL_ACT'); 
             Notificacion('ERROR AL REGISTRAR', 'error');
         }
     }
@@ -87,9 +76,7 @@ function RegistrarBD() {
     const [tableDataServidor, setDataServidor] = useState([]);
 
     const obtenerSeleccionesServidor = (respuesta) => {
-        console.log(respuesta);
         setSelectServidor(select_servidor.push(respuesta));
-        console.log(select_servidor[0]);
 
         for (let i = 0; i < respuesta.length; i++) {
             const x = respuesta[i];
@@ -98,7 +85,6 @@ function RegistrarBD() {
     };
 
     const eliminarElemento = (row, elemento, tabla, setTabla) => {
-		console.log(row);
         if (window.confirm(`Estas seguro de eliminar: ${row[elemento]}?`)) {
             const nuevo = tabla.filter((i) => i[elemento] != row[elemento]);
             setTabla(nuevo);
@@ -156,12 +142,14 @@ function RegistrarBD() {
 
             <h1 className='font-bold text-lg'>Registro de Base de datos</h1>
 
-            <form className="flex flex-col relative w-3/4 bg-zinc-400 p-4 pb-24 mb-10 rounded drop-shadow-md" onSubmit={createData}>
+            <form className="flex flex-col justify-content items-center space-y-4 relative w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" onSubmit={createData}>
                 <h2 className='font-bold text-base mb-6'>Informacion General</h2>
 
-                <TextArea campo='Nombre' name='base_datos' editable={true} area={true} manejador={handleInputChange} />
+                <div className='w-full'>
+                    <TextArea campo='Nombre' name='base_datos' editable={true} area={true} manejador={handleInputChange} />
+                </div>
 
-                <div className="relative grid grid-cols-2 gap-4 mb-0">
+                <div className="w-full grid grid-cols-1 md:grid-cols-2 relative space-x-4 mb-0">
                     <Select campo='Estatus' name='estatus' required={true} opciones={opcionEstatus ? opcionEstatus : ['SELECCIONE']} manejador={handleInputChange}/>
                     <Select campo='Tipo' name='tipo' required={true} opciones={opcionTipos ? opcionTipos : ['SELECCIONE']} manejador={handleInputChange} />
                     <Select campo='Manejador' name='manejador' required={true} opciones={opcionMane ? opcionMane : ['SELECCIONE']} manejador={handleInputChange} />
@@ -172,7 +160,7 @@ function RegistrarBD() {
 
                 {/* --------------- SERVIDOR --------------- */}
                 <p className='font-bold text-sm my-4'>Servidor</p>
-                    <div className='flex flex-col justify-center items-center gap-4'>
+                    <div className='w-full flex flex-col justify-center items-center space-y-4'>
 
                         <button type='button' className="p-1 bg-blue-600 text-white rounded" 
                             onClick={(e) => {setIsOpen(!isOpen)}} >
@@ -184,10 +172,8 @@ function RegistrarBD() {
                     </div>
                 </div>
                     
-                <div className="absolute bottom-4 right-1/3">
+                <div className="flex space-x-2 md:space-x-12 mt-12">
                     <Button tipo='submit' color='blue' width={32}>Registrar</Button>
-                </div>
-                <div className="absolute bottom-4 left-1/3">
                     <Button tipo='button' color='blue' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
                 </div>
 

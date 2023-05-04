@@ -13,12 +13,12 @@ function Dropdown({ user }) {
     <div className="flex">
 
       <div 
-        className="relative text-black bg-transparent gap-2 mr-6 font-medium flex justify-center items-center cursor-pointer" 
+        className="relative text-black bg-transparent space-x-2 mr-6 font-medium flex justify-center items-center cursor-pointer" 
         onClick={openMenu} >
 
           <FaUserCircle className="text-blue-500 text-5xl pointer" />
 
-          <div className="flex flex-col justify-center items-center gap-0" >
+          <div className="flex flex-col justify-center items-center" >
             <div className="text-lg" >{user.indicador}</div>
             <div className="text-base text-zinc-500" >{user.rol}</div>
           </div>
@@ -26,7 +26,7 @@ function Dropdown({ user }) {
 
           <div style={open ? {display: 'block'} : {display: 'none'}} className="z-1 absolute top-16 bg-zinc-300 divide-y divide-gray-100 rounded-lg shadow w-44">
               <ul className="m-0 p-0 text-sm text-center list-none text-gray-700">
-                <Link className="flex justify-center items-center gap-2 px-2 py-2 text-black no-underline rounded-sm hover:bg-blue-400" onClick={Autorizacion.logout} to="/" >
+                <Link className="flex justify-center items-center space-x-2 px-2 py-2 text-black no-underline rounded-sm hover:bg-blue-400" onClick={Autorizacion.logout} to="/" >
                   <FaSignOutAlt className="text-lg cursor-pointer" />Cerrar Sesion
                 </Link>
                 

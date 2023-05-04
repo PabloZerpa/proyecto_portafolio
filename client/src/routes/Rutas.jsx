@@ -4,7 +4,6 @@ import { Protegida, ProtegidaAdm, ProtegidaSuper } from "./Protegida";
 import { 
   Login, 
   Dashboard,
-  ActualizarCampo,
   ActualizarApp,
   Registrar,
   RegistrarApp,
@@ -22,7 +21,9 @@ import {
   ActualizarBD,
   Servidores,
   RegistrarServidor,
-  RegistrarRespon
+  RegistrarRespon,
+  VerServidor,
+  ActualizarServidor
 } from '../pages';
 
 function Rutas() {
@@ -49,7 +50,6 @@ function Rutas() {
 
             <Route element={<ProtegidaSuper />} >
               {/* ADMINISTRACION POR CAMPO Y ACTUALIZACION POR ID PUEDEN ACCERDER SUPERUSER Y ADMIN */}
-              <Route path="/administracion" element={<ActualizarCampo />} />
               <Route path="/administracion/actualizacion/:id" element={<ActualizarApp />} />
 
               <Route path="/administracion/registro" element={<Registrar />} />
@@ -68,10 +68,14 @@ function Rutas() {
               
             {/* MODULO DE BASE DE DATOS */}
             <Route path="/basedatos" element={<BaseDatos />} />
+            <Route path="/servidores" element={<Servidores />} />
+
             <Route path="/basedatos/:id" element={<VerBD />} />
+            <Route path="/servidor/:id" element={<VerServidor />} />
+
             {/* <Route path="/basedatos/registro" element={<RegistrarBD />} /> */}
             <Route path="/basedatos/actualizacion/:id" element={<ActualizarBD />} />
-            <Route path="/servidores" element={<Servidores />} />
+            <Route path="/servidor/actualizacion/:id" element={<ActualizarServidor />} />
             
           </Route> 
 

@@ -7,7 +7,6 @@ class Aplicacion {
 
     // ---------------- CREATE DE LA INFO DE NUEVA APP ------------------
     async crearDatos(datos, lenguajes, bases, servidores) {
-        console.log(datos, lenguajes, bases, servidores);
 
         let datosServidor = datos;
         datosServidor.select_lenguaje = lenguajes;
@@ -21,13 +20,16 @@ class Aplicacion {
     }
 
     // ---------------- UPDATE DE TODOS LOS DATOS ------------------
-    async actualizarDatos(id, datosModificacion) {
-        console.log('AFUERA DE ACTUALIZAR DATOS SERVICE');
-        console.log(id);
+    async actualizarDatos(id, datos, lenguajes, bases, servidores) {
         try { 
-            console.log('EN EL TRY DE ACTUALIZAR DATOS SERVICE');
-            const respuesta = await axios.put(`${baseUrl}aplicaciones/${id}`, datosModificacion, { headers: authHeader() });
-            console.log('DESPUES DE ACTUALIZAR DATOS SERVICE');
+
+            let datosServidor = datos;
+            datosServidor.select_lenguaje = lenguajes;
+            datosServidor.select_base = bases;
+            datosServidor.select_servidor = servidores;
+            console.log(datosServidor);
+            
+            const respuesta = await axios.put(`${baseUrl}aplicaciones/${id}`, datosServidor, { headers: authHeader() });
             return respuesta;
         } catch (error) {
             console.log('ERROR AL ACTUALIZAR auth.service');
@@ -39,8 +41,6 @@ class Aplicacion {
     async actualizarDato(id, datoModificacion) {
         try { 
             const id = datoModificacion.edicion;
-            console.log(id);
-            console.log(datoModificacion);
             const respuesta = await axios.patch(`${baseUrl}aplicaciones/${id}`, datoModificacion, { headers: authHeader() });
             return respuesta;
         } catch (error) {
@@ -73,7 +73,6 @@ class Aplicacion {
             console.log(error.response.data); 
             //Autorizacion.logout();
         }
-        //return axios.get(`${baseUrl}aplicaciones`, { headers: this.authHeader() });
     }
 
     // =============== OBTIENE EL DATO DE UNA APP POR SU ID ===============
@@ -90,7 +89,6 @@ class Aplicacion {
     // =============== OBTIENE EL DATO DE UNA APP POR SU ID ===============
     async obtenerDato(id) {
         try {
-            console.log(`OBTENIENDO DATO: ${id}`)
             const respuesta = await axios.get(`${baseUrl}aplicaciones/${id}`, { headers: authHeader() });
             return respuesta;
         } catch (error) {
@@ -111,8 +109,6 @@ class Aplicacion {
 
     // =============== OBTIENE LOS DATOS PARA GENERAR LOS GRAFICOS ===============
     async datosGraficos(categoria,orden) {
-        //console.log(categoria);
-        //console.log(orden);
         try {
             return axios.post(`${baseUrl}aplicaciones/grafico`, {categoria,orden}, { headers: authHeader() });
         } catch (error) {
@@ -125,12 +121,8 @@ class Aplicacion {
     async obtenerPorBusqueda(term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
         critico,codigo,count,order,pagina) {
         try {
-            //console.log('OBTENER_BUSQUEDA PAGINA: :' + pagina);
-            console.log(term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
-                critico,codigo,count,order,pagina);
-
             return axios.post(`${baseUrl}aplicaciones/busqueda`, 
-            {term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
+                {term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
                 critico,codigo,count,order,pagina}, { headers: authHeader() });
         } catch (error) {
             console.log('Error al obtener dato');
@@ -197,7 +189,6 @@ class Aplicacion {
     async obtenerGeneral(id) { 
         try { 
             const respuesta = await axios.get(`${baseUrl}aplicaciones/general/${id}`, { headers: authHeader() });
-            //console.log(respuesta);
             return respuesta;
         } catch (error) {
             console.log('Error al obtener datos'); 
@@ -209,7 +200,6 @@ class Aplicacion {
     async obtenerTecnologia(id) { 
         try { 
             const respuesta = await axios.get(`${baseUrl}aplicaciones/tecnologia/${id}`, { headers: authHeader() });
-            console.log(respuesta);
             return respuesta;
         } catch (error) {
             console.log('Error al obtener datos'); 

@@ -1,8 +1,17 @@
 
 const pool = require('../config');
 
-const { insertarAplicacion, insertarPlataforma, insertarLenguaje, insertarFramework, 
-        insertarMantenimiento, insertarDocumentacion, insertarServidor, insertarBase, insertarResponsable } = require('../helpers/verificaciones');
+const { 
+    insertarAplicacion, 
+    insertarPlataforma, 
+    insertarLenguaje, 
+    insertarFramework, 
+    insertarMantenimiento, 
+    insertarDocumentacion, 
+    insertarServidor, 
+    insertarBase, 
+    insertarResponsable 
+} = require('../helpers/verificaciones');
         
 const query = `
     SELECT 
@@ -14,7 +23,8 @@ const query = `
         LEFT JOIN prioridades ON aplicaciones.apl_prioridad = prioridades.prioridad_id
         LEFT JOIN alcances ON aplicaciones.apl_alcance = alcances.alcance_id
         LEFT JOIN regiones ON aplicaciones.apl_region = regiones.region_id
-        LEFT JOIN mantenimientos ON aplicaciones.aplicacion_id = mantenimientos.aplicacion_id`;
+        LEFT JOIN mantenimientos ON aplicaciones.aplicacion_id = mantenimientos.aplicacion_id
+`;
 
 
 /* 
@@ -27,14 +37,14 @@ const query = `
 const obtenerDatos = async (req,res) => {
     try {
         const data = await pool.query(`
-            SELECT 
-                aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,
-                estatus,apl_direccion,
-                DATE_FORMAT (apl_fecha_actualizacion, '%d-%m-%Y %H:%i') as apl_fecha_actualizacion, indicador
-            FROM aplicaciones 
-                JOIN estatus ON aplicaciones.apl_estatus = estatus.estatus_id
-                JOIN usuarios ON aplicaciones.apl_usuario_actualizo = usuarios.usuario_id
-            ORDER BY apl_fecha_actualizacion DESC LIMIT 5;
+        SELECT 
+            aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,
+            estatus,apl_direccion,
+            DATE_FORMAT (apl_fecha_actualizacion, '%d-%m-%Y %H:%i') as apl_fecha_actualizacion, indicador
+        FROM aplicaciones 
+            JOIN estatus ON aplicaciones.apl_estatus = estatus.estatus_id
+            JOIN usuarios ON aplicaciones.apl_usuario_actualizo = usuarios.usuario_id
+        ORDER BY aplicaciones.apl_fecha_actualizacion DESC LIMIT 5;
         `);
         res.send(data[0]);
     } catch (error) {
@@ -44,6 +54,127 @@ const obtenerDatos = async (req,res) => {
 
 // *********************************** OBTENER DATOS POR ID ***********************************
 const obtenerDato = async (req,res) => {
+    try {
+        const { id } = req.params;
+
+        const general = await pool.query(`
+            SELECT 
+                aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_descripcion,
+                estatus,prioridad,apl_critico,alcance,apl_codigo_fuente,
+                apl_version,apl_direccion,apl_cantidad_usuarios,region,
+                DATE_FORMAT (apl_fecha_actualizacion, '%d-%m-%Y %H:%i') as apl_fecha_actualizacion,
+                man_frecuencia, man_horas_prom, man_horas_anuales, 
+            FROM aplicaciones
+                LEFT JOIN estatus ON aplicaciones.apl_estatus = estatus.estatus_id
+                LEFT JOIN prioridades ON aplicaciones.apl_prioridad = prioridades.prioridad_id
+                LEFT JOIN alcances ON aplicaciones.apl_alcance = alcances.alcance_id
+                LEFT JOIN regiones ON aplicaciones.apl_region = regiones.region_id
+                LEFT JOIN mantenimientos ON aplicaciones.aplicacion_id = mantenimientos.aplicacion_id
+            WHERE aplicaciones.aplicacion_id = ?;`, [id]);
+
+        const plataformas = await pool.query(`
+            SELECT plataforma
+            FROM aplicaciones
+                JOIN aplicacion_plataforma ON aplicaciones.aplicacion_id = aplicacion_plataforma.aplicacion_id
+                JOIN plataformas ON aplicacion_plataforma.plataforma_id = plataformas.plataforma_id
+            WHERE aplicaciones.aplicacion_id = ?`, 
+        [id]);
+
+        const lenguajes = await pool.query(` 
+            SELECT 
+                lenguajes.lenguaje_id, lenguaje
+            FROM aplicaciones
+                JOIN aplicacion_lenguaje ON aplicaciones.aplicacion_id = aplicacion_lenguaje.aplicacion_id
+                JOIN lenguajes ON aplicacion_lenguaje.lenguaje_id = lenguajes.lenguaje_id
+            WHERE aplicaciones.aplicacion_id = ?;`, 
+        [id]);
+
+        const basedatos = await pool.query(`
+            SELECT 
+                bases_datos.base_datos_id, base_datos, bas_estatus, 
+                tipo, manejador, tipo_ambiente,
+                bas_cantidad_usuarios, servidor, bas_fecha_actualizacion, servidores.servidor_id
+            FROM aplicaciones
+                JOIN aplicacion_basedatos ON aplicaciones.aplicacion_id = aplicacion_basedatos.aplicacion_id
+                JOIN bases_datos ON bases_datos.base_datos_id = aplicacion_basedatos.base_datos_id
+                JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.bas_tipo
+                JOIN manejadores ON manejadores.manejador_id = bases_datos.bas_manejador
+                JOIN tipos_ambientes ON tipos_ambientes.tipo_ambiente_id = bases_datos.bas_tipo_ambiente
+                JOIN basedatos_servidor ON bases_datos.base_datos_id = basedatos_servidor.base_datos_id
+                JOIN servidores ON servidores.servidor_id = basedatos_servidor.servidor_id
+            WHERE aplicaciones.aplicacion_id =?;`, [id]);
+
+        const servidores = await pool.query(`
+            SELECT 
+                servidores.servidor_id,servidor,ser_estatus,ser_direccion,sistema,modelo,marca,
+                region,localidad,ser_fecha_actualizacion
+            FROM aplicaciones
+                    JOIN aplicacion_servidor ON aplicaciones.aplicacion_id = aplicacion_servidor.aplicacion_id
+                    JOIN servidores ON aplicacion_servidor.servidor_id = servidores.servidor_id
+                    JOIN sistemas_operativos ON sistemas_operativos.sistema_id = servidores.ser_sistema
+                    JOIN modelos ON modelos.modelo_id = servidores.ser_modelo
+                    JOIN marcas ON marcas.marca_id = modelos.mod_marca
+                    JOIN regiones ON regiones.region_id = servidores.ser_region_id
+                    JOIN localidades ON localidades.localidad_id = servidores.ser_localidad_id
+            WHERE aplicaciones.aplicacion_id = ?;`, 
+            [id]);
+
+            const funcional = await pool.query(`
+            SELECT 
+                res_nombre, res_apellido, res_indicador, res_cedula, cargo, 
+                telefono, gerencia, region, localidad
+            FROM aplicaciones
+                LEFT JOIN responsables_funcionales ON aplicaciones.aplicacion_id = responsables_funcionales.aplicacion_id
+                LEFT JOIN responsables ON responsables.responsable_id = responsables_funcionales.responsable_id 
+                LEFT JOIN telefonos ON responsables.responsable_id = telefonos.responsable_id 
+                LEFT JOIN gerencias ON responsables.res_gerencia_id = gerencias.gerencia_id 
+                LEFT JOIN cargos ON responsables.res_cargo_id = cargos.cargo_id 
+                LEFT JOIN regiones ON responsables.res_region_id = regiones.region_id 
+                LEFT JOIN localidades ON responsables.res_localidad_id = localidades.localidad_id 
+            WHERE aplicaciones.aplicacion_id = ?;`, 
+            [id]);
+            
+        const tecnico = await pool.query(`
+            SELECT 
+                res_nombre, res_apellido, res_indicador, res_cedula, cargo, 
+                telefono, gerencia, region, localidad
+            FROM aplicaciones
+                LEFT JOIN responsables_tecnicos ON aplicaciones.aplicacion_id = responsables_tecnicos.aplicacion_id
+                LEFT JOIN responsables ON responsables.responsable_id = responsables_tecnicos.responsable_id 
+                LEFT JOIN telefonos ON responsables.responsable_id = telefonos.responsable_id 
+                LEFT JOIN gerencias ON responsables.res_gerencia_id = gerencias.gerencia_id 
+                LEFT JOIN cargos ON responsables.res_cargo_id = cargos.cargo_id 
+                LEFT JOIN regiones ON responsables.res_region_id = regiones.region_id 
+                LEFT JOIN localidades ON responsables.res_localidad_id = localidades.localidad_id 
+            WHERE aplicaciones.aplicacion_id = ?;`, 
+            [id]);
+
+        const documentacion = await pool.query(`
+            SELECT 
+                doc_descripcion,doc_direccion,doc_tipo,doc_fecha_actualizacion
+            FROM aplicaciones
+                inner join documentaciones on aplicaciones.aplicacion_id = documentaciones.aplicacion_id
+            WHERE aplicaciones.aplicacion_id = ?;`, 
+            [id]); 
+            
+        const respuestas = {
+            general: general[0],
+            plataformas: plataformas[0],
+            lenguajes: lenguajes[0],
+            basedatos: basedatos[0],
+            servidores: servidores[0],
+            funcional: funcional[0],
+            tecnico: tecnico[0],
+            documentacion: documentacion[0],
+        }
+
+        res.send(respuestas);
+
+
+        //res.send(general[0]);
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+    }
 };
 
 // *********************************** OBTENER LOS DATOS POR TERMINO DE BUSQUEDA ***********************************
@@ -53,6 +184,8 @@ const obtenerBusqueda = async (req,res) => {
                 critico,codigo,count,order,pagina } = req.body;
         const termino = '%' + term + '%';
         let data;
+
+        console.log(termino);
 
         if (term === undefined || null)
             return res.status(404).json({ message: "Error al recibir consulta" });
@@ -255,17 +388,13 @@ const registrarResponsable = async (req,res) => {
         const { nombre,apellido,indicador,cedula,telefono,cargo,gerencia,region,localidad,usuario_registro } = req.body;
         console.log( nombre,apellido,indicador,cedula,telefono,cargo,gerencia,region,localidad,usuario_registro );
 
-        // const x = await pool.query(`SELECT usuario_id FROM usuarios WHERE indicador = ?`, [usuario]); 
-        // const usuario_id = x[0][0].usuario_id
-
         const query = await pool.query(`SELECT responsable_id FROM responsables WHERE res_indicador = ?`, [indicador]); 
-        const res = query[0][0];
-        console.log(res);
+        const respon = query[0][0];
 
         // ****************************** VERIFICA QUE LA RESPONSABLE NO EXISTA ******************************
-        if(res){
+        if(respon){
             console.log('ERROR, RESPONSABLE YA EXISTE');
-            return res.status(401).json({ message: 'ERROR, RESPONSABLE YA EXISTE' });
+            return respon.status(401).json({ message: 'ERROR, RESPONSABLE YA EXISTE' });
         }
         else{
             const data = await pool.query(`
@@ -273,12 +402,19 @@ const registrarResponsable = async (req,res) => {
                     (res_nombre,res_apellido,res_indicador,res_cedula,res_cargo_id,res_gerencia_id,res_region_id,res_localidad_id)
                 VALUES
                     (?,?,?,?,?,?,?,?);`, 
-                [nombre,apellido,indicador,cedula,cargo,gerencia,region,localidad]); 
+                [nombre,apellido,indicador,cedula,cargo,gerencia,region,localidad]);
+
+            const buscarResponsable = await pool.query(
+                `SELECT responsable_id FROM responsables WHERE res_indicador = ?`, [indicador]);
+            let responsable_id = buscarResponsable[0][0].responsable_id;
+
+            const datos_telefono = await pool.query( 
+                `INSERT INTO telefonos (responsable_id,telefono) VALUES (?,?)`, [responsable_id,telefono] );
                     
-            console.log('RESPONSABLE REGISTRADO CORRECTAMENTE');
+            // console.log('RESPONSABLE REGISTRADO CORRECTAMENTE');
         }
 
-        res.send('RESPONSABLE REGISTRADO CORRECTAMENTE');
+        res.json('RESPONSABLE REGISTRADO CORRECTAMENTE');
 
     } catch (error) {
         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
@@ -300,35 +436,13 @@ const crearAplicacion = async (req,res) => {
             apl_acronimo,apl_nombre,apl_descripcion,apl_region,
             apl_version,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
             apl_codigo_fuente,apl_direccion,apl_cantidad_usuarios,apl_usuario_registro,
-            plataforma,lenguaje1,lenguaje2,lenguaje3,  
-            version1, version2, version3,
-            framework1,framework2,framework3, 
-            select_lenguaje, select_base, select_servidor,
+            plataforma,
             man_frecuencia,man_horas_prom,man_horas_anuales, 
             doc_descripcion,doc_tipo, doc_direccion,
- 
-            select_funcional, select_tecnico,
-            funcional_nombre,funcional_apellido,funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
-            funcional_gerencia,funcional_region,funcional_localidad,
-            tecnico_nombre,tecnico_apellido,tecnico_indicador,tecnico_cedula,tecnico_cargo,tecnico_telefono,
-            tecnico_gerencia,tecnico_region,tecnico_localidad,
-        } = req.body;
-
-        console.log(apl_acronimo,apl_nombre,apl_descripcion,apl_region,
-            apl_version,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
-            apl_codigo_fuente,apl_direccion,apl_cantidad_usuarios,apl_usuario_registro,
-            plataforma,lenguaje1,lenguaje2,lenguaje3, 
-            version1, version2, version3,
-            framework1,framework2,framework3, 
+            
             select_lenguaje, select_base, select_servidor,
-            man_frecuencia, man_horas_prom,man_horas_anuales, 
-            doc_descripcion, doc_tipo, doc_direccion,
- 
-            select_funcional, select_tecnico,
-            funcional_nombre,funcional_apellido,funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
-            funcional_gerencia,funcional_region,funcional_localidad,
-            tecnico_nombre,tecnico_apellido,tecnico_indicador,tecnico_cedula,tecnico_cargo,tecnico_telefono,
-            tecnico_gerencia,tecnico_region,tecnico_localidad);
+            select_funcional, select_tecnico
+        } = req.body;
         
 
         const query = await pool.query(
@@ -343,13 +457,6 @@ const crearAplicacion = async (req,res) => {
         }
         else{
 
-            if(!select_lenguaje[0])
-                return res.status(401).json({ message: 'ERROR, NINGUN LENGUAJE SELECCIONADO' });
-            if(!select_servidor[0])
-                return res.status(401).json({ message: 'ERROR, SERVIDOR SIN SELECCIONAR' });
-            if(!select_base[0])
-                return res.status(401).json({ message: 'ERROR, BASE DE DATOS SIN SELECCIONAR' });
-
             const aplicacion_id = await insertarAplicacion(
                 apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
                 apl_codigo_fuente,apl_version,apl_direccion,apl_cantidad_usuarios,apl_region,
@@ -360,19 +467,15 @@ const crearAplicacion = async (req,res) => {
             
             await insertarLenguaje(aplicacion_id, select_lenguaje);    
             
-            if(framework1 || framework2 || framework3)
-                await insertarFramework(aplicacion_id, framework1, framework2, framework3);
+            //if(framework1 || framework2 || framework3)
+                //await insertarFramework(aplicacion_id, framework1, framework2, framework3);
 
             await insertarServidor(aplicacion_id,select_servidor);
             await insertarBase(aplicacion_id,select_base);
 
-            await insertarResponsable('funcional',aplicacion_id,select_funcional,funcional_nombre,funcional_apellido,
-                funcional_indicador,funcional_cedula,funcional_cargo,funcional_telefono,
-                funcional_gerencia,funcional_region,funcional_localidad);
+            await insertarResponsable('funcional',aplicacion_id,select_funcional);
                 
-            await insertarResponsable('tecnico',aplicacion_id,select_tecnico,tecnico_nombre,tecnico_apellido,
-                tecnico_indicador,tecnico_cedula,tecnico_cargo,tecnico_telefono,
-                tecnico_gerencia,tecnico_region,tecnico_localidad);
+            await insertarResponsable('tecnico',aplicacion_id,select_tecnico);
 
             await insertarMantenimiento(aplicacion_id,man_frecuencia,man_horas_prom,man_horas_anuales);          
             await insertarDocumentacion(aplicacion_id,doc_descripcion,doc_direccion,doc_tipo);
@@ -390,97 +493,170 @@ const actualizarAplicacion = async (req,res) => {
     try {
         const { id } = req.params;
         const {
-            apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,apl_version,
-            apl_cantidad_usuarios,apl_critico,apl_direccion,apl_codigo_fuente,apl_alcance,
-            apl_region,apl_fecha_registro,plataforma,lenguaje,framework,indicador_funcional,indicador_tecnico,
-            select_servidor,select_base,
-            doc_descripcion,doc_direccion,doc_tipo,
-            man_frecuencia,man_horas_prom,man_horas_anuales
+            apl_acronimo,apl_nombre,apl_descripcion,apl_region,
+            apl_version,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
+            apl_codigo_fuente,apl_direccion,apl_cantidad_usuarios,usuario_actualizo,
+            plataforma,
+            man_frecuencia,man_horas_prom,man_horas_anuales, 
+            doc_descripcion,doc_tipo, doc_direccion,
+            
+            select_lenguaje, select_base, select_servidor,
+            select_funcional, select_tecnico
         } = req.body;
 
-        const datos = await pool.query(`
-            UPDATE aplicaciones 
-                JOIN mantenimientos ON aplicaciones.aplicacion_id = mantenimientos.aplicacion_id
-                JOIN documentaciones ON mantenimientos.aplicacion_id = aplicaciones.aplicacion_id
-                JOIN aplicacion_plataforma ON aplicaciones.aplicacion_id = aplicacion_plataforma.aplicacion_id
-                JOIN plataformas ON aplicacion_plataforma.plataforma_id = plataformas.plataforma_id
-            SET 
-                apl_acronimo = ?,apl_nombre = ?,apl_descripcion = ?,apl_estatus = ?,
-                apl_prioridad = ?,apl_critico = ?,apl_direccion = ?,apl_codigo_fuente = ?,
-                apl_alcance = ?,apl_version = ?,apl_cantidad_usuarios = ?,
-                apl_region = (SELECT region_id FROM regiones WHERE region = ?),
-                man_frecuencia = ?, man_horas_prom = ?, man_horas_anuales = ?,
-                doc_descripcion = ?, doc_direccion = ?, doc_tipo = ?
-            WHERE aplicaciones.aplicacion_id = ?;`,
-            [
-                apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,apl_critico,
-                apl_direccion,apl_codigo_fuente,apl_alcance,apl_version,apl_cantidad_usuarios,
-                apl_region,man_frecuencia,man_horas_prom,man_horas_anuales,doc_descripcion,
-                doc_direccion,doc_tipo,id
-            ]
-        );
-        console.log('GENERAL ACTUALIZADO');
+        console.log(apl_acronimo,apl_nombre,apl_descripcion,apl_region,
+            apl_version,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
+            apl_codigo_fuente,apl_direccion,apl_cantidad_usuarios,usuario_actualizo,
+            plataforma,
+            man_frecuencia,man_horas_prom,man_horas_anuales, 
+            doc_descripcion,doc_tipo, doc_direccion,
+            select_lenguaje, select_base, select_servidor,
+            select_funcional, select_tecnico);
+ 
+        const query = await pool.query(`SELECT * FROM aplicaciones WHERE apl_acronimo = ? OR apl_nombre = ?`,
+            [apl_acronimo,apl_nombre]);
+        const app = query[0][0];
 
-        const pla = await pool.query(`
-            UPDATE aplicacion_plataforma
-            SET aplicacion_plataforma.plataforma_id = (SELECT plataforma_id FROM plataformas WHERE plataforma = ?)
-            WHERE aplicacion_plataforma.aplicacion_id = ?;`,
-            [plataforma,id]
-        );
-        console.log('PLATAFORMA ACTUALIZADO');
+        if(app){
+            console.log('ERROR, ACRONIMO/NOMBRE YA OCUPADO');
+            return res.status(401).json({ message: 'ACRONIMO/NOMBRE YA OCUPADO' });
+        }
+        else{
 
-        const len = await pool.query(`
-            UPDATE aplicacion_lenguaje
-            SET aplicacion_lenguaje.lenguaje_id = (SELECT lenguaje_id FROM lenguajes WHERE lenguaje = ?)
-            WHERE aplicacion_lenguaje.aplicacion_id = ? AND aplicacion_lenguaje.lenguaje_id = 5;`,
-            [lenguaje,id]
-        );
-        console.log('LENGUAJE ACTUALIZADO');
+            // ============= UPDATE DE LOS DATOS GENERALES =============
+            const datos = await pool.query(`
+                UPDATE aplicaciones 
+                SET 
+                    apl_acronimo = ?,apl_nombre = ?,apl_descripcion = ?,
+                    apl_estatus = (SELECT estatus_id FROM estatus WHERE estatus = ?),
+                    apl_prioridad = (SELECT prioridad_id FROM prioridades WHERE prioridad = ?),
+                    apl_critico = ?,apl_direccion = ?,apl_codigo_fuente = ?,
+                    apl_alcance = (SELECT alcance_id FROM alcances WHERE alcance = ?),
+                    apl_version = ?,apl_cantidad_usuarios = ?,
+                    apl_region = (SELECT region_id FROM regiones WHERE region = ?), 
+                    apl_fecha_actualizacion = now(), 
+                    apl_usuario_actualizo = (SELECT usuario_id FROM usuarios WHERE indicador = ?)
+                WHERE aplicaciones.aplicacion_id = ?;`,
+                [
+                    apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,apl_critico,
+                    apl_direccion,apl_codigo_fuente,apl_alcance,apl_version,apl_cantidad_usuarios,
+                    apl_region,usuario_actualizo,id
+                ]
+            );
+            console.log('GENERAL ACTUALIZADO');
+    
+            // ============= UPDATE DE LA PLATAFORMA =============
+            if(plataforma){
+                const pla = await pool.query(`
+                    UPDATE aplicacion_plataforma
+                    SET aplicacion_plataforma.plataforma_id = 
+                        (SELECT plataforma_id FROM plataformas WHERE plataforma = ?)
+                    WHERE aplicacion_plataforma.aplicacion_id = ?;`,
+                    [plataforma,id]
+                );
+                console.log('PLATAFORMA ACTUALIZADO');
+            }
+    
+    
+            // // ============= UPDATE DE LOS LENGUAJES =============
+            // for (const element of select_lenguaje) {
+    
+            //     const datos_len = await pool.query(
+            //         `UPDATE aplicacion_lenguaje
+            //         SET aplicacion_lenguaje.lenguaje_id = ?
+            //         WHERE aplicacion_lenguaje.aplicacion_id = 8 AND aplicacion_lenguaje.lenguaje_id = 1;`,
+            //     [element.lenguaje_id, ]); 
+            // }
+            // const len = await pool.query(`
+            //     UPDATE aplicacion_lenguaje
+            //     SET aplicacion_lenguaje.lenguaje_id = (SELECT lenguaje_id FROM lenguajes WHERE lenguaje = ?)
+            //     WHERE aplicacion_lenguaje.aplicacion_id = ? AND aplicacion_lenguaje.lenguaje_id = 5;`,
+            //     [lenguaje,id]
+            // );
+            // console.log('LENGUAJE ACTUALIZADO');
+    
+    
+            // // ============= UPDATE DE LOS FRAMEWORK =============
+            // const fra = await pool.query(`
+            //     UPDATE aplicacion_framework
+            //     SET aplicacion_framework.framework_id = (SELECT framework_id FROM frameworks WHERE framework = ?)
+            //     WHERE aplicacion_framework.aplicacion_id = ? AND aplicacion_framework.framework_id = 8;`,
+            //     [framework,id]
+            // );
+            // console.log('FRAMEWORK ACTUALIZADO');
+    
+            // // ============= UPDATE DE LAS BASES DE DATOS =============
+            // const bas = await pool.query(`
+            //     UPDATE aplicacion_basedatos
+            //     SET aplicacion_basedatos.base_datos_id = (SELECT base_datos_id FROM bases_datos WHERE base_datos = ?)
+            //     WHERE aplicacion_basedatos.aplicacion_id = ?;`,
+            //     [select_base,id]
+            // );
+            // console.log('BASE DE DATOS ACTUALIZADO');
+    
+            // // ============= UPDATE DE LOS SERVIDORES =============
+            // const ser = await pool.query(`
+            //     UPDATE aplicacion_servidor
+            //     SET aplicacion_servidor.servidor_id = (SELECT servidor_id FROM servidores WHERE servidor = ?)
+            //     WHERE aplicacion_servidor.aplicacion_id = ?;`,
+            //     [select_servidor,id]
+            // );
+            // console.log('SERVIDOR ACTUALIZADO');
+    
+            // ============= UPDATE DE LOS RESPONSABLES =============
+            if(select_funcional){
+                const fun = await pool.query(`
+                    UPDATE responsables_funcionales
+                    SET responsables_funcionales.responsable_id = 
+                        (SELECT responsable_id FROM responsables WHERE res_indicador = ?)
+                    WHERE responsables_funcionales.aplicacion_id = ?;`,
+                    [select_funcional,id]
+                );
+                console.log('RESPONSABLE FUNCIONAL ACTUALIZADO');
+            }
 
-        const fra = await pool.query(`
-            UPDATE aplicacion_framework
-            SET aplicacion_framework.framework_id = (SELECT framework_id FROM frameworks WHERE framework = ?)
-            WHERE aplicacion_framework.aplicacion_id = ? AND aplicacion_framework.framework_id = 8;`,
-            [framework,id]
-        );
-        console.log('FRAMEWORK ACTUALIZADO');
-
-        const bas = await pool.query(`
-            UPDATE aplicacion_basedatos
-            SET aplicacion_basedatos.base_datos_id = (SELECT base_datos_id FROM bases_datos WHERE base_datos = ?)
-            WHERE aplicacion_basedatos.aplicacion_id = ?;`,
-            [select_base,id]
-        );
-        console.log('BASE DE DATOS ACTUALIZADO');
-
-        const ser = await pool.query(`
-            UPDATE aplicacion_servidor
-            SET aplicacion_servidor.servidor_id = (SELECT servidor_id FROM servidores WHERE servidor = ?)
-            WHERE aplicacion_servidor.aplicacion_id = ?;`,
-            [select_servidor,id]
-        );
-        console.log('SERVIDOR ACTUALIZADO');
-
-        const fun = await pool.query(`
-            UPDATE responsables_funcionales
-            SET responsables_funcionales.responsable_id = 
-                (SELECT responsable_id FROM responsables WHERE res_indicador = ?)
-            WHERE responsables_funcionales.aplicacion_id = ?;`,
-            [indicador_funcional,id]
-        );
-        console.log('RESPONSABLE FUNCIONAL ACTUALIZADO');
-
-        const tec = await pool.query(`
-            UPDATE responsables_tecnicos
-            SET responsables_tecnicos.responsable_id = 
-                (SELECT responsable_id FROM responsables WHERE res_indicador = ?)
-            WHERE responsables_tecnicos.aplicacion_id = ?;`,
-            [indicador_tecnico,id]
-        );
-        console.log('RESPONSABLE TECNICO ACTUALIZADO');
-
-        console.log('ACTUALIZACION EXITOSA');
-        res.json('UPDATE EXITOSO');
+            if(select_tecnico){
+                const tec = await pool.query(`
+                    UPDATE responsables_tecnicos
+                    SET responsables_tecnicos.responsable_id = 
+                        (SELECT responsable_id FROM responsables WHERE res_indicador = ?)
+                    WHERE responsables_tecnicos.aplicacion_id = ?;`,
+                    [select_tecnico,id]
+                );
+                console.log('RESPONSABLE TECNICO ACTUALIZADO');
+            }
+    
+            // ============= UPDATE DE LOS DATOS GENERALES =============
+            if(doc_descripcion || doc_direccion || doc_tipo){
+                const doc = await pool.query(`
+                    UPDATE documentaciones 
+                        JOIN aplicaciones ON aplicaciones.aplicacion_id = documentaciones.aplicacion_id
+                    SET 
+                        doc_descripcion = ?, doc_direccion = ?, doc_tipo = ?, doc_fecha_actualizacion = now(), 
+                        doc_usuario_actualizo = (SELECT usuario_id FROM usuarios WHERE indicador = ?)
+                    WHERE aplicaciones.aplicacion_id = ?;`,
+                    [doc_descripcion,doc_direccion,doc_tipo,usuario_actualizo,id]
+                );
+                console.log('DOCUMENTACION ACTUALIZADA');
+            }
+    
+            // ============= UPDATE DE LOS DATOS GENERALES =============
+            if(man_frecuencia || man_horas_prom || man_horas_anuales){
+                const man = await pool.query(`
+                    UPDATE mantenimientos 
+                        JOIN aplicaciones ON aplicaciones.aplicacion_id = mantenimientos.aplicacion_id
+                    SET 
+                        man_frecuencia = ?, man_horas_prom = ?, man_horas_anuales = ?
+                    WHERE aplicaciones.aplicacion_id = ?;`,
+                    [man_frecuencia,man_horas_prom,man_horas_anuales,id]
+                );
+                console.log('MANTENIMIENTOS ACTUALIZADA');
+            }
+    
+    
+            console.log('ACTUALIZACION EXITOSA');
+            res.json('UPDATE EXITOSO');
+        }
 
     } catch (error) {  
         console.log("ERROR_UPDATE_ITEMS");
@@ -591,10 +767,10 @@ const obtenerPorGraficos = async (req,res) => {
         let cantidad = [];
 
         console.log(categoria,orden);
- 
+
         if (categoria === undefined || null)
             return res.status(404).json({ message: "Error al recibir consulta" });
-         
+
         const query = await pool.query( `SELECT ${categoria} FROM apps`);
         regiones = query[0]; 
         console.log(regiones);
@@ -642,7 +818,6 @@ const obtenerPorGraficos = async (req,res) => {
 // *********************************** LISTA DE PLATAFORMAS PARA SELECTS ***********************************
 const obtenerPlataformas = async (req,res) => {
     try{
-        console.log('AQUI');
         const data = await pool.query(`SELECT plataformas FROM plataforma`);
         res.send(data[0]);
     }
@@ -655,7 +830,6 @@ const obtenerPlataformas = async (req,res) => {
 const obtenerLenguajes = async (req,res) => {
     try {
         const data = await pool.query(`SELECT lenguaje FROM lenguajes`);
-        console.log(data[0]);
         res.send(data[0]);
     } catch (error) {
         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
@@ -726,7 +900,6 @@ const general = async (req,res) => {
             LEFT JOIN prioridades ON aplicaciones.apl_prioridad = prioridades.prioridad_id
             LEFT JOIN alcances ON aplicaciones.apl_alcance = alcances.alcance_id
             LEFT JOIN regiones ON aplicaciones.apl_region = regiones.region_id
-            LEFT JOIN mantenimientos ON aplicaciones.aplicacion_id = mantenimientos.aplicacion_id
         WHERE aplicaciones.aplicacion_id = ?`, [id]);
 
         res.send(data[0]);
@@ -785,23 +958,20 @@ const basedatos = async (req,res) => {
 
         const data = await pool.query(`
             SELECT 
-                bases_datos.base_datos_id, base_datos, bas_estatus, 
-                tipo, manejador, tipo_ambiente,
-                bas_cantidad_usuarios, servidor, bas_fecha_actualizacion, servidores.servidor_id
+                bases_datos.base_datos_id, base_datos, bas_estatus, bas_cantidad_usuarios, bas_fecha_actualizacion,
+                tipo, manejador, tipo_ambiente
             FROM aplicaciones
                 JOIN aplicacion_basedatos ON aplicaciones.aplicacion_id = aplicacion_basedatos.aplicacion_id
                 JOIN bases_datos ON bases_datos.base_datos_id = aplicacion_basedatos.base_datos_id
                 JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.bas_tipo
                 JOIN manejadores ON manejadores.manejador_id = bases_datos.bas_manejador
                 JOIN tipos_ambientes ON tipos_ambientes.tipo_ambiente_id = bases_datos.bas_tipo_ambiente
-                JOIN basedatos_servidor ON bases_datos.base_datos_id = basedatos_servidor.base_datos_id
-                JOIN servidores ON servidores.servidor_id = basedatos_servidor.servidor_id
-            WHERE aplicaciones.aplicacion_id =?;`, [id]);
+            WHERE aplicaciones.aplicacion_id = ?;`, [id]);
 
         const respuestas = {
             datos: data[0],
         }
-            
+        
         res.send(respuestas);
     } catch (error) {
         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
@@ -827,21 +997,9 @@ const servidor = async (req,res) => {
                     JOIN localidades ON localidades.localidad_id = servidores.ser_localidad_id
             WHERE aplicaciones.aplicacion_id = ?;`, 
             [id]);
-
-        // const modelos = await pool.query(`
-        //     SELECT 
-        //         modelo,mod_marca,mod_serial,
-        //         mod_velocidad_cpu,mod_cantidad_cpu, mod_memoria
-        //     FROM aplicaciones
-        //         JOIN aplicacion_servidor ON aplicaciones.aplicacion_id = aplicacion_servidor.aplicacion_id
-        //         JOIN servidores ON aplicacion_servidor.servidor_id = servidores.servidor_id
-        //         JOIN modelos ON modelos.modelo_id = servidores.ser_modelo
-        //     WHERE aplicaciones.aplicacion_id = ?;`, 
-        //     [id]);
             
         const respuestas = {
-            datos: data[0],
-            //modelos: modelos[0],
+            datos: data[0]
         }
                 
         res.send(respuestas);
@@ -943,4 +1101,4 @@ module.exports = {
     servidor,responsable,
     documentacion,
     registrarResponsable,
- };
+};

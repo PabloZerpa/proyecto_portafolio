@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Container, Button, Select } from "../../components";
+import { Container, Button } from "../../components";
 import { useDebounce } from "use-debounce";
 import { BiLoaderAlt } from "react-icons/bi";
 import Barra from "../../chart/Barra";
@@ -60,9 +60,9 @@ function Diagramas() {
             
             <h2 className='font-bold text-lg'>Generar graficos</h2>
 
-            <form className='grid gap-2 grid-cols-1 p-4 bg-zinc-400 border-solid rounded'>
-                <Radio label='Categoria' name='categoria' opciones={opcionCategoria} manejador={handleInputChange} size='big' />
-                <Radio label='Ordernar' name='orden' opciones={opcionOrden} manejador={handleInputChange} size='big' />
+            <form className='flex flex-col items-center space-y-4 p-4 bg-zinc-400 border-solid rounded'>
+                <Radio label='Categoria' name='categoria' opciones={opcionCategoria} manejador={handleInputChange} size='small' />
+                <Radio label='Ordernar' name='orden' opciones={opcionOrden} manejador={handleInputChange} size='small' />
                 <Button color='blue' manejador={handleSearch}>Generar</Button>
             </form>
 

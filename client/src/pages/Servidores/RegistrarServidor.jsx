@@ -16,19 +16,6 @@ function RegistrarServidor() {
     function navegar(ruta) { navigate(ruta) }
 
     const [datos, setDatos] = useState({
-        servidor: '',
-        estatus: '',
-        direccion: '',
-        sistema: '',
-        version: '',
-        modelo: '',
-        marca: '',
-        serial: '',
-        memoria: '',
-        velocidad: '',
-        cantidad: '',
-        region: '',
-        localidad: '',
         usuario_registro: Autorizacion.obtenerUsuario().indicador,
         usuario_actualizo: Autorizacion.obtenerUsuario().indicador,
 
@@ -70,8 +57,6 @@ function RegistrarServidor() {
 
         if(e.target.name === 'region')
             cambioLocalidad(e.target.value, setOpcion1);
-
-        console.log(datos);
     }
 
     function cambioLocalidad(valor, elemento){
@@ -100,18 +85,17 @@ function RegistrarServidor() {
         e.preventDefault();
 
         try {
-          if(Autorizacion.obtenerUsuario().rol === 'admin'){
+            if(Autorizacion.obtenerUsuario().rol === 'admin'){
             
             await Servidor.crearDatosServidor(datos);
             Notificacion('REGISTRO EXITOSO', 'success');
-            //navigate("/dashboard");
-          }
+            navigate("/dashboard");
+            }
         }
         catch (error) { 
-            console.log('ERROR AL ACTUALIZAR APL_ACT'); 
             Notificacion(error.response.data.message, 'error');
         }
-      }
+    }
 
     if(Autorizacion.obtenerUsuario().rol !== 'admin')
         return <Navigate to='/' />
@@ -120,12 +104,14 @@ function RegistrarServidor() {
         <Container>
             <h1 className='font-bold text-lg'>Registro de Servidor</h1>
 
-            <form className="flex flex-col relative w-3/4 bg-zinc-400 p-4 pb-24 mb-10 rounded drop-shadow-md" onSubmit={createData}>
+            <form className="flex flex-col justify-content items-center space-y-8 relative w-full md:w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" onSubmit={createData}>
                 <h2 className='font-bold text-base mb-6'>Informacion General</h2>
 
-                <TextArea campo='Nombre' name='servidor' required={true} editable={true} manejador={handleInputChange} />
+                <div className='w-full'>
+                    <TextArea campo='Nombre' name='servidor' required={true} editable={true} manejador={handleInputChange} />
+                </div>
 
-                <div className="relative grid grid-cols-2 gap-4 mb-0">
+                <div className="w-full relative grid grid-cols-1 md:grid-cols-2 space-x-4 mb-0">
                     <Select campo='Estatus' name='estatus' required={true} opciones={opcionEstatus ? opcionEstatus : ['SELECCIONE']} manejador={handleInputChange}/>
                     <Input campo='Direccion' name='direccion' required={true} manejador={handleInputChange} />
                     
@@ -143,15 +129,12 @@ function RegistrarServidor() {
                     <Select campo='Localidad' name='localidad' required={true} opciones={opcion1} manejador={handleInputChange} />
                 </div>
                     
-                <div className="absolute bottom-4 right-1/3">
+                <div className="flex space-x-2 md:space-x-12">
                     <Button tipo='submit' color='blue' width={32}>Registrar</Button>
-                </div>
-                <div className="absolute bottom-4 left-1/3">
                     <Button tipo='button' color='blue' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
                 </div>
 
             </form>
-            
 
         </Container>
     )

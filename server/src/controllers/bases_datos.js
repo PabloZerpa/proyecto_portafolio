@@ -102,17 +102,23 @@ const obtenerBusqueda = async (req,res) => {
             [termino,termino,ambiente]);
         }
         else{
-            data = await pool.query(`
+            if(term===' '){
+                data = await pool.query(`
+                ${query}
+                ORDER BY bases_datos.base_datos_id ${orden ? orden : 'ASC'}`);
+            }
+            else{
+                data = await pool.query(`
                 ${query}
                 WHERE 
                     (bases_datos.base_datos_id LIKE ? OR 
                     base_datos LIKE ? ) 
                 ORDER BY bases_datos.base_datos_id ${orden ? orden : 'ASC'}`, 
                     [termino,termino,parseInt(count)]
-            );
+                );
+            } 
         }
         
-        console.log(data[0]);
         res.json(data[0]);
         
     } catch (error) {
@@ -120,7 +126,7 @@ const obtenerBusqueda = async (req,res) => {
     }
 };
 
- 
+
 // *********************************** CREAR REGISTRO ***********************************
 const crearBaseDatos = async (req,res) => {
     try {
@@ -179,15 +185,6 @@ const crearBaseDatos = async (req,res) => {
                     [base_datos_id,element.servidor_id]);
                 }
                 console.log('SERVIDOR GENERAL REGISTRADO');
-
-                /*const selectServidor = await pool.query(`SELECT servidor_id FROM servidores WHERE servidor = ?`, [select_servidor]);
-                const servidor_id = selectServidor[0][0].servidor_id;
-                
-                const bas_ser = await pool.query(
-                    `INSERT INTO basedatos_servidor (base_datos_id,servidor_id) VALUES (?,?);`, 
-                    [base_datos_id, servidor_id]
-                );
-                console.log('RELACION BASE-SERVIDOR');*/
 
             }
             

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Container, Tabla } from "../../components";
 import { Busqueda } from "../../container"
 import Autorizacion from "../../services/auth.service";
@@ -11,7 +11,7 @@ const columns = [
 		name: 'Operaciones',
 		button: true,
 		cell: row => 
-    <div className="flex gap-8">
+    <div className="flex space-x-8">
       <Link to={row ? `/aplicaciones/${row.aplicacion_id}` : `/dashboard`} >
         <FaEye className="text-blue-500 text-lg" />
       </Link>
@@ -109,27 +109,29 @@ const columns = [
 
 function Aplicaciones() {
 
-  const [pagina, setPagina] = useState(1);
-  const [count, setCount] = useState('');
   const [resultado, setResultado] = useState('');
-  const rol = Autorizacion.obtenerUsuario().rol;
-
-  const obtenerPagina = (respuesta) => {setPagina(respuesta); };
-  const obtenerCount = (respuesta) => {setCount(respuesta); };
   const obtenerResultado = (respuesta) => {setResultado(respuesta)};
 
+  const [pending, setPending] = useState(true);
+  const loading = () => { 
+    const timeout = setTimeout(() => { setPending(false) }, 500);
+    return () => clearTimeout(timeout);
+  }
+  useEffect(() => {
+      setPending(true);
+      loading();
+  }, [resultado]);
+  
   return (
     <Container>
 
       <Busqueda 
         manejarBusqueda={obtenerResultado}
-        manejarCount={obtenerCount}
-        pagina={pagina ? pagina : 1}
       />
 
       {resultado ? (
-        <div className="w-[1080px]">
-          <Tabla columnas={columns} datos={resultado} paginacion={true} />
+        <div className="w-[480px] md:w-[720px] lg:w-[960px] px-8">
+          <Tabla columnas={columns} datos={resultado} paginacion={true} pending={pending} />
         </div>
       ) : (null)}
 

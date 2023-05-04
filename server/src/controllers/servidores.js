@@ -5,12 +5,12 @@ SELECT
     servidores.servidor_id,servidor,ser_estatus,ser_direccion,sistema,modelo,marca,
     region,localidad,DATE_FORMAT (ser_fecha_actualizacion, '%d-%m-%Y %H:%i') as ser_fecha_actualizacion,indicador
 FROM servidores
-    JOIN sistemas_operativos ON sistemas_operativos.sistema_id = servidores.ser_sistema
-    JOIN modelos ON modelos.modelo_id = servidores.ser_modelo
-    JOIN marcas ON marcas.marca_id = modelos.mod_marca
-    JOIN regiones ON regiones.region_id = servidores.ser_region_id
-    JOIN localidades ON localidades.localidad_id = servidores.ser_localidad_id
-    JOIN usuarios ON usuarios.usuario_id = servidores.ser_usuario_actualizo`;
+    LEFT JOIN sistemas_operativos ON sistemas_operativos.sistema_id = servidores.ser_sistema
+    LEFT JOIN modelos ON modelos.modelo_id = servidores.ser_modelo
+    LEFT JOIN marcas ON marcas.marca_id = modelos.mod_marca
+    LEFT JOIN regiones ON regiones.region_id = servidores.ser_region_id
+    LEFT JOIN localidades ON localidades.localidad_id = servidores.ser_localidad_id
+    LEFT JOIN usuarios ON usuarios.usuario_id = servidores.ser_usuario_actualizo`;
 
 // *********************************** OBTENER LOS DATOS POR TERMINO DE BUSQUEDA ***********************************
 const obtenerBusqueda = async (req,res) => {
@@ -54,11 +54,19 @@ const obtenerBusqueda = async (req,res) => {
             [termino,termino,marca]);
         }
         else{
-            data = await pool.query(`
-                ${query}
-                WHERE (servidores.servidor_id LIKE ? OR servidor LIKE ? ) 
-                ORDER BY servidores.servidor_id ${orden ? orden : 'ASC'}`, 
+            if(term===''){
+                data = await pool.query(`
+                    ${query}
+                    ORDER BY servidores.servidor_id ${orden ? orden : 'ASC'}`, 
                 [termino,termino]);
+            }
+            else{
+                data = await pool.query(`
+                    ${query}
+                    WHERE (servidores.servidor_id LIKE ? OR servidor LIKE ? ) 
+                    ORDER BY servidores.servidor_id ${orden ? orden : 'ASC'}`, 
+                [termino,termino]);
+            }
         }
 
         //console.log(data[0]);
@@ -69,7 +77,7 @@ const obtenerBusqueda = async (req,res) => {
     }
 };
 
- 
+
 // *********************************** CREAR REGISTRO ***********************************
 const registrarServidor = async (req,res) => {
     try {
@@ -183,8 +191,96 @@ const actualizarServidor = async (req,res) => {
 };
 
 
+
+
+// *********************************** OBTENER INFORMACION GENERAL ***********************************
+const general = async (req,res) => {
+    try {
+        const { id } = req.params;
+
+        console.log('ALO');
+
+        const data = await pool.query(`
+        SELECT 
+            servidores.servidor_id,servidor,ser_estatus,ser_direccion,
+            sistema,modelo,marca,mod_serial,mod_cantidad_cpu,mod_velocidad_cpu,mod_memoria,region,localidad,
+            DATE_FORMAT (ser_fecha_actualizacion, '%d-%m-%Y %H:%i') as ser_fecha_actualizacion, indicador
+        FROM servidores
+            LEFT JOIN sistemas_operativos ON sistemas_operativos.sistema_id = servidores.ser_sistema
+            LEFT JOIN modelos ON modelos.modelo_id = servidores.ser_modelo
+            LEFT JOIN marcas ON marcas.marca_id = modelos.mod_marca
+            LEFT JOIN regiones ON regiones.region_id = servidores.ser_region_id
+            LEFT JOIN localidades ON localidades.localidad_id = servidores.ser_localidad_id
+            LEFT JOIN usuarios ON usuarios.usuario_id = servidores.ser_usuario_actualizo
+        WHERE servidores.servidor_id = ?`, [id]);
+
+        console.log('ALO');
+        res.send(data[0]);
+
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+    }
+};
+
+
+// *********************************** OBTENER SERVIDOR ***********************************
+const aplicacion = async (req,res) => {
+    try {
+        const { id } = req.params;
+
+        const data = await pool.query(`
+            SELECT 
+                aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_descripcion,estatus,
+                prioridad,apl_critico,alcance,apl_codigo_fuente,
+                apl_version,apl_direccion,apl_cantidad_usuarios,region
+            FROM aplicaciones
+                LEFT JOIN estatus ON aplicaciones.apl_estatus = estatus.estatus_id
+                LEFT JOIN prioridades ON aplicaciones.apl_prioridad = prioridades.prioridad_id
+                LEFT JOIN alcances ON aplicaciones.apl_alcance = alcances.alcance_id
+                LEFT JOIN aplicacion_servidor ON aplicaciones.aplicacion_id = aplicacion_servidor.aplicacion_id
+                LEFT JOIN servidores ON servidores.servidor_id = aplicacion_servidor.servidor_id
+                LEFT JOIN regiones ON aplicaciones.apl_region = regiones.region_id
+            WHERE servidores.servidor_id = ?;`, 
+            [id]);
+
+        res.send(data[0]);
+
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+    }
+};
+
+
+// *********************************** OBTENER SERVIDOR ***********************************
+const basedatos = async (req,res) => {
+    try {
+        const { id } = req.params;
+        
+        const data = await pool.query(`
+            SELECT 
+                bases_datos.base_datos_id, base_datos, bas_estatus, bas_cantidad_usuarios, bas_fecha_actualizacion,
+                tipo, manejador, tipo_ambiente
+            FROM bases_datos
+                JOIN basedatos_servidor ON bases_datos.base_datos_id = basedatos_servidor.base_datos_id
+                JOIN servidores ON basedatos_servidor.servidor_id = servidores.servidor_id
+                JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.bas_tipo
+                JOIN manejadores ON manejadores.manejador_id = bases_datos.bas_manejador
+                JOIN tipos_ambientes ON tipos_ambientes.tipo_ambiente_id = bases_datos.bas_tipo_ambiente
+            WHERE servidores.servidor_id = ?;`, 
+            [id]);
+                
+        res.send(data[0]);
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+    }
+};
+
+
 module.exports = { 
     obtenerBusqueda,
     registrarServidor,
     actualizarServidor,
+    general,
+    aplicacion,
+    basedatos,
  };

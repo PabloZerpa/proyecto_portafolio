@@ -81,7 +81,7 @@ function Linea() {
     return(
         <div className="w-4/3 flex flex-col justify-around items-center p-6 bg-zinc-200 rounded shadow-md">
             <h3 className='font-bold'>Historial de Modificaciones</h3>
-            <LineChart width={730} height={250} data={data}
+            <LineChart width={540} height={220} data={data}
                 margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />

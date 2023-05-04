@@ -16,7 +16,6 @@ class Usuario {
 
     
     async crearUsuario(datos) {
-        console.log('AQUI');
         return await axios.post(`${baseUrl}login/registro`, datos) 
         .then(response => {
             return response.data;
@@ -27,8 +26,6 @@ class Usuario {
     async actualizarUsuario(datoModificacion) {
         try { 
             const id = datoModificacion.edicion;
-            console.log(id);
-            console.log(datoModificacion);
             const respuesta = await axios.patch(`${baseUrl}usuarios/permisos/${id}`, datoModificacion, { headers: authHeader() });
             return respuesta;
         } catch (error) {
@@ -39,7 +36,6 @@ class Usuario {
     // ---------------- UPDATE DE UN CAMPO DE UN USUARIO ------------------
     async eliminarUsuario(id) {
         try { 
-            console.log(id);
             const respuesta = await axios.delete(`${baseUrl}usuarios/eliminar/${id}`, { headers: authHeader() });
             return respuesta;
         } catch (error) {

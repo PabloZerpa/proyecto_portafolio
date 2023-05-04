@@ -1,29 +1,25 @@
 
 import { useEffect, useState } from "react";
-import { Container, Select, Radio, Tabla } from "../../components";
+import { Container, Select, Tabla } from "../../components";
 import { useDebounce } from 'use-debounce';
 import { FaEdit, FaEye, FaSearch } from 'react-icons/fa';
 import Autorizacion from "../../services/auth.service";
 import Servidor from "../../services/servidor.service";
-import { opcionEstatus, opcionRegion, opcionPlataforma, opcionAlcance, 
-    opcionMantenimiento, opcionCount, opcionLocalidad, opcionTipoBD, opcionManejadores } from '../../services/campos.service';
+import { opcionEstatus, opcionRegion } from '../../services/campos.service';
 import { Link } from "react-router-dom";
-import DataTable from "react-data-table-component";
-import { selectTipoAmbiente } from "../../services/campos.service";
-import { paginacionOpciones } from "../../utils/TablaOpciones";
 
 const columns = [
     {
         name: 'Operaciones',
         button: true,
         cell: row => 
-        <div className="flex gap-8">
-            <Link to={row ? `/basedatos/${row.servidor_id}` : `/dashboard`} >
+        <div className="flex space-x-8">
+            <Link to={row ? `/servidor/${row.servidor_id}` : `/dashboard`} >
                 <FaEye className="text-blue-500 text-lg" />
             </Link>
             
             {Autorizacion.obtenerUsuario.rol !== 'user' ? 
-                <Link to={row ? `/administracion/actualizacion/${row.servidor_id}` : `/dashboard`} >
+                <Link to={row ? `/servidor/actualizacion/${row.servidor_id}` : `/dashboard`} >
                 <FaEdit className="text-blue-500 text-lg" />
                 </Link>
             : 
@@ -104,18 +100,19 @@ const columns = [
 
 function Servidores() {
 
-    const [searchTerm, setSearchTerm] = useState(" ");
     const [resultado, setResultado] = useState('');
-    const [debounceValue] = useDebounce(searchTerm, 500);
+    // const [debounceValue] = useDebounce(searchTerm, 500);
 
-    const [avanzados, setAvanzados] = useState(false);
     const [datos, setDatos] = useState({
+        terminoBusqueda: '',
         estatus: '',
         region: '',
         sistema: '',
         marca: '', 
         orden: 'ASC',
     }); 
+
+    const [debounceValue] = useDebounce(datos, 500);
 
     const resetCampos = () => {
         for (let clave in datos){
@@ -126,7 +123,6 @@ function Servidores() {
             else
                 datos[clave] = '';
         }
-        setAvanzados(false);
         onSearch(debounceValue)
     }
 
@@ -147,29 +143,38 @@ function Servidores() {
 	}, [debounceValue, datos]); 
 
 
-    const onSearch = async (value) => {
+    const onSearch = async (datos) => {
         try {
-            const { estatus,region,sistema,marca,orden } = datos;
-            console.log(estatus,region,sistema,marca,orden);
+            const { terminoBusqueda,estatus,region,sistema,marca,orden } = datos;
+
             const respuesta = await Servidor.obtenerServidorPorBusqueda(
-                value,estatus,region,sistema,marca,orden);
+                terminoBusqueda,estatus,region,sistema,marca,orden);
             setResultado(respuesta.data);
-            console.log(respuesta.data);
             
         } catch (error) {
             console.log('ERROR AL BUSCAR DATOS');
         }
     }
+    
+    const [pending, setPending] = useState(true);
+    const loading = () => { 
+        const timeout = setTimeout(() => { setPending(false) }, 500);
+        return () => clearTimeout(timeout);
+    }
+    useEffect(() => {
+        setPending(true);
+        loading();
+    }, [resultado]);
 
 
     return(
         <Container>
 
             <form className='flex justify-center items-center flex-col p-4 bg-zinc-400 border-solid rounded'>
-                <div className='flex flex-col gap-4 w-full py-2 border-solid'>
+                <div className='flex flex-col space-x-4 w-full justify-center items-center py-2 border-solid'>
 
                     <div className="border-solid">
-                        <div className="grid grid-cols-4 gap-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 space-x-4">
                             <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={opcionEstatus} manejador={handleInputChange} />
                             <Select campo='Region' name='region' busqueda={true} byId={false} opciones={opcionRegion} manejador={handleInputChange} />
                             <Select campo='Sistema' name='sistema' busqueda={true} byId={false} opciones={['SELECCIONE','TODAS','WINDOWS','RED HAT','DEBIAN','FEDORA','ARCH',]} manejador={handleInputChange} />
@@ -178,11 +183,12 @@ function Servidores() {
                     </div>
 
                     <div className="radioArea">
-                        <div className='mt-8 flex justify-center items-center gap-4'>
+                        <div className='mt-8 flex flex-col md:flex-row justify-center items-center space-x-4'>
                             <div className="relative w-96">
                                 <input 
                                     type="search" 
-                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    name='terminoBusqueda'
+                                    onChange={(e) => handleInputChange(e)}
                                     className="block p-2 pr-12 w-96 text-sm text-black bg-white rounded border-none outline-none" placeholder="Buscar" />
                                 <button 
                                     type="submit" 
@@ -204,20 +210,8 @@ function Servidores() {
             </form>
 
             {resultado ? (
-                <div className="w-[1080px]">
-                <DataTable
-                    columns={columns}
-                    data={resultado}
-                    pagination
-                    paginationComponentOptions={paginacionOpciones}
-                    paginationRowsPerPageOptions={[10,20,30,50,100]}
-                    noDataComponent={"SIN RESULTADOS"}
-                    fixedHeader
-                    fixedHeaderScrollHeight="600px"
-                    highlightOnHover
-                    pointerOnHover
-                    dense
-                />
+                <div className="w-[480px] md:w-[720px] lg:w-[960px] px-8">
+                    <Tabla columnas={columns} datos={resultado} paginacion={true} pending={pending} />
                 </div>
             ) : (null)}
 

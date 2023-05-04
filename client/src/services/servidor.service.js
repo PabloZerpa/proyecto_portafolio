@@ -23,6 +23,46 @@ class Servidor {
         }
     }
 
+    // =============== OBTIENE INFORMACION GENERAL DATABASE ===============
+    async obtenerGeneralServidor(id) { 
+        try { 
+            const respuesta = await axios.get(`${baseUrl}servidores/general/${id}`, { headers: authHeader() });
+            return respuesta;
+            console.log(respuesta);
+        } catch (error) {
+            console.log('Error al obtener datos'); 
+        }
+    }
+    
+    // =============== OBTIENE INFORMACION SERVIDOR DATABASE ===============
+    async obtenerAplicacionServidor(id) { 
+        try { 
+            const respuesta = await axios.get(`${baseUrl}servidores/aplicacion/${id}`, { headers: authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log('Error al obtener datos'); 
+        }
+    }
+    // =============== OBTIENE INFORMACION APLICACION DATABASE ===============
+    async obtenerBDServidor(id) { 
+        try { 
+            const respuesta = await axios.get(`${baseUrl}servidores/basedatos/${id}`, { headers: authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log('Error al obtener datos'); 
+        }
+    }
+
+
+    // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
+    async obtenerSer(id) {
+        try {
+            return axios.get(`${baseUrl}basedatos/${id}`, { headers: authHeader() });
+        } catch (error) {
+            console.log('Error al obtener dato');
+        } 
+    }
+
     // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
     async obtenerServidorPorBusqueda(term,estatus,region,sistema,marca,orden) {
         try {

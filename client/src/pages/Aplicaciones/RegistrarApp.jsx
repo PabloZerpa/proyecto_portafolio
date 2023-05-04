@@ -4,13 +4,13 @@ import { useNavigate, Navigate } from 'react-router-dom';
 import { Button, Container, Input, Radio, Select, TextArea, Tabla } from '../../components';
 import { Notificacion } from '../../utils/Notificacion';
 import { FaTimesCircle } from 'react-icons/fa';
-import { columnasModalBD, columnasModalFramework, 
-    columnasModalLenguaje, columnasModalServidor } from '../../utils/columnas';
+import { columnasModalBD,columnasModalLenguaje, columnasModalServidor } from '../../utils/columnas';
 import Autorizacion from '../../services/auth.service';
 import Aplicacion from '../../services/aplicacion.service';
 import Opciones from '../../utils/Opciones';
 import TableRegistro from '../../components/TablaRegistro';
 import Modal from '../../components/Modal';
+import { opcionMantenimiento } from '../../services/campos.service';
 
 
 function RegistrarApp() {
@@ -19,25 +19,10 @@ function RegistrarApp() {
     function navegar(ruta) { navigate(ruta) }
     
     const [datos, setDatos] = useState({
-        apl_acronimo: '',
-        apl_estatus: '',
-        apl_nombre: '',
-        apl_descripcion: '',
-        apl_prioridad: '',
-        apl_version: '',
-        apl_critico: '',
-        apl_alcance: '',
-        apl_codigo_fuente: '',
-        apl_direccion: '',
-        apl_region: '',
+        apl_codigo_fuente: 'SI',
+        apl_critico: 'SI',
         apl_usuario_registro: Autorizacion.obtenerUsuario().indicador,
         apl_usuario_actualizo: Autorizacion.obtenerUsuario().indicador,
-    
-        plataforma: '',
-        select_base: '',
-        select_servidor: '',
-        select_lenguaje: '',
-        select_framework: '',
     });
 
     // =================== OPCIONES PARA LOS SELECTS ===================
@@ -64,13 +49,10 @@ function RegistrarApp() {
 
     // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
     const setValores = (e) => {
-        console.log(e.target.value);
-
         if(e.target.value === 'TODAS')
-            setDatos({ ...datos, [e.target.name] : null })
+            setDatos({ ...datos, [e.target.name] : null });
         else
-            setDatos({ ...datos, [e.target.name] : e.target.value })
-
+            setDatos({ ...datos, [e.target.name] : e.target.value });
     }
 
     // =================== FUNCION PARA ACTUALIZAR DATOS ===================
@@ -79,13 +61,11 @@ function RegistrarApp() {
 
         if(Autorizacion.obtenerUsuario().rol === 'admin'){
             try {
-
                 await Aplicacion.crearDatos(datos, tableDataLenguaje, tableDataBase, tableDataServidor);
                 Notificacion('REGISTRO EXITOSO', 'success');
-                //navigate("/dashboard");
+                navigate("/dashboard");
             }
             catch (error) { 
-                console.log('ERROR AL ACTUALIZAR APL_ACT');
                 Notificacion(error.response.data.message, 'error');
             }
         }
@@ -146,24 +126,8 @@ function RegistrarApp() {
         setSelectLenguaje(selecciones); 
     };
 
-    // -------------------- FUNCION Y VARIABLES PARA LA SELECCION DE APLICACIONES --------------------
-    const [isOpen4, setIsOpen4] = useState(false);
-    const [select_framework, setSelectFramework] = useState([]);
-    const [tableDataFramework, setDataFramework] = useState([]);
-
-    const obtenerSeleccionesFramework = (respuesta) => {
-        console.log(respuesta);
-        setSelectFramework(select_framework.push(respuesta));
-        console.log(select_framework[0]);
-
-        for (let i = 0; i < respuesta.length; i++) {
-            const x = respuesta[i];
-            setDataFramework(tableDataFramework => [...tableDataFramework, { framework_id: x.framework_id, framework: x.framework}]);
-        }
-    };
-
     const eliminarElemento = (row, elemento, tabla, setTabla, setSelecciones) => {
-		console.log(row);
+
         if (window.confirm(`Estas seguro de eliminar: ${row[elemento]}?`)) {
             const nuevo = tabla.filter((i) => i[elemento] != row[elemento]);
             setTabla(nuevo);
@@ -237,23 +201,6 @@ function RegistrarApp() {
         },
     ];
 
-    const columnasFramework = [
-        generarColumna('Framework ID','framework_id','160px'),
-        generarColumna('Framework','framework',null),
-        {
-            name: 'Remover',
-            button: true,
-            cell: row => 
-            <div>
-                <FaTimesCircle
-                    onClick={() => eliminarElemento(row,'framework_id',tableDataFramework,setDataFramework)} 
-                    className="ml-3 text-red-500 text-lg cursor-pointer"
-                />
-            </div>,
-            left: true
-        },
-    ];
-
 
     if(Autorizacion.obtenerUsuario().rol !== 'admin')
         return <Navigate to='/' />
@@ -298,30 +245,18 @@ function RegistrarApp() {
                         columnas={columnasModalLenguaje}
                         objetivo='lenguaje'
                         selectDefault={select_lenguaje}
-                     />
+                    />
                 </Modal>
             ) : (null) }
 
-            {/* --------------- VENTANA MODAL PARA REGISTRAR FRAMEWORKS --------------- */}
-            {isOpen4 ? (
-                <Modal>
-                    <TableRegistro
-                        setIsOpen={setIsOpen4}
-                        devolverSelecciones={obtenerSeleccionesFramework}
-                        columnas={columnasModalFramework}
-                        objetivo='framework'
-                    />
-                </Modal>
-            ) : (null)}
-
             <h1 className='font-bold text-lg'>Registro de Aplicacion</h1>
 
-            <form className="flex flex-col justify-center items-center relative w-full p-4 pb-24 mb-10 z-40" onSubmit={crearDatos} >
+            <form className="flex flex-col justify-center items-center w-full p-4 mb-10 z-40" onSubmit={crearDatos} >
                 
                 {/* --------------- INFORMACION BASICA --------------- */}
-                <div className="flex flex-col relative w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
+                <div className="flex flex-col w-full md:w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
                     <h2 className='font-bold text-base mb-6'>Informacion General</h2>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 space-x-4">
                         <Input campo='Acronimo' name='apl_acronimo' required={true} manejador={setValores} />
                         <Select campo='Estatus' name='apl_estatus' required={true} opciones={estatus ? estatus : ['SELECCIONE']} manejador={setValores}/>
                     </div>
@@ -329,7 +264,7 @@ function RegistrarApp() {
                     <TextArea campo='Nombre' name='apl_nombre' required={true} manejador={setValores} />
                     <TextArea campo='Descripcion' required={true} name='apl_descripcion' manejador={setValores} />
 
-                    <div className="relative grid grid-cols-2 gap-4 mb-0">
+                    <div className="grid grid-cols-1 md:grid-cols-2 space-x-4 mb-0">
                         <Input campo='Version' name='apl_version' required={true} manejador={setValores} />
                         <Select campo='Prioridad' name='apl_prioridad' opciones={['SELECCIONE','BAJA','MEDIA','ALTA',]} manejador={setValores} />
                         <Select campo='Alcance' name='apl_alcance' opciones={alcance ? alcance : ['SELECCIONE']} manejador={setValores} />
@@ -343,15 +278,15 @@ function RegistrarApp() {
 
                 
                 {/* --------------- TECNOLOGIAS --------------- */}
-                <div className="flex flex-col relative w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
+                <div className="flex flex-col w-full md:w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
                     <h2 className='font-bold text-base my-4'>Tecnologia</h2>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2">
                         <Select campo='Plataforma' name='plataforma' opciones={plataformas ? plataformas : ['SELECCIONE']} manejador={setValores} />
                     </div>
 
                     {/* --------------- LENGUAJES --------------- */}
                     <p className='font-bold text-sm my-4'>Lenguajes</p>
-                    <div className='flex flex-col justify-center items-center gap-4'>
+                    <div className='flex flex-col justify-center items-center space-y-4'>
 
                         <button type='button' className="p-1 bg-blue-600 text-white rounded" 
                             onClick={(e) => {setIsOpen3(!isOpen3)}} >
@@ -363,23 +298,9 @@ function RegistrarApp() {
                         </div>
                     </div>
 
-                    {/* --------------- FRAMEWORKS --------------- */}
-                    <p className='font-bold text-sm my-4'>Frameworks</p>
-                    <div className='flex flex-col justify-center items-center gap-4'>
-
-                        <button type='button' className="p-1 bg-blue-600 text-white rounded" 
-                            onClick={(e) => {setIsOpen4(!isOpen4)}} >
-                            Agregar
-                        </button>
-
-                        <div className="w-full">
-                            <Tabla columnas={columnasFramework} datos={tableDataFramework} />
-                        </div>
-                    </div>
-
                     {/* --------------- BASE DE DATOS --------------- */}
                     <p className='font-bold text-sm my-4'>Base de datos</p>
-                    <div className='flex flex-col justify-center items-center gap-4'>
+                    <div className='flex flex-col justify-center items-center space-y-4'>
 
                         <button type='button' className="p-1 bg-blue-600 text-white rounded" 
                             onClick={(e) => {setIsOpen(!isOpen)}} >
@@ -393,7 +314,7 @@ function RegistrarApp() {
 
                     {/* --------------- SERVIDOR --------------- */}
                     <p className='font-bold text-sm my-4'>Servidor</p>
-                    <div className='flex flex-col justify-center items-center gap-4'>
+                    <div className='flex flex-col justify-center items-center space-y-4'>
 
                         <button type='button' className="p-1 bg-blue-600 text-white rounded" 
                             onClick={(e) => {setIsOpen2(!isOpen2)}} >
@@ -409,16 +330,17 @@ function RegistrarApp() {
 
                 
                 {/* --------------- RESPONSABLES --------------- */} 
-                <div className="flex flex-col relative w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
+                <div className="flex flex-col w-full md:w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
                     
-                    <div className="grid grid-cols-2 gap-4">
-                        <p className='font-bold text-base my-4'>Responsable Funcional</p>
-                        <p className='font-bold text-base my-4'>Responsable Tecnico</p>
-
-                        <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 space-y-4 space-x-0 md:space-x-4 md:space-y-0">
+                        <div>
+                            <p className='font-bold text-base my-4'>Responsable Funcional</p>
                             <Select campo='Seleccione Custodio' name='select_funcional' byId={false} opciones={responsables ? responsables : ['SELECCIONE']} manejador={setValores}/>
+                            
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
+
+                        <div>
+                            <p className='font-bold text-base my-4'>Responsable Tecnico</p>
                             <Select campo='Seleccione Custodio' name='select_tecnico' byId={false} opciones={responsables ? responsables : ['SELECCIONE']} manejador={setValores}/>
                         </div>
 
@@ -426,10 +348,10 @@ function RegistrarApp() {
                 </div>
 
 
-                <div className="flex flex-col relative w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
+                <div className="flex flex-col w-full md:w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
                     {/* --------------- DOCUMENTACION --------------- */}
                     <p className='font-bold text-base my-4'>Documentacion</p>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 space-y-4 space-x-0 md:space-x-4 md:space-y-0">
                         <Input campo='Descripcion' name='doc_descripcion' required={true} manejador={setValores} />
                         <Input campo='Direccion' name='doc_direccion' required={true} manejador={setValores} />
                         <Input campo='Tipo de Doc' name='doc_tipo' required={true} manejador={setValores} />
@@ -437,17 +359,15 @@ function RegistrarApp() {
 
                     {/* --------------- MANTENIMIENTO --------------- */}
                     <p className='font-bold text-base my-4'>Mantenimiento</p>
-                    <div className="grid grid-cols-2 gap-4">
-                        <Select campo='Frecuencia' name='man_frecuencia' byId={false} opciones={mante ? mante : ['SELECCIONE']} manejador={setValores}/>
+                    <div className="grid grid-cols-1 md:grid-cols-2 space-y-4 space-x-0 md:space-x-4 md:space-y-0">
+                        <Select campo='Frecuencia' name='man_frecuencia' byId={false} opciones={opcionMantenimiento} manejador={setValores}/>
                         <Input campo='Horas Pro' name='man_horas_prom' required={true} manejador={setValores} />
                         <Input campo='Horas Anu' name='man_horas_anuales' required={true} manejador={setValores} />
                     </div>
                 </div>
 
-                <div className="absolute bottom-16 right-1/3">
+                <div className="flex gap-2 md:gap-12">
                     <Button tipo='submit' color='blue' width={32}>Registrar</Button>
-                </div>
-                <div className="absolute bottom-16 left-1/3">
                     <Button tipo='button' color='blue' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
                 </div>
 

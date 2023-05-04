@@ -68,7 +68,6 @@ function BuscarUsuario() {
       }
     }
     catch (error) { 
-      console.log(error);
       Notificacion(error.response.data.message, 'error');
     }
   }
@@ -94,7 +93,7 @@ function BuscarUsuario() {
 
   // =================== FUNCION PARA VERIFICAR Y ELEGIR SELECT SEGUN LA OPCION SELECCIONADA ===================
   const verificarCampo = (campo, valor) => {
-    console.log(valor);
+    
     if(campo === 'Rol')
       return (selectCampo(opcionRol,setRol,valor));
     else if(campo === 'Gerencia')
@@ -207,12 +206,22 @@ function BuscarUsuario() {
     },
   ];
 
+  
+  const [pending, setPending] = useState(true);
+  const loading = () => { 
+      const timeout = setTimeout(() => { setPending(false) }, 500);
+      return () => clearTimeout(timeout);
+  }
+  useEffect(() => {
+      setPending(true);
+      loading();
+  }, [resultados]);
 
   return (
     <Container>
       <h2 className='font-bold text-lg'>Buscar Usuarios</h2>
 
-      <form className='flex justify-center items-center flex-row gap-4 p-4 bg-zinc-400 border-solid rounded'>
+      <form className='flex justify-center items-center spacex-4 p-4 bg-zinc-400 border-solid rounded'>
 
         <div className="relative w-96">
           <input 
@@ -230,8 +239,8 @@ function BuscarUsuario() {
       </form>
 
       {resultados ? (
-        <div className="w-2/3">
-          <Tabla columnas={columns} datos={resultados} />
+        <div className="w-[360px] md:w-[600px] lg:w-[800px]">
+          <Tabla columnas={columns} datos={resultados} pending={pending} />
         </div>
       ) : 
       (null)}

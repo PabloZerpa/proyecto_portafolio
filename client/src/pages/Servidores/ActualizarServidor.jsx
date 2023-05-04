@@ -4,9 +4,10 @@ import { Button, Checkbox, Container, Input, Select } from '../../components';
 import { BiLoaderAlt } from "react-icons/bi";
 import Autorizacion from '../../services/auth.service';
 import Base from '../../services/basedatos.service';
+import Servidor from '../../services/servidor.service';
 import { useEffect, useState } from 'react';
 
-function ActualizarBD() {
+function ActualizarServidor() {
 
     const { id } = useParams();
     const navigate = useNavigate();
@@ -95,7 +96,7 @@ function ActualizarBD() {
                         <Select campo='Ambiente' name='tipo_ambiente' propiedad={valor.bas_tipo_ambiente} opciones={['SELECCIONE','DESARROLLO','ESTABILIZACION','MANTENIMIENTO']} manejador={handleInputChange} />
                         <Input campo='N° Usuario' name='cantidad_usuarios' propiedad={valor.bas_cantidad_usuarios} editable={true} manejador={handleInputChange} />
                     </div>
-                        
+    
                     <div className="absolute bottom-4 right-1/3">
                         <Button color='blue' width={32}>Actualizar</Button>
                     </div>
@@ -111,4 +112,4 @@ function ActualizarBD() {
     }
 };
 
-export default ActualizarBD;
+export default ActualizarServidor;

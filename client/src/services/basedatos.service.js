@@ -8,7 +8,6 @@ class Base {
     // ---------------- CREATE DE LA INFO DE NUEVA APP ------------------
     async crearDatosDB(datos, servidores) {
         
-        console.log(datos, servidores);
         let datosServidor = datos;
         datosServidor.select_servidor = servidores;
         try {  
@@ -22,18 +21,13 @@ class Base {
 
     // ---------------- CREATE DE LA INFO DE NUEVA APP ------------------
     async actualizarDatosDB(id,datos) {
-        console.log('AFUERA DE CREAR DATOS SERVICE')
-        console.log(datos);
         try { 
-            console.log('EN EL TRY DE CREAR DATOS SERVICE')
             const respuesta = await axios.patch(`${baseUrl}basedatos/${id}`, datos, { headers: authHeader() });
-            console.log('DESPUES DE CREAR DATOS SERVICE')
             return respuesta;
         } catch (error) {
             console.log('ERROR AL CREAR auth.service');
         }
     }
-
 
 
     // =============== OBTIENE INFORMACION GENERAL DATABASE ===============
@@ -45,11 +39,11 @@ class Base {
             console.log('Error al obtener datos'); 
         }
     }
+    
     // =============== OBTIENE INFORMACION SERVIDOR DATABASE ===============
     async obtenerAplicacionBD(id) { 
         try { 
             const respuesta = await axios.get(`${baseUrl}basedatos/aplicacion/${id}`, { headers: authHeader() });
-            //console.log(respuesta);
             return respuesta;
         } catch (error) {
             console.log('Error al obtener datos'); 
@@ -59,7 +53,6 @@ class Base {
     async obtenerServidorBD(id) { 
         try { 
             const respuesta = await axios.get(`${baseUrl}basedatos/servidor/${id}`, { headers: authHeader() });
-            //console.log(respuesta);
             return respuesta;
         } catch (error) {
             console.log('Error al obtener datos'); 
@@ -70,9 +63,6 @@ class Base {
     // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
     async obtenerBD(id) {
         try {
-            console.log('OBTENER_BUSQUEDA');
-            console.log(id);
- 
             return axios.get(`${baseUrl}basedatos/${id}`, { headers: authHeader() });
         } catch (error) {
             console.log('Error al obtener dato');
@@ -82,6 +72,7 @@ class Base {
     // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
     async obtenerBDPorBusqueda(term,estatus,tipo,manejador,ambiente,count,orden) {
         try {
+            
             return axios.post(`${baseUrl}basedatos/busqueda`, 
             {term,estatus,tipo,manejador,ambiente,count,orden}, { headers: authHeader() });
         } catch (error) {

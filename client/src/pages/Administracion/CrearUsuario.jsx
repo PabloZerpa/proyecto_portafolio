@@ -7,7 +7,7 @@ import { Notificacion } from "../../utils/Notificacion";
 import Autorizacion from "../../services/auth.service";
 import Usuario from "../../services/usuario.service";
 import Opciones from "../../utils/Opciones";
- 
+
 function CrearUsuario() {
 
     const navigate = useNavigate();
@@ -67,11 +67,11 @@ function CrearUsuario() {
     return(
         <Container>
 
-            <form className="flex flex-col items-center gap-8 pb-4" onSubmit={crearUsuario}>
+            <form className="flex flex-col items-center space-y-8 pb-4" onSubmit={crearUsuario}>
 
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col space-y-4">
                     <h2 className='font-bold text-base'>Datos del Nuevo Usuario</h2>
-                    <div className="grid grid-cols-2 w-[900px] gap-4 p-4 bg-zinc-400 rounded border-2 border-dashed border-blue-500">
+                    <div className="grid grid-cols-1 md:grid-cols-2 w-[600px] lg:w-[800px] gap-4 p-4 bg-zinc-400 rounded">
                         <Input campo='Indicador' name='indicador' direccion="col" required={true} editable={true} manejador={setValores} />
                         <Select campo='Rol' name='rol' direccion="col" required={true} opciones={roles ? roles : ['SELECCIONE']} manejador={setValores} />
                         <Input campo='Nombre' name='nombre' direccion="col" required={true} editable={true} manejador={setValores} />
@@ -82,7 +82,7 @@ function CrearUsuario() {
                     </div> 
                 </div>
 
-                <div className="flex gap-16">
+                <div className="flex space-x-16">
                     <Button color='blue' width={32} manejador={(e) => navegar(-1)} ><FaArrowLeft />Volver</Button>
                     <Button color='blue' tipo="submit" width={32}>Crear Usuario</Button>
                 </div>

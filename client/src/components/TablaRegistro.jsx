@@ -19,7 +19,6 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
     const [elementos, setElementos] = useState([0]);
 
     useEffect(() => {
-        console.log(selectDefault);
 		if (debounceValue)
             onSearch(debounceValue);
         else
@@ -79,10 +78,10 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
         <>
             {busqueda ? (
                 <form className='flex justify-center items-center flex-col p-0 bg-zinc-400 border-solid rounded'>
-                    <div className='flex flex-col gap-0 w-full py-2 border-solid'>
+                    <div className='flex flex-col w-full py-2 border-solid'>
 
                         <div className="radioArea">
-                            <div className='mt-4 flex justify-center items-center gap-0'>
+                            <div className='mt-4 flex justify-center items-center'>
                                 <div className="relative w-96">
                                     <input 
                                         type="search" 
@@ -124,7 +123,7 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
                 </div>
             ) : (null)}
 
-            <div className="flex items-center gap-4 p-2 space-x-2 border-t border-gray-200 rounded-b">
+            <div className="flex items-center space-x-8 p-2 border-t border-gray-200 rounded-b">
                 <Button color='blue' manejador={(e) => {sendDatos()}}>Agregar</Button>
                 <Button color='blue' manejador={(e) => setIsOpen(false)}>Cerrar</Button>
             </div>

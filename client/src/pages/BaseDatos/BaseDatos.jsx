@@ -1,12 +1,11 @@
 
 import { useEffect, useState } from "react";
-import { Container, Select, Radio, Tabla } from "../../components";
+import { Container, Select, Tabla } from "../../components";
 import { useDebounce } from 'use-debounce';
 import { FaEdit, FaEye, FaSearch } from 'react-icons/fa';
 import Autorizacion from "../../services/auth.service";
 import Base from "../../services/basedatos.service";
-import { opcionEstatus, opcionRegion, opcionPlataforma, opcionAlcance, 
-    opcionMantenimiento, opcionCount, opcionLocalidad, opcionTipoBD, opcionManejadores } from '../../services/campos.service';
+import { opcionEstatus, opcionTipoBD, opcionManejadores } from '../../services/campos.service';
 import { Link } from "react-router-dom";
 import { selectTipoAmbiente } from "../../services/campos.service";
 
@@ -16,13 +15,13 @@ const columns = [
         name: 'Operaciones',
         button: true,
         cell: row => 
-        <div className="flex gap-8">
+        <div className="flex space-x-8">
             <Link to={row ? `/basedatos/${row.base_datos_id}` : `/dashboard`} >
                 <FaEye className="text-blue-500 text-lg" />
             </Link>
             
             {Autorizacion.obtenerUsuario.rol !== 'user' ? 
-                <Link to={row ? `/administracion/actualizacion/${row.base_datos_id}` : `/dashboard`} >
+                <Link to={row ? `/basedatos/actualizacion/${row.base_datos_id}` : `/dashboard`} >
                 <FaEdit className="text-blue-500 text-lg" />
                 </Link>
             : 
@@ -62,16 +61,16 @@ const columns = [
         left: true
     },
     {
-      name: 'N° de Usuarios',
-      selector: row => row.bas_cantidad_usuarios,
-      sortable: true,
-      left: true
+        name: 'N° de Usuarios',
+        selector: row => row.bas_cantidad_usuarios,
+        sortable: true,
+        left: true
     },
     {
-      name: 'Ambiente',
-      selector: row => row.tipo_ambiente,
-      sortable: true,
-      left: true
+        name: 'Ambiente',
+        selector: row => row.tipo_ambiente,
+        sortable: true,
+        left: true
     },
     {
         name: 'Ultima Actualizacion',
@@ -81,22 +80,20 @@ const columns = [
         left: true
     },
     {
-      name: 'Por',
-      selector: row => row.indicador,
-      sortable: true,
-      grow: 1,
-      left: true
-  },
+        name: 'Por',
+        selector: row => row.indicador,
+        sortable: true,
+        grow: 1,
+        left: true
+    },
 ];
 
 function BaseDatos() {
-
-    const [searchTerm, setSearchTerm] = useState("a");
+    
     const [resultado, setResultado] = useState('');
-    const [debounceValue] = useDebounce(searchTerm, 500);
 
-    const [avanzados, setAvanzados] = useState(false);
     const [datos, setDatos] = useState({
+        terminoBusqueda: '',
         estatus: '',
         tipo: '',
         manejador: '',
@@ -104,6 +101,8 @@ function BaseDatos() {
         registros: 10,
         orden: 'ASC',
     }); 
+
+    const [debounceValue] = useDebounce(datos, 500);
 
     const resetCampos = () => {
         for (let clave in datos){
@@ -114,7 +113,6 @@ function BaseDatos() {
             else
                 datos[clave] = '';
         }
-        setAvanzados(false);
         onSearch(debounceValue)
     }
 
@@ -135,12 +133,12 @@ function BaseDatos() {
 	}, [debounceValue, datos]); 
 
 
-    const onSearch = async (value) => {
+    const onSearch = async (datos) => {
         try {
-            const { estatus,tipo,manejador,ambiente,registros,orden } = datos;
+            const { terminoBusqueda,estatus,tipo,manejador,ambiente,registros,orden } = datos;
 
             const respuesta = await Base.obtenerBDPorBusqueda(
-                value,estatus,tipo,manejador,ambiente,registros,orden);
+                terminoBusqueda,estatus,tipo,manejador,ambiente,registros,orden);
             setResultado(respuesta.data);
             
         } catch (error) {
@@ -148,15 +146,25 @@ function BaseDatos() {
         }
     }
 
+    const [pending, setPending] = useState(true);
+    const loading = () => { 
+        const timeout = setTimeout(() => { setPending(false) }, 500);
+        return () => clearTimeout(timeout);
+    }
+    useEffect(() => {
+        setPending(true);
+        loading();
+    }, [resultado]);
+
 
     return(
         <Container>
 
             <form className='flex justify-center items-center flex-col p-4 bg-zinc-400 border-solid rounded'>
-                <div className='flex flex-col gap-4 w-full py-2 border-solid'>
+                <div className='flex flex-col space-x-4 w-full justify-center items-center py-2 border-solid'>
 
                     <div className="border-solid">
-                        <div className="grid grid-cols-4 gap-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 space-x-4">
                             <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={opcionEstatus} manejador={handleInputChange} />
                             <Select campo='Tipo' name='tipo' busqueda={true} byId={false} opciones={opcionTipoBD} manejador={handleInputChange} />
                             <Select campo='Manejador' name='manejador' busqueda={true} byId={false} opciones={opcionManejadores} manejador={handleInputChange} />
@@ -165,11 +173,12 @@ function BaseDatos() {
                     </div>
 
                     <div className="radioArea">
-                        <div className='mt-8 flex justify-center items-center gap-4'>
+                        <div className='mt-8 flex flex-col md:flex-row justify-center items-center space-x-4'>
                             <div className="relative w-96">
                                 <input 
                                     type="search" 
-                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    name='terminoBusqueda'
+                                    onChange={(e) => handleInputChange(e)}
                                     className="block p-2 pr-12 w-96 text-sm text-black bg-white rounded border-none outline-none" placeholder="Buscar" />
                                 <button 
                                     type="submit" 
@@ -191,8 +200,8 @@ function BaseDatos() {
             </form>
 
             {resultado ? (
-                <div className="w-4/3">
-                    <Tabla columnas={columns} datos={resultado} paginacion={true} />
+                <div className="w-[480px] md:w-[720px] lg:w-[960px] px-8">
+                    <Tabla columnas={columns} datos={resultado} paginacion={true} pending={pending} />
                 </div>
             ) : (null)}
 

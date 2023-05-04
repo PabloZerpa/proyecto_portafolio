@@ -1,5 +1,3 @@
-import Button from "./Button";
-
 
 
 const Modal = ({children }) => {
@@ -23,6 +21,6 @@ const Modal = ({children }) => {
             </div>
         </div>
     );
-  };
-  
-  export default Modal;
+};
+
+export default Modal;

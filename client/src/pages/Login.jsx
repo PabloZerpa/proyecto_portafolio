@@ -74,9 +74,8 @@ function Login() {
     <div className='relative flex flex-col justify-center items-center w-full h-screen bg-zinc-300'>
 
       <form
-        className='flex justify-center items-center flex-col gap-6 w-96 mt-20 px-13 py-4 
-        bg-zinc-100 font-medium list-none rounded-lg drop-shadow-md' 
-        method="post" onSubmitCapture={handleLogin}
+        className='flex justify-center items-center flex-col space-y-6 w-96 mt-20 px-13 py-4 
+        bg-zinc-100 font-medium list-none rounded-lg drop-shadow-md' onSubmit={handleLogin}
       >
 
         <FaUserCircle className='text-6xl text-blue-500' />

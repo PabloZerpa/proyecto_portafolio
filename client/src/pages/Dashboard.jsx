@@ -23,7 +23,7 @@ const columns = [
       sortable: true,
       grow: 0,
       left: true,
-      width: "60px"
+      width: "60px",
   },
   {
       name: 'Acronimo',
@@ -56,14 +56,16 @@ const columns = [
       selector: row => row.apl_fecha_actualizacion,
       sortable: true,
       grow: 2,
-      left: true
+      left: true,
+      hide: 'md'
   },
   {
     name: 'Por',
     selector: row => row.indicador,
     sortable: true,
     grow: 1,
-    left: true
+    left: true,
+    hide: 'md'
 },
 ];
 
@@ -99,15 +101,8 @@ function Dashboard() {
           <>
             <h3 className='font-bold text-lg'>Modificaciones Recientes</h3>
             
-            <div className="w-4/3">
+            <div className="w-[540px] md:w-[720px] lg:w-[960px] px-8">
               <Tabla columnas={columns} datos={datos} />
-              {/* <DataTable
-                  columns={columns}
-                  data={datos}
-                  highlightOnHover
-                  pointerOnHover
-                  dense
-              /> */}
             </div>
             
             <Linea />

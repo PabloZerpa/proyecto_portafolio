@@ -21,6 +21,10 @@ const validatorApp = [
     check("doc_descripcion").exists().notEmpty().isString(),
     check("doc_tipo").exists().notEmpty().isString(),
     check("doc_direccion").exists().notEmpty().isString(),
+
+    check("select_lenguaje").exists().notEmpty().isLength({min:1}),
+    check("select_base").exists().notEmpty().isLength({min:1}),
+    check("select_servidor").exists().notEmpty().isLength({min:1}),
     (req,res,next) => {
         try{
             validationResult(req).throw();

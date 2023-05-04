@@ -3,16 +3,13 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Dropdown } from "./";
 import Autorizacion from '../services/auth.service';
-// import Logo from "../assets/logo.png";
 import Logo from "../components/logo_pdvsa.png";
 
 // -------------------- NAVEGACION --------------------
 function Header() {
   const [user, setUser] = useState('');
   
-  useEffect(() => {
-    setUser(Autorizacion.obtenerUsuario());
-  }, []);
+  useEffect(() => { setUser(Autorizacion.obtenerUsuario()); }, []);
 
   return (
     
@@ -24,12 +21,12 @@ function Header() {
 
       {user == null ? (
         <>
-          <div className="text-xl font-bold">Repositorio de Infraestructura y Aplicaciones</div>
+          <div className="text-xl font-bold hidden md:block">Repositorio de Infraestructura y Aplicaciones</div>
           <div className="mr-16 pr-14"></div>
         </>
       ) : ( 
         <>
-          <div className="pl-14 text-xl font-bold">Repositorio de Infraestructura y Aplicaciones</div>
+          <div className="pl-14 text-xl font-bold hidden md:block">Repositorio de Infraestructura y Aplicaciones</div>
           <Dropdown user={user} />
         </>
       )}

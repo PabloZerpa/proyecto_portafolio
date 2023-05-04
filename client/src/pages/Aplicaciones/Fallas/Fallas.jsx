@@ -1,12 +1,12 @@
 
 import { useEffect, useState } from "react";
-import { Container, Button, Tabla } from "../../components";
+import { Container, Button, Tabla } from "../../../components";
 import { useDebounce } from 'use-debounce';
 import { FaCheckCircle, FaEdit, FaSearch } from 'react-icons/fa';
-import Autorizacion from "../../services/auth.service";
-import Falla from "../../services/falla.service";
+import Autorizacion from "../../../services/auth.service";
+import Falla from "../../../services/falla.service";
 import { Link } from "react-router-dom";
-import { Notificacion } from "../../utils/Notificacion";
+import { Notificacion } from "../../../utils/Notificacion";
 
 function Fallas() {
 
@@ -38,10 +38,6 @@ function Fallas() {
         setSolucion(dato.fal_solucion);
     }
 
-    // VARIABLES PARA LA PAGINA
-    const [pagina, setPagina] = useState(1);
-    const obtenerPagina = (respuesta) => {setPagina(respuesta); console.log('PAGINA EN ADMINISTRACION: ' + pagina)};
-
     // FUNCION PARA BUSCAR AL ESCRIBIR EN EL INPUT
     useEffect(() => {
         if (debounceValue)
@@ -49,7 +45,7 @@ function Fallas() {
         else
             setResultados(null) 
         
-    }, [debounceValue, pagina]);
+    }, [debounceValue]);
 
     // FUNCION PARA BUSCAR DATOS EN LA DATABASE
     const onSearch = async (termino) => {
@@ -120,7 +116,6 @@ function Fallas() {
         else
             return (<td key={campo} className="px-2 py-2">{valor}</td>)
     }
-
 
     const columnas = [
         {
@@ -214,11 +209,21 @@ function Fallas() {
         },
       ];
 
+    const [pending, setPending] = useState(true);
+    const loading = () => { 
+        const timeout = setTimeout(() => { setPending(false) }, 500);
+        return () => clearTimeout(timeout);
+    }
+    useEffect(() => {
+        setPending(true);
+        loading();
+    }, [resultados]);
+
     return(
         <Container>
             <h2 className='font-bold text-lg'>Buscar Falla</h2>
 
-            <form className='flex justify-center items-center flex-row gap-4 p-4 bg-zinc-400 border-solid rounded'>
+            <form className='flex justify-center items-center space-x-4 p-4 bg-zinc-400 border-solid rounded'>
 
                 <div className="relative w-96">
                     <input 
@@ -238,9 +243,8 @@ function Fallas() {
 
             {resultados ? (
                 <>
-                {console.log(resultados)}
-                <div className="w-[1080px]">
-                    <Tabla columnas={columnas} datos={resultados} paginacion={true} />
+                <div className="w-[480px] md:w-[720px] lg:w-[960px] px-8">
+                    <Tabla columnas={columnas} datos={resultados} paginacion={true} pending={pending} />
                 </div>
                 </>
             ) : (

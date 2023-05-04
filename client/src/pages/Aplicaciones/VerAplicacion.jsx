@@ -1,10 +1,8 @@
 
 import { useState, useEffect } from 'react';
-import { FaEye, FaPlus } from 'react-icons/fa';
 import { useParams, Navigate, Link } from 'react-router-dom';
-import { Button, Container, Input, Radio, Tabla, TextArea } from '../../components';
+import { Container, Input, Radio, Tabla, TextArea } from '../../components';
 import Aplicacion from '../../services/aplicacion.service';
-import DataTable from 'react-data-table-component';
 
 const opcionesVista = ['General','Tecnologia', 'Base de datos',
 'Servidor','Responsables','Documentacion','Fallas'];
@@ -59,19 +57,19 @@ function VerAplicacion() {
             <h2 className='font-bold text-lg'>Informacion General</h2>
             <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
     
-              <div className='grid gap-6 mb-6 md:grid-cols-2'>
+              <div className='grid space-x-6 mb-6 md:grid-cols-2'>
                 <Input campo='Acronimo' propiedad={general.apl_acronimo} editable={false} />
                 <Input campo='Estatus' propiedad={general.estatus} editable={false} />
                 <Input campo='Version' propiedad={general.apl_version} editable={false} />
                 <Input campo='Direccion' propiedad={general.apl_direccion} editable={false} />
               </div>
     
-              <div className='flex flex-col gap-2 text-sm font-medium text-gray-900 mb-6'>
+              <div className='flex flex-col space-x-2 text-sm font-medium text-gray-900 mb-6'>
                 <TextArea campo='Nombre' propiedad={general.apl_nombre} editable={false} />
                 <TextArea campo='Descripcion' propiedad={general.apl_descripcion} editable={false} />
               </div>
                 
-              <div className='grid gap-6 mb-6 md:grid-cols-2'>
+              <div className='grid space-x-6 mb-6 md:grid-cols-2'>
                 <Input campo='Prioridad' propiedad={general.prioridad} editable={false} />
                 <Input campo='Alcance' propiedad={general.alcance} editable={false} />
                 <Input campo='Critico' propiedad={general.apl_critico} editable={false} />
@@ -142,7 +140,7 @@ function VerAplicacion() {
             <h2 className='font-bold text-lg'>Tecnologia</h2>
             <form className="grid grid-cols-2 justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
 
-              <div className='inline-grid grid-cols-1 gap-4 col-span-2'>
+              <div className='inline-grid grid-cols-1 space-x-4 col-span-2'>
                 <Input campo='Plataforma' propiedad={plataformas} editable={false} />
                 <Tabla columnas={columnsLen} datos={lenguajes} />
                 <Tabla columnas={columnsMan} datos={datos} />
@@ -205,16 +203,6 @@ function VerAplicacion() {
           grow: 1.5
         },
         {
-          name: 'Servidor',
-          selector: row => 
-            <Link className='text-blue-700' to={row ? `/servidor/${row.servidor_id}` : `/dashboard`} >
-              {row.servidor}
-            </Link>,
-          sortable: true,
-          left: true,
-          grow: 1.5
-        },
-        {
             name: 'Ultima Actualizacion',
             selector: row => row.bas_fecha_actualizacion,
             sortable: true,
@@ -228,7 +216,7 @@ function VerAplicacion() {
         return(
           <>
             <h2 className='font-bold text-lg'>Base de datos</h2>
-            <form className="flex justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
+            <form className="grid grid-cols-1 justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
               <Tabla columnas={columnsBD} datos={datos} />
             </form>
           </>
@@ -309,7 +297,7 @@ function VerAplicacion() {
         return(
           <>
             <h2 className='font-bold text-lg'>Servidor</h2>
-            <form className="flex flex-col justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
+            <form className="grid grid-cols-1 justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
               <Tabla columnas={columnsSer} datos={datos} />
             </form>
           </>
@@ -389,20 +377,16 @@ function VerAplicacion() {
         return(
           <>
             <h2 className='font-bold text-lg'>Responsables</h2>
-            <form className="flex flex-col justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-              
-              <div className="flex flex-col justify-center items-center gap-4 mb-8">
+            <form className="grid grid-cols-1 justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
+
+              <div className="w-full flex flex-col justify-center items-center gap-4 mb-8">
                 <h3 className='font-bold text-base'>Responsables Funcional</h3>
-                <div className='w-[880px]'>
                   <Tabla columnas={columnsRes} datos={funcional} />
-                </div>
               </div>
 
-              <div className="flex flex-col justify-center items-center gap-4">
+              <div className="w-full flex flex-col justify-center items-center gap-4">
                 <h3 className='font-bold text-base'>Responsables Tecnico</h3>
-                <div className='w-[880px]'>
                   <Tabla columnas={columnsRes} datos={tecnico} />
-                </div>
               </div>
 
             </form>
@@ -445,17 +429,8 @@ function VerAplicacion() {
         return (
           <>
             <h2 className='font-bold text-lg'>Documentacion</h2>
-            <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-                <DataTable
-                  columns={columnsDoc}
-                  data={datos}
-                  noDataComponent={"SIN RESULTADOS"}
-                  fixedHeader
-                  fixedHeaderScrollHeight="600px"
-                  highlightOnHover
-                  pointerOnHover
-                  dense
-                />
+            <form className="grid grid-cols-1 justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
+              <Tabla columnas={columnsDoc} datos={datos} />
             </form>
           </>
         )
@@ -499,18 +474,8 @@ function VerAplicacion() {
         return (
           <>
             <h2 className='font-bold text-lg'>Fallas</h2>
-            <form className="relative w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-                <DataTable
-                  columns={columnsFal}
-                  data={datos}
-                  noDataComponent={"SIN RESULTADOS"}
-                  fixedHeader
-                  fixedHeaderScrollHeight="600px"
-                  highlightOnHover
-                  pointerOnHover
-                  dense
-                />
-              {/* <Tabla3 columnas={columnasFallas} datos={datos} /> */}
+            <form className="grid grid-cols-1 justify-center items-center relative w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
+              <Tabla columnas={columnsFal} datos={datos} />
             </form>
           </>
         )
@@ -518,7 +483,7 @@ function VerAplicacion() {
 
     return(
       <Container>
-        <Radio label=' ' size='big' opciones={opcionesVista} manejador={handleInputChange} />
+        <Radio label=' ' size='small' opciones={opcionesVista} manejador={handleInputChange} />
         {opcion === 'General' ? <General/> : null}
         {opcion === 'Tecnologia' ? <Tecnologia/> : null}
         {opcion === 'Base de datos' ? <Basedatos/> : null }

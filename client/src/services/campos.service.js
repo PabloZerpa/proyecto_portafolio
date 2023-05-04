@@ -150,7 +150,7 @@ export const opcionLenguaje = ['SELECCIONE','PHP', 'JAVASCRIPT', 'JAVA', 'C++', 
     'TYPESCRIPT','PYTHON','GO','RUST'];
 
 export const frameworkPhp = ['SELECCIONE','LARAVEL', 'CODEIGNITER', 'SIMPHONY'];
-export const frameworkJS = ['SELECCIONE','REACT', 'VUE', 'ANGULAR','BOOTSTRAP','MATERIAL DESIGN'];
+export const frameworkJS = ['SELECCIONE','REACT', 'VUE', 'ANGULAR'];
 export const frameworkJAVA = ['SELECCIONE','SPRING'];
 export const frameworkCPP = ['SELECCIONE','QT'];
 export const frameworkCS = ['SELECCIONE','BLAZE'];
