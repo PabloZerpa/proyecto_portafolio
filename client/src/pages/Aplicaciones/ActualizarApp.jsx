@@ -10,19 +10,20 @@ import Opciones from '../../utils/Opciones';
 import { columnasModalBD, columnasModalLenguaje, columnasModalServidor } from '../../utils/columnas';
 import { FaTimesCircle } from 'react-icons/fa';
 import { Notificacion } from '../../utils/Notificacion';
+import Swal from 'sweetalert2';
+import swal from 'sweetalert';
 
 function ActualizarApp() {
 
     const navigate = useNavigate();
     const { id } = useParams();
-    const [datos, setDatos] = useState({
-        usuario_actualizo: Autorizacion.obtenerUsuario().indicador,
-    });
     const [load, setLoad] = useState(true);
+    const [datos, setDatos] = useState({
+        usuario_actualizo: Autorizacion.obtenerUsuario().indicador, 
+    });
     
     // VALORES POR DEFECTO EN LOS INPUTS
     const [general, setGeneral] = useState('');
-    //const [tecnologia, setTecnologia] = useState('');
     const [lenguaje, setLenguaje] = useState('');
     const [plataforma, setPlataforma] = useState('');
     const [basedatos, setBaseDatos] = useState('');
@@ -33,34 +34,33 @@ function ActualizarApp() {
     const [documentacion, setDocumentacion] = useState('');
 
     // =================== OPCIONES PARA LOS SELECTS ===================
-    const [responsables, setResponsables] = useState('');
+    const [custodios, setCustodios] = useState('');
     const [estatus, setEstatus] = useState('');
     const [alcance, setAlcance] = useState('');
     const [plataformas, setPlataformas] = useState('');
-    const [mante, setMante] = useState('');
+    const [frecuencia, setFrecu] = useState('');
     const [regiones, setRegiones] = useState('');
 
     function navegar() { navigate(-1) } 
 
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
-    async function updateData(e) {
+    async function actualizar(e) {
         e.preventDefault();
         try {
             if(Autorizacion.obtenerUsuario().rol === 'admin'){
                 await Aplicacion.actualizarDatos(id, datos, tableDataLenguaje, tableDataBase, tableDataServidor); 
                 Notificacion('REGISTRO EXITOSO', 'success');
-                // navigate("/dashboard");
+                navigate("/dashboard");
             }
         } 
         catch (error) { 
             console.log('ERROR AL ACTUALIZAR APL_ACT'); 
-            Notificacion(error.response.data.message, 'error');
+            Notificacion(error.cusponse.data.message, 'error');
         }
     }
 
     // FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS
     const setValores = (e) => {
-
         if(e.target.value === 'TODAS')
             setDatos({ ...datos, [e.target.name] : null });
         else
@@ -73,32 +73,31 @@ function ActualizarApp() {
     const [select_base, setSelectBase] = useState([]);
     const [tableDataBase, setDataBase] = useState([]);
 
-    const obtenerSeleccionesBase = (respuesta) => {
+    const obtenerSeleccionesBase = (cuspuesta) => {
         let selecciones = [];
         setDataBase([]);
 
-        for (let i = 0; i < respuesta.length; i++) {
-            const x = respuesta[i];
+        for (let i = 0; i < cuspuesta.length; i++) {
+            const x = cuspuesta[i];
             setDataBase(tableDataBase => [...tableDataBase, { base_datos_id: x.base_datos_id, base_datos: x.base_datos}]);
-            selecciones.push(respuesta[i].base_datos_id);
+            selecciones.push(cuspuesta[i].base_datos_id);
         }
-
         setSelectBase(selecciones);
     };
 
-    // -------------------- FUNCION Y VARIABLES PARA LA SELECCION DE SERVIDORES --------------------
+    // -------------------- FUNCION Y VARIABLES PARA LA SELECCION DE SERVIDOcus --------------------
     const [isOpen2, setIsOpen2] = useState(false);
     const [select_servidor, setSelectServidor] = useState([]);
     const [tableDataServidor, setDataServidor] = useState([]);
 
-    const obtenerSeleccionesServidor = (respuesta) => {
+    const obtenerSeleccionesServidor = (cuspuesta) => {
         let selecciones = [];
         setDataServidor([]);
 
-        for (let i = 0; i < respuesta.length; i++) {
-            const x = respuesta[i];
+        for (let i = 0; i < cuspuesta.length; i++) {
+            const x = cuspuesta[i];
             setDataServidor(tableDataServidor => [...tableDataServidor, { servidor_id: x.servidor_id, servidor: x.servidor}]);
-            selecciones.push(respuesta[i].servidor_id);
+            selecciones.push(cuspuesta[i].servidor_id);
         }
 
         setSelectServidor(selecciones); 
@@ -109,14 +108,14 @@ function ActualizarApp() {
     const [select_lenguaje, setSelectLenguaje] = useState([]);
     const [tableDataLenguaje, setDataLenguaje] = useState([]);
 
-    const obtenerSeleccionesLenguaje = (respuesta) => {
+    const obtenerSeleccionesLenguaje = (cuspuesta) => {
         let selecciones = [];
         setDataLenguaje([]);
 
-        for (let i = 0; i < respuesta.length; i++) {
-            const x = respuesta[i];
+        for (let i = 0; i < cuspuesta.length; i++) {
+            const x = cuspuesta[i];
             setDataLenguaje(tableDataLenguaje => [...tableDataLenguaje, { lenguaje_id: x.lenguaje_id, lenguaje: x.lenguaje}]);
-            selecciones.push(respuesta[i].lenguaje_id);
+            selecciones.push(cuspuesta[i].lenguaje_id);
         }
 
         setSelectLenguaje(selecciones); 
@@ -125,16 +124,13 @@ function ActualizarApp() {
 
     // -------------------- FUNCION PARA LLENAR TABLA POR DEFECTO --------------------
     const llenarTabla = async (datos, id, nombre, setTabla, tabla, setSelect) => {
-
         let selecciones = [];
-
         for (let i = 0; i < datos.length; i++) {
             const x = datos[i];
             setTabla(tabla => [...tabla, { [`${id}`]: x[id], [`${nombre}`]: x[nombre]}]); 
             selecciones.push(datos[i].base_datos_id); 
         }
-
-        return selecciones;
+        setSelect(selecciones);
     }
 
     // -------------------- FUNCION PARA ELIMINAR ELEMENTOS DE LA TABLA --------------------
@@ -218,59 +214,57 @@ function ActualizarApp() {
         async function fetchData(){
         try { 
 
-            setResponsables(await Opciones('responsables'));
+            // ========== OPCIONES PARA LOS SELECTS ==========
+            setCustodios(await Opciones('custodios'));
             setPlataformas(await Opciones('plataformas'));
             setEstatus(await Opciones('estatus'));
             setAlcance(await Opciones('alcance'));
-            setMante(await Opciones('mantenimientos'));
+            setFrecu(await Opciones('frecuencias'));
             setRegiones(await Opciones('regiones')); 
 
-            const gen = await Aplicacion.obtenerGeneral(id);
-            const tec = await Aplicacion.obtenerTecnologia(id);
-            const doc = await Aplicacion.obtenerDocumentacion(id);
-            const bas = await Aplicacion.obtenerBaseDatos(id);
-            const ser = await Aplicacion.obtenerServidor(id);
-            const res = await Aplicacion.obtenerResponsable(id);
+            // ========== DATOS POR DEFECTO ==========
+            const todo = await Aplicacion.obtenerTodo(id);
     
-            setGeneral(gen.data);
-            setBaseDatos(bas.data.datos);
-            setServidor(ser.data.datos);
-            setFuncional(res.data.funcional[0].res_indicador);
-            setTecnico(res.data.tecnico[0].res_indicador); 
-            setLenguaje(tec.data.lenguajes);
-            setPlataforma(tec.data.plataformas);
-            setMantenimiento(tec.data.datos[0]);
-            setDocumentacion(doc.data.datos[0]);
+            setGeneral(todo.general);
+            setBaseDatos(todo.basedatos);
+            setServidor(todo.servidor);
+            setFuncional(todo.funcional);
+            setTecnico(todo.tecnico); 
+            setLenguaje(todo.lenguajes);
+            setPlataforma(todo.plataformas);
+            setMantenimiento(todo.tecnologia); 
+            setDocumentacion(todo.documentacion);
 
+            llenarTabla(lenguaje,'lenguaje_id','lenguaje',setDataLenguaje,tableDataLenguaje,setSelectLenguaje);
             llenarTabla(basedatos,'base_datos_id','base_datos',setDataBase,tableDataBase,setSelectBase);
             llenarTabla(servidor,'servidor_id','servidor',setDataServidor,tableDataServidor,setSelectServidor);
-            llenarTabla(lenguaje,'lenguaje_id','lenguaje',setDataLenguaje,tableDataLenguaje,setSelectLenguaje);
 
             setDatos({
                 ...datos,
-                apl_acronimo : gen.data[0].apl_acronimo,
-                apl_nombre : gen.data[0].apl_nombre,
-                apl_descripcion : gen.data[0].apl_descripcion,
-                apl_prioridad : gen.data[0].prioridad,
-                apl_alcance : gen.data[0].alcance,
-                apl_critico : gen.data[0].apl_critico,
-                apl_direccion : gen.data[0].apl_direccion,
-                apl_estatus : gen.data[0].estatus,
-                apl_version : gen.data[0].apl_version,
-                apl_codigo_fuente : gen.data[0].apl_codigo_fuente,
-                apl_cantidad_usuarios : gen.data[0].apl_cantidad_usuarios,
-                apl_region : gen.data[0].region,
-                plataforma : tec.data.plataformas[0].plataforma,
-                select_funcional: res.data.funcional[0].res_indicador,
-                select_tecnico: res.data.tecnico[0].res_indicador,
-                man_frecuencia: mantenimiento.man_frecuencia,
-                man_horas_prom: mantenimiento.man_horas_prom,
-                man_horas_anuales: mantenimiento.man_horas_anuales,
-                doc_descripcion: documentacion.doc_descripcion,
-                doc_direccion: documentacion.doc_direccion,
-                doc_tipo: documentacion.doc_tipo,
+                apl_acronimo : todo.general.apl_acronimo,
+                apl_nombre : todo.general.apl_nombre,
+                apl_descripcion : todo.general.apl_descripcion,
+                apl_prioridad : todo.general.prioridad,
+                apl_alcance : todo.general.alcance,
+                apl_critico : todo.general.apl_critico,
+                apl_direccion : todo.general.apl_direccion,
+                apl_estatus : todo.general.estatus,
+                apl_version : todo.general.apl_version,
+                apl_codigo_fuente : todo.general.apl_codigo_fuente,
+                apl_cantidad_usuarios : todo.general.apl_cantidad_usuarios,
+                apl_region : todo.general.region, 
+                plataforma : todo.plataformas.plataforma,
+                select_funcional: todo.funcional.cus_indicador,
+                select_tecnico: todo.tecnico.cus_indicador,
+                man_frecuencia: todo.tecnologia.frecuencia,
+                man_horas_prom: todo.tecnologia.man_horas_prom,
+                man_horas_anuales: todo.tecnologia.man_horas_anuales,
+                doc_descripcion: todo.documentacion[0].doc_descripcion,
+                doc_direccion: todo.documentacion[0].doc_direccion,
+                doc_tipo: todo.documentacion[0].doc_tipo,
             });
 
+            console.log(datos);
             setLoad(false);
 
         }catch (error) { console.log(error) }
@@ -279,6 +273,19 @@ function ActualizarApp() {
     }, [id, load]);
 
 
+    const eliminar = async (id) => {
+        try {
+            if(Autorizacion.obtenerUsuario().rol === 'admin'){
+                console.log(id);
+                await Aplicacion.eliminar(id); 
+                Notificacion('USUARIO ELIMINADO EXITOSAMENTE', 'success');
+                navegar('/');
+            }
+          }
+          catch (error) { 
+            Notificacion(error.response.data.message, 'error');
+          }
+    }
 
     if(Autorizacion.obtenerUsuario().rol !== 'admin') 
         return <Navigate to='/' />
@@ -303,7 +310,7 @@ function ActualizarApp() {
                     />
                 </Modal> 
             ) : (null) }
-            {/* --------------- VENTANA MODAL PARA REGISTRAR SERVIDORES --------------- */}
+            {/* --------------- VENTANA MODAL PARA REGISTRAR SERVIDOcus --------------- */}
             {isOpen2 ? (
                 <Modal>
                     <TableRegistro
@@ -331,27 +338,27 @@ function ActualizarApp() {
 
             <h2 className='font-bold text-lg'>Actualizacion de Aplicacion</h2>
 
-            <form className="flex flex-col justify-center items-center relative w-full p-4 mb-10 z-40" onSubmit={updateData} >
+            <form className="flex flex-col justify-center items-center relative w-full p-4 mb-10 z-40" onSubmit={actualizar} >
 
                 <div className="flex flex-col relative w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
 
                     <h2 className='font-bold text-base mb-6'>Informacion General</h2>
                     <div className="grid grid-cols-2 space-x-4">
                         {/* --------------- INFORMACION BASICA --------------- */}
-                        <Input campo='Acronimo' name='apl_acronimo' required={true} propiedad={general[0].apl_acronimo} manejador={setValores} />
-                        <Select campo='Estatus' name='apl_estatus' required={true} opciones={estatus ? estatus : ['SELECCIONE']} propiedad={general[0].estatus} manejador={setValores}/>
+                        <Input campo='Acronimo' name='apl_acronimo' required={true} propiedad={general.apl_acronimo} manejador={setValores} />
+                        <Select campo='Estatus' name='apl_estatus' required={true} opciones={estatus ? estatus : ['SELECCIONE']} propiedad={general.estatus} manejador={setValores}/>
                     </div>
 
-                    <TextArea campo='Nombre' name='apl_nombre' required={true} propiedad={general[0].apl_nombre} manejador={setValores} />
-                    <TextArea campo='Descripcion' name='apl_descripcion' required={true} propiedad={general[0].apl_descripcion} manejador={setValores} />
+                    <TextArea campo='Nombre' name='apl_nombre' required={true} propiedad={general.apl_nombre} manejador={setValores} />
+                    <TextArea campo='Descripcion' name='apl_descripcion' required={true} propiedad={general.apl_descripcion} manejador={setValores} />
 
                     <div className="relative grid grid-cols-2 space-x-4 mb-0">
-                        <Input campo='Version' name='apl_version' required={true} propiedad={general[0].apl_version} manejador={setValores} />
-                        <Select campo='Prioridad' name='apl_prioridad' required={true} propiedad={general[0].prioridad} opciones={['SELECCIONE','ALTA','MEDIA','BAJA',]} manejador={setValores} />
-                        <Select campo='Alcance' name='apl_alcance' required={true} propiedad={general[0].alcance} opciones={alcance ? alcance : ['SELECCIONE']} manejador={setValores} />
-                        <Input campo='Direccion' name='apl_direccion' required={true} propiedad={general[0].apl_direccion} manejador={setValores} />
-                        <Input campo='N° Usuarios' name='apl_cantidad_usuarios' required={true} propiedad={general[0].apl_cantidad_usuarios} manejador={setValores} />
-                        <Select campo='Region' name='apl_region' required={true} propiedad={general[0].region} opciones={regiones ? regiones : ['SELECCIONE']} manejador={setValores} />
+                        <Input campo='Version' name='apl_version' required={true} propiedad={general.apl_version} manejador={setValores} />
+                        <Select campo='Prioridad' name='apl_prioridad' required={true} propiedad={general.prioridad} opciones={['SELECCIONE','ALTA','MEDIA','BAJA',]} manejador={setValores} />
+                        <Select campo='Alcance' name='apl_alcance' required={true} propiedad={general.alcance} opciones={alcance ? alcance : ['SELECCIONE']} manejador={setValores} />
+                        <Input campo='Direccion' name='apl_direccion' required={true} propiedad={general.apl_direccion} manejador={setValores} />
+                        <Input campo='N° Usuarios' name='apl_cantidad_usuarios' required={true} propiedad={general.apl_cantidad_usuarios} manejador={setValores} />
+                        <Select campo='Region' name='apl_region' required={true} propiedad={general.region} opciones={regiones ? regiones : ['SELECCIONE']} manejador={setValores} />
                         <Radio label='Critico' name='apl_critico' required={true} opciones={['SI','NO']} manejador={setValores} />
                         <Radio label='Codigo Fuente' name='apl_codigo_fuente' required={true} opciones={['SI', 'NO']} manejador={setValores} />
                     </div>
@@ -362,7 +369,7 @@ function ActualizarApp() {
 
                     <h2 className='font-bold text-base my-4'>Tecnologia</h2>
                     <div className="grid grid-cols-2 space-x-4">
-                        <Select campo='Plataforma' name='plataforma' propiedad={plataforma} byId={false} opciones={plataformas ? plataformas : ['SELECCIONE']} manejador={setValores} />
+                        <Select campo='Plataforma' name='plataforma' propiedad={plataforma.plataforma} byId={false} opciones={plataformas ? plataformas : ['SELECCIONE']} manejador={setValores} />
                     </div>
 
                     {/* --------------- LENGUAJES --------------- */}
@@ -409,18 +416,18 @@ function ActualizarApp() {
 
                 </div>
 
-                {/* --------------- RESPONSABLES --------------- */} 
+                {/* --------------- CUSTODIOS --------------- */} 
                 <div className="flex flex-col relative w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
                         
                     <div className="grid grid-cols-2 space-x-4">
-                        <p className='font-bold text-base my-4'>Responsable Funcional</p>
-                        <p className='font-bold text-base my-4'>Responsable Tecnico</p>
+                        <p className='font-bold text-base my-4'>Custodio Funcional</p>
+                        <p className='font-bold text-base my-4'>Custodio Tecnico</p>
  
                         <div className="grid grid-cols-2 space-x-4">
-                            <Select campo='Seleccione Custodio' name='select_funcional' byId={false} propiedad={datos.select_funcional} opciones={responsables ? responsables : ['SELECCIONE']} manejador={setValores}/>
+                            <Select campo='Seleccione Custodio' name='select_funcional' byId={false} propiedad={datos.select_funcional} opciones={custodios ? custodios : ['SELECCIONE']} manejador={setValores}/>
                         </div>
                         <div className="grid grid-cols-2 space-x-4">
-                            <Select campo='Seleccione Custodio' name='select_tecnico' byId={false} propiedad={tecnico ? tecnico : null} opciones={responsables ? responsables : ['SELECCIONE']} manejador={setValores}/>
+                            <Select campo='Seleccione Custodio' name='select_tecnico' byId={false} propiedad={datos.select_tecnico} opciones={custodios ? custodios : ['SELECCIONE']} manejador={setValores}/>
                         </div>
 
                     </div>
@@ -430,23 +437,44 @@ function ActualizarApp() {
                     {/* --------------- DOCUMENTACION --------------- */}
                     <p className='font-bold text-base my-4'>Documentacion</p>
                     <div className="grid grid-cols-2 space-x-4">
-                        <Input campo='Descripcion' name='doc_descripcion' propiedad={documentacion.doc_descripcion} manejador={setValores} />
-                        <Input campo='Direccion' name='doc_direccion' propiedad={documentacion.doc_direccion} manejador={setValores} />
-                        <Input campo='Tipo de Doc' name='doc_tipo' propiedad={documentacion.doc_tipo} manejador={setValores} />
+                        <Input campo='Descripcion' name='doc_descripcion' propiedad={documentacion[0].doc_descripcion} manejador={setValores} />
+                        <Input campo='Direccion' name='doc_direccion' propiedad={documentacion[0].doc_direccion} manejador={setValores} />
+                        <Input campo='Tipo de Doc' name='doc_tipo' propiedad={documentacion[0].doc_tipo} manejador={setValores} />
                     </div>
 
                     {/* --------------- MANTENIMIENTO --------------- */}
                     <p className='font-bold text-base my-4'>Mantenimiento</p>
                     <div className="grid grid-cols-2 space-x-4">
-                        <Select campo='Frecuencia' name='man_frecuencia' propiedad={mantenimiento.man_frecuencia} byId={false} opciones={opcionMantenimiento} manejador={setValores}/>
+                        <Select campo='Frecuencia' name='man_frecuencia' propiedad={mantenimiento.frecuencia} byId={false} opciones={frecuencia ? frecuencia : ['SELECCIONE']} manejador={setValores}/>
                         <Input campo='Horas Pro' name='man_horas_prom' propiedad={mantenimiento.man_horas_prom} manejador={setValores} />
                         <Input campo='Horas Anu' name='man_horas_anuales' propiedad={mantenimiento.man_horas_anuales} manejador={setValores} />
                     </div>
                 </div>
 
                 <div className="flex gap-2 md:gap-12">
-                    <Button tipo='button' color='blue' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
-                    <Button tipo='submit' color='blue' width={32}>Registrar</Button>
+                    <Button tipo='button' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
+                    <Button tipo='submit' width={32}>Actualizar</Button>
+                    <button type='button' onClick={() => {
+                        swal({
+                            text: `¿Esta seguro de Eliminar la aplicacion ${general.apl_acronimo}?`,
+                            icon: 'warning',
+                            buttons: {
+                                cancel: {
+                                  text: "Cancel",
+                                  value: false,
+                                  visible: true,
+                                },
+                                confirm: {
+                                  text: "Aceptar",
+                                  value: true,
+                                  visible: true,
+                                }
+                            },
+                          }).then((result) => {
+                            if (result)
+                              eliminar(id);
+                          })
+                    }}>Eliminar</button>
                 </div>
 
             </form>

@@ -39,7 +39,7 @@ const validatorApp = [
 ];
 
 // *************** VALIDAR DATOS APLICACION ***************
-const validatorResponsable = [
+const validatorCustodio = [
     check("nombre").exists().notEmpty().isString(),
     check("apellido").exists().notEmpty().isString(),
     check("indicador").exists().notEmpty().isString(),
@@ -54,13 +54,10 @@ const validatorResponsable = [
             validationResult(req).throw();
             return next();
         } catch(err){ 
-            console.log('hola');
-            // res.status(403);
-            // res.send({errors: err.array()})
             return res.status(401).json({ message: 'DATOS INCOMPLETOS' });
         }
     }
 ];
 
-module.exports = { validatorApp, validatorResponsable };
+module.exports = { validatorApp, validatorCustodio };
 

@@ -1,7 +1,7 @@
 
 import axios from 'axios';
 import authHeader from './header.service';
-const baseUrl = "http://localhost:3001/api/";
+const baseUrl = process.env.REACT_APP_URL;
  
 class Usuario {  
 
@@ -25,7 +25,7 @@ class Usuario {
     // ---------------- UPDATE DE UN CAMPO DE UN USUARIO ------------------
     async actualizarUsuario(datoModificacion) {
         try { 
-            const id = datoModificacion.edicion;
+            const id = datoModificacion.id;
             const respuesta = await axios.patch(`${baseUrl}usuarios/permisos/${id}`, datoModificacion, { headers: authHeader() });
             return respuesta;
         } catch (error) {

@@ -100,31 +100,31 @@ const insertarBase = async (id,select_base) => {
 
 }
 
-const insertarResponsable = async (tipo,id,select_responsable) => {
+const insertarCustodio = async (tipo,id,select_custodio) => {
 
-    let responsable_id = null;
+    let custodio_id = null;
 
-    if(select_responsable){
-        const buscarResponsable = await pool.query(`SELECT responsable_id FROM responsables WHERE res_indicador = ?`, [select_responsable]);
-        responsable_id = buscarResponsable[0][0].responsable_id
-        console.log('CONDICION TRUE DEL SELECT RESPONSABLE: ' + responsable_id);
+    if(select_custodio){
+        const buscarCustodio = await pool.query(`SELECT custodio_id FROM custodios WHERE cus_indicador = ?`, [select_custodio]);
+        custodio_id = buscarCustodio[0][0].custodio_id
+        console.log('CONDICION TRUE DEL SELECT custodio: ' + custodio_id);
     }
 
-    // crea los datos del tipo de responsable
+    // crea los datos del tipo de custodio
     if(tipo === 'funcional'){
-        const datos_tipo_responsable = await pool.query(
-            `INSERT INTO responsables_funcionales (aplicacion_id,responsable_id) VALUES (?,?)`,[id,responsable_id]);
+        const datos_tipo_custodio = await pool.query(
+            `INSERT INTO custodios_funcionales (aplicacion_id,custodio_id) VALUES (?,?)`,[id,custodio_id]);
         console.log('FUNCIONAL REGISTRADO');
     }
     else if(tipo === 'tecnico'){
-        const datos_tipo_responsable = await pool.query(
-            `INSERT INTO responsables_tecnicos (aplicacion_id,responsable_id) VALUES (?,?)`,[id,responsable_id]);
+        const datos_tipo_custodio = await pool.query(
+            `INSERT INTO custodios_tecnicos (aplicacion_id,custodio_id) VALUES (?,?)`,[id,custodio_id]);
         console.log('TECNICO REGISTRADO');
     }
 
-    console.log('RESPONSABLE REGISTRADO: ' + responsable_id);
+    console.log('custodio REGISTRADO: ' + custodio_id);
 
-    return responsable_id;
+    return custodio_id;
 }
 
 const insertarMantenimiento = async (id,frecuencia,horas_prom,horas_anuales) => {
@@ -152,4 +152,4 @@ const insertarDocumentacion = async (id,descripcion,direccion,tipo) => {
 
 module.exports = { insertarAplicacion, insertarPlataforma, 
     insertarLenguaje, insertarFramework, insertarServidor, 
-    insertarBase, insertarMantenimiento,insertarDocumentacion, insertarResponsable };
+    insertarBase, insertarMantenimiento,insertarDocumentacion, insertarCustodio };

@@ -61,13 +61,13 @@ const registrar = async (req, res) => {
     try {
         const password = await encriptar(req.body.password);
         const datos = {...req.body, password };
+        //console.log(datos);
         
         const buscarUsuario = await pool.query('SELECT * FROM usuarios WHERE indicador = ?', [datos.indicador]);
         const user = buscarUsuario[0][0];
             
         // ********** VERIFICA QUE EL USUARIO EXISTA **********
         if(user){
-            console.log('USUARIO YA EXISTENTE');
             return res.status(401).json({ message: 'USUARIO YA REGISTRADO' });
         }
 

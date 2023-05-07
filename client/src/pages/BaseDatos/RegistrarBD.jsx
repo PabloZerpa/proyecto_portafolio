@@ -10,42 +10,35 @@ import { FaTimesCircle } from 'react-icons/fa';
 import Modal from '../../components/Modal';
 import TableRegistro from '../../components/TablaRegistro';
 import { columnasModalServidor } from '../../utils/columnas';
+import Opciones from '../../utils/Opciones';
 
 function RegistrarBD() {
 
     const navigate = useNavigate();
     function navegar(ruta) { navigate(ruta) }
-
-    const [opcionServidores, setOpcionServidores] = useState('');
-    const [opcionMane, setOpcionMane] = useState('');
-    const [opcionTipos, setOpcionTipos] = useState('');
-    const [opcionEstatus, setOpcionEstatus] = useState('');
-    const [opcionAmbientes, setOpcionAmbientes] = useState('');
-
+    
     const [datos, setDatos] = useState({
         usuario_registro: Autorizacion.obtenerUsuario().indicador,
         usuario_actualizo: Autorizacion.obtenerUsuario().indicador,
     });
 
-    async function getData(ruta, elemento){
-        const respuesta = await Usuario.obtenerOpcion(ruta);
-        const data = respuesta.data;
-        let opciones = ['SELECCIONE'];
+    const [mane, setMane] = useState('');
+    const [tipos, setTipos] = useState('');
+    const [estatus, setEstatus] = useState('');
+    const [ambientes, setAmbientes] = useState('');
 
-        for (let i = 0; i < data.length; i++) {
-            const valor = Object.values(data[i]);
-            opciones.push(valor[0]);
-        }
-        elemento(opciones);
+    // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
+    async function establecerDatos(){
+        setMane(await Opciones('manejadores'));
+        setEstatus(await Opciones('estatus'));
+        setTipos(await Opciones('tipos'));
+        setAmbientes(await Opciones('ambientes'));
     }
 
     useEffect(() => {
-        getData('manejadores',setOpcionMane);
-        getData('tipos',setOpcionTipos);
-        getData('ambientes',setOpcionAmbientes);
-        getData('estatus',setOpcionEstatus);
-        getData('servidores',setOpcionServidores);
+        establecerDatos();
     }, []);
+
 
     const handleInputChange = (e) => {
         if(e.target.value === 'TODAS')
@@ -146,18 +139,18 @@ function RegistrarBD() {
                 <h2 className='font-bold text-base mb-6'>Informacion General</h2>
 
                 <div className='w-full'>
-                    <TextArea campo='Nombre' name='base_datos' editable={true} area={true} manejador={handleInputChange} />
+                    <TextArea campo='Nombre' name='base_datos' required={true} editable={true} area={true} manejador={handleInputChange} />
                 </div>
 
                 <div className="w-full grid grid-cols-1 md:grid-cols-2 relative space-x-4 mb-0">
-                    <Select campo='Estatus' name='estatus' required={true} opciones={opcionEstatus ? opcionEstatus : ['SELECCIONE']} manejador={handleInputChange}/>
-                    <Select campo='Tipo' name='tipo' required={true} opciones={opcionTipos ? opcionTipos : ['SELECCIONE']} manejador={handleInputChange} />
-                    <Select campo='Manejador' name='manejador' required={true} opciones={opcionMane ? opcionMane : ['SELECCIONE']} manejador={handleInputChange} />
+                    <Select campo='Estatus' name='estatus' required={true} opciones={estatus ? estatus : ['SELECCIONE']} manejador={handleInputChange}/>
+                    <Select campo='Tipo' name='tipo' required={true} opciones={tipos ? tipos : ['SELECCIONE']} manejador={handleInputChange} />
+                    <Select campo='Manejador' name='manejador' required={true} opciones={mane ? mane : ['SELECCIONE']} manejador={handleInputChange} />
                     <Input campo='Version' name='version_manejador' editable={true} manejador={handleInputChange} />
-                    <Select campo='Ambiente' name='tipo_ambiente' required={true} opciones={opcionAmbientes ? opcionAmbientes : ['SELECCIONE']} manejador={handleInputChange} />
+                    <Select campo='Ambiente' name='ambiente' required={true} opciones={ambientes ? ambientes : ['SELECCIONE']} manejador={handleInputChange} />
                     <Input campo='N° Usuario' name='cantidad_usuarios' editable={true} manejador={handleInputChange} />
                 </div>
-
+ 
                 {/* --------------- SERVIDOR --------------- */}
                 <p className='font-bold text-sm my-4'>Servidor</p>
                     <div className='w-full flex flex-col justify-center items-center space-y-4'>
@@ -173,8 +166,8 @@ function RegistrarBD() {
                 </div>
                     
                 <div className="flex space-x-2 md:space-x-12 mt-12">
-                    <Button tipo='submit' color='blue' width={32}>Registrar</Button>
                     <Button tipo='button' color='blue' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
+                    <Button tipo='submit' color='blue' width={32}>Registrar</Button>
                 </div>
 
             </form>

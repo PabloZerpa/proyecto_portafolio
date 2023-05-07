@@ -9,6 +9,7 @@ import { Notificacion } from '../../utils/Notificacion';
 import { localidadCentro, localidadCentroOccidente, localidadCentroSur, 
     localidadFaja, localidadMetropolitana, localidadOccidente, localidadOrienteNorte, 
     localidadOrienteSur, opcionLocalidad } from '../../services/campos.service';
+import Opciones from '../../utils/Opciones';
 
 function RegistrarServidor() {
 
@@ -21,28 +22,21 @@ function RegistrarServidor() {
 
     });
 
-    const [opcionMarcas, setOpcionMarcas] = useState('');
-    const [opcionSistemas, setOpcionSistemas] = useState('');
-    const [opcionEstatus, setOpcionEstatus] = useState('');
-    const [opcionRegiones, setOpcionRegiones] = useState('');
+    const [marcas, setMarcas] = useState('');
+    const [sistemas, setSistemas] = useState('');
+    const [estatus, setEstatus] = useState('');
+    const [regiones, setRegiones] = useState('');
 
-    async function getData(ruta, elemento){
-        const respuesta = await Usuario.obtenerOpcion(ruta);
-        const data = respuesta.data;
-        let opciones = ['SELECCIONE'];
-
-        for (let i = 0; i < data.length; i++) {
-            const valor = Object.values(data[i]);
-            opciones.push(valor[0]);
-        }
-        elemento(opciones);
+    // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
+    async function establecerDatos(){
+        setMarcas(await Opciones('marcas'));
+        setEstatus(await Opciones('estatus'));
+        setSistemas(await Opciones('sistemas'));
+        setRegiones(await Opciones('regiones'));
     }
 
     useEffect(() => {
-        getData('estatus',setOpcionEstatus);
-        getData('sistemas',setOpcionSistemas);
-        getData('marcas',setOpcionMarcas);
-        getData('regiones',setOpcionRegiones);
+        establecerDatos();
     }, []);
 
     // OPCIONES DE SELECT ANIDADOS
@@ -112,26 +106,26 @@ function RegistrarServidor() {
                 </div>
 
                 <div className="w-full relative grid grid-cols-1 md:grid-cols-2 space-x-4 mb-0">
-                    <Select campo='Estatus' name='estatus' required={true} opciones={opcionEstatus ? opcionEstatus : ['SELECCIONE']} manejador={handleInputChange}/>
+                    <Select campo='Estatus' name='estatus' required={true} opciones={estatus ? estatus : ['SELECCIONE']} manejador={handleInputChange}/>
                     <Input campo='Direccion' name='direccion' required={true} manejador={handleInputChange} />
                     
-                    <Select campo='Sistema' name='sistema' required={true} opciones={opcionSistemas ? opcionSistemas : ['SELECCIONE']} manejador={handleInputChange} />
+                    <Select campo='Sistema' name='sistema' required={true} opciones={sistemas ? sistemas : ['SELECCIONE']} manejador={handleInputChange} />
                     <Input campo='Version' name='version' editable={true} manejador={handleInputChange} />
                     
-                    <Select campo='Marca' name='marca' required={true} opciones={opcionMarcas ? opcionMarcas : ['SELECCIONE']} manejador={handleInputChange} />
+                    <Select campo='Marca' name='marca' required={true} opciones={marcas ? marcas : ['SELECCIONE']} manejador={handleInputChange} />
                     <Input campo='Modelo' name='modelo' required={true} editable={true} manejador={handleInputChange} />
                     <Input campo='Serial' name='serial' editable={true} manejador={handleInputChange} />
                     <Input campo='Velocidad CPU' name='velocidad' required={true} editable={true} manejador={handleInputChange} />
                     <Input campo='Cantidad CPU' name='cantidad' required={true} editable={true} manejador={handleInputChange} />
                     <Input campo='Memoria' name='memoria' required={true} editable={true} manejador={handleInputChange} />
 
-                    <Select campo='Region' name='region' required={true} opciones={opcionRegiones ? opcionRegiones : ['SELECCIONE']} manejador={handleInputChange} />
+                    <Select campo='Region' name='region' required={true} opciones={regiones ? regiones : ['SELECCIONE']} manejador={handleInputChange} />
                     <Select campo='Localidad' name='localidad' required={true} opciones={opcion1} manejador={handleInputChange} />
                 </div>
                     
                 <div className="flex space-x-2 md:space-x-12">
-                    <Button tipo='submit' color='blue' width={32}>Registrar</Button>
                     <Button tipo='button' color='blue' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
+                    <Button tipo='submit' color='blue' width={32}>Registrar</Button>
                 </div>
 
             </form>

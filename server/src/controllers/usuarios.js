@@ -9,7 +9,7 @@ const obtenerUsuarios = async (req,res) => {
         const data = await pool.query(`
             SELECT usuario_id, indicador, rol, gerencia 
             FROM usuarios
-            JOIN gerencias ON gerencias.gerencia_id = usuarios.gerencia_id`);
+            JOIN gerencias ON gerencias.gerencia_id = usuarios.gerencia_id;`);
         res.send(data[0]);
     }
     catch (error) {
@@ -18,7 +18,7 @@ const obtenerUsuarios = async (req,res) => {
  }
 
  // *************** ELIMINAR USUARIO ***************
- const eliminarAplicacion = async (req,res) => {
+ const eliminarUsuario = async (req,res) => {
     try {
         const { id } = req.params;
         const [result] = await pool.query('DELETE FROM usuarios WHERE usuario_id = ?', [id]);
@@ -34,23 +34,37 @@ const obtenerPorBusqueda = async (req,res) => {
 
     const { term } = req.body;
     const termino = `%${term}%`;
+    let data = '';
 
     try{
-        const data = await pool.query(`
-            SELECT usuario_id, indicador, rol, gerencia, cargo
-            FROM usuarios 
-                JOIN roles ON roles.rol_id = usuarios.rol_id
-                LEFT JOIN gerencias ON gerencias.gerencia_id = usuarios.gerencia_id
-                LEFT JOIN cargos ON cargos.cargo_id = usuarios.cargo_id
-            WHERE 
-                usuario_id LIKE ? OR 
-                indicador LIKE ? OR 
-                rol LIKE ? OR 
-                gerencia LIKE ? OR
-                cargo LIKE ? 
-            ORDER BY usuario_id ASC;`,
-            [termino,termino,termino,termino,termino]
-        );
+        if(term===' '){
+            data = await pool.query(`
+                SELECT usuario_id, indicador, rol, gerencia, cargo, nombre, apellido
+                FROM usuarios 
+                    JOIN roles ON roles.rol_id = usuarios.rol_id
+                    LEFT JOIN gerencias ON gerencias.gerencia_id = usuarios.gerencia_id
+                    LEFT JOIN cargos ON cargos.cargo_id = usuarios.cargo_id
+                ORDER BY usuario_id ASC;`
+            );
+        }
+        else{
+            data = await pool.query(`
+                SELECT usuario_id, indicador, rol, gerencia, cargo, nombre, apellido
+                FROM usuarios 
+                    JOIN roles ON roles.rol_id = usuarios.rol_id
+                    LEFT JOIN gerencias ON gerencias.gerencia_id = usuarios.gerencia_id
+                    LEFT JOIN cargos ON cargos.cargo_id = usuarios.cargo_id
+                WHERE 
+                    usuario_id LIKE ? OR 
+                    indicador LIKE ? OR 
+                    rol LIKE ? OR 
+                    gerencia LIKE ? OR
+                    cargo LIKE ? 
+                ORDER BY usuario_id ASC;`,
+                [termino,termino,termino,termino,termino]
+            );
+        }
+
         res.send(data[0]);
     }
     catch (error) {
@@ -61,19 +75,20 @@ const obtenerPorBusqueda = async (req,res) => {
 // *************** CAMBIAR PERMISOS ***************
 const cambiarPermisos = async (req,res) => {
     const { id } = req.params;
-    const { rol, gerencia, cargo } = req.body;
+    const { nombre, apellido, rol, gerencia, cargo } = req.body;
    
     try {
         const query = await pool.query(`
             UPDATE 
                 usuarios 
             SET 
+                nombre = ?,
+                apellido = ?,
                 rol_id = (SELECT rol_id FROM roles WHERE rol = ?),
                 gerencia_id = (SELECT gerencia_id FROM gerencias WHERE gerencia = ?),
                 cargo_id = (SELECT cargo_id FROM cargos WHERE cargo = ?) 
-                
             WHERE 
-                usuario_id = ?;`, [rol, gerencia, cargo, id]
+                usuario_id = ?;`, [nombre, apellido, rol, gerencia, cargo, id]
         );
         
         res.send('ACTUALIZACION DE ROL EXITOSA');
@@ -134,9 +149,9 @@ const obtenerGerencias = async (req,res) => {
     }
 
     // *************** OBTENER CARGOS ***************
-    const obtenerResponsables = async (req,res) => {
+    const obtenerCustodios = async (req,res) => {
         try{
-            const data = await pool.query(`SELECT res_indicador FROM responsables`);
+            const data = await pool.query(`SELECT cus_indicador FROM custodios`);
             res.send(data[0]);
         }
         catch (error) {
@@ -233,9 +248,9 @@ const obtenerGerencias = async (req,res) => {
     }
 
     // *************** OBTENER CARGOS ***************
-    const obtenerMantenimientos = async (req,res) => {
+    const obtenerFrecuencias = async (req,res) => {
         try{
-            const data = await pool.query(`SELECT man_frecuencia FROM mantenimientos`);
+            const data = await pool.query(`SELECT frecuencia FROM frecuencias`);
             res.send(data[0]);
         }
         catch (error) {
@@ -279,7 +294,7 @@ const obtenerGerencias = async (req,res) => {
     // *************** OBTENER CARGOS ***************
     const obtenerAmbientes = async (req,res) => {
         try{
-            const data = await pool.query(`SELECT tipo_ambiente FROM tipos_ambientes`);
+            const data = await pool.query(`SELECT ambiente FROM ambientes`);
             res.send(data[0]);
         }
         catch (error) {
@@ -321,7 +336,7 @@ const obtenerGerencias = async (req,res) => {
 
 
 module.exports = { obtenerUsuarios, cambiarPermisos, cambiarPassword, obtenerPorBusqueda, obtenerRoles, 
-    obtenerGerencias, obtenerCargos, obtenerResponsables, obtenerLenguajes, obtenerPlataformas, obtenerBasesDatos,
-    obtenerServidores, obtenerEstatus, obtenerAlcance, obtenerMantenimientos, obtenerRegiones, obtenerTipos,
-    obtenerMane, obtenerAmbientes,obtenerMarcas,obtenerSistemas, eliminarAplicacion, obtenerLenguajesTabla, 
+    obtenerGerencias, obtenerCargos, obtenerCustodios, obtenerLenguajes, obtenerPlataformas, obtenerBasesDatos,
+    obtenerServidores, obtenerEstatus, obtenerAlcance, obtenerFrecuencias, obtenerRegiones, obtenerTipos,
+    obtenerMane, obtenerAmbientes,obtenerMarcas,obtenerSistemas, eliminarUsuario, obtenerLenguajesTabla, 
     obtenerFrameworksTabla, obtenerAcronimos };

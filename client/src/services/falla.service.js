@@ -1,7 +1,7 @@
 
 import axios from 'axios';
 import authHeader from './header.service';
-const baseUrl = "http://localhost:3001/api/";
+const baseUrl = process.env.REACT_APP_URL;
 
 class Falla {  
 
@@ -26,11 +26,9 @@ class Falla {
 
     // =============== ACTUALIZA LA FALLA ===============
     async actualizarFalla(datos) {
-        const id = datos.edicion;
+        const id = datos.id;
         try {
-            
             const respuesta = await axios.patch(`${baseUrl}aplicaciones/fallas/${id}`, datos, { headers: authHeader() });
-            
             return respuesta;
         } catch (error) {
             console.log('ERROR AL CREAR USUARIO');

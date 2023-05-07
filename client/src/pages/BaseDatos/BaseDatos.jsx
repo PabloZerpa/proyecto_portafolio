@@ -44,7 +44,7 @@ const columns = [
     },
     {
         name: 'Estatus',
-        selector: row => row.bas_estatus,
+        selector: row => row.estatus,
         sortable: true,
         left: true
     },
@@ -62,19 +62,19 @@ const columns = [
     },
     {
         name: 'N° de Usuarios',
-        selector: row => row.bas_cantidad_usuarios,
+        selector: row => row.base_cantidad_usuarios,
         sortable: true,
         left: true
     },
     {
         name: 'Ambiente',
-        selector: row => row.tipo_ambiente,
+        selector: row => row.ambiente,
         sortable: true,
         left: true
     },
     {
         name: 'Ultima Actualizacion',
-        selector: row => row.bas_fecha_actualizacion,
+        selector: row => row.base_fecha_actualizacion,
         sortable: true,
         grow: 2,
         left: true
@@ -116,7 +116,7 @@ function BaseDatos() {
         onSearch(debounceValue)
     }
 
-    const handleInputChange = (e) => {
+    const setValores = (e) => {
         if(e.target.value === 'TODAS')
             setDatos({ ...datos, [e.target.name] : null })
         else
@@ -165,10 +165,10 @@ function BaseDatos() {
 
                     <div className="border-solid">
                         <div className="grid grid-cols-2 md:grid-cols-4 space-x-4">
-                            <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={opcionEstatus} manejador={handleInputChange} />
-                            <Select campo='Tipo' name='tipo' busqueda={true} byId={false} opciones={opcionTipoBD} manejador={handleInputChange} />
-                            <Select campo='Manejador' name='manejador' busqueda={true} byId={false} opciones={opcionManejadores} manejador={handleInputChange} />
-                            <Select campo='Ambiente' name='ambiente' busqueda={true} byId={false} opciones={selectTipoAmbiente} manejador={handleInputChange} />
+                            <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={opcionEstatus} manejador={setValores} />
+                            <Select campo='Tipo' name='tipo' busqueda={true} byId={false} opciones={opcionTipoBD} manejador={setValores} />
+                            <Select campo='Manejador' name='manejador' busqueda={true} byId={false} opciones={opcionManejadores} manejador={setValores} />
+                            <Select campo='Ambiente' name='ambiente' busqueda={true} byId={false} opciones={selectTipoAmbiente} manejador={setValores} />
                         </div>
                     </div>
 
@@ -178,10 +178,10 @@ function BaseDatos() {
                                 <input 
                                     type="search" 
                                     name='terminoBusqueda'
-                                    onChange={(e) => handleInputChange(e)}
+                                    onChange={(e) => setValores(e)}
                                     className="block p-2 pr-12 w-96 text-sm text-black bg-white rounded border-none outline-none" placeholder="Buscar" />
                                 <button 
-                                    type="submit" 
+                                    type="button" 
                                     onClick={(e) => {e.preventDefault(); onSearch(debounceValue)}}
                                     className="absolute top-0 right-0 p-2.5 text-sm font-medium text-white bg-blue-600 rounded-r border border-blue-700 hover:bg-blue-700">
                                     <FaSearch />

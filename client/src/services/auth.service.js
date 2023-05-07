@@ -1,6 +1,6 @@
 
 import axios from 'axios';
-const baseUrl = "http://localhost:3001/api/";
+const baseUrl = process.env.REACT_APP_URL;
 
 class Autorizacion {
     
@@ -21,7 +21,7 @@ class Autorizacion {
         localStorage.removeItem("user");
         window.location.reload();
         try {
-            await axios.get('http://localhost:3001/api/logout');
+            await axios.get(`${baseUrl}/logout`);
         } catch (error) {console.log(error);}
     }
 

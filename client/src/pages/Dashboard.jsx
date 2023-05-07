@@ -43,7 +43,7 @@ const columns = [
       name: 'Estatus',
       selector: row => row.estatus,
       grow: 2,
-      left: true
+      left: true,
   },
   {
       name: 'Direccion',
@@ -99,10 +99,14 @@ function Dashboard() {
             <BiLoaderAlt className='text-6xl text-blue-500 animate-spin' />
         ) : (
           <>
-            <h3 className='font-bold text-lg'>Modificaciones Recientes</h3>
-            
-            <div className="w-[540px] md:w-[720px] lg:w-[960px] px-8">
-              <Tabla columnas={columns} datos={datos} />
+            <div className="flex flex-col items-center space-y-4">
+
+              <h3 className='font-bold text-lg'>Modificaciones Recientes</h3>
+
+              <div className="w-4/3 px-12">
+                <Tabla columnas={columns} datos={datos} />
+              </div>
+
             </div>
             
             <Linea />

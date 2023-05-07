@@ -2,7 +2,7 @@
 
 function Input({campo, name, direccion='col', editable=true, propiedad=null, manejador, required=false}) {
 
-    const clase = `flex flex-${direccion} items-start space-x-2 text-xs font-medium text-gray-900 mb-4`;
+    const clase = `flex flex-${direccion} items-start space-y-2 text-xs font-medium text-gray-900 mb-4`;
     const labelClase = `w-full`;
     const inputClase = `w-full p-2 bg-gray-50 border-none text-gray-900 uppercase
         text-xs rounded focus:ring-blue-500 focus:border-blue-500`

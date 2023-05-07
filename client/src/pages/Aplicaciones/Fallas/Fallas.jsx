@@ -2,11 +2,13 @@
 import { useEffect, useState } from "react";
 import { Container, Button, Tabla } from "../../../components";
 import { useDebounce } from 'use-debounce';
-import { FaCheckCircle, FaEdit, FaSearch } from 'react-icons/fa';
+import { FaCheckCircle, FaEdit, FaEye, FaSearch } from 'react-icons/fa';
 import Autorizacion from "../../../services/auth.service";
 import Falla from "../../../services/falla.service";
 import { Link } from "react-router-dom";
 import { Notificacion } from "../../../utils/Notificacion";
+import ActualizarFalla from "./ActualizarFalla";
+import VerFalla from "./VerFalla";
 
 function Fallas() {
 
@@ -14,28 +16,18 @@ function Fallas() {
     const [resultados, setResultados] = useState('');
     const [debounceValue] = useDebounce(searchTerm, 500);
 
-    const [datos, setDatos] = useState({
-        aplicacion: '',
-        clase: '',
-        impacto: '',
-        descripcion: '',
-        solucion: '',
-        usuario: Autorizacion.obtenerUsuario().indicador,
-		actualizador: Autorizacion.obtenerUsuario().indicador,
-    }); 
-
-    const [clase, setClase] = useState("");
-    const [impacto, setImpacto] = useState("");
-    const [descripcion, setDescripcion] = useState("");
-    const [solucion, setSolucion] = useState("");
-    const [edicion, setEdicion] = useState(null);
+    const [falla, setFalla] = useState("");
+    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen2, setIsOpen2] = useState(false);
+    const [update, setUpdate] = useState(false);
     
-    const habilitar = (dato) => {
-        setEdicion(dato.falla_id); 
-        setClase(dato.fal_clase); 
-        setImpacto(dato.fal_impacto);
-        setDescripcion(dato.fal_descripcion);
-        setSolucion(dato.fal_solucion);
+    const habilitar = (dato,operacion) => {
+        setFalla(dato);
+
+        if(operacion === 'editar')
+            setIsOpen(!isOpen);
+        else if(operacion === 'ver')
+            setIsOpen2(!isOpen2);
     }
 
     // FUNCION PARA BUSCAR AL ESCRIBIR EN EL INPUT
@@ -45,7 +37,7 @@ function Fallas() {
         else
             setResultados(null) 
         
-    }, [debounceValue]);
+    }, [debounceValue, update]);
 
     // FUNCION PARA BUSCAR DATOS EN LA DATABASE
     const onSearch = async (termino) => {
@@ -57,83 +49,20 @@ function Fallas() {
         }
     }
 
-    // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
-    async function updateData(e) {
-        e.preventDefault();
-        try {
-            if(Autorizacion.obtenerUsuario().rol === 'admin'){
-                const datoModificacion = { edicion, clase, impacto, descripcion, solucion };
-                await Falla.actualizarFalla(datoModificacion); 
-                onSearch(debounceValue);
-                Notificacion('FALLA MODDIFICADA EXITOSAMENTE', 'success');
-                habilitar('','','');
-            }
-        }
-        catch (error) {
-            Notificacion(error.response.data.message, 'error');
-        }
-    }
-
-    // SELECT PERSONALIZADO
-    const selectCampo = (opciones,elemento,propiedad) => {
-        return (
-            <select 
-                className={`w-full p-2 bg-gray-50 border border-solid border-blue-500 text-gray-900 text-xs text-center rounded-md`} 
-                onChange={(e) => {elemento(e.target.value)}}
-            >
-                {opciones.map((opcion, index) => {
-                    if(opcion === propiedad)
-                        return <option key={index} value={opcion} selected>{opcion}</option>
-                    if(index === 0)
-                        return <option key={index} value={opcion} disabled selected>{opcion}</option>
-                    else
-                        return <option key={index} value={opcion}>{opcion}</option>
-                })}
-            </select>
-        )
-    }
-
-    // FUNCION PARA VERIFICAR Y ELEGIR SELECT SEGUN LA OPCION SELECCIONADA
-    const verificarCampo = (campo, valor) => {
-        if(campo === 'Clase')
-            return (selectCampo(['SELECCIONE','CLASE1','CLASE2','CLASE3'],setClase,valor));
-        else if(campo === 'Impacto')
-            return (selectCampo(['SELECCIONE','ALTA','MEDIA','BAJA'],setImpacto,valor));
-        else if(campo === 'Descripcion'){
-            return (
-                <input type='text' defaultValue={valor}
-                onChange={(e) => {setDescripcion(e.target.value)}}
-                className="w-full p-2 bg-gray-50 border border-solid border-blue-500 text-gray-900 text-xs text-center rounded-md" />
-            )
-        }
-        else if(campo === 'Solucion'){
-            return (
-                <input type='text' defaultValue={valor}
-                onChange={(e) => {setSolucion(e.target.value)}}
-                className="w-full p-2 bg-gray-50 border border-solid border-blue-500 text-gray-900 text-xs text-center rounded-md" />
-            )
-        }
-        else
-            return (<td key={campo} className="px-2 py-2">{valor}</td>)
-    }
-
     const columnas = [
         {
-          name: 'Editar',
+          name: 'Operaciones',
           button: true,
           cell: row => 
-            <div>
-                {edicion === row.falla_id ?
-                    (<FaCheckCircle 
-                    onClick={updateData} 
-                    className="ml-3 text-green-500 text-lg cursor-pointer"
-                    />)
-                    :
-                    (<FaEdit
-                    onClick={(e) => habilitar(row)}
+            <div className="flex space-x-4">
+                <FaEye
+                    onClick={(e) => habilitar(row, 'ver')}
                     className="text-blue-500 text-lg" 
-                    />)
-                }
+                />
+                <FaEdit
+                    onClick={(e) => habilitar(row, 'editar')}
+                    className="text-blue-500 text-lg" 
+                />
             </div>
         },
         {
@@ -157,53 +86,25 @@ function Fallas() {
         },
         {
             name: 'Clase',
-            selector: row => 
-                <did>
-                {edicion === row.falla_id ? 
-                ( verificarCampo('Clase',row.fal_clase) ) 
-                : 
-                ( row.fal_clase )
-                }
-                </did>,
+            selector: row => row.fal_clase,
             sortable: true,
             left: true
         },
         {
             name: 'Impacto',
-            selector: row => 
-            <did>
-                {edicion === row.falla_id ? 
-                ( verificarCampo('Impacto',row.fal_impacto) ) 
-                : 
-                ( row.fal_impacto )
-                }
-            </did>,
+            selector: row => row.fal_impacto,
             sortable: true,
             left: true
         },
         {
             name: 'Descripcion',
-            selector: row => 
-            <did>
-                {edicion === row.falla_id ? 
-                ( verificarCampo('Descripcion',row.fal_descripcion) ) 
-                : 
-                ( row.fal_descripcion )
-                }
-            </did>,
+            selector: row => row.fal_descripcion,
             sortable: true,
             left: true
         },
         {
             name: 'Solucion',
-            selector: row => 
-            <did>
-                {edicion === row.falla_id ? 
-                ( verificarCampo('Solucion',row.fal_solucion) ) 
-                : 
-                ( row.fal_solucion )
-                }
-            </did>,
+            selector: row => row.fal_solucion,
             sortable: true,
             left: true
         },
@@ -221,6 +122,29 @@ function Fallas() {
 
     return(
         <Container>
+            {/* --------------- VENTANA MODAL PARA ACTUALIZAR DATOS --------------- */}
+            {isOpen ? (
+                <div className="fixed w-full max-w-2xl max-h-full z-50 overflow-y-auto">
+                    <ActualizarFalla
+                        setIsOpen={setIsOpen} 
+                        valores={falla ? falla : null}
+                        setUpdate={setUpdate}
+                    />
+                </div>
+                        
+            ) : (null) }
+
+            {/* --------------- VENTANA MODAL PARA ACTUALIZAR DATOS --------------- */}
+            {isOpen2 ? (
+                <div className="fixed w-full max-w-2xl max-h-full z-50 overflow-y-auto">
+                    <VerFalla
+                        setIsOpen={setIsOpen2} 
+                        valores={falla ? falla : null}
+                    />
+                </div>
+                        
+            ) : (null) }
+
             <h2 className='font-bold text-lg'>Buscar Falla</h2>
 
             <form className='flex justify-center items-center space-x-4 p-4 bg-zinc-400 border-solid rounded'>
@@ -237,7 +161,7 @@ function Fallas() {
                     </button>
                 </div>
 
-                <Button color='blue' ><Link to={`/aplicaciones/fallas/registro`}>Registrar +</Link></Button>
+                <Link to={`/aplicaciones/fallas/registro`}><Button>Registrar +</Button></Link>
 
             </form>
 

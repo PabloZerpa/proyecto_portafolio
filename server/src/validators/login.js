@@ -20,11 +20,11 @@ const validatorLogin = [
 const validatorRegistro = [
     check("indicador").exists().notEmpty().isString().isLength({min:4, max:10}),
     check("password").exists().notEmpty().isLength({min:8, max:12}),
-    check("nombre").exists().notEmpty().isString(),
-    check("apellido").exists().notEmpty().isString(),
-    // check("rol").exists().notEmpty().isString(),
-    // check("cargo").exists().notEmpty().isString(),
-    // check("gerencia").exists().notEmpty().isString(),
+    check("nombre").exists().notEmpty().isString().isLength({min:3, max:20}),
+    check("apellido").exists().notEmpty().isString().isLength({min:3, max:20}),
+    check("rol").exists().notEmpty().isInt(),
+    check("cargo").exists().notEmpty().isInt(),
+    check("gerencia").exists().notEmpty().isInt(),
     (req,res,next) => {
         try{
             validationResult(req).throw();

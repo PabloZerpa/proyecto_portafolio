@@ -1,7 +1,7 @@
 
 import axios from 'axios';
 import authHeader from './header.service';
-const baseUrl = "http://localhost:3001/api/";
+const baseUrl = process.env.REACT_APP_URL;
 
 class Base {  
 

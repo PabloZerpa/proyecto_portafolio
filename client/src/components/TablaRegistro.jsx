@@ -62,7 +62,7 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
     }
 
     const rowSelectCritera = useCallback( row => {
-        if(selectDefault > 0){
+        if(selectDefault){
             for (const id of selectDefault){
                 if(row['base_datos_id'] === id)
                     return true;
@@ -77,7 +77,7 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
     return (
         <>
             {busqueda ? (
-                <form className='flex justify-center items-center flex-col p-0 bg-zinc-400 border-solid rounded'>
+                <form className='flex justify-center items-center flex-col p-0 border-solid rounded'>
                     <div className='flex flex-col w-full py-2 border-solid'>
 
                         <div className="radioArea">
@@ -102,7 +102,7 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
             ) : null}
 
             {resultado ? (
-                <div className="w-full bg-zinc-400 p-4 rounded">
+                <div className="w-full bg-zinc-400 p-0 rounded">
                     <DataTable
                         columns={columnas}
                         data={resultado}
@@ -114,7 +114,7 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
                         onSelectedRowsChange={handleRowSelected}
                         noDataComponent={"SIN RESULTADOS"}
                         fixedHeader
-                        fixedHeaderScrollHeight="600px"
+                        fixedHeaderScrollHeight="220px"
                         highlightOnHover
                         pointerOnHover
                         dense
@@ -123,7 +123,7 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
                 </div>
             ) : (null)}
 
-            <div className="flex items-center space-x-8 p-2 border-t border-gray-200 rounded-b">
+            <div className="flex items-center space-x-8 p-0 ">
                 <Button color='blue' manejador={(e) => {sendDatos()}}>Agregar</Button>
                 <Button color='blue' manejador={(e) => setIsOpen(false)}>Cerrar</Button>
             </div>

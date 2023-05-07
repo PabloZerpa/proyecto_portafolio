@@ -77,10 +77,8 @@ const buscarFalla = async (req,res) => {
             ORDER BY falla_id ASC;`,
             [termino,termino,termino,termino,termino,termino,termino]
         );
-        console.log(data[0][0]);
 
         res.send(data[0]);
-
     }
     catch (error) {
         return res.status(401).json({ message: 'ERROR' });
@@ -104,6 +102,8 @@ const actualizarFalla = async (req,res) => {
             fal_solucion = ?
         WHERE falla_id = ?`, [clase, impacto, descripcion, solucion, id]
         );
+
+        console.log(id);
         
         res.send('ACTUALIZACION EXITOSA');
     } catch (error) {

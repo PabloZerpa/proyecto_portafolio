@@ -94,9 +94,22 @@
 5. Una **aplicacion** posee muchos **plataformas** (1 a 1)
 
 
-<Container>
-
-
 for (const [, value] of Object.entries(productos)) {
     Object.keys(value).forEach(key => value[key] = value[key].toUpperCase());
 }
+
+ALTER TABLE empleado 
+  ADD CONSTRAINT constraint_name
+  FOREIGN KEY (columna_de_la_tabla_a_referenciar) 
+  REFERENCES nombre_tabla_padre(columna_de_la_tabla_padre) 
+  ON DELETE CASCADE;
+
+* HASHBROWSER
+* ESPACIADO EN CREAR USUARIO
+* ARREGLAR SWEET ALERT EN OLDER BROWSER
+* ESPACIADO DE LOS BOTONES EN REGISTRO APP
+* BOTON REGISTRAR FALLA NO FUNCIONA EN OLDER BROWSER
+
+
+
+

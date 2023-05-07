@@ -5,7 +5,7 @@ import { Container, Input, Radio, Tabla, TextArea } from '../../components';
 import Aplicacion from '../../services/aplicacion.service';
 
 const opcionesVista = ['General','Tecnologia', 'Base de datos',
-'Servidor','Responsables','Documentacion','Fallas'];
+'Servidor','Custodios','Documentacion','Fallas'];
 
 function VerAplicacion() {
 
@@ -17,7 +17,7 @@ function VerAplicacion() {
   const [tecnologia, setTecnologia] = useState('');
   const [basedatos, setBaseDatos] = useState('');
   const [servidor, setServidor] = useState('');
-  const [responsables, setResponsables] = useState('');
+  const [custodios, setCustodios] = useState('');
   const [documentacion, setDocumentacion] = useState('');
   const [fallas, setFallas] = useState('');
 
@@ -32,7 +32,7 @@ function VerAplicacion() {
         const tec = await Aplicacion.obtenerTecnologia(id);
         const bas = await Aplicacion.obtenerBaseDatos(id);
         const ser = await Aplicacion.obtenerServidor(id);
-        const res = await Aplicacion.obtenerResponsable(id);
+        const cus = await Aplicacion.obtenerCustodios(id);
         const doc = await Aplicacion.obtenerDocumentacion(id);
         const fal = await Aplicacion.obtenerFallas(id);
 
@@ -40,7 +40,7 @@ function VerAplicacion() {
         setTecnologia(tec);
         setBaseDatos(bas);
         setServidor(ser);
-        setResponsables(res);
+        setCustodios(cus);
         setDocumentacion(doc);
         setFallas(fal);
       }catch (error) { console.log(error) }
@@ -86,7 +86,7 @@ function VerAplicacion() {
       const columnsMan = [
         {
             name: 'Frecuencia',
-            selector: row => row.man_frecuencia,
+            selector: row => row.frecuencia,
             sortable: true,
             left: true,
             grow: 2
@@ -140,7 +140,7 @@ function VerAplicacion() {
             <h2 className='font-bold text-lg'>Tecnologia</h2>
             <form className="grid grid-cols-2 justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
 
-              <div className='inline-grid grid-cols-1 space-x-4 col-span-2'>
+              <div className='inline-grid grid-cols-1 space-y-4 col-span-2'>
                 <Input campo='Plataforma' propiedad={plataformas} editable={false} />
                 <Tabla columnas={columnsLen} datos={lenguajes} />
                 <Tabla columnas={columnsMan} datos={datos} />
@@ -171,7 +171,7 @@ function VerAplicacion() {
         },
         {
             name: 'Estatus',
-            selector: row => row.bas_estatus,
+            selector: row => row.estatus,
             sortable: true,
             left: true,
         },
@@ -190,21 +190,21 @@ function VerAplicacion() {
         },
         {
             name: 'Tipo Ambiente',
-            selector: row => row.tipo_ambiente,
+            selector: row => row.ambiente,
             sortable: true,
             left: true,
             grow: 2
         },
         {
           name: 'N° Usuarios',
-          selector: row => row.bas_cantidad_usuarios,
+          selector: row => row.base_cantidad_usuarios,
           sortable: true,
           left: true,
           grow: 1.5
         },
         {
             name: 'Ultima Actualizacion',
-            selector: row => row.bas_fecha_actualizacion,
+            selector: row => row.base_fecha_actualizacion,
             sortable: true,
             left: true,
             grow: 2
@@ -212,6 +212,7 @@ function VerAplicacion() {
       ];
   
       function Basedatos (){
+        
         const datos = basedatos.data.datos;
         return(
           <>
@@ -305,30 +306,30 @@ function VerAplicacion() {
       }
 
 
-      const columnsRes = [
+      const columnsCus = [
         {
             name: 'Nombre',
-            selector: row => row.res_nombre,
+            selector: row => row.cus_nombre,
             sortable: true,
             left: true,
             grow: 2
         },
         {
             name: 'Apellido',
-            selector: row => row.res_apellido,
+            selector: row => row.cus_apellido,
             sortable: true,
             left: true,
         },
         {
             name: 'Indicador',
-            selector: row => row.res_indicador,
+            selector: row => row.cus_indicador,
             sortable: true,
             left: true,
             grow: 1.5
         },
         {
             name: 'Cedula',
-            selector: row => row.res_cedula,
+            selector: row => row.cus_cedula,
             sortable: true,
             left: true
         },
@@ -369,24 +370,24 @@ function VerAplicacion() {
       },
       ];
   
-      function Responsable() {
-        const funcional = responsables.data.funcional;
-        const tecnico = responsables.data.tecnico;
+      function Custodio() {
+        const funcional = custodios.data.funcional;
+        const tecnico = custodios.data.tecnico;
         console.log(funcional);
         console.log(tecnico);
         return(
           <>
-            <h2 className='font-bold text-lg'>Responsables</h2>
+            <h2 className='font-bold text-lg'>Custodios</h2>
             <form className="grid grid-cols-1 justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
 
               <div className="w-full flex flex-col justify-center items-center gap-4 mb-8">
-                <h3 className='font-bold text-base'>Responsables Funcional</h3>
-                  <Tabla columnas={columnsRes} datos={funcional} />
+                <h3 className='font-bold text-base'>Custodios Funcional</h3>
+                  <Tabla columnas={columnsCus} datos={funcional} />
               </div>
 
               <div className="w-full flex flex-col justify-center items-center gap-4">
-                <h3 className='font-bold text-base'>Responsables Tecnico</h3>
-                  <Tabla columnas={columnsRes} datos={tecnico} />
+                <h3 className='font-bold text-base'>Custodios Tecnico</h3>
+                  <Tabla columnas={columnsCus} datos={tecnico} />
               </div>
 
             </form>
@@ -488,7 +489,7 @@ function VerAplicacion() {
         {opcion === 'Tecnologia' ? <Tecnologia/> : null}
         {opcion === 'Base de datos' ? <Basedatos/> : null }
         {opcion === 'Servidor' ? <Servidor/> : null }
-        {opcion === 'Responsables' ? <Responsable/> : null }
+        {opcion === 'Custodios' ? <Custodio/> : null }
         {opcion === 'Documentacion' ? <Documentacion/> : null }
         {opcion === 'Fallas' ? <Fallas/> : null }
       </Container>

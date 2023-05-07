@@ -36,7 +36,6 @@ export const columnasModalServidor = [
     generarColumna('Por','indicador',null),
 ];
 
-// const frameworks = ['PHP','JAVASCRIPT','JAVA','C++','C#','VISUAL BASIC','TYPESCRIPT','PYTHON','GO','RUST']
 
 function crearInputs (array) {
 
@@ -57,64 +56,62 @@ function crearInputs (array) {
 
 export const columnasModalLenguaje = [
     generarColumna('Lenguaje ID','lenguaje_id','150px'),
-    generarColumna('Lenguaje','lenguaje','200px'),
-    {
-        name: 'Framework',
-        button: true,
-        cell: row => {
-            console.log(row);
+    generarColumna('Lenguaje','lenguaje','150px'),
+    // {
+    //     name: 'Framework',
+    //     button: true,
+    //     cell: row => {
+    //         if(row.lenguaje_id === 1){
+    //             return(
+    //                 <div className="flex">
+    //                     {crearInputs(frameworkPhp)}
+    //                 </div>
+    //             )
+    //         }
+
+    //         if(row.lenguaje_id === 2){
+    //             return(
+    //                 <div className="flex">
+    //                     {crearInputs(frameworkJS)}
+    //                 </div>
+    //             )
+    //         }
+
+    //         if(row.lenguaje_id === 3){
+    //             return(
+    //                 <div className="flex">
+    //                     {crearInputs(frameworkJAVA)}
+    //                 </div>
+    //             )
+    //         }
+
+    //         if(row.lenguaje_id === 4){
+    //             return(
+    //                 <div className="flex">
+    //                     {crearInputs(frameworkCPP)}
+    //                 </div>
+    //             )
+    //         }
+
+    //         if(row.lenguaje_id === 5){
+    //             return(
+    //                 <div className="flex">
+    //                     {crearInputs(frameworkCS)}
+    //                 </div>
+    //             )
+    //         }
+
+    //         if(row.lenguaje_id === 8){
+    //             return(
+    //                 <div className="flex">
+    //                     {crearInputs(frameworkPY)}
+    //                 </div>
+    //             )
+    //         }
             
-            if(row.lenguaje_id === 1){
-                return(
-                    <div className="flex">
-                        {crearInputs(frameworkPhp)}
-                    </div>
-                )
-            }
-
-            if(row.lenguaje_id === 2){
-                return(
-                    <div className="flex">
-                        {crearInputs(frameworkJS)}
-                    </div>
-                )
-            }
-
-            if(row.lenguaje_id === 3){
-                return(
-                    <div className="flex">
-                        {crearInputs(frameworkJAVA)}
-                    </div>
-                )
-            }
-
-            if(row.lenguaje_id === 4){
-                return(
-                    <div className="flex">
-                        {crearInputs(frameworkCPP)}
-                    </div>
-                )
-            }
-
-            if(row.lenguaje_id === 5){
-                return(
-                    <div className="flex">
-                        {crearInputs(frameworkCS)}
-                    </div>
-                )
-            }
-
-            if(row.lenguaje_id === 8){
-                return(
-                    <div className="flex">
-                        {crearInputs(frameworkPY)}
-                    </div>
-                )
-            }
-            
-        },
-        left: true
-    },
+    //     },
+    //     left: true
+    // },
 ];
 
 export const columnasModalFramework = [

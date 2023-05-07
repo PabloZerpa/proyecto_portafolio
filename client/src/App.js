@@ -1,17 +1,19 @@
 
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, HashRouter } from "react-router-dom";
 import { Header, Navegacion } from "./container";
 import Rutas from "./routes/Rutas";
 
 export default function App() {
   return (
-    <BrowserRouter>
-
-      <Header />
-      <Navegacion />
-      <Rutas />
+    <HashRouter>
       
-    </BrowserRouter>
+      <Header />
+      <div className="flex">
+        <Navegacion />
+        <Rutas />
+      </div>
+      
+    </HashRouter>
   );
 }
 

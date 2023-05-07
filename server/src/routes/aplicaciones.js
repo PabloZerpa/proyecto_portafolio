@@ -1,54 +1,56 @@
 
 const router = require("express").Router();
-const { obtenerDatos, obtenerDato, crearAplicacion, actualizarAplicacion, eliminarAplicacion, 
-    obtenerBusqueda, obtenerCampo, obtenerPorGraficos, actualizarCampo, obtenerLenguajes,obtenerPlataformas,
-    obtenerFrameworks, obtenerBaseDatos, obtenerServidores, obtenerCantidadTotal, 
-    general, tecno, basedatos, servidor, responsable, documentacion, obtenerResponsables, registrarResponsable } = require("../controllers/aplicaciones");
+const { obtenerDatos, obtenerDato, registrarAplicacion, actualizarAplicacion, eliminarAplicacion, 
+    obtenerBusqueda, obtenerLenguajes,obtenerPlataformas,obtenerFrameworks, obtenerBaseDatos, 
+    obtenerServidores,general, tecno, basedatos, servidor, responsable, documentacion, 
+    obtenerResponsables, registrarResponsable, custodio, registrarCustodio, obtenerCustodios } = require("../controllers/aplicaciones");
 const { auth, authAdmin } = require("../middlewares/auth");
 const { autenticarUser } = require("../middlewares/ad");
 const { fallas, registrarFalla, actualizarFalla, buscarFalla } = require("../controllers/fallas");
-const { validatorResponsable, validatorApp } = require("../validators/aplicaciones");
+const { validatorResponsable, validatorApp, validatorCustodio } = require("../validators/aplicaciones");
 
+
+
+/* 
+    ***********************************                             ***********************************
+    *********************************** CREATE-READ-UPDATE-DELETE   ***********************************
+    ***********************************                             ***********************************
+*/
+
+// *************** RUTA REGISTRAR UNA APLICACION *************** 
+router.post("/", auth, validatorApp, registrarAplicacion);
+
+
+// *************** RUTA PARA ACTUALIZAR UNA APLICACION *************** 
+router.put("/:id", auth, actualizarAplicacion);
 
 
 // *************** RUTA PARA OBTENER TODOS LOS DATOS *************** 
 router.get("/", auth, obtenerDatos);
 
+
 // *************** RUTA PARA OBTENER LOS DATOS POR ID *************** 
 router.get("/:id", auth, obtenerDato);
+
 
 // *************** RUTA PARA OBTENER LOS DATOS POR TERMINO DE BUSQUEDA *************** 
 router.post("/busqueda", auth, obtenerBusqueda);
 
-// *************** RUTA PARA OBTENER LOS DATOS POR CAMPO *************** 
-router.post("/campo", auth, obtenerCampo); 
-
-// *************** RUTA PARA OBTENER CANTIDAD DE REGISTROS *************** 
-router.get("/total", auth, obtenerCantidadTotal);
-
-
-
-
-
-// *************** RUTA REGISTRAR UNA APLICACION *************** 
-router.post("/", auth, validatorApp, crearAplicacion);
-
-// *************** RUTA PARA ACTUALIZAR UNA APLICACION *************** 
-router.put("/:id", auth, actualizarAplicacion);
-
-// *************** RUTA PARA ACTUALIZAR LOS DATOS POR CAMPO *************** 
-router.patch("/:id", auth, actualizarCampo);
 
 // *************** RUTA PARA ELIMINAR DATOS POR ID *************** 
 router.delete("/:id", auth, eliminarAplicacion);
 
-// *************** RUTA PARA OBTENER LOS DATOS PARA LOS GRAFICOS *************** 
-router.post("/grafico", auth, obtenerPorGraficos); 
 
 // *************** RUTA REGISTRAR UN RESPONSABLE *************** 
-router.post("/responsable", auth, validatorResponsable, registrarResponsable);
+router.post("/custodio", auth, validatorCustodio, registrarCustodio);
 
 
+
+/* 
+    ***********************************                             ***********************************
+    *********************************** LISTA DE DATOS PARA SELECTS ***********************************
+    ***********************************                             ***********************************
+*/
 
 // *************** RUTA PARA OBTENER LENGUAJES *************** 
 router.get("/plataformas", auth, obtenerPlataformas);
@@ -66,12 +68,14 @@ router.get("/basesdatos", auth, obtenerBaseDatos);
 router.get("/servidores", auth, obtenerServidores);
 
 // *************** RUTA PARA OBTENER RESPONSABLES *************** 
-router.get("/responsables", auth, obtenerResponsables);
+router.get("/custodios", auth, obtenerCustodios);
 
 
-
-
-
+/* 
+    ***********************************                        ***********************************
+    *********************************** INFORMACION PARA VISTA ***********************************
+    ***********************************                        ***********************************
+*/
 
 // *************** RUTA PARA OBTENER INFORMACION GENERAL *************** 
 router.get("/general/:id", auth, general);
@@ -86,14 +90,18 @@ router.get("/basedatos/:id", auth, basedatos);
 router.get("/servidor/:id", auth, servidor);
 
 // *************** RUTA PARA OBTENER INFORMACION RESPONSABLE *************** 
-router.get("/responsable/:id", auth, responsable);
+router.get("/custodio/:id", auth, custodio);
 
 // *************** RUTA PARA OBTENER INFORMACION DE LA DOCUMENTACION *************** 
 router.get("/documentacion/:id", auth, documentacion); 
 
 
 
-
+/* 
+    ***********************************          ***********************************
+    *********************************** FALLAS   ***********************************
+    ***********************************          ***********************************
+*/
 
 // *************** RUTA PARA OBTENER INFORMACION DE LAS FALLAS *************** 
 router.get("/fallas/:id", auth, fallas);
@@ -113,11 +121,13 @@ router.post("/fallas/busqueda", auth, buscarFalla);
 
 
 
+// // *************** RUTA PARA OBTENER CANTIDAD DE REGISTROS *************** 
+// router.get("/total", auth, obtenerCantidadTotal);
+// // *************** RUTA PARA OBTENER LOS DATOS PARA LOS GRAFICOS *************** 
+// router.post("/grafico", auth, obtenerPorGraficos); 
 
-// *************** RUTA INACTIVA, ERA PARA TESTEAR LA CONEXION CON DIRECTORIO ACTIVO *************** 
-router.post("/ad", autenticarUser, (req, res, next) => {res.send('NICE')});
 
-// *************** RUTA INACTIVA, ERA PARA CREAR DATOS POR SERVIDOR *************** 
-// router.post("/", validatorCreateItem, crearAplicacion);
+
+
 
 module.exports = router; 

@@ -1,13 +1,12 @@
 
 function Select({campo, name, direccion='col', opciones, propiedad=null, busqueda=false, manejador, required=false, byId=true}) {
 
-    const clase = `flex flex-${direccion} items-start space-x-2 text-xs font-medium text-gray-900 mb-4`;
-    const clase2 = `flex flex-${direccion} items-start space-x-2 text-xs font-medium text-gray-900`;
+    const clase = `flex flex-${direccion} items-start space-y-2 text-xs font-medium text-gray-900 mb-4`;
+    const clase2 = `flex flex-${direccion} items-start space-y-2 text-xs font-medium text-gray-900`;
     const claseSelect = `w-full p-2 text-gray-900 bg-gray-50 text-xs border-none rounded focus:ring-blue-500 focus:border-blue-500`
     const claseSelect2 = `w-32 p-2 text-gray-900 bg-gray-50 text-xs border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500`
 
     if(required){
-        console.log(propiedad);
         return(
             <div className={busqueda ? clase2 : clase} >
                 <label>{campo}</label>

@@ -2,25 +2,27 @@ const pool = require('../config');
 
 const query = `
 SELECT 
-    bases_datos.base_datos_id, base_datos, bas_estatus, tipo, manejador, tipo_ambiente, 
-    bas_cantidad_usuarios, DATE_FORMAT (bas_fecha_actualizacion, '%d-%m-%Y %H:%i') as bas_fecha_actualizacion, indicador 
+    bases_datos.base_datos_id, base_datos, estatus, tipo, manejador, ambiente, 
+    base_cantidad_usuarios, DATE_FORMAT (base_fecha_actualizacion, '%d-%m-%Y %H:%i') as base_fecha_actualizacion, indicador 
 FROM bases_datos
-    JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.bas_tipo
-    JOIN manejadores ON manejadores.manejador_id = bases_datos.bas_manejador
-    JOIN tipos_ambientes ON tipos_ambientes.tipo_ambiente_id = bases_datos.bas_tipo_ambiente
-    JOIN usuarios ON usuarios.usuario_id = bases_datos.bas_usuario_actualizo`;
+    JOIN estatus ON bases_datos.base_estatus = estatus.estatus_id
+    JOIN tipos_bases ON tipos_bases.tipo_id = bases_datos.base_tipo
+    JOIN manejadores ON manejadores.manejador_id = bases_datos.base_manejador
+    JOIN ambientes ON ambientes.ambiente_id = bases_datos.base_ambiente
+    JOIN usuarios ON usuarios.usuario_id = bases_datos.base_usuario_actualizo`;
 
 // *********************************** OBTENER TODOS LOS DATOS ***********************************
 const obtenerDatos = async (req,res) => {
     try {
         const data = await pool.query(`
             SELECT
-                bases_datos.base_datos_id,base_datos,bas_estatus,tipo,manejador,version_manejador,
-		        bas_cantidad_usuarios,bas_tipo_ambiente, servidor, region, localidad
+                bases_datos.base_datos_id,base_datos,base_estatus,tipo,manejador,
+                base_cantidad_usuarios,ambiente, servidor, region, localidad
             FROM bases_datos
+                JOIN estatus ON bases_datos.base_estatus = estatus.estatus_id
                 JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.base_datos_id
                 JOIN manejadores ON manejadores.manejador_id = bases_datos.base_datos_id
-                JOIN versiones_manejadores ON manejadores.manejador_id = versiones_manejadores.manejador_id
+                JOIN ambientes ON ambientes.ambiente_id = bases_datos.base_ambiente
                 JOIN basedatos_servidor ON bases_datos.base_datos_id = basedatos_servidor.base_datos_id
                 JOIN servidores ON servidores.servidor_id = basedatos_servidor.servidor_id
                 JOIN regiones ON servidores.ser_region_id = regiones.region_id
@@ -40,15 +42,14 @@ const obtenerBaseDatos = async (req,res) => {
 
         const data = await pool.query(`
             SELECT
-                bases_datos.base_datos_id,base_datos,bas_estatus,tipo,manejador,version_manejador,
-		        bas_cantidad_usuarios,bas_tipo_ambiente
+                bases_datos.base_datos_id,base_datos,base_estatus,tipo,manejador,version_manejador,
+                base_cantidad_usuarios,base_ambiente
             FROM bases_datos
                 JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.base_datos_id
                 JOIN manejadores ON manejadores.manejador_id = bases_datos.base_datos_id
                 JOIN versiones_manejadores ON manejadores.manejador_id = versiones_manejadores.manejador_id
             WHERE bases_datos.base_datos_id = ?;`, [id]);
 
-        console.log(data[0][0]);
         res.send(data[0][0]);
     } catch (error) {
         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
@@ -62,8 +63,6 @@ const obtenerBusqueda = async (req,res) => {
         const { term,estatus,tipo,manejador,ambiente,count,orden } = req.body;
         const termino = '%' + term + '%';
         let data;
-
-        console.log(term,estatus,tipo,manejador,ambiente,count,orden);
 
         if (term === undefined || null)
         return res.status(404).json({ message: "Error al recibir consulta" });
@@ -98,13 +97,13 @@ const obtenerBusqueda = async (req,res) => {
                 `${query}
                 WHERE (bases_datos.base_datos_id LIKE ? OR 
                     base_datos LIKE ? )
-                    AND tipo_ambiente LIKE ? ORDER BY bases_datos.base_datos_id ${orden ? orden : 'ASC'};`, 
+                    AND ambiente LIKE ? ORDER BY bases_datos.base_datos_id ${orden ? orden : 'ASC'};`, 
             [termino,termino,ambiente]);
         }
         else{
             if(term===' '){
                 data = await pool.query(`
-                ${query}
+                ${query} 
                 ORDER BY bases_datos.base_datos_id ${orden ? orden : 'ASC'}`);
             }
             else{
@@ -132,7 +131,7 @@ const crearBaseDatos = async (req,res) => {
     try {
         const {
             base_datos,estatus,cantidad_usuarios, tipo, manejador, 
-            version_manejador,tipo_ambiente, usuario_registro, select_servidor,
+            version_manejador,ambiente, usuario_registro, select_servidor,
         } = req.body;
 
         const query = await pool.query(
@@ -146,28 +145,28 @@ const crearBaseDatos = async (req,res) => {
         }
         else{
             console.log(base_datos,estatus,cantidad_usuarios, tipo, manejador, 
-                version_manejador,tipo_ambiente, usuario_registro, select_servidor);
+                version_manejador,ambiente, usuario_registro, select_servidor);
 
-            if(version_manejador){
-                const datos_version = await pool.query(
-                    `INSERT INTO versiones_manejadores (version_manejador,manejador_id) 
-                    VALUES 
-                        (?,?);`, 
-                    [version_manejador,manejador]
-                );
-                console.log('REGISTRO MANEJADOR');
-            }
+            // if(version_manejador){
+            //     const datos_version = await pool.query(
+            //         `INSERT INTO versiones_manejadores (version_manejador,manejador_id) 
+            //         VALUES 
+            //             (?,?);`, 
+            //         [version_manejador,manejador]
+            //     );
+            //     console.log('REGISTRO MANEJADOR');
+            // }
 
             const datos_basedatos = await pool.query(
                 `INSERT INTO bases_datos 
-                    (base_datos,bas_estatus,bas_tipo,bas_manejador,bas_tipo_ambiente,bas_cantidad_usuarios,
-                    bas_usuario_registro,bas_usuario_actualizo) 
+                    (base_datos,base_estatus,base_tipo,base_manejador,base_ambiente,base_cantidad_usuarios,
+                    base_usuario_registro,base_usuario_actualizo) 
                 VALUES 
                     (?,?,?,?,?,?,
                     (SELECT usuario_id FROM usuarios WHERE indicador = ?),
                     (SELECT usuario_id FROM usuarios WHERE indicador = ?)
                 );`, 
-                [base_datos,estatus,tipo,manejador,tipo_ambiente,cantidad_usuarios,usuario_registro,usuario_registro]
+                [base_datos,estatus,tipo,manejador,ambiente,cantidad_usuarios,usuario_registro,usuario_registro]
             );
             console.log('REGISTRO GENERAL BASE DE DATOS');
 
@@ -207,27 +206,27 @@ const actualizarBaseDatos = async (req,res) => {
         const {
             select_aplicacion, select_servidor,
             base_datos,estatus,cantidad_usuarios, tipo, manejador, manejador_version,
-            tipo_ambiente
+            ambiente
         } = req.body;
 
         console.log(
             select_aplicacion, select_servidor,
             base_datos,estatus,cantidad_usuarios, tipo, manejador, manejador_version,
-            tipo_ambiente
+            ambiente
         );
 
         // ACTUALIZAR LA BASE DE DATOS
         const [result] = await pool.query(
             `UPDATE bases_datos  SET 
-                base_datos = ?,bas_estatus = ?,bas_cantidad_usuarios = ?,
-                bas_tipo = (SELECT tipo_base_id FROM tipos_bases WHERE tipo = ? LIMIT 1),
-                bas_manejador = (SELECT manejador_id FROM manejadores WHERE manejador = ? LIMIT 1),
-                bas_tipo_ambiente = ?
+                base_datos = ?,base_estatus = ?,base_cantidad_usuarios = ?,
+                base_tipo = (SELECT tipo_base_id FROM tipos_bases WHERE tipo = ? LIMIT 1),
+                base_manejador = (SELECT manejador_id FROM manejadores WHERE manejador = ? LIMIT 1),
+                base_ambiente = ?
             WHERE 
                 base_datos_id = ?`,
             [   
                 base_datos,estatus,cantidad_usuarios, tipo, 
-                manejador,tipo_ambiente,id
+                manejador,ambiente,id
             ]
         );
         console.log('ACTUALIZACION EXITOSA'); 
@@ -250,11 +249,11 @@ const general = async (req,res) => {
 
         const data = await pool.query(`
         SELECT 
-            bases_datos.base_datos_id,base_datos,bas_estatus,tipo, manejador,
-            bas_cantidad_usuarios,bas_tipo_ambiente
+            bases_datos.base_datos_id,base_datos,base_estatus,tipo, manejador,
+            base_cantidad_usuarios,base_ambiente
         FROM bases_datos
-            JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.bas_tipo
-            JOIN manejadores ON manejadores.manejador_id = bases_datos.bas_manejador
+            JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.base_tipo
+            JOIN manejadores ON manejadores.manejador_id = bases_datos.base_manejador
         WHERE bases_datos.base_datos_id = ?`, [id]);
 
         res.send(data[0]);

@@ -1,13 +1,15 @@
 
 import { useState, useEffect } from "react";
 import { Button, Container, Tabla } from "../../components/";
-import { FaArrowLeft, FaCheckCircle, FaEdit, FaSearch, FaTimesCircle } from "react-icons/fa";
+import { FaArrowLeft, FaEdit, FaSearch, FaTimesCircle } from "react-icons/fa";
 import { useDebounce } from "use-debounce";
 import Autorizacion from '../../services/auth.service';
 import Usuario from "../../services/usuario.service";
 import { Notificacion } from "../../utils/Notificacion";
-import { opcionCargo, opcionGerencia, opcionRol } from "../../services/campos.service";
 import { useNavigate } from "react-router-dom";
+import ActualizarUsuario from "./ActualizarUsuario";
+import Swal from "sweetalert2";
+import swal from "sweetalert";
 
 function BuscarUsuario() {
 
@@ -15,33 +17,28 @@ function BuscarUsuario() {
   function navegar(ruta) { navigate(ruta) };
 
   // =================== VARIABLES PARA LA BUSQUEDA ===================
-  const [searchTerm, setSearchTerm] = useState("a");
   const [resultados, setResultados] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(' ');
   const [debounceValue] = useDebounce(searchTerm, 500);
 
   // =================== VARIABLES PARA LA EDICION ===================
-  const [rol, setRol] = useState("");
-  const [gerencia, setGerencia] = useState("");
-  const [cargo, setCargo] = useState("");
-  const [edicion, setEdicion] = useState("");
+  const [usuario, setUsuario] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [update, setUpdate] = useState(false);
 
   // =================== FUNCION PARA HABILITAR LOS INPUTS DE EDICION ===================
   const habilitar = (dato) => {
-    setEdicion(dato.usuario_id); 
-    setRol(dato.rol); 
-    setGerencia(dato.gerencia);
-    setCargo(dato.cargo);
+    setIsOpen(!isOpen);
+    setUsuario(dato); 
   }
 
   // =================== FUNCION PARA BUSCAR AL ESCRIBIR EN EL INPUT ===================
   useEffect(() => {
-
     if (debounceValue)
       onSearch(debounceValue);
     else
       setResultados(null) 
-    
-  }, [debounceValue]);
+  }, [debounceValue, update]);
 
   // =================== FUNCION PARA BUSCAR DATOS EN LA DATABASE ===================
   const onSearch = async (termino) => {
@@ -53,67 +50,13 @@ function BuscarUsuario() {
     }
   }
 
-  // =================== FUNCION PARA ACTUALIZAR DATOS ===================
-  async function actualizarDatos(e) {
-    e.preventDefault();
-    try {
-      
-      if(Autorizacion.obtenerUsuario().rol === 'admin'){
-
-        const datoModificacion = { edicion, rol, gerencia, cargo };
-        await Usuario.actualizarUsuario(datoModificacion); 
-        onSearch(debounceValue);
-        Notificacion('USUARIO MODDIFICADO EXITOSAMENTE', 'success');
-        habilitar('','','','');
-      }
-    }
-    catch (error) { 
-      Notificacion(error.response.data.message, 'error');
-    }
-  }
-
-  // =================== SELECT PERSONALIZADO ===================
-  const selectCampo = (opciones,elemento,propiedad) => {
-    return (
-        <select 
-            className={`w-full p-2 bg-gray-50 border border-solid border-blue-500 text-gray-900 text-xs text-center rounded-md`} 
-            onChange={(e) => {elemento(e.target.value)}}
-        >
-            {opciones.map((opcion, index) => {
-                if(opcion === propiedad)
-                  return <option key={index} value={opcion} selected>{opcion}</option>
-                if(index === 0)
-                    return <option key={index} value={opcion} disabled selected>{opcion}</option>
-                else
-                    return <option key={index} value={opcion}>{opcion}</option>
-            })}
-        </select>
-    )
-  }
-
-  // =================== FUNCION PARA VERIFICAR Y ELEGIR SELECT SEGUN LA OPCION SELECCIONADA ===================
-  const verificarCampo = (campo, valor) => {
-    
-    if(campo === 'Rol')
-      return (selectCampo(opcionRol,setRol,valor));
-    else if(campo === 'Gerencia')
-      return (selectCampo(opcionGerencia,setGerencia,valor));
-    else if(campo === 'Cargo')
-      return (selectCampo(opcionCargo,setCargo,valor));
-    else
-      return (<td key={campo} className="px-2 py-2 flex justify-center items-center">{valor}</td>)
-  }
-
   // =================== FUNCION PARA ELIMINAR USUARIO ===================
   const eliminarUsuario = async (row) => {
     try {
       if(Autorizacion.obtenerUsuario().rol === 'admin'){
-
-        if (window.confirm(`Estas seguro eliminar: ${row.indicador}?`)){
-          await Usuario.eliminarUsuario(row.usuario_id); 
-          onSearch(debounceValue);
-          Notificacion('USUARIO ELIMINADO EXITOSAMENTE', 'success');
-        }
+        await Usuario.eliminarUsuario(row.usuario_id); 
+        onSearch(debounceValue);
+        Notificacion('USUARIO ELIMINADO EXITOSAMENTE', 'success');
       }
     }
     catch (error) { 
@@ -127,17 +70,10 @@ function BuscarUsuario() {
       button: true,
       cell: row => 
         <div>
-          {edicion === row.usuario_id ?
-            (<FaCheckCircle 
-              onClick={actualizarDatos} 
-              className="ml-3 text-green-500 text-lg cursor-pointer"
-            />)
-              :
-            (<FaEdit 
-              onClick={(e) => habilitar(row)}
-              className="text-blue-500 text-lg" 
-            />)
-          }
+          <FaEdit 
+            onClick={(e) => habilitar(row)}
+            className="text-blue-500 text-lg" 
+          />
         </div>
     },
     {
@@ -155,40 +91,19 @@ function BuscarUsuario() {
     },
     {
         name: 'Rol',
-        selector: row => 
-          <did>
-            {edicion === row.usuario_id ? 
-              ( verificarCampo('Rol',row.rol) ) 
-              : 
-              ( row.rol )
-            }
-          </did>,
+        selector: row => row.rol,
         sortable: true,
         left: true
     },
     {
         name: 'Gerencia',
-        selector: row =>
-          <did>
-            {edicion === row.usuario_id ? 
-              ( verificarCampo('Gerencia',row.gerencia) ) 
-              : 
-              ( row.gerencia )
-            }
-          </did>,
+        selector: row => row.gerencia,
         sortable: true,
         left: true
     },
     {
         name: 'Cargo',
-        selector: row =>
-          <did>
-            {edicion === row.usuario_id ? 
-              ( verificarCampo('Cargo',row.cargo) ) 
-              : 
-              ( row.cargo )
-            }
-          </did>,
+        selector: row => row.cargo,
         sortable: true,
         left: true
     },
@@ -198,7 +113,29 @@ function BuscarUsuario() {
       cell: row => 
         <div>
           <FaTimesCircle
-              onClick={() => eliminarUsuario(row)} 
+              onClick={() => {
+                swal({
+                  text: `¿Esta seguro de Eliminar a ${row.indicador}?`,
+                  icon: 'warning',
+                  buttons: {
+                    cancel: {
+                      text: "Cancel",
+                      value: false,
+                      visible: true,
+                      className: "bg-red-600 text-white outline-none border-none hover:bg-red-500",
+                    },
+                    confirm: {
+                      text: "Aceptar",
+                      value: true,
+                      visible: true,
+                      className: "bg-blue-600 text-white outline-none border-none hover:bg-blue-500",
+                    }
+                  },
+                }).then((result) => {
+                  if (result)
+                    eliminarUsuario(row);
+                })
+              }} 
               className="ml-3 text-red-500 text-lg cursor-pointer"
           />
         </div>,
@@ -212,6 +149,7 @@ function BuscarUsuario() {
       const timeout = setTimeout(() => { setPending(false) }, 500);
       return () => clearTimeout(timeout);
   }
+
   useEffect(() => {
       setPending(true);
       loading();
@@ -219,6 +157,19 @@ function BuscarUsuario() {
 
   return (
     <Container>
+
+      {/* --------------- VENTANA MODAL PARA ACTUALIZAR DATOS --------------- */}
+      {isOpen ? (
+          <div className="fixed w-full max-w-2xl max-h-full z-50 overflow-y-auto">
+            <ActualizarUsuario 
+              setIsOpen={setIsOpen} 
+              valores={usuario ? usuario : null}
+              setUpdate={setUpdate}
+            />
+          </div>
+                
+      ) : (null) }
+
       <h2 className='font-bold text-lg'>Buscar Usuarios</h2>
 
       <form className='flex justify-center items-center spacex-4 p-4 bg-zinc-400 border-solid rounded'>
@@ -226,7 +177,7 @@ function BuscarUsuario() {
         <div className="relative w-96">
           <input 
             type="search"
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {e.target.value === '' ? setSearchTerm(' ') : setSearchTerm(e.target.value)}}
             className="block p-2 pr-12 w-96 text-xs text-black bg-white rounded border-none outline-none" 
             placeholder="Buscar" />
           <button 
@@ -246,7 +197,7 @@ function BuscarUsuario() {
       (null)}
 
       <div className="flex gap-16">
-        <Button color='blue' width={32} manejador={(e) => navegar(-1)} ><FaArrowLeft />Volver</Button>
+        <Button width={32} manejador={(e) => navegar(-1)} ><FaArrowLeft />Volver</Button>
       </div>
 
     </Container>
