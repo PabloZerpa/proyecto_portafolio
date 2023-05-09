@@ -3,7 +3,7 @@ const { check, validationResult } = require("express-validator");
 
 // *************** VALIDAR DATOS APLICACION ***************
 const validatorApp = [
-    check("apl_acronimo").exists().notEmpty().isString(),
+    check("apl_acronimo").exists().notEmpty().isString().isLength({min:3, max:10}),
     check("apl_nombre").exists().notEmpty().isString(),
     check("apl_descripcion").exists().notEmpty().isString(),
     check("apl_version").exists().notEmpty().isString(),
@@ -30,9 +30,6 @@ const validatorApp = [
             validationResult(req).throw();
             return next();
         } catch(err){ 
-            console.log('hola');
-            // res.status(403);
-            // res.send({errors: err.array()})
             return res.status(401).json({ message: 'DATOS INCOMPLETOS' });
         }
     }
@@ -42,13 +39,13 @@ const validatorApp = [
 const validatorCustodio = [
     check("nombre").exists().notEmpty().isString(),
     check("apellido").exists().notEmpty().isString(),
-    check("indicador").exists().notEmpty().isString(),
+    check("indicador").exists().notEmpty().isString().isLength({min:4, max:12}),
     check("cedula").exists().notEmpty().isString(),
     check("telefono").exists().notEmpty().isString(),
-    check("cargo").exists().notEmpty().isInt(),
-    check("gerencia").exists().notEmpty().isInt(),
-    check("region").exists().notEmpty().isInt(),
-    check("localidad").exists().notEmpty().isInt(),
+    check("cargo").exists().notEmpty().isString(),
+    check("gerencia").exists().notEmpty().isString(),
+    check("region").exists().notEmpty().isString(),
+    check("localidad").exists().notEmpty().isString(),
     (req,res,next) => {
         try{
             validationResult(req).throw();

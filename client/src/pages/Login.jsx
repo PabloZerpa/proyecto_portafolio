@@ -5,7 +5,7 @@ import { FaUserCircle, FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa'
 import Autorizacion from '../services/auth.service';
 import Usuario from '../services/usuario.service';
 import { Notificacion } from '../utils/Notificacion';
-
+ 
 function Login() {
   
   const [password, setPassword] = useState('');
@@ -45,7 +45,7 @@ function Login() {
   }, []);
 
   // -------------------- FUNCION PARA INICIAR SESION --------------------
-  async function handleLogin(e) {
+  async function iniciarSesion(e) {
     e.preventDefault();
 
     if(password.length > 7 && indicador !== ''){
@@ -75,7 +75,7 @@ function Login() {
 
       <form
         className='flex justify-center items-center flex-col space-y-6 w-96 mt-20 px-13 py-4 
-        bg-zinc-100 font-medium list-none rounded-lg drop-shadow-md' onSubmit={handleLogin}
+        bg-zinc-100 font-medium list-none rounded-lg drop-shadow-md' onSubmit={iniciarSesion}
       >
 
         <FaUserCircle className='text-6xl text-blue-500' />

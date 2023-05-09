@@ -8,7 +8,7 @@ import { Notificacion } from "../../utils/Notificacion";
 
 
 function ActualizarUsuario({setIsOpen, valores, setUpdate}) {
-
+ 
     const [datos, setDatos] = useState({
         id: valores.usuario_id,
         nombre: valores.nombre,
@@ -19,6 +19,7 @@ function ActualizarUsuario({setIsOpen, valores, setUpdate}) {
         creador: Autorizacion.obtenerUsuario().indicador,
     });
 
+    // ---------- ESTADOS PARA LOS VALORES DE LOS SELECTS ----------
     const [roles, setRoles] = useState('');
     const [gerencias, setGerencias] = useState('');
     const [cargos, setCargos] = useState('');
@@ -32,7 +33,6 @@ function ActualizarUsuario({setIsOpen, valores, setUpdate}) {
 
     useEffect(() => {
         establecerDatos();
-        console.log(datos);
     }, []);
 
 
@@ -64,7 +64,9 @@ function ActualizarUsuario({setIsOpen, valores, setUpdate}) {
 
     return(
         <form className="flex flex-col items-center space-y-2 pb-4 overflow-y-auto" onSubmit={actualizarDatos} >
+
             <div className="flex flex-col items-center space-y-2 pb-4 bg-zinc-400 rounded">
+
                 <div className="grid grid-cols-1 md:grid-cols-2 w-[300px] lg:w-[500px] gap-4 p-4">
                     <Input campo='Indicador' name='indicador' direccion="col" editable={false} propiedad={valores.indicador} />
                     <Select campo='Rol' name='rol' direccion="col" required={true} byId={false} propiedad={valores.rol} opciones={roles ? roles : ['SELECCIONE']} manejador={setValores} />
@@ -78,6 +80,7 @@ function ActualizarUsuario({setIsOpen, valores, setUpdate}) {
                     <Button width={32} manejador={(e) => setIsOpen(false)} >Cerrar</Button>
                     <Button tipo="submit" width={32}>Actualizar</Button>
                 </div>
+                
             </div>
         </form>
     );

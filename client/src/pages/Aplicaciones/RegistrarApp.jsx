@@ -11,12 +11,14 @@ import Opciones from '../../utils/Opciones';
 import TableRegistro from '../../components/TablaRegistro';
 import Modal from '../../components/Modal';
 
-
+ 
 function RegistrarApp() {
 
+    // ---------- FUNCION PARA NAVEGAR A RUTA INDICADA ----------
     const navigate = useNavigate();
     function navegar(ruta) { navigate(ruta) }
     
+    // ---------- ESTADOS ----------
     const [datos, setDatos] = useState({
         apl_codigo_fuente: 'SI',
         apl_critico: 'SI',
@@ -75,10 +77,8 @@ function RegistrarApp() {
     
     // VARIABLE QUE ABRE Y CIERRA MODAL DE BASE DE DATOS
     const [isOpen, setIsOpen] = useState(false);
-
     // VARIABLE QUE GUARDA LAS BASES DE DATOS SELECCIONADAS
     const [select_base, setSelectBase] = useState([]);
-
     // VARIABLE QUE CONTIENE LOS ELEMENTOS DE LA TABLA EN EL FORMULARIO
     const [tableDataBase, setDataBase] = useState([]);
 
@@ -86,15 +86,11 @@ function RegistrarApp() {
         let selecciones = [];
         setDataBase([]);
 
-        console.log(tableDataBase);
-
         for (let i = 0; i < respuesta.length; i++) {
             const x = respuesta[i];
             setDataBase(tableDataBase => [...tableDataBase, { base_datos_id: x.base_datos_id, base_datos: x.base_datos}]);
             selecciones.push(respuesta[i].base_datos_id);
         }
-
-        console.log(selecciones);
         setSelectBase(selecciones);
     };
 
@@ -134,10 +130,11 @@ function RegistrarApp() {
         setSelectLenguaje(selecciones); 
     };
 
+    // -------------------- FUNCION QUE ELIMINA ELEMENTO SELECCIONADA DE LA TABLA --------------------
     const eliminarElemento = (row, elemento, tabla, setTabla, setSelecciones) => {
 
         if (window.confirm(`Estas seguro de eliminar: ${row[elemento]}?`)) {
-            const nuevo = tabla.filter((i) => i[elemento] != row[elemento]);
+            const nuevo = tabla.filter((i) => i[elemento] !== row[elemento]);
             setTabla(nuevo);
 
             let selecciones = [];
@@ -375,8 +372,8 @@ function RegistrarApp() {
                 </div>
 
                 <div className="flex gap-2 md:gap-12">
-                    <Button tipo='submit' width={32}>Registrar</Button>
                     <Button tipo='button' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
+                    <Button tipo='submit' width={32}>Registrar</Button>
                 </div>
 
             </form>

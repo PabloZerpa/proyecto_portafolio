@@ -2,9 +2,10 @@ const pool = require('../config');
 
 const query = `
 SELECT 
-    servidores.servidor_id,servidor,ser_estatus,ser_direccion,sistema,modelo,marca,
+    servidores.servidor_id,servidor,estatus,ser_direccion,sistema,modelo,marca,
     region,localidad,DATE_FORMAT (ser_fecha_actualizacion, '%d-%m-%Y %H:%i') as ser_fecha_actualizacion,indicador
 FROM servidores
+    LEFT JOIN estatus ON servidores.ser_estatus = estatus.estatus_id
     LEFT JOIN sistemas_operativos ON sistemas_operativos.sistema_id = servidores.ser_sistema
     LEFT JOIN modelos ON modelos.modelo_id = servidores.ser_modelo
     LEFT JOIN marcas ON marcas.marca_id = modelos.mod_marca
@@ -18,8 +19,6 @@ const obtenerBusqueda = async (req,res) => {
         const { term,estatus,region,sistema,marca,orden } = req.body;
         const termino = '%' + term + '%';
         let data;
-
-        //console.log(term,estatus,region,sistema,marca,orden);
 
         if (term === undefined || null)
             return res.status(404).json({ message: "Error al recibir consulta" });
@@ -69,7 +68,6 @@ const obtenerBusqueda = async (req,res) => {
             }
         }
 
-        //console.log(data[0]);
         res.json(data[0]);
         
     } catch (error) {
@@ -92,12 +90,9 @@ const registrarServidor = async (req,res) => {
 
         // ****************************** VERIFICA QUE LA APLICACION NO EXISTA ******************************
         if(ser){
-            console.log('ERROR, SERVIDOR YA EXISTE');
             return res.status(401).json({ message: 'ERROR, SERVIDOR YA EXISTE' });
         }
         else{
-            console.log(servidor,estatus,direccion,sistema,version,modelo,marca,serial,
-                memoria,velocidad,cantidad,region,localidad,usuario_registro);
 
             if(version){
                 const datos_version = await pool.query(
@@ -106,7 +101,6 @@ const registrarServidor = async (req,res) => {
                         (?, ?);`, 
                     [version,sistema]
                 );
-                console.log('REGISTRO VERSION SISTEMA');
             }
 
             let modelo_id = null;
@@ -122,7 +116,6 @@ const registrarServidor = async (req,res) => {
 
                 const selectModelo = await pool.query(`SELECT * FROM modelos ORDER BY modelo_id DESC LIMIT 1`);
                 modelo_id = selectModelo[0][0].modelo_id;
-                console.log('REGISTRO MODELO' + modelo_id);
             }
 
             const datos_servidor = await pool.query(
@@ -137,9 +130,7 @@ const registrarServidor = async (req,res) => {
                 );`, 
                 [servidor,estatus,direccion,sistema,modelo_id,region,localidad,region,usuario_registro,usuario_registro]
             );
-            console.log('REGISTRO GENERAL DEL SERVIDOR');
 
-            console.log('CREACION EXITOSA');
             res.send('CREACION EXITOSA');
         }
     } catch (error) {
@@ -151,36 +142,39 @@ const registrarServidor = async (req,res) => {
 // *********************************** ACTUALIZAR REGISTRO ***********************************
 const actualizarServidor = async (req,res) => {
     try {
-        console.log('EN EN UPDATE DEL SERVER');
+
         const { id } = req.params;
 
         const {
-            select_aplicacion, select_servidor,
-            base_datos,estatus,cantidad_usuarios, tipo, manejador, manejador_version,
-            tipo_ambiente
+            servidor,estatus,direccion,sistema,marca,modelo,serial,
+            velocidad,cantidad,memoria,region,localidad,actualizador
         } = req.body;
 
-        console.log(
-            select_aplicacion, select_servidor,
-            base_datos,estatus,cantidad_usuarios, tipo, manejador, manejador_version,
-            tipo_ambiente
+        const query = await pool.query(`SELECT modelo_id FROM modelos WHERE mod_serial = ?;`,[serial]);
+        const modelo_id = query[0][0].modelo_id;
+
+        const query2 = await pool.query( 
+            `UPDATE modelos  SET 
+                mod_cantidad_cpu = ?, mod_velocidad_cpu = ?, mod_memoria = ?
+            WHERE 
+                modelo_id = ?`,
+            [cantidad,velocidad,memoria,modelo_id]
         );
 
-        // ACTUALIZAR LA BASE DE DATOS
+        // ACTUALIZAR SERVIDOR
         const [result] = await pool.query(
-            `UPDATE bases_datos  SET 
-                base_datos = ?,bas_estatus = ?,bas_cantidad_usuarios = ?,
-                bas_tipo = (SELECT tipo_base_id FROM tipos_bases WHERE tipo = ? LIMIT 1),
-                bas_manejador = (SELECT manejador_id FROM manejadores WHERE manejador = ? LIMIT 1),
-                bas_tipo_ambiente = ?
-            WHERE 
-                base_datos_id = ?`,
-            [   
-                base_datos,estatus,cantidad_usuarios, tipo, 
-                manejador,tipo_ambiente,id
-            ]
+            `UPDATE servidores  SET 
+                servidor = ?,
+                ser_estatus = (SELECT estatus_id FROM estatus WHERE estatus = ?),
+                ser_direccion = ?,
+                ser_sistema = (SELECT sistema_id FROM sistemas_operativos WHERE sistema = ?),
+                ser_region_id = (SELECT region_id FROM regiones WHERE region = ?),
+                ser_localidad_id = (SELECT localidad_id FROM localidades WHERE localidad = ?),
+                ser_usuario_actualizo = (SELECT usuario_id FROM usuarios WHERE indicador = ?),
+                ser_fecha_actualizacion = now()
+            WHERE servidor_id = ?`,
+            [servidor,estatus,direccion,sistema,region,localidad,actualizador,id]
         );
-        console.log('ACTUALIZACION EXITOSA'); 
             
         res.json('UPDATE EXITOSO');
 
@@ -198,14 +192,13 @@ const general = async (req,res) => {
     try {
         const { id } = req.params;
 
-        console.log('ALO');
-
         const data = await pool.query(`
         SELECT 
-            servidores.servidor_id,servidor,ser_estatus,ser_direccion,
+            servidores.servidor_id,servidor,estatus,ser_direccion,
             sistema,modelo,marca,mod_serial,mod_cantidad_cpu,mod_velocidad_cpu,mod_memoria,region,localidad,
             DATE_FORMAT (ser_fecha_actualizacion, '%d-%m-%Y %H:%i') as ser_fecha_actualizacion, indicador
         FROM servidores
+            LEFT JOIN estatus ON servidores.ser_estatus = estatus.estatus_id
             LEFT JOIN sistemas_operativos ON sistemas_operativos.sistema_id = servidores.ser_sistema
             LEFT JOIN modelos ON modelos.modelo_id = servidores.ser_modelo
             LEFT JOIN marcas ON marcas.marca_id = modelos.mod_marca
@@ -213,8 +206,7 @@ const general = async (req,res) => {
             LEFT JOIN localidades ON localidades.localidad_id = servidores.ser_localidad_id
             LEFT JOIN usuarios ON usuarios.usuario_id = servidores.ser_usuario_actualizo
         WHERE servidores.servidor_id = ?`, [id]);
-
-        console.log('ALO');
+        
         res.send(data[0]);
 
     } catch (error) {
@@ -258,14 +250,15 @@ const basedatos = async (req,res) => {
         
         const data = await pool.query(`
             SELECT 
-                bases_datos.base_datos_id, base_datos, bas_estatus, bas_cantidad_usuarios, bas_fecha_actualizacion,
-                tipo, manejador, tipo_ambiente
+                bases_datos.base_datos_id, base_datos, estatus, base_cantidad_usuarios, base_fecha_actualizacion,
+                tipo, manejador,ambiente
             FROM bases_datos
                 JOIN basedatos_servidor ON bases_datos.base_datos_id = basedatos_servidor.base_datos_id
                 JOIN servidores ON basedatos_servidor.servidor_id = servidores.servidor_id
-                JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.bas_tipo
-                JOIN manejadores ON manejadores.manejador_id = bases_datos.bas_manejador
-                JOIN tipos_ambientes ON tipos_ambientes.tipo_ambiente_id = bases_datos.bas_tipo_ambiente
+                JOIN estatus ON bases_datos.base_estatus = estatus.estatus_id
+                JOIN tipos_bases ON tipos_bases.tipo_id = bases_datos.base_tipo
+                JOIN manejadores ON manejadores.manejador_id = bases_datos.base_manejador
+                JOIN ambientes ON ambientes.ambiente_id = bases_datos.base_ambiente
             WHERE servidores.servidor_id = ?;`, 
             [id]);
                 

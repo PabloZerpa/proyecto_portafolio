@@ -5,23 +5,25 @@ import { Button, Container, Input, Radio, Select, Tabla, TextArea, Modal, TableR
 import { BiLoaderAlt } from "react-icons/bi";
 import Autorizacion from '../../services/auth.service';
 import Aplicacion from '../../services/aplicacion.service';
-import { opcionMantenimiento } from '../../services/campos.service';
 import Opciones from '../../utils/Opciones';
 import { columnasModalBD, columnasModalLenguaje, columnasModalServidor } from '../../utils/columnas';
 import { FaTimesCircle } from 'react-icons/fa';
 import { Notificacion } from '../../utils/Notificacion';
-import Swal from 'sweetalert2';
 import swal from 'sweetalert';
 
 function ActualizarApp() {
 
+    // ---------- FUNCION PARA NAVEGAR A RUTA INDICADA ----------
     const navigate = useNavigate();
+    function navegar() { navigate(-1) } 
+
+    // ---------- ESTADOS ----------
     const { id } = useParams();
     const [load, setLoad] = useState(true);
     const [datos, setDatos] = useState({
         usuario_actualizo: Autorizacion.obtenerUsuario().indicador, 
     });
-    
+     
     // VALORES POR DEFECTO EN LOS INPUTS
     const [general, setGeneral] = useState('');
     const [lenguaje, setLenguaje] = useState('');
@@ -41,20 +43,17 @@ function ActualizarApp() {
     const [frecuencia, setFrecu] = useState('');
     const [regiones, setRegiones] = useState('');
 
-    function navegar() { navigate(-1) } 
-
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
     async function actualizar(e) {
         e.preventDefault();
         try {
             if(Autorizacion.obtenerUsuario().rol === 'admin'){
                 await Aplicacion.actualizarDatos(id, datos, tableDataLenguaje, tableDataBase, tableDataServidor); 
-                Notificacion('REGISTRO EXITOSO', 'success');
-                navigate("/dashboard");
+                Notificacion('ACTUALIZACION EXITOSA', 'success');
+                //navigate("/dashboard");
             }
         } 
         catch (error) { 
-            console.log('ERROR AL ACTUALIZAR APL_ACT'); 
             Notificacion(error.cusponse.data.message, 'error');
         }
     }
@@ -67,20 +66,19 @@ function ActualizarApp() {
             setDatos({ ...datos, [e.target.name] : e.target.value });
     }
 
-
     // -------------------- FUNCION Y VARIABLES PARA LA SELECCION DE BASES DE DATOS --------------------
     const [isOpen, setIsOpen] = useState(false);
     const [select_base, setSelectBase] = useState([]);
     const [tableDataBase, setDataBase] = useState([]);
 
-    const obtenerSeleccionesBase = (cuspuesta) => {
+    const obtenerSeleccionesBase = (respuesta) => {
         let selecciones = [];
         setDataBase([]);
 
-        for (let i = 0; i < cuspuesta.length; i++) {
-            const x = cuspuesta[i];
+        for (let i = 0; i < respuesta.length; i++) {
+            const x = respuesta[i];
             setDataBase(tableDataBase => [...tableDataBase, { base_datos_id: x.base_datos_id, base_datos: x.base_datos}]);
-            selecciones.push(cuspuesta[i].base_datos_id);
+            selecciones.push(respuesta[i].base_datos_id);
         }
         setSelectBase(selecciones);
     };
@@ -90,14 +88,14 @@ function ActualizarApp() {
     const [select_servidor, setSelectServidor] = useState([]);
     const [tableDataServidor, setDataServidor] = useState([]);
 
-    const obtenerSeleccionesServidor = (cuspuesta) => {
+    const obtenerSeleccionesServidor = (respuesta) => {
         let selecciones = [];
         setDataServidor([]);
 
-        for (let i = 0; i < cuspuesta.length; i++) {
-            const x = cuspuesta[i];
+        for (let i = 0; i < respuesta.length; i++) {
+            const x = respuesta[i];
             setDataServidor(tableDataServidor => [...tableDataServidor, { servidor_id: x.servidor_id, servidor: x.servidor}]);
-            selecciones.push(cuspuesta[i].servidor_id);
+            selecciones.push(respuesta[i].servidor_id);
         }
 
         setSelectServidor(selecciones); 
@@ -108,28 +106,29 @@ function ActualizarApp() {
     const [select_lenguaje, setSelectLenguaje] = useState([]);
     const [tableDataLenguaje, setDataLenguaje] = useState([]);
 
-    const obtenerSeleccionesLenguaje = (cuspuesta) => {
+    const obtenerSeleccionesLenguaje = (respuesta) => {
         let selecciones = [];
         setDataLenguaje([]);
 
-        for (let i = 0; i < cuspuesta.length; i++) {
-            const x = cuspuesta[i];
+        for (let i = 0; i < respuesta.length; i++) {
+            const x = respuesta[i];
             setDataLenguaje(tableDataLenguaje => [...tableDataLenguaje, { lenguaje_id: x.lenguaje_id, lenguaje: x.lenguaje}]);
-            selecciones.push(cuspuesta[i].lenguaje_id);
+            selecciones.push(respuesta[i].lenguaje_id);
         }
 
         setSelectLenguaje(selecciones); 
     };
 
-
     // -------------------- FUNCION PARA LLENAR TABLA POR DEFECTO --------------------
-    const llenarTabla = async (datos, id, nombre, setTabla, tabla, setSelect) => {
+    const llenarTabla = async (datos, id, nombre, setTabla, setSelect) => {
         let selecciones = [];
+
         for (let i = 0; i < datos.length; i++) {
             const x = datos[i];
             setTabla(tabla => [...tabla, { [`${id}`]: x[id], [`${nombre}`]: x[nombre]}]); 
-            selecciones.push(datos[i].base_datos_id); 
+            selecciones.push(datos[i][id]); 
         }
+        
         setSelect(selecciones);
     }
 
@@ -137,7 +136,7 @@ function ActualizarApp() {
     const eliminarElemento = (row, elemento, tabla, setTabla, setSelecciones) => {
 
         if (window.confirm(`Estas seguro de eliminar: ${row[elemento]}?`)) {
-            const nuevo = tabla.filter((i) => i[elemento] != row[elemento]);
+            const nuevo = tabla.filter((i) => i[elemento] !== row[elemento]);
             setTabla(nuevo);
 
             let selecciones = [];
@@ -209,18 +208,51 @@ function ActualizarApp() {
         },
     ];
 
+    // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
+    async function establecerDatos(){
+        setCustodios(await Opciones('custodios'));
+        setPlataformas(await Opciones('plataformas'));
+        setEstatus(await Opciones('estatus'));
+        setAlcance(await Opciones('alcance'));
+        setFrecu(await Opciones('frecuencias'));
+        setRegiones(await Opciones('regiones')); 
+    }
+
+    // =================== FUNCION PARA CARGOR LOS VALORES POR DEFECTO AL ESTADO ===================
+    async function llenarDatos(){
+        setDatos({
+            ...datos,
+            apl_acronimo : general.apl_acronimo,
+            apl_nombre : general.apl_nombre,
+            apl_descripcion : general.apl_descripcion,
+            apl_prioridad : general.prioridad,
+            apl_alcance : general.alcance,
+            apl_critico : general.apl_critico,
+            apl_direccion : general.apl_direccion,
+            apl_estatus : general.estatus,
+            apl_version : general.apl_version,
+            apl_codigo_fuente : general.apl_codigo_fuente,
+            apl_cantidad_usuarios : general.apl_cantidad_usuarios,
+            apl_region : general.region, 
+            plataforma : plataforma,
+            select_funcional: funcional.cus_indicador,
+            select_tecnico: tecnico.cus_indicador,
+            man_frecuencia: mantenimiento.frecuencia,
+            man_horas_prom: mantenimiento.man_horas_prom,
+            man_horas_anuales: mantenimiento.man_horas_anuales,
+            doc_descripcion: documentacion.doc_descripcion,
+            doc_direccion: documentacion.doc_direccion,
+            doc_tipo: documentacion.doc_tipo,
+        });
+    }
+
 
     useEffect(() => {
         async function fetchData(){
         try { 
 
             // ========== OPCIONES PARA LOS SELECTS ==========
-            setCustodios(await Opciones('custodios'));
-            setPlataformas(await Opciones('plataformas'));
-            setEstatus(await Opciones('estatus'));
-            setAlcance(await Opciones('alcance'));
-            setFrecu(await Opciones('frecuencias'));
-            setRegiones(await Opciones('regiones')); 
+            establecerDatos();
 
             // ========== DATOS POR DEFECTO ==========
             const todo = await Aplicacion.obtenerTodo(id);
@@ -231,40 +263,16 @@ function ActualizarApp() {
             setFuncional(todo.funcional);
             setTecnico(todo.tecnico); 
             setLenguaje(todo.lenguajes);
-            setPlataforma(todo.plataformas);
-            setMantenimiento(todo.tecnologia); 
-            setDocumentacion(todo.documentacion);
+            setPlataforma(todo.plataformas.plataforma);
+            {todo.documentacion[0] ? setDocumentacion(todo.documentacion[0]) : setDocumentacion('')}
+            {todo.tecnologia ? setMantenimiento(todo.tecnologia) : setMantenimiento('')}
 
-            llenarTabla(lenguaje,'lenguaje_id','lenguaje',setDataLenguaje,tableDataLenguaje,setSelectLenguaje);
-            llenarTabla(basedatos,'base_datos_id','base_datos',setDataBase,tableDataBase,setSelectBase);
-            llenarTabla(servidor,'servidor_id','servidor',setDataServidor,tableDataServidor,setSelectServidor);
+            // ========== LLENA LA TABLA CON LOS VALORES POR DEFECTO ==========
+            llenarTabla(lenguaje,'lenguaje_id','lenguaje',setDataLenguaje,setSelectLenguaje);
+            llenarTabla(basedatos,'base_datos_id','base_datos',setDataBase,setSelectBase);
+            llenarTabla(servidor,'servidor_id','servidor',setDataServidor,setSelectServidor);
 
-            setDatos({
-                ...datos,
-                apl_acronimo : todo.general.apl_acronimo,
-                apl_nombre : todo.general.apl_nombre,
-                apl_descripcion : todo.general.apl_descripcion,
-                apl_prioridad : todo.general.prioridad,
-                apl_alcance : todo.general.alcance,
-                apl_critico : todo.general.apl_critico,
-                apl_direccion : todo.general.apl_direccion,
-                apl_estatus : todo.general.estatus,
-                apl_version : todo.general.apl_version,
-                apl_codigo_fuente : todo.general.apl_codigo_fuente,
-                apl_cantidad_usuarios : todo.general.apl_cantidad_usuarios,
-                apl_region : todo.general.region, 
-                plataforma : todo.plataformas.plataforma,
-                select_funcional: todo.funcional.cus_indicador,
-                select_tecnico: todo.tecnico.cus_indicador,
-                man_frecuencia: todo.tecnologia.frecuencia,
-                man_horas_prom: todo.tecnologia.man_horas_prom,
-                man_horas_anuales: todo.tecnologia.man_horas_anuales,
-                doc_descripcion: todo.documentacion[0].doc_descripcion,
-                doc_direccion: todo.documentacion[0].doc_direccion,
-                doc_tipo: todo.documentacion[0].doc_tipo,
-            });
-
-            console.log(datos);
+            await llenarDatos(); 
             setLoad(false);
 
         }catch (error) { console.log(error) }
@@ -276,7 +284,6 @@ function ActualizarApp() {
     const eliminar = async (id) => {
         try {
             if(Autorizacion.obtenerUsuario().rol === 'admin'){
-                console.log(id);
                 await Aplicacion.eliminar(id); 
                 Notificacion('USUARIO ELIMINADO EXITOSAMENTE', 'success');
                 navegar('/');
@@ -369,7 +376,7 @@ function ActualizarApp() {
 
                     <h2 className='font-bold text-base my-4'>Tecnologia</h2>
                     <div className="grid grid-cols-2 space-x-4">
-                        <Select campo='Plataforma' name='plataforma' propiedad={plataforma.plataforma} byId={false} opciones={plataformas ? plataformas : ['SELECCIONE']} manejador={setValores} />
+                        <Select campo='Plataforma' name='plataforma' propiedad={datos.plataforma} byId={false} opciones={plataformas ? plataformas : ['SELECCIONE']} manejador={setValores} />
                     </div>
 
                     {/* --------------- LENGUAJES --------------- */}
@@ -437,24 +444,24 @@ function ActualizarApp() {
                     {/* --------------- DOCUMENTACION --------------- */}
                     <p className='font-bold text-base my-4'>Documentacion</p>
                     <div className="grid grid-cols-2 space-x-4">
-                        <Input campo='Descripcion' name='doc_descripcion' propiedad={documentacion[0].doc_descripcion} manejador={setValores} />
-                        <Input campo='Direccion' name='doc_direccion' propiedad={documentacion[0].doc_direccion} manejador={setValores} />
-                        <Input campo='Tipo de Doc' name='doc_tipo' propiedad={documentacion[0].doc_tipo} manejador={setValores} />
+                        <Input campo='Descripcion' name='doc_descripcion' propiedad={datos.doc_descripcion} manejador={setValores} />
+                        <Input campo='Direccion' name='doc_direccion' propiedad={datos.doc_direccion} manejador={setValores} />
+                        <Input campo='Tipo de Doc' name='doc_tipo' propiedad={datos.doc_tipo} manejador={setValores} />
                     </div>
 
                     {/* --------------- MANTENIMIENTO --------------- */}
                     <p className='font-bold text-base my-4'>Mantenimiento</p>
                     <div className="grid grid-cols-2 space-x-4">
-                        <Select campo='Frecuencia' name='man_frecuencia' propiedad={mantenimiento.frecuencia} byId={false} opciones={frecuencia ? frecuencia : ['SELECCIONE']} manejador={setValores}/>
-                        <Input campo='Horas Pro' name='man_horas_prom' propiedad={mantenimiento.man_horas_prom} manejador={setValores} />
-                        <Input campo='Horas Anu' name='man_horas_anuales' propiedad={mantenimiento.man_horas_anuales} manejador={setValores} />
+                        <Select campo='Frecuencia' name='man_frecuencia' propiedad={datos.man_frecuencia} byId={false} opciones={frecuencia ? frecuencia : ['SELECCIONE']} manejador={setValores}/>
+                        <Input campo='Horas Pro' name='man_horas_prom' propiedad={datos.man_horas_prom} manejador={setValores} />
+                        <Input campo='Horas Anu' name='man_horas_anuales' propiedad={datos.man_horas_anuales} manejador={setValores} />
                     </div>
                 </div>
 
                 <div className="flex gap-2 md:gap-12">
                     <Button tipo='button' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
                     <Button tipo='submit' width={32}>Actualizar</Button>
-                    <button type='button' onClick={() => {
+                    <Button tipo='button' color='red' width={32} manejador={(e) => {
                         swal({
                             text: `¿Esta seguro de Eliminar la aplicacion ${general.apl_acronimo}?`,
                             icon: 'warning',
@@ -463,20 +470,21 @@ function ActualizarApp() {
                                   text: "Cancel",
                                   value: false,
                                   visible: true,
+                                  className: "bg-red-600 text-white outline-none border-none hover:bg-red-500",
                                 },
                                 confirm: {
                                   text: "Aceptar",
                                   value: true,
                                   visible: true,
+                                  className: "bg-blue-600 text-white outline-none border-none hover:bg-blue-500",
                                 }
                             },
                           }).then((result) => {
                             if (result)
                               eliminar(id);
                           })
-                    }}>Eliminar</button>
+                    }} >Eliminar</Button>
                 </div>
-
             </form>
             
         </Container>

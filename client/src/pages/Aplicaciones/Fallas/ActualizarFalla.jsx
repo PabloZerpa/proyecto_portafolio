@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button, Select, TextArea } from "../../../components";
 import Autorizacion from "../../../services/auth.service";
 import Falla from "../../../services/falla.service";
@@ -7,6 +7,7 @@ import { Notificacion } from "../../../utils/Notificacion";
 
 function ActualizarFalla({setIsOpen, valores, setUpdate}) {
 
+    // ---------- ESTADOS ----------
     const [datos, setDatos] = useState({
         id: valores.falla_id,
         clase: valores.fal_clase,
@@ -16,6 +17,7 @@ function ActualizarFalla({setIsOpen, valores, setUpdate}) {
 		actualizador: Autorizacion.obtenerUsuario().indicador,
     });
 
+    // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
     const setValores = (e) => {
         if(e.target.value === 'TODAS')
             setDatos({ ...datos, [e.target.name] : null })
@@ -23,6 +25,7 @@ function ActualizarFalla({setIsOpen, valores, setUpdate}) {
             setDatos({ ...datos, [e.target.name] : e.target.value })
     }
 
+    // =================== FUNCION PARA ACTUALIZAR FALLA ===================
 	async function actualizarFalla(e){
         e.preventDefault();
         

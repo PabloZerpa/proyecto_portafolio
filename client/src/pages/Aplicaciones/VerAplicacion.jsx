@@ -9,8 +9,9 @@ const opcionesVista = ['General','Tecnologia', 'Base de datos',
 
 function VerAplicacion() {
 
+  // -------- ESTADOS ---------
   const { id } = useParams();
-  const [valor, setValor] = useState('');
+  const [load, setLoad] = useState(true);
 
   const [opcion, setOpcion] = useState('General');
   const [general, setGeneral] = useState('');
@@ -21,7 +22,8 @@ function VerAplicacion() {
   const [documentacion, setDocumentacion] = useState('');
   const [fallas, setFallas] = useState('');
 
-  const handleInputChange = (e) => {
+  // FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS
+  const setValores = (e) => {
     setOpcion(e.target.value);
   }
   
@@ -43,12 +45,15 @@ function VerAplicacion() {
         setCustodios(cus);
         setDocumentacion(doc);
         setFallas(fal);
+
+        setLoad(false);
+        
       }catch (error) { console.log(error) }
     } 
     fetchData();
-  }, []);
+  }, [id]);
   
-    if(valor === null) 
+    if(load === null) 
       return <Navigate to='/' />
 
       function General(){
@@ -130,8 +135,7 @@ function VerAplicacion() {
       ];
 
       function Tecnologia() {
-        const datos = tecnologia.data.datos;
-        console.log(tecnologia.data);
+        const datos = tecnologia.data.datos;;
         const plataformas = tecnologia.data.plataformas[0].plataforma;
         const lenguajes = tecnologia.data.lenguajes;
 
@@ -212,7 +216,6 @@ function VerAplicacion() {
       ];
   
       function Basedatos (){
-        
         const datos = basedatos.data.datos;
         return(
           <>
@@ -294,7 +297,6 @@ function VerAplicacion() {
 
       function Servidor(){
         const datos = servidor.data.datos;
-        const modelos = servidor.data.modelos;
         return(
           <>
             <h2 className='font-bold text-lg'>Servidor</h2>
@@ -373,8 +375,6 @@ function VerAplicacion() {
       function Custodio() {
         const funcional = custodios.data.funcional;
         const tecnico = custodios.data.tecnico;
-        console.log(funcional);
-        console.log(tecnico);
         return(
           <>
             <h2 className='font-bold text-lg'>Custodios</h2>
@@ -484,7 +484,7 @@ function VerAplicacion() {
 
     return(
       <Container>
-        <Radio label=' ' size='small' opciones={opcionesVista} manejador={handleInputChange} />
+        <Radio label=' ' size='small' opciones={opcionesVista} manejador={setValores} />
         {opcion === 'General' ? <General/> : null}
         {opcion === 'Tecnologia' ? <Tecnologia/> : null}
         {opcion === 'Base de datos' ? <Basedatos/> : null }

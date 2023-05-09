@@ -1,0 +1,215 @@
+const pool = require('../config');
+
+const query = `
+SELECT 
+    custodios.custodio_id, cus_nombre, cus_apellido ,cus_indicador ,cus_cedula ,
+    telefono, cargo, gerencia, region, localidad
+FROM custodios
+    LEFT JOIN telefonos ON custodios.custodio_id = telefonos.custodio_id 
+	LEFT JOIN gerencias ON custodios.cus_gerencia = gerencias.gerencia_id 
+	LEFT JOIN cargos ON custodios.cus_cargo = cargos.cargo_id 
+    LEFT JOIN regiones ON regiones.region_id = custodios.cus_region
+    LEFT JOIN localidades ON localidades.localidad_id = custodios.cus_localidad`;
+
+// *********************************** OBTENER LOS DATOS POR TERMINO DE BUSQUEDA ***********************************
+const obtenerBusqueda = async (req,res) => {
+    try {
+        const { term, cargo,gerencia,region } = req.body;
+        const termino = '%' + term + '%';
+        let data;
+
+        if (term === undefined || null)
+            return res.status(404).json({ message: "Error al recibir consulta" });
+    
+
+        if(cargo){
+            data = await pool.query(
+                `${query}
+                WHERE (custodios.custodio_id LIKE ? 
+                    OR cus_indicador LIKE ?  
+                    OR cus_nombre LIKE ?  
+                    OR cus_apellido LIKE ? ) 
+                    AND cargo LIKE ? ORDER BY custodios.custodio_id ASC;`, 
+            [termino,termino,termino,termino,cargo]);
+        }
+        else if(region){
+            data = await pool.query(
+                `${query}
+                WHERE (custodios.custodio_id LIKE ? 
+                    OR cus_indicador LIKE ?  
+                    OR cus_nombre LIKE ?  
+                    OR cus_apellido LIKE ? ) 
+                    AND region LIKE ? ORDER BY custodios.custodio_id ASC;`, 
+            [termino,termino,termino,termino,region]);
+        }
+        else if(gerencia){
+            data = await pool.query(
+                `${query}
+                WHERE (custodios.custodio_id LIKE ? 
+                    OR cus_indicador LIKE ?  
+                    OR cus_nombre LIKE ?  
+                    OR cus_apellido LIKE ? ) 
+                    AND gerencia LIKE ? ORDER BY custodios.custodio_id ASC;`, 
+            [termino,termino,termino,termino,gerencia]);
+        }
+        else{
+            if(term===''){
+                data = await pool.query(`
+                    ${query}
+                    ORDER BY custodios.custodio_id ASC`);
+            }
+            else{
+                data = await pool.query(`
+                    ${query}
+                    WHERE (custodios.custodio_id LIKE ? 
+                        OR cus_indicador LIKE ?  
+                        OR cus_nombre LIKE ?  
+                        OR cus_apellido LIKE ? ) 
+                    ORDER BY custodios.custodio_id ASC`, 
+                [termino,termino,termino,termino]);
+            }
+        }
+
+        res.json(data[0]);
+        
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+    }
+};
+
+// *********************************** OBTENER FALLAS ***********************************
+const registrarCustodio = async (req,res) => {
+    try {
+        const { id } = req.params;
+        const { nombre,apellido,indicador,cedula,telefono,cargo,gerencia,region,localidad,usuario_registro } = req.body;
+        
+        const query = await pool.query(`SELECT custodio_id FROM custodios WHERE cus_indicador = ?`, [indicador]); 
+        const custodio = query[0][0];
+
+        // ****************************** VERIFICA QUE LA custodio NO EXISTA ******************************
+        if(custodio){
+            return res.status(401).json({ message: 'PERSONA YA REGISTRADA' });
+        }
+        else{
+            const data = await pool.query(`
+                INSERT INTO custodios
+                    (cus_nombre,cus_apellido,cus_indicador,cus_cedula,cus_cargo,
+                        cus_gerencia,cus_region,cus_localidad)
+                VALUES
+                    (?,?,?,?,?,?,?,?);`, 
+                [nombre,apellido,indicador,cedula,cargo,gerencia,region,localidad]);
+
+            const buscarcustodio = await pool.query(
+                `SELECT custodio_id FROM custodios WHERE cus_indicador = ?`, [indicador]);
+            let custodio_id = buscarcustodio[0][0].custodio_id;
+
+            const datos_telefono = await pool.query( 
+                `INSERT INTO telefonos (custodio_id,telefono) VALUES (?,?)`, [custodio_id,telefono] );
+        }
+
+        res.json('custodio REGISTRADO CORRECTAMENTE');
+
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+    }
+};
+
+// *********************************** ELIMINAR REGISTRO ***********************************
+const eliminarCustodio = async (req,res) => {
+    try {
+        const { id } = req.params;
+        const data = await pool.query('DELETE FROM custodios WHERE custodio_id = ?', [id]);
+        res.sendStatus(204);
+    } catch (error) {
+        console.log("ERROR_DELETE_ITEMS");
+    }
+};
+
+// *********************************** ACTUALIZAR REGISTRO ***********************************
+const actualizarCustodio = async (req,res) => {
+    const { id } = req.params;
+    const { nombre, apellido, region, localidad, gerencia, cargo, telefono } = req.body;
+
+    console.log('aqui');
+    console.log(id, nombre, apellido, region, localidad, gerencia, cargo, telefono);
+    
+    try {
+        const query = await pool.query(`
+            UPDATE 
+                custodios 
+            SET  
+                cus_nombre = ?,
+                cus_apellido = ?,
+                cus_region = (SELECT region_id FROM regiones WHERE region = ?),
+                cus_localidad = (SELECT localidad_id FROM localidades WHERE localidad = ?),
+                cus_gerencia = (SELECT gerencia_id FROM gerencias WHERE gerencia = ?),
+                cus_cargo = (SELECT cargo_id FROM cargos WHERE cargo = ?) 
+            WHERE 
+                custodio_id = ?;`, [nombre, apellido, region, localidad, gerencia, cargo, id]
+        );
+
+        const query2 = await pool.query( 
+            `UPDATE telefonos SET telefono = ? WHERE custodio_id = ?`, [telefono, id] );
+        
+        res.send('ACTUALIZACION EXITOSA');
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR' });
+    }
+ }
+
+
+ 
+// *********************************** OBTENER INFORMACION GENERAL ***********************************
+const general = async (req,res) => {
+    try {
+        const { id } = req.params;
+
+        const data = await pool.query(`
+        SELECT 
+            custodios.custodio_id, cus_nombre, cus_apellido ,cus_indicador ,cus_cedula ,
+            telefono, cargo, gerencia, region, localidad
+        FROM custodios
+            LEFT JOIN telefonos ON custodios.custodio_id = telefonos.custodio_id 
+            LEFT JOIN gerencias ON custodios.cus_gerencia = gerencias.gerencia_id 
+            LEFT JOIN cargos ON custodios.cus_cargo = cargos.cargo_id 
+            LEFT JOIN regiones ON regiones.region_id = custodios.cus_region
+            LEFT JOIN localidades ON localidades.localidad_id = custodios.cus_localidad
+        WHERE custodios.custodio_id = ?`, [id]);
+
+        res.send(data[0]);
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+    }
+};
+
+// *********************************** OBTENER SERVIDOR ***********************************
+const aplicacion = async (req,res) => {
+    try {
+        const { id } = req.params;
+
+        const data = await pool.query(`
+            SELECT 
+                aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_descripcion,estatus,
+                prioridad,apl_critico,alcance,apl_codigo_fuente,
+                apl_version,apl_direccion,apl_cantidad_usuarios,region
+            FROM aplicaciones
+                LEFT JOIN aplicacion_basedatos ON aplicaciones.aplicacion_id = aplicacion_basedatos.aplicacion_id
+                LEFT JOIN bases_datos ON bases_datos.base_datos_id = aplicacion_basedatos.base_datos_id
+
+                LEFT JOIN estatus ON aplicaciones.apl_estatus = estatus.estatus_id
+                LEFT JOIN prioridades ON aplicaciones.apl_prioridad = prioridades.prioridad_id
+                LEFT JOIN alcances ON aplicaciones.apl_alcance = alcances.alcance_id
+                LEFT JOIN regiones ON aplicaciones.apl_region = regiones.region_id
+            WHERE custodios.custodio_id = ?;`, 
+            [id]);
+
+        res.send(data[0]);
+
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+    }
+};
+
+module.exports = { 
+    obtenerBusqueda,registrarCustodio,eliminarCustodio,actualizarCustodio, general, aplicacion
+ };

@@ -49,18 +49,6 @@ const registrarAplicacion = async (req,res) => {
             select_funcional, select_tecnico
         } = req.body;
 
-        console.log(
-            apl_acronimo,apl_nombre,apl_descripcion,apl_region,
-            apl_version,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
-            apl_codigo_fuente,apl_direccion,apl_cantidad_usuarios,apl_usuario_registro,
-            plataforma,
-            man_frecuencia,man_horas_prom,man_horas_anuales, 
-            doc_descripcion,doc_tipo, doc_direccion,
-            
-            select_lenguaje, select_base, select_servidor,
-            select_funcional, select_tecnico
-        );
-        
 
         const query = await pool.query(
             `SELECT * FROM aplicaciones WHERE apl_acronimo = ? OR apl_nombre = ?`, 
@@ -72,7 +60,7 @@ const registrarAplicacion = async (req,res) => {
             console.log('ERROR, APLICACION YA EXISTE');
             return res.status(401).json({ message: 'ERROR, APLICACION YA EXISTE' });
         }
-        else{
+        else{   
 
             const aplicacion_id = await insertarAplicacion(
                 apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
@@ -97,7 +85,6 @@ const registrarAplicacion = async (req,res) => {
             await insertarMantenimiento(aplicacion_id,man_frecuencia,man_horas_prom,man_horas_anuales);          
             await insertarDocumentacion(aplicacion_id,doc_descripcion,doc_direccion,doc_tipo);
 
-            console.log('CREACION EXITOSA');
             res.send('CREACION EXITOSA');
         }
     } catch (error) {
@@ -121,11 +108,10 @@ const actualizarAplicacion = async (req,res) => {
             select_funcional, select_tecnico
         } = req.body;
 
-        const query = await pool.query(`SELECT * FROM aplicaciones WHERE apl_acronimo = ?`,
-            [apl_acronimo,apl_nombre]);
-        const app = query[0][0];
+        const query = await pool.query(`SELECT aplicacion_id FROM aplicaciones WHERE apl_acronimo = ?`,[apl_acronimo]);
+        const app = query[0][0].aplicacion_id; 
 
-        if(app){
+        if(app === id){
             console.log('ERROR, ACRONIMO YA OCUPADO');
             return res.status(401).json({ message: 'ACRONIMO YA OCUPADO' });
         }
@@ -151,7 +137,6 @@ const actualizarAplicacion = async (req,res) => {
                     apl_region,usuario_actualizo,id
                 ]
             );
-            console.log('GENERAL ACTUALIZADO');
     
             // ============= UPDATE DE LA PLATAFORMA =============
             if(plataforma){
@@ -162,55 +147,35 @@ const actualizarAplicacion = async (req,res) => {
                     WHERE aplicacion_plataforma.aplicacion_id = ?;`,
                     [plataforma,id]
                 );
-                console.log('PLATAFORMA ACTUALIZADO'); 
             }
     
     
-            // // ============= UPDATE DE LOS LENGUAJES =============
-            // for (const element of select_lenguaje) {
+            // ============= UPDATE DE LOS LENGUAJES =============
+            // CONDICION QUE VERIFIQUE SI LOS ELEMENTOS NUEVOS SON LOS MISMOS PARA PERMITIR O NO EJECUTAR LA ACTUALIZACION
+            const deleteLen = await pool.query(`DELETE FROM aplicacion_lenguaje WHERE aplicacion_id = ?;`,[id]);
+            for (const element of select_lenguaje) {
+                const datos_len = await pool.query(
+                    `INSERT INTO aplicacion_lenguaje (aplicacion_id,lenguaje_id) VALUES (?,?)`,
+                [id,element.lenguaje_id]); 
+            }
     
-            //     const datos_len = await pool.query(
-            //         `UPDATE aplicacion_lenguaje
-            //         SET aplicacion_lenguaje.lenguaje_id = ?
-            //         WHERE aplicacion_lenguaje.aplicacion_id = 8 AND aplicacion_lenguaje.lenguaje_id = 1;`,
-            //     [element.lenguaje_id, ]); 
-            // }
-            // const len = await pool.query(`
-            //     UPDATE aplicacion_lenguaje
-            //     SET aplicacion_lenguaje.lenguaje_id = (SELECT lenguaje_id FROM lenguajes WHERE lenguaje = ?)
-            //     WHERE aplicacion_lenguaje.aplicacion_id = ? AND aplicacion_lenguaje.lenguaje_id = 5;`,
-            //     [lenguaje,id]
-            // );
-            // console.log('LENGUAJE ACTUALIZADO');
+            const deleteBas = await pool.query(`DELETE FROM aplicacion_basedatos WHERE aplicacion_id = ?;`,[id]);
+            // ============= UPDATE DE LAS BASES DE DATOS =============
+            for (const element of select_base) {
+                const datos_bas = await pool.query(
+                    `INSERT INTO aplicacion_basedatos (aplicacion_id,base_datos_id) VALUES (?,?)`,
+                [id,element.base_datos_id]); 
+            }
     
-    
-            // // ============= UPDATE DE LOS FRAMEWORK =============
-            // const fra = await pool.query(`
-            //     UPDATE aplicacion_framework
-            //     SET aplicacion_framework.framework_id = (SELECT framework_id FROM frameworks WHERE framework = ?)
-            //     WHERE aplicacion_framework.aplicacion_id = ? AND aplicacion_framework.framework_id = 8;`,
-            //     [framework,id]
-            // );
-            // console.log('FRAMEWORK ACTUALIZADO');
-    
-            // // ============= UPDATE DE LAS BASES DE DATOS =============
-            // const bas = await pool.query(`
-            //     UPDATE aplicacion_basedatos
-            //     SET aplicacion_basedatos.base_datos_id = (SELECT base_datos_id FROM bases_datos WHERE base_datos = ?)
-            //     WHERE aplicacion_basedatos.aplicacion_id = ?;`,
-            //     [select_base,id]
-            // );
-            // console.log('BASE DE DATOS ACTUALIZADO');
-    
-            // // ============= UPDATE DE LOS SERVIDORES =============
-            // const ser = await pool.query(`
-            //     UPDATE aplicacion_servidor
-            //     SET aplicacion_servidor.servidor_id = (SELECT servidor_id FROM servidores WHERE servidor = ?)
-            //     WHERE aplicacion_servidor.aplicacion_id = ?;`,
-            //     [select_servidor,id]
-            // );
-            // console.log('SERVIDOR ACTUALIZADO');
-    
+
+            // ============= UPDATE DE LOS SERVIDORES =============
+            const deleteSer = await pool.query(`DELETE FROM aplicacion_servidor WHERE aplicacion_id = ?;`,[id]);
+            for (const element of select_servidor) {
+                const datos_ser = await pool.query(
+                    `INSERT INTO aplicacion_servidor (aplicacion_id,servidor_id) VALUES (?,?)`,
+                [id,element.servidor_id]); 
+            }
+
             // ============= UPDATE DE LOS custodioS =============
             if(select_funcional){
                 const fun = await pool.query(`
@@ -220,7 +185,6 @@ const actualizarAplicacion = async (req,res) => {
                     WHERE custodios_funcionales.aplicacion_id = ?;`,
                     [select_funcional,id]
                 );
-                console.log('custodio FUNCIONAL ACTUALIZADO');
             }
 
             if(select_tecnico){
@@ -231,7 +195,6 @@ const actualizarAplicacion = async (req,res) => {
                     WHERE custodios_tecnicos.aplicacion_id = ?;`,
                     [select_tecnico,id]
                 );
-                console.log('custodio TECNICO ACTUALIZADO');
             }
     
             // ============= UPDATE DE LOS DATOS GENERALES =============
@@ -245,7 +208,6 @@ const actualizarAplicacion = async (req,res) => {
                     WHERE aplicaciones.aplicacion_id = ?;`,
                     [doc_descripcion,doc_direccion,doc_tipo,usuario_actualizo,id]
                 );
-                console.log('DOCUMENTACION ACTUALIZADA');
             }
     
             // ============= UPDATE DE LOS DATOS GENERALES =============
@@ -254,15 +216,13 @@ const actualizarAplicacion = async (req,res) => {
                     UPDATE mantenimientos 
                         JOIN aplicaciones ON aplicaciones.aplicacion_id = mantenimientos.aplicacion_id
                     SET 
-                        man_frecuencia = ?, man_horas_prom = ?, man_horas_anuales = ?
+                        man_frecuencia = (SELECT frecuencia_id FROM frecuencias WHERE frecuencia = ?),
+                        man_horas_prom = ?, man_horas_anuales = ?
                     WHERE aplicaciones.aplicacion_id = ?;`,
                     [man_frecuencia,man_horas_prom,man_horas_anuales,id]
                 );
-                console.log('MANTENIMIENTOS ACTUALIZADA');
             }
-    
-    
-            console.log('ACTUALIZACION EXITOSA');
+
             res.json('UPDATE EXITOSO');
         }
 
@@ -510,53 +470,22 @@ const obtenerBusqueda = async (req,res) => {
 const eliminarAplicacion = async (req,res) => {
     try {
         const { id } = req.params;
-        console.log(`Eliminando aplicacion ${id}`);
-        const data = await pool.query('DELETE FROM aplicaciones WHERE aplicacion_id = ?', [id]);
-        console.log(`AQUI`);
+
+        const pla = await pool.query(`DELETE FROM aplicacion_plataforma WHERE aplicacion_id = ?;`, [id]);
+        const len = await pool.query(`DELETE FROM aplicacion_lenguaje WHERE aplicacion_id = ?;`, [id]);
+        const ser = await pool.query(`DELETE FROM aplicacion_servidor WHERE aplicacion_id = ?;`, [id]);
+        const bas = await pool.query(`DELETE FROM aplicacion_basedatos WHERE aplicacion_id = ?;`, [id]);
+        const fun = await pool.query(`DELETE FROM custodios_funcionales WHERE aplicacion_id = ?;`, [id]);
+        const tec = await pool.query(`DELETE FROM custodios_tecnicos WHERE aplicacion_id = ?;`, [id]);
+        const man = await pool.query(`DELETE FROM mantenimientos WHERE aplicacion_id = ?;`, [id]);
+        const doc = await pool.query(`DELETE FROM documentaciones WHERE aplicacion_id = ?;`, [id]);
+        const fal = await pool.query(`DELETE FROM fallas WHERE aplicacion_id = ?;`, [id]);
+        const app = await pool.query(`DELETE FROM aplicaciones WHERE aplicacion_id = ?;`, [id]);
+
+
         res.sendStatus(204);
     } catch (error) {
         console.log("ERROR_DELETE_ITEMS");
-    }
-};
-
-// *********************************** OBTENER FALLAS ***********************************
-const registrarCustodio = async (req,res) => {
-    try {
-        
-        const { nombre,apellido,indicador,cedula,telefono,cargo,gerencia,region,localidad,usuario_registro } = req.body;
-        console.log( nombre,apellido,indicador,cedula,telefono,cargo,gerencia,region,localidad,usuario_registro );
-
-        const query = await pool.query(`SELECT custodio_id FROM custodios WHERE cus_indicador = ?`, [indicador]); 
-        const custodio = query[0][0];
-
-        // ****************************** VERIFICA QUE LA custodio NO EXISTA ******************************
-        if(custodio){
-            console.log('ERROR, PERSONA YA REGISTRADA');
-            return res.status(401).json({ message: 'PERSONA YA REGISTRADA' });
-        }
-        else{
-            const data = await pool.query(`
-                INSERT INTO custodios
-                    (cus_nombre,cus_apellido,cus_indicador,cus_cedula,cus_cargo,
-                        cus_gerencia,cus_region,cus_localidad)
-                VALUES
-                    (?,?,?,?,?,?,?,?);`, 
-                [nombre,apellido,indicador,cedula,cargo,gerencia,region,localidad]);
-
-            const buscarcustodio = await pool.query(
-                `SELECT custodio_id FROM custodios WHERE cus_indicador = ?`, [indicador]);
-            let custodio_id = buscarcustodio[0][0].custodio_id;
-
-            const datos_telefono = await pool.query( 
-                `INSERT INTO telefonos (custodio_id,telefono) VALUES (?,?)`, [custodio_id,telefono] );
-                    
-            console.log('custodio REGISTRADO CORRECTAMENTE');
-        }
-
-        res.json('custodio REGISTRADO CORRECTAMENTE');
-
-    } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
     }
 };
 
@@ -708,7 +637,6 @@ const obtenerServidores = async (req,res) => {
 const obtenerCustodios = async (req,res) => {
     try {
         const data = await pool.query(`SELECT cus_indicador FROM custodios`);
-        console.log(data[0])
     } catch (error) {
         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
     }
@@ -937,5 +865,4 @@ module.exports = {
     general,tecno,basedatos,
     servidor,custodio,
     documentacion,
-    registrarCustodio,
 };

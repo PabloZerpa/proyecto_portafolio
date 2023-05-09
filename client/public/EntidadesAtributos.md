@@ -109,6 +109,18 @@ ALTER TABLE empleado
 * ARREGLAR SWEET ALERT EN OLDER BROWSER
 * ESPACIADO DE LOS BOTONES EN REGISTRO APP
 * BOTON REGISTRAR FALLA NO FUNCIONA EN OLDER BROWSER
+* No carga los valores por defecto en los selects de actualización
+* No carga completamente bien los valores por defecto en actualizacion
+* Arreglar actualizacion cuando los datos por defectos sean nulos
+* Actualizar varios campos por id
+* Hacer modulo para custodios
+* Proceso de eliminacion de elementos
+* Arreglar vista y actualizacion de BD/Servidores
+
+
+Agregar opciones para seleccionar framework por lenguaje en la tabla de registro
+Cambio de contraseña a la primera iniciada de sesion y cada 3 meses
+Cerrar sesion por inactividad en client/server de 10 minutos
 
 
 

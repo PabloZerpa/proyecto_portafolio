@@ -1,6 +1,6 @@
 
-import { useState } from "react";
-import { FaHome, FaCode,FaDatabase, FaChevronDown, FaChevronUp, FaKey, FaChevronRight, FaChevronLeft, FaSignOutAlt, FaArrowRight, FaArrowLeft, FaBars, FaTimes } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { FaHome, FaCode,FaDatabase, FaChevronDown, FaChevronUp, FaKey, FaSignOutAlt, FaBars, FaTimes, FaHardHat, FaServer, FaChevronRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import Autorizacion from '../services/auth.service';
 
@@ -12,26 +12,26 @@ function Navegacion() {
     const [open2, setOpen2] = useState(false);
     const [open3, setOpen3] = useState(false);
     const [open4, setOpen4] = useState(false);
+    const [open5, setOpen5] = useState(false);
     const openMenu1 = () => setOpen1(!open1);
     const openMenu2 = () => setOpen2(!open2);
     const openMenu3 = () => setOpen3(!open3);
     const openMenu4 = () => setOpen4(!open4);
+    const openMenu5 = () => setOpen5(!open5);
 
     if (Autorizacion.obtenerUsuario() === null)
         return null
-
     
     return (
         <div className='relative'>
             <span
-                className="absolute text-zinc-800 text-3xl top-24 left-4 z-40 cursor-pointer"
+                className="fixed flex mt-32 ml-4 text-zinc-800 text-xl z-50 cursor-pointer"
                 onClick={(e) => setOpen(!open)}
             >
-                <FaBars />
+                <FaChevronRight />
             </span>
 
-            {/* ${ open ? "flex" : "hidden" } */}
-            <div className={` ${ open ? "hidden lg:flex lg:flex-col" : "hidden" }
+            <div className={` ${ open ? "flex" : "hidden" }
                 h-screen p-3 px-5 overflow-y-auto bg-gray-200 m-0 mt-20 p-0 z-50 fixed drop-shadow-md`}>
 
                 <div className="pt-12 space-y-3">
@@ -114,7 +114,7 @@ function Navegacion() {
                             <li>
                                 <div className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg cursor-pointer hover:bg-gray-800 hover:text-gray-100" 
                                     onClick={openMenu4}>
-                                    <FaDatabase />
+                                    <FaServer />
                                     <span className="px-2">Servidor</span>
                                     {open4 ? <FaChevronUp /> : <FaChevronDown />}
                                 </div>
@@ -123,6 +123,21 @@ function Navegacion() {
                                     <Link to="/servidores" 
                                         className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                         Servidores
+                                    </Link>
+                                </div>
+                            </li>
+                            <li>
+                                <div className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg cursor-pointer hover:bg-gray-800 hover:text-gray-100" 
+                                    onClick={openMenu5}>
+                                    <FaHardHat />
+                                    <span className="px-2">Custodios</span>
+                                    {open5 ? <FaChevronUp /> : <FaChevronDown />}
+                                </div>
+
+                                <div style={open5 ? {display: 'block'} : {display: 'none'}} className='pl-4'>
+                                    <Link to="/custodios" 
+                                        className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
+                                        Custodios
                                     </Link>
                                 </div>
                             </li>

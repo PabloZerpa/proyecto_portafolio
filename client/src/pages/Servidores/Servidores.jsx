@@ -42,7 +42,7 @@ const columns = [
     },
     {
         name: 'Estatus',
-        selector: row => row.ser_estatus,
+        selector: row => row.estatus,
         sortable: true,
         left: true
     },
@@ -100,9 +100,8 @@ const columns = [
 
 function Servidores() {
 
+    // =================== VARIABLES PARA LA BUSQUEDA ===================
     const [resultado, setResultado] = useState('');
-    // const [debounceValue] = useDebounce(searchTerm, 500);
-
     const [datos, setDatos] = useState({
         terminoBusqueda: '',
         estatus: '',
@@ -111,9 +110,9 @@ function Servidores() {
         marca: '', 
         orden: 'ASC',
     }); 
-
     const [debounceValue] = useDebounce(datos, 500);
 
+    // =================== RESTABLECE LOS CAMPOS DE BUSQUEDA ===================
     const resetCampos = () => {
         for (let clave in datos){
             if(clave==='orden')
@@ -126,7 +125,8 @@ function Servidores() {
         onSearch(debounceValue)
     }
 
-    const handleInputChange = (e) => {
+    // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
+    const setValores = (e) => {
         if(e.target.value === 'TODAS')
             setDatos({ ...datos, [e.target.name] : null })
         else
@@ -134,15 +134,7 @@ function Servidores() {
             
     }
 
-    useEffect(() => {
-		if (debounceValue) {
-            onSearch(debounceValue);
-        } else {
-            setResultado(null);
-        }
-	}, [debounceValue, datos]); 
-
-
+    // FUNCION PARA BUSCAR DATOS EN LA DATABASE
     const onSearch = async (datos) => {
         try {
             const { terminoBusqueda,estatus,region,sistema,marca,orden } = datos;
@@ -155,12 +147,23 @@ function Servidores() {
             console.log('ERROR AL BUSCAR DATOS');
         }
     }
+
+     // FUNCION PARA BUSCAR AL ESCRIBIR EN EL INPUT
+     useEffect(() => {
+		if (debounceValue) {
+            onSearch(debounceValue);
+        } else {
+            setResultado(null);
+        }
+	}, [debounceValue, datos]); 
     
+    // =================== FUNCION PARA MOSTRAR LOAD EN TABLA DE BUSQUEDA ===================
     const [pending, setPending] = useState(true);
     const loading = () => { 
         const timeout = setTimeout(() => { setPending(false) }, 500);
         return () => clearTimeout(timeout);
     }
+
     useEffect(() => {
         setPending(true);
         loading();
@@ -175,10 +178,10 @@ function Servidores() {
 
                     <div className="border-solid">
                         <div className="grid grid-cols-2 md:grid-cols-4 space-x-4">
-                            <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={opcionEstatus} manejador={handleInputChange} />
-                            <Select campo='Region' name='region' busqueda={true} byId={false} opciones={opcionRegion} manejador={handleInputChange} />
-                            <Select campo='Sistema' name='sistema' busqueda={true} byId={false} opciones={['SELECCIONE','TODAS','WINDOWS','RED HAT','DEBIAN','FEDORA','ARCH',]} manejador={handleInputChange} />
-                            <Select campo='Marca' name='marca' busqueda={true} byId={false} opciones={['SELECCIONE','TODAS','HP','VIT','LENOVO','ACER','ASUS']} manejador={handleInputChange} />
+                            <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={opcionEstatus} manejador={setValores} />
+                            <Select campo='Region' name='region' busqueda={true} byId={false} opciones={opcionRegion} manejador={setValores} />
+                            <Select campo='Sistema' name='sistema' busqueda={true} byId={false} opciones={['SELECCIONE','TODAS','WINDOWS','RED HAT','DEBIAN','FEDORA','ARCH',]} manejador={setValores} />
+                            <Select campo='Marca' name='marca' busqueda={true} byId={false} opciones={['SELECCIONE','TODAS','HP','VIT','LENOVO','ACER','ASUS']} manejador={setValores} />
                         </div>
                     </div>
 
@@ -188,7 +191,7 @@ function Servidores() {
                                 <input 
                                     type="search" 
                                     name='terminoBusqueda'
-                                    onChange={(e) => handleInputChange(e)}
+                                    onChange={(e) => setValores(e)}
                                     className="block p-2 pr-12 w-96 text-sm text-black bg-white rounded border-none outline-none" placeholder="Buscar" />
                                 <button 
                                     type="submit" 

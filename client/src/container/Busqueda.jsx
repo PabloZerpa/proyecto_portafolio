@@ -38,7 +38,7 @@ function Busqueda({manejarBusqueda}) {
         onSearch(debounceValue)
     }
 
-    const handleInputChange = (e) => {
+    const setValores = (e) => {
         if(e.target.value === 'TODAS')
             setDatos({ ...datos, [e.target.name] : null })
         else
@@ -77,29 +77,29 @@ function Busqueda({manejarBusqueda}) {
 
                 <div className="selectArea border-solid">
                     <div className="flex justify-center items-center space-x-4">
-                        <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={opcionEstatus} manejador={handleInputChange} />
-                        <Select campo='Region' name='region' busqueda={true} byId={false} opciones={opcionRegion} manejador={handleInputChange} />
-                        <Select campo='Plataforma' name='plataforma' busqueda={true} byId={false} opciones={opcionPlataforma} manejador={handleInputChange} />
+                        <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={opcionEstatus} manejador={setValores} />
+                        <Select campo='Region' name='region' busqueda={true} byId={false} opciones={opcionRegion} manejador={setValores} />
+                        <Select campo='Plataforma' name='plataforma' busqueda={true} byId={false} opciones={opcionPlataforma} manejador={setValores} />
                     </div>
                 </div>
 
                 <div style={avanzados ? {display: 'block'} : {display: 'none'}} className="selectArea">
                     <div className="flex flex-wrap justify-center items-center space-x-4">
-                        <Select campo='Alcance' name='alcance' busqueda={true} byId={false} opciones={opcionAlcance} manejador={handleInputChange} />
-                        <Select campo='Mantenimiento' name='mantenimiento' busqueda={true} byId={false} opciones={opcionMantenimiento} manejador={handleInputChange} />
-                        <Select campo='N° Usuarios' name='cantidad_usuarios' busqueda={true} byId={false} opciones={opcionCount} manejador={handleInputChange} />
+                        <Select campo='Alcance' name='alcance' busqueda={true} byId={false} opciones={opcionAlcance} manejador={setValores} />
+                        <Select campo='Mantenimiento' name='mantenimiento' busqueda={true} byId={false} opciones={opcionMantenimiento} manejador={setValores} />
+                        <Select campo='N° Usuarios' name='cantidad_usuarios' busqueda={true} byId={false} opciones={opcionCount} manejador={setValores} />
                     </div>
                 </div>
                 
                 <div className="radioArea">
                     <div className="flex flex-wrap justify-center items-center">
-                        <Radio label='Orden' name='orden' opciones={['ASC', 'DESC']} manejador={handleInputChange} />
-                        <Radio label='Prioridad' name='prioridad' opciones={['TODAS', 'ALTA', 'MEDIA', 'BAJA']} manejador={handleInputChange} />
+                        <Radio label='Orden' name='orden' opciones={['ASC', 'DESC']} manejador={setValores} />
+                        <Radio label='Prioridad' name='prioridad' opciones={['TODAS', 'ALTA', 'MEDIA', 'BAJA']} manejador={setValores} />
                     </div>
                     
                     <div style={avanzados ? {display: 'flex'} : {display: 'none'}} className="flex flex-wrap justify-center items-center">
-                        <Radio label='Critica' name='critico' opciones={['TODAS', 'SI','NO']} manejador={handleInputChange} />
-                        <Radio label='Codigo Fuente' name='codigo' opciones={['TODAS', 'SI', 'NO']} manejador={handleInputChange} />
+                        <Radio label='Critica' name='critico' opciones={['TODAS', 'SI','NO']} manejador={setValores} />
+                        <Radio label='Codigo Fuente' name='codigo' opciones={['TODAS', 'SI', 'NO']} manejador={setValores} />
                     </div>
 
                     <div className='mt-8 flex flex-col md:flex-row justify-center items-center space-y-2 space-x-4'>
@@ -108,7 +108,7 @@ function Busqueda({manejarBusqueda}) {
                             <input 
                                 type="text" 
                                 name='terminoBusqueda'
-                                onChange={(e) => handleInputChange(e)}
+                                onChange={(e) => setValores(e)}
                                 className="block p-2 pr-12 w-96 text-sm text-black bg-white rounded border-none outline-none" placeholder="Buscar" />
                             
                             <button 

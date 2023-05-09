@@ -109,9 +109,11 @@ const columns = [
 
 function Aplicaciones() {
 
+  // =================== VARIABLES PARA LA BUSQUEDA ===================
   const [resultado, setResultado] = useState('');
   const obtenerResultado = (respuesta) => {setResultado(respuesta)};
 
+  // =================== FUNCION PARA MOSTRAR LOAD EN TABLA DE BUSQUEDA ===================
   const [pending, setPending] = useState(true);
   const loading = () => { 
     const timeout = setTimeout(() => { setPending(false) }, 500);

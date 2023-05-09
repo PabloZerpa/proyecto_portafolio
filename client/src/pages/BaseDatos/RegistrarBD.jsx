@@ -1,9 +1,8 @@
 
 import { useEffect, useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { Button, Container, Input, Select, Tabla, TextArea } from '../../components';
 import Autorizacion from '../../services/auth.service';
-import Usuario from '../../services/usuario.service';
 import Base from '../../services/basedatos.service';
 import { Notificacion } from '../../utils/Notificacion';
 import { FaTimesCircle } from 'react-icons/fa';
@@ -14,9 +13,11 @@ import Opciones from '../../utils/Opciones';
 
 function RegistrarBD() {
 
+    // ---------- FUNCION PARA NAVEGAR A RUTA INDICADA ----------
     const navigate = useNavigate();
     function navegar(ruta) { navigate(ruta) }
     
+    // ---------- ESTADOS ----------
     const [datos, setDatos] = useState({
         usuario_registro: Autorizacion.obtenerUsuario().indicador,
         usuario_actualizo: Autorizacion.obtenerUsuario().indicador,
@@ -40,7 +41,8 @@ function RegistrarBD() {
     }, []);
 
 
-    const handleInputChange = (e) => {
+    // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
+    const setValores = (e) => {
         if(e.target.value === 'TODAS')
             setDatos({ ...datos, [e.target.name] : null })
         else
@@ -53,17 +55,17 @@ function RegistrarBD() {
 
         try {
             if(Autorizacion.obtenerUsuario().rol === 'admin'){
-            
-            await Base.crearDatosDB(datos, tableDataServidor);
-            Notificacion('REGISTRO EXITOSO', 'success');
-            navigate("/dashboard");
+                await Base.crearDatosDB(datos, tableDataServidor);
+                Notificacion('REGISTRO EXITOSO', 'success');
+                navigate("/dashboard");
             }
-        }
+        } 
         catch (error) { 
-            Notificacion('ERROR AL REGISTRAR', 'error');
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
+    // -------------------- FUNCION Y VARIABLES PARA LA SELECCION DE SERVIDORES --------------------
     const [isOpen, setIsOpen] = useState(false);
     const [select_servidor, setSelectServidor] = useState([]);
     const [tableDataServidor, setDataServidor] = useState([]);
@@ -77,9 +79,10 @@ function RegistrarBD() {
         }
     };
 
+    // -------------------- FUNCION QUE ELIMINA ELEMENTO SELECCIONADA DE LA TABLA --------------------
     const eliminarElemento = (row, elemento, tabla, setTabla) => {
         if (window.confirm(`Estas seguro de eliminar: ${row[elemento]}?`)) {
-            const nuevo = tabla.filter((i) => i[elemento] != row[elemento]);
+            const nuevo = tabla.filter((i) => i[elemento] !== row[elemento]);
             setTabla(nuevo);
         }
     };
@@ -112,7 +115,6 @@ function RegistrarBD() {
     ];
 
 
-
     if(Autorizacion.obtenerUsuario().rol !== 'admin')
         return <Navigate to='/' />
     
@@ -135,20 +137,19 @@ function RegistrarBD() {
 
             <h1 className='font-bold text-lg'>Registro de Base de datos</h1>
 
-            <form className="flex flex-col justify-content items-center space-y-4 relative w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" onSubmit={createData}>
-                <h2 className='font-bold text-base mb-6'>Informacion General</h2>
+            <form className="flex flex-col items-center space-y-4 relative w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" onSubmit={createData}>
 
                 <div className='w-full'>
-                    <TextArea campo='Nombre' name='base_datos' required={true} editable={true} area={true} manejador={handleInputChange} />
+                    <TextArea campo='Nombre' name='base_datos' required={true} editable={true} area={true} manejador={setValores} />
                 </div>
 
                 <div className="w-full grid grid-cols-1 md:grid-cols-2 relative space-x-4 mb-0">
-                    <Select campo='Estatus' name='estatus' required={true} opciones={estatus ? estatus : ['SELECCIONE']} manejador={handleInputChange}/>
-                    <Select campo='Tipo' name='tipo' required={true} opciones={tipos ? tipos : ['SELECCIONE']} manejador={handleInputChange} />
-                    <Select campo='Manejador' name='manejador' required={true} opciones={mane ? mane : ['SELECCIONE']} manejador={handleInputChange} />
-                    <Input campo='Version' name='version_manejador' editable={true} manejador={handleInputChange} />
-                    <Select campo='Ambiente' name='ambiente' required={true} opciones={ambientes ? ambientes : ['SELECCIONE']} manejador={handleInputChange} />
-                    <Input campo='N° Usuario' name='cantidad_usuarios' editable={true} manejador={handleInputChange} />
+                    <Select campo='Estatus' name='estatus' required={true} opciones={estatus ? estatus : ['SELECCIONE']} manejador={setValores}/>
+                    <Select campo='Tipo' name='tipo' required={true} opciones={tipos ? tipos : ['SELECCIONE']} manejador={setValores} />
+                    <Select campo='Manejador' name='manejador' required={true} opciones={mane ? mane : ['SELECCIONE']} manejador={setValores} />
+                    <Input campo='Version' name='version_manejador' editable={true} manejador={setValores} />
+                    <Select campo='Ambiente' name='ambiente' required={true} opciones={ambientes ? ambientes : ['SELECCIONE']} manejador={setValores} />
+                    <Input campo='N° Usuario' name='cantidad_usuarios' required={true} editable={true} manejador={setValores} />
                 </div>
  
                 {/* --------------- SERVIDOR --------------- */}

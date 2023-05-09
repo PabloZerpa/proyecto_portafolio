@@ -19,7 +19,10 @@ import Servidores from './Servidores/Servidores';
 import RegistrarServidor from './Servidores/RegistrarServidor';
 import VerServidor from './Servidores/VerServidor';
 import ActualizarServidor from './Servidores/ActualizarServidor';
-import RegistrarRespon from './Aplicaciones/RegistrarRespon';
+import Custodios from './Custodios/Custodios';
+import RegistrarCustodio from './Custodios/RegistrarCustodio';
+import ActualizarCustodio from './Custodios/ActualizarCustodio';
+import VerCustodio from './Custodios/VerCustodio';
 
 export {
     Login, 
@@ -43,5 +46,8 @@ export {
     RegistrarServidor,
     VerServidor,
     ActualizarServidor,
-    RegistrarRespon,
+    RegistrarCustodio,
+    Custodios,
+    ActualizarCustodio,
+    VerCustodio,
 };

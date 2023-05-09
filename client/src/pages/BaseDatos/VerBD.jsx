@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { BiLoaderAlt } from "react-icons/bi";
-import { useParams, Navigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Container, Input, Radio, Tabla } from '../../components';
 import Base from '../../services/basedatos.service';
 
@@ -9,8 +9,8 @@ const opcionesVista = ['General','Aplicacion','Servidor'];
 
 function VerBD() {
 
+  // -------- ESTADOS ---------
   const { id } = useParams();
-  const [valor, setValor] = useState('');
   const [load, setLoad] = useState(true);
 
   const [opcion, setOpcion] = useState('General');
@@ -18,7 +18,8 @@ function VerBD() {
   const [aplicacion, setAplicacion] = useState('');
   const [servidor, setServidor] = useState('');
 
-  const handleInputChange = (e) => {
+  // FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS
+  const setValores = (e) => {
     setOpcion(e.target.value);
   }
   
@@ -28,7 +29,7 @@ function VerBD() {
         const gen = await Base.obtenerGeneralBD(id);
         const apl = await Base.obtenerAplicacionBD(id);
         const ser = await Base.obtenerServidorBD(id); 
-        
+
         setGeneral(gen.data);
         setAplicacion(apl.data);
         setServidor(ser);
@@ -39,12 +40,8 @@ function VerBD() {
     } 
     fetchData();
   }, [id,load]);
-  
-    if(valor === null) 
-      return <Navigate to='/' />
       
       function General(){
-        
         
         if(load){
           return <BiLoaderAlt className='text-6xl text-blue-500 animate-spin' />
@@ -57,12 +54,12 @@ function VerBD() {
                 <div className='grid space-x-4 mb-6 md:grid-cols-2'> 
                   <Input campo='ID' editable={false} propiedad={general[0].base_datos_id} />
                   <Input campo='Nombre' editable={false} propiedad={general[0].base_datos} />
-                  <Input campo='Estatus' editable={false} propiedad={general[0].bas_estatus} />
+                  <Input campo='Estatus' editable={false} propiedad={general[0].estatus} />
                   <Input campo='Tipo' editable={false} propiedad={general[0].tipo} />
                   <Input campo='Manejador' editable={false} propiedad={general[0].manejador} />
                   <Input campo='Version' editable={false} propiedad={general[0].version_manejador} />
-                  <Input campo='N° Usuarios' editable={false} propiedad={general[0].bas_cantidad_usuarios} />
-                  <Input campo='Ambiente' editable={false} propiedad={general[0].bas_tipo_ambiente} />
+                  <Input campo='N° Usuarios' editable={false} propiedad={general[0].base_cantidad_usuarios} />
+                  <Input campo='Ambiente' editable={false} propiedad={general[0].ambiente} />
                 </div>
               </form>
             </>
@@ -137,7 +134,7 @@ function VerBD() {
         {
           name: 'Direccion',
           selector: row => 
-            <a className='text-blue-700' href={row.apl_direccion} target='_blank' >
+            <a className='text-blue-700' href={row.apl_direccion} rel="noreferrer" target='_blank' >
               {row.apl_direccion}
             </a>,
           sortable: true,
@@ -190,7 +187,7 @@ function VerBD() {
         },
         {
             name: 'Estatus',
-            selector: row => row.ser_estatus,
+            selector: row => row.estatus,
             sortable: true,
             left: true,
         },
@@ -215,7 +212,7 @@ function VerBD() {
         {
           name: 'Direccion',
           selector: row => 
-            <a className='text-blue-700' href={row.ser_direccion} target='_blank' >
+            <a className='text-blue-700' href={row.ser_direccion} rel="noreferrer" target='_blank' >
               {row.ser_direccion}
             </a>,
           sortable: true,
@@ -238,7 +235,6 @@ function VerBD() {
 
       function Servidor(){
         const datos = servidor.data.datos;
-        const modelos = servidor.data.modelos;
         return(
           <>
             <h2 className='font-bold text-lg'>Servidor</h2>
@@ -251,7 +247,7 @@ function VerBD() {
 
     return(
       <Container>
-        <Radio label=' ' size='big' opciones={opcionesVista} manejador={handleInputChange} />
+        <Radio label=' ' size='big' opciones={opcionesVista} manejador={setValores} />
         {opcion === 'General' ? <General/> : null}
         {opcion === 'Aplicacion' ? <Aplicacion/> : null}
         {opcion === 'Servidor' ? <Servidor/> : null }

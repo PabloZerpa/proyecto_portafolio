@@ -16,9 +16,6 @@ const validatorResponsable = [
             validationResult(req).throw();
             return next();
         } catch(err){ 
-            console.log('hola');
-            // res.status(403);
-            // res.send({errors: err.array()})
             return res.status(401).json({ message: 'DATOS INCOMPLETOS' });
         }
     }

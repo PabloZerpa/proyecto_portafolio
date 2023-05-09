@@ -2,25 +2,26 @@
 import { useEffect, useState } from "react";
 import { Container, Button, Tabla } from "../../../components";
 import { useDebounce } from 'use-debounce';
-import { FaCheckCircle, FaEdit, FaEye, FaSearch } from 'react-icons/fa';
-import Autorizacion from "../../../services/auth.service";
+import { FaEdit, FaEye, FaSearch } from 'react-icons/fa';
 import Falla from "../../../services/falla.service";
 import { Link } from "react-router-dom";
-import { Notificacion } from "../../../utils/Notificacion";
 import ActualizarFalla from "./ActualizarFalla";
 import VerFalla from "./VerFalla";
 
 function Fallas() {
 
+    // =================== VARIABLES PARA LA BUSQUEDA ===================
     const [searchTerm, setSearchTerm] = useState("a");
     const [resultados, setResultados] = useState('');
     const [debounceValue] = useDebounce(searchTerm, 500);
 
+    // =================== VARIABLES PARA LA EDICION ===================
     const [falla, setFalla] = useState("");
     const [isOpen, setIsOpen] = useState(false);
     const [isOpen2, setIsOpen2] = useState(false);
     const [update, setUpdate] = useState(false);
     
+    // =================== FUNCION PARA HABILITAR VENTANA MODAL DE EDICION ===================
     const habilitar = (dato,operacion) => {
         setFalla(dato);
 
@@ -30,14 +31,6 @@ function Fallas() {
             setIsOpen2(!isOpen2);
     }
 
-    // FUNCION PARA BUSCAR AL ESCRIBIR EN EL INPUT
-    useEffect(() => {
-        if (debounceValue)
-            onSearch(debounceValue);
-        else
-            setResultados(null) 
-        
-    }, [debounceValue, update]);
 
     // FUNCION PARA BUSCAR DATOS EN LA DATABASE
     const onSearch = async (termino) => {
@@ -48,6 +41,15 @@ function Fallas() {
             console.log('ERROR AL BUSCAR DATOS') 
         }
     }
+
+    // FUNCION PARA BUSCAR AL ESCRIBIR EN EL INPUT
+    useEffect(() => {
+        if (debounceValue)
+            onSearch(debounceValue);
+        else
+            setResultados(null) 
+        
+    }, [debounceValue, update]);
 
     const columnas = [
         {
@@ -110,6 +112,7 @@ function Fallas() {
         },
       ];
 
+    // =================== FUNCION PARA MOSTRAR LOAD EN TABLA DE BUSQUEDA ===================
     const [pending, setPending] = useState(true);
     const loading = () => { 
         const timeout = setTimeout(() => { setPending(false) }, 500);

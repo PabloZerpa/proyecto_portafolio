@@ -1,7 +1,7 @@
 
 
 import { Button, Input, TextArea } from "../../../components";
-
+ 
 function VerFalla({setIsOpen, valores}) {
 
     return (

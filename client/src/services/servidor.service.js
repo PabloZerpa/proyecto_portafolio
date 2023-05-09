@@ -16,7 +16,7 @@ class Servidor {
     // ---------------- CREATE DE LA INFO DE NUEVA APP ------------------
     async actualizarDatosServidor(id,datos) {
         try { 
-            const respuesta = await axios.patch(`${baseUrl}basedatos/${id}`, datos, { headers: authHeader() });
+            const respuesta = await axios.patch(`${baseUrl}servidores/${id}`, datos, { headers: authHeader() });
             return respuesta;
         } catch (error) {
             console.log('ERROR AL CREAR auth.service');
@@ -28,7 +28,6 @@ class Servidor {
         try { 
             const respuesta = await axios.get(`${baseUrl}servidores/general/${id}`, { headers: authHeader() });
             return respuesta;
-            console.log(respuesta);
         } catch (error) {
             console.log('Error al obtener datos'); 
         }

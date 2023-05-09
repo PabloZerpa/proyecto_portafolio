@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { BiLoaderAlt } from "react-icons/bi";
-import { useParams, Navigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Container, Input, Radio, Tabla } from '../../components';
 import Servidor from '../../services/servidor.service';
 
@@ -9,8 +9,8 @@ const opcionesVista = ['General','Base de datos','Aplicacion'];
 
 function VerServidor() {
 
+  // -------- ESTADOS ---------
   const { id } = useParams();
-  const [valor, setValor] = useState('');
   const [load, setLoad] = useState(true);
 
   const [opcion, setOpcion] = useState('General');
@@ -18,7 +18,8 @@ function VerServidor() {
   const [basedatos, setBaseDatos] = useState('');
   const [aplicacion, setAplicacion] = useState('');
 
-  const handleInputChange = (e) => {
+  // FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS
+  const setValores = (e) => {
     setOpcion(e.target.value);
   }
   
@@ -29,7 +30,7 @@ function VerServidor() {
         const bas = await Servidor.obtenerBDServidor(id);
         const apl = await Servidor.obtenerAplicacionServidor(id);
         
-        setGeneral(gen.data[0]);
+        setGeneral(gen.data);
         setBaseDatos(bas.data);
         setAplicacion(apl.data);
 
@@ -39,9 +40,6 @@ function VerServidor() {
     } 
     fetchData();
   }, [id,load]);
-  
-    if(valor === null) 
-      return <Navigate to='/' />
       
       function General(){
         
@@ -54,20 +52,20 @@ function VerServidor() {
               <h2 className='font-bold text-lg'>Servidor</h2>
               <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
                 <div className='grid space-x-4 mb-6 md:grid-cols-2'> 
-                  <Input campo='ID' editable={false} propiedad={general.servidor_id} />
-                  <Input campo='Nombre' editable={false} propiedad={general.servidor} />
-                  <Input campo='Estatus' editable={false} propiedad={general.ser_estatus} />
-                  <Input campo='Direccion' editable={false} propiedad={general.ser_direccion} />
-                  <Input campo='OS' editable={false} propiedad={general.sistema} />
-                  <Input campo='Version' editable={false} propiedad={general.sistema_version} />
-                  <Input campo='Modelo' editable={false} propiedad={general.modelo} />
-                  <Input campo='Marca' editable={false} propiedad={general.marca} />
-                  <Input campo='Serial' editable={false} propiedad={general.mod_serial} />
-                  <Input campo='Cantidad CPU' editable={false} propiedad={general.mod_cantidad_cpu} />
-                  <Input campo='Velocidad CPU' editable={false} propiedad={general.mod_velocidad_cpu} />
-                  <Input campo='Memoria' editable={false} propiedad={general.mod_memoria} />
-                  <Input campo='Region' editable={false} propiedad={general.region} />
-                  <Input campo='Localidad' editable={false} propiedad={general.localidad} />
+                  <Input campo='ID' editable={false} propiedad={general[0].servidor_id} />
+                  <Input campo='Nombre' editable={false} propiedad={general[0].servidor} />
+                  <Input campo='Estatus' editable={false} propiedad={general[0].estatus} />
+                  <Input campo='Direccion' editable={false} propiedad={general[0].ser_direccion} />
+                  <Input campo='OS' editable={false} propiedad={general[0].sistema} />
+                  <Input campo='Version' editable={false} propiedad={general[0].sistema_version} />
+                  <Input campo='Modelo' editable={false} propiedad={general[0].modelo} />
+                  <Input campo='Marca' editable={false} propiedad={general[0].marca} />
+                  <Input campo='Serial' editable={false} propiedad={general[0].mod_serial} />
+                  <Input campo='Cantidad CPU' editable={false} propiedad={general[0].mod_cantidad_cpu} />
+                  <Input campo='Velocidad CPU' editable={false} propiedad={general[0].mod_velocidad_cpu} />
+                  <Input campo='Memoria' editable={false} propiedad={general[0].mod_memoria} />
+                  <Input campo='Region' editable={false} propiedad={general[0].region} />
+                  <Input campo='Localidad' editable={false} propiedad={general[0].localidad} />
                 </div>
               </form>
             </>
@@ -95,7 +93,7 @@ function VerServidor() {
         },
         {
             name: 'Estatus',
-            selector: row => row.bas_estatus,
+            selector: row => row.estatus,
             sortable: true,
             left: true,
         },
@@ -114,14 +112,14 @@ function VerServidor() {
         },
         {
             name: 'Tipo Ambiente',
-            selector: row => row.tipo_ambiente,
+            selector: row => row.ambiente,
             sortable: true,
             left: true,
             grow: 2
         },
         {
           name: 'N° Usuarios',
-          selector: row => row.bas_cantidad_usuarios,
+          selector: row => row.base_cantidad_usuarios,
           sortable: true,
           left: true,
           grow: 1.5
@@ -207,7 +205,7 @@ function VerServidor() {
         {
           name: 'Direccion',
           selector: row => 
-            <a className='text-blue-700' href={row.apl_direccion} target='_blank' >
+            <a className='text-blue-700' href={row.apl_direccion} rel="noreferrer" target='_blank' >
               {row.apl_direccion}
             </a>,
           sortable: true,
@@ -244,7 +242,7 @@ function VerServidor() {
 
     return(
       <Container>
-        <Radio label=' ' size='big' opciones={opcionesVista} manejador={handleInputChange} />
+        <Radio label=' ' size='big' opciones={opcionesVista} manejador={setValores} />
         {opcion === 'General' ? <General/> : null}
         {opcion === 'Base de datos' ? <Basedatos/> : null }
         {opcion === 'Aplicacion' ? <Aplicacion/> : null}

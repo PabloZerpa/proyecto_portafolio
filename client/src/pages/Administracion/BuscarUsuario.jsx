@@ -7,12 +7,12 @@ import Autorizacion from '../../services/auth.service';
 import Usuario from "../../services/usuario.service";
 import { Notificacion } from "../../utils/Notificacion";
 import { useNavigate } from "react-router-dom";
-import ActualizarUsuario from "./ActualizarUsuario";
-import Swal from "sweetalert2";
+import ActualizarUsuario from "./ActualizarUsuario"; 
 import swal from "sweetalert";
 
 function BuscarUsuario() {
 
+  // ---------- FUNCION PARA NAVEGAR A RUTA INDICADA ----------
   const navigate = useNavigate();
   function navegar(ruta) { navigate(ruta) };
 
@@ -26,19 +26,11 @@ function BuscarUsuario() {
   const [isOpen, setIsOpen] = useState(false);
   const [update, setUpdate] = useState(false);
 
-  // =================== FUNCION PARA HABILITAR LOS INPUTS DE EDICION ===================
+  // =================== FUNCION PARA HABILITAR VENTANA MODAL DE EDICION ===================
   const habilitar = (dato) => {
     setIsOpen(!isOpen);
     setUsuario(dato); 
   }
-
-  // =================== FUNCION PARA BUSCAR AL ESCRIBIR EN EL INPUT ===================
-  useEffect(() => {
-    if (debounceValue)
-      onSearch(debounceValue);
-    else
-      setResultados(null) 
-  }, [debounceValue, update]);
 
   // =================== FUNCION PARA BUSCAR DATOS EN LA DATABASE ===================
   const onSearch = async (termino) => {
@@ -50,6 +42,14 @@ function BuscarUsuario() {
     }
   }
 
+  // =================== FUNCION PARA BUSCAR AL ESCRIBIR EN EL INPUT ===================
+  useEffect(() => {
+    if (debounceValue)
+      onSearch(debounceValue);
+    else
+      setResultados(null) 
+  }, [debounceValue, update]);
+  
   // =================== FUNCION PARA ELIMINAR USUARIO ===================
   const eliminarUsuario = async (row) => {
     try {
@@ -143,7 +143,7 @@ function BuscarUsuario() {
     },
   ];
 
-  
+  // =================== FUNCION PARA MOSTRAR LOAD EN TABLA DE BUSQUEDA ===================
   const [pending, setPending] = useState(true);
   const loading = () => { 
       const timeout = setTimeout(() => { setPending(false) }, 500);
@@ -154,6 +154,7 @@ function BuscarUsuario() {
       setPending(true);
       loading();
   }, [resultados]);
+
 
   return (
     <Container>
@@ -179,16 +180,20 @@ function BuscarUsuario() {
             type="search"
             onChange={(e) => {e.target.value === '' ? setSearchTerm(' ') : setSearchTerm(e.target.value)}}
             className="block p-2 pr-12 w-96 text-xs text-black bg-white rounded border-none outline-none" 
-            placeholder="Buscar" />
+            placeholder="Buscar" 
+          />
+
           <button 
             type="button" 
-            className="absolute top-0 right-0 p-2 h-8 text-xs font-medium text-white bg-blue-600 rounded-r border border-blue-700 hover:bg-blue-700">          
+            className="absolute top-0 right-0 p-2 h-8 text-xs font-medium text-white 
+              bg-blue-600 rounded-r border border-blue-700 hover:bg-blue-700">          
             <FaSearch />
           </button>
         </div>
 
       </form>
 
+      {/* --------------- SI HAY RESULTADOS, MUESTRA LA TABLA --------------- */}
       {resultados ? (
         <div className="w-[360px] md:w-[600px] lg:w-[800px]">
           <Tabla columnas={columns} datos={resultados} pending={pending} />

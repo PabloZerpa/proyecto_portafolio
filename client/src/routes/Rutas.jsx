@@ -21,9 +21,12 @@ import {
   ActualizarBD,
   Servidores,
   RegistrarServidor,
-  RegistrarRespon,
+  RegistrarCustodio,
   VerServidor,
-  ActualizarServidor
+  ActualizarServidor,
+  Custodios,
+  ActualizarCustodio,
+  VerCustodio
 } from '../pages';
 
 function Rutas() {
@@ -56,7 +59,7 @@ function Rutas() {
               <Route path="/administracion/registro/aplicacion" element={<RegistrarApp />} />
               <Route path="/administracion/registro/basedatos" element={<RegistrarBD />} />
               <Route path="/administracion/registro/servidor" element={<RegistrarServidor />} />
-              <Route path="/administracion/registro/responsable" element={<RegistrarRespon />} />
+              <Route path="/administracion/registro/custodio" element={<RegistrarCustodio />} />
             </Route>
             
             {/* MODULO DE APLICACIONES */}
@@ -68,14 +71,20 @@ function Rutas() {
               
             {/* MODULO DE BASE DE DATOS */}
             <Route path="/basedatos" element={<BaseDatos />} />
-            <Route path="/servidores" element={<Servidores />} />
-
             <Route path="/basedatos/:id" element={<VerBD />} />
+            <Route path="/basedatos/actualizacion/:id" element={<ActualizarBD />} />
+
+            {/* MODULO DE SERVIDORES */}
+            <Route path="/servidores" element={<Servidores />} />
             <Route path="/servidor/:id" element={<VerServidor />} />
+            <Route path="/servidor/actualizacion/:id" element={<ActualizarServidor />} />
+
+            {/* MODULO DE CUSTODIOS */}
+            <Route path="/custodios" element={<Custodios />} />
+            <Route path="/custodios/:id" element={<VerCustodio />} />
+            <Route path="/custodios/actualizacion/:id" element={<ActualizarCustodio />} />
 
             {/* <Route path="/basedatos/registro" element={<RegistrarBD />} /> */}
-            <Route path="/basedatos/actualizacion/:id" element={<ActualizarBD />} />
-            <Route path="/servidor/actualizacion/:id" element={<ActualizarServidor />} />
             
           </Route> 
 

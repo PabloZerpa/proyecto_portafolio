@@ -17,6 +17,7 @@ app.use("/api/usuarios", require("./routes/usuarios"));
 app.use("/api/aplicaciones", require("./routes/aplicaciones"));
 app.use("/api/basedatos", require("./routes/bases_datos"));
 app.use("/api/servidores", require("./routes/servidores"));
+app.use("/api/custodios", require("./routes/custodios"));
 
 // ---------- SERVER ----------
 app.listen(PORT, () => {

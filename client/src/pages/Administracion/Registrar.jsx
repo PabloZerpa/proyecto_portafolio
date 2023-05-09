@@ -5,7 +5,7 @@ import { FaDatabase, FaServer, FaCode, FaHardHat } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 function Registrar() {
-
+ 
     return(
         <Container>
 
@@ -31,10 +31,10 @@ function Registrar() {
                     </div>
                 </Link>
 
-                <Link to="/administracion/registro/responsable" className="flex items-center justify-between w-72 mb-4 mx-4 p-4 text-gray-600 bg-white border-2 border-white rounded-lg cursor-pointer hover:text-blue-500 hover:border-blue-500">            
+                <Link to="/administracion/registro/custodio" className="flex items-center justify-between w-72 mb-4 mx-4 p-4 text-gray-600 bg-white border-2 border-white rounded-lg cursor-pointer hover:text-blue-500 hover:border-blue-500">            
                     <div className="block">
                         <FaHardHat className="text-2xl" />
-                        <div className="w-full text-lg font-semibold">Registrar Responsable</div>
+                        <div className="w-full text-lg font-semibold">Registrar Custodio</div>
                     </div>
                 </Link>
             </ul>

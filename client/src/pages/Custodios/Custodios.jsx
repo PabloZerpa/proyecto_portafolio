@@ -4,11 +4,10 @@ import { Container, Select, Tabla } from "../../components";
 import { useDebounce } from 'use-debounce';
 import { FaEdit, FaEye, FaSearch } from 'react-icons/fa';
 import Autorizacion from "../../services/auth.service";
-import Base from "../../services/basedatos.service";
-import { opcionEstatus, opcionTipoBD, opcionManejadores } from '../../services/campos.service';
+import Custodio from "../../services/custodios.service";
+import { opcionEstatus, opcionRegion } from '../../services/campos.service';
 import { Link } from "react-router-dom";
-import { selectTipoAmbiente } from "../../services/campos.service";
-
+import Opciones from "../../utils/Opciones";
 
 const columns = [
     {
@@ -16,12 +15,12 @@ const columns = [
         button: true,
         cell: row => 
         <div className="flex space-x-8">
-            <Link to={row ? `/basedatos/${row.base_datos_id}` : `/dashboard`} >
+            <Link to={row ? `/custodios/${row.custodio_id}` : `/dashboard`} >
                 <FaEye className="text-blue-500 text-lg" />
             </Link>
-            
+
             {Autorizacion.obtenerUsuario.rol !== 'user' ? 
-                <Link to={row ? `/basedatos/actualizacion/${row.base_datos_id}` : `/dashboard`} >
+                <Link to={row ? `/custodios/actualizacion/${row.custodio_id}` : `/dashboard`} >
                 <FaEdit className="text-blue-500 text-lg" />
                 </Link>
             : 
@@ -31,77 +30,95 @@ const columns = [
     },
     {
         name: 'ID',
-        selector: row => row.base_datos_id,
+        selector: row => row.custodio_id,
         sortable: true,
         left: true,
         width: '60px'
     },
     {
+        name: 'Indicador',
+        selector: row => row.cus_indicador,
+        sortable: true,
+        left: true
+    },
+    {
         name: 'Nombre',
-        selector: row => row.base_datos,
+        selector: row => row.cus_nombre,
         sortable: true,
         left: true
     },
     {
-        name: 'Estatus',
-        selector: row => row.estatus,
+        name: 'Apellido',
+        selector: row => row.cus_apellido,
         sortable: true,
         left: true
     },
     {
-        name: 'Tipo',
-        selector: row => row.tipo,
+        name: 'Cedula',
+        selector: row => row.cus_cedula,
         sortable: true,
         left: true
     },
     {
-        name: 'Manejador',
-        selector: row => row.manejador,
-        sortable: true,
-        left: true
+      name: 'Telefono',
+      selector: row => row.telefono,
+      sortable: true,
+      left: true
     },
     {
-        name: 'N° de Usuarios',
-        selector: row => row.base_cantidad_usuarios,
-        sortable: true,
-        left: true
+      name: 'Cargo',
+      selector: row => row.cargo,
+      sortable: true,
+      left: true
     },
     {
-        name: 'Ambiente',
-        selector: row => row.ambiente,
+        name: 'Gerencia',
+        selector: row => row.gerencia,
         sortable: true,
         left: true
-    },
+      },
+      {
+        name: 'Region',
+        selector: row => row.region,
+        sortable: true,
+        left: true
+      },
     {
-        name: 'Ultima Actualizacion',
-        selector: row => row.base_fecha_actualizacion,
+        name: 'Localidad',
+        selector: row => row.localidad,
         sortable: true,
         grow: 2,
         left: true
     },
-    {
-        name: 'Por',
-        selector: row => row.indicador,
-        sortable: true,
-        grow: 1,
-        left: true
-    },
 ];
 
-function BaseDatos() {
-    
+function Custodios() {
+
     // =================== VARIABLES PARA LA BUSQUEDA ===================
     const [resultado, setResultado] = useState('');
     const [datos, setDatos] = useState({
         terminoBusqueda: '',
-        estatus: '',
-        tipo: '',
-        manejador: '',
-        ambiente: '', 
-        registros: 10,
+        cargo: '',
+        gerencia: '',
+        region: '',
         orden: 'ASC',
     }); 
     const [debounceValue] = useDebounce(datos, 500);
+
+    const [gerencias, setGerencias] = useState('');
+    const [cargos, setCargos] = useState('');
+    const [regiones, setRegiones] = useState('');
+
+    // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
+    async function establecerDatos(){
+        setRegiones(await Opciones('regiones',true));
+        setGerencias(await Opciones('gerencias',true));
+        setCargos(await Opciones('cargos',true));
+    }
+
+    useEffect(() => { 
+        establecerDatos();
+    }, []);
 
     // =================== RESTABLECE LOS CAMPOS DE BUSQUEDA ===================
     const resetCampos = () => {
@@ -122,16 +139,15 @@ function BaseDatos() {
             setDatos({ ...datos, [e.target.name] : null })
         else
             setDatos({ ...datos, [e.target.name] : e.target.value })
-            
     }
 
     // FUNCION PARA BUSCAR DATOS EN LA DATABASE
     const onSearch = async (datos) => {
         try {
-            const { terminoBusqueda,estatus,tipo,manejador,ambiente,registros,orden } = datos;
+            const { terminoBusqueda,cargo,gerencia,region } = datos;
 
-            const respuesta = await Base.obtenerBDPorBusqueda(
-                terminoBusqueda,estatus,tipo,manejador,ambiente,registros,orden);
+            const respuesta = await Custodio.obtenerCustodioPorBusqueda(
+                terminoBusqueda,cargo,gerencia,region);
             setResultado(respuesta.data);
             
         } catch (error) {
@@ -147,7 +163,7 @@ function BaseDatos() {
             setResultado(null);
         }
 	}, [debounceValue, datos]); 
-
+    
     // =================== FUNCION PARA MOSTRAR LOAD EN TABLA DE BUSQUEDA ===================
     const [pending, setPending] = useState(true);
     const loading = () => { 
@@ -168,11 +184,10 @@ function BaseDatos() {
                 <div className='flex flex-col space-x-4 w-full justify-center items-center py-2 border-solid'>
 
                     <div className="border-solid">
-                        <div className="grid grid-cols-2 md:grid-cols-4 space-x-4">
-                            <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={opcionEstatus} manejador={setValores} />
-                            <Select campo='Tipo' name='tipo' busqueda={true} byId={false} opciones={opcionTipoBD} manejador={setValores} />
-                            <Select campo='Manejador' name='manejador' busqueda={true} byId={false} opciones={opcionManejadores} manejador={setValores} />
-                            <Select campo='Ambiente' name='ambiente' busqueda={true} byId={false} opciones={selectTipoAmbiente} manejador={setValores} />
+                        <div className="flex space-x-4">
+                            <Select campo='Cargo' name='cargo' busqueda={true} byId={false} opciones={cargos ? cargos : ['SELECCIONE']} manejador={setValores} />
+                            <Select campo='Gerencia' name='gerencia' busqueda={true} byId={false} opciones={gerencias ? gerencias : ['SELECCIONE']} manejador={setValores} />
+                            <Select campo='Region' name='region' busqueda={true} byId={false} opciones={regiones ? regiones : ['SELECCIONE']} manejador={setValores} />
                         </div>
                     </div>
 
@@ -185,7 +200,7 @@ function BaseDatos() {
                                     onChange={(e) => setValores(e)}
                                     className="block p-2 pr-12 w-96 text-sm text-black bg-white rounded border-none outline-none" placeholder="Buscar" />
                                 <button 
-                                    type="button" 
+                                    type="submit" 
                                     onClick={(e) => {e.preventDefault(); onSearch(debounceValue)}}
                                     className="absolute top-0 right-0 p-2.5 text-sm font-medium text-white bg-blue-600 rounded-r border border-blue-700 hover:bg-blue-700">
                                     <FaSearch />
@@ -214,4 +229,4 @@ function BaseDatos() {
     )
 };
 
-export default BaseDatos;
+export default Custodios;

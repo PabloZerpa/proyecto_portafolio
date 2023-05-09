@@ -1,70 +1,106 @@
 
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
-import { Button, Checkbox, Container, Input, Select } from '../../components';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Button, Container, Input, Modal, Select, Tabla, TableRegistro, TextArea } from '../../components';
 import { BiLoaderAlt } from "react-icons/bi";
 import Autorizacion from '../../services/auth.service';
 import Base from '../../services/basedatos.service';
 import { useEffect, useState } from 'react';
+import { columnasModalServidor } from '../../utils/columnas';
+import { FaTimesCircle } from 'react-icons/fa';
+import Opciones from '../../utils/Opciones';
+import { Notificacion } from '../../utils/Notificacion';
 
 function ActualizarBD() {
 
-    const { id } = useParams();
+    // ---------- FUNCION PARA NAVEGAR A RUTA INDICADA ----------
     const navigate = useNavigate();
-    const [load, setLoad] = useState(true);
-    const [valor, setValor] = useState('');
-
     function navegar() { navigate(-1) } 
 
-    const [registrarServidor, setRegistrarServidor] = useState(false);
-    const habilitarServidor = () => {
-        setRegistrarServidor(!registrarServidor)
-        if(!registrarServidor){
-            setDatos({ ...datos, select_servidor : null })
-        }
-    }
-
+    // ---------- ESTADOS ----------
+    const { id } = useParams();
+    const [load, setLoad] = useState(true);
     const [datos, setDatos] = useState({
-        base_datos: '',
-        estatus: '',
-        tipo: '',
-        manejador: '',
-        version_manejador: '',
-        tipo_ambiente: '',
-        cantidad_usuarios: '',
-        select_aplicacion: '',
-        select_servidor: '',
-        creador: Autorizacion.obtenerUsuario().indicador,
+        actualizador: Autorizacion.obtenerUsuario().indicador,
     });
 
-    const handleInputChange = (e) => {
-
+    // FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS
+    const setValores = (e) => {
         if(e.target.value === 'TODAS')
             setDatos({ ...datos, [e.target.name] : null })
         else
             setDatos({ ...datos, [e.target.name] : e.target.value })
     }
 
+    const [mane, setMane] = useState('');
+    const [tipos, setTipos] = useState('');
+    const [estatus, setEstatus] = useState('');
+    const [ambientes, setAmbientes] = useState('');
+
+    // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
+    async function establecerDatos(){
+        setMane(await Opciones('manejadores'));
+        setEstatus(await Opciones('estatus'));
+        setTipos(await Opciones('tipos'));
+        setAmbientes(await Opciones('ambientes'));
+    }
+
+    // -------------------- FUNCION PARA LLENAR TABLA POR DEFECTO --------------------
+    const llenarTabla = async (datos, id, nombre, setTabla, setSelect) => {
+        let selecciones = [];
+
+        for (let i = 0; i < datos.length; i++) {
+            const x = datos[i];
+            setTabla(tabla => [...tabla, { [`${id}`]: x[id], [`${nombre}`]: x[nombre]}]); 
+            selecciones.push(datos[i][id]); 
+        }
+
+        setSelect(selecciones);
+    }
+
+    // VALORES POR DEFECTO EN LOS INPUTS
+    const [general, setGeneral] = useState('');
+    const [servidor, setServidor] = useState('');
+
     useEffect(() => {
         async function fetchData(){
             try {
-                const valores = await Base.obtenerBD(id);
-                setValor(valores.data); 
-                setLoad(true); 
+                // ========== OPCIONES PARA LOS SELECTS ==========
+                establecerDatos();
 
+                // ========== DATOS POR DEFECTO ==========
+                const gen = await Base.obtenerGeneralBD(id);
+                const ser = await Base.obtenerServidorBD(id);
+
+                setGeneral(gen.data[0]);
+                setServidor(ser.data.datos);
+
+                // ========== LLENAN LA TABLA CON LOS VALORES POR DEFECTO ==========
+                llenarTabla(ser.data.datos,'servidor_id','servidor',setDataServidor,setSelectServidor);
+
+                //await llenarDatos();
+                setDatos({
+                    ...datos,
+                    base_datos : gen.data[0].base_datos,
+                    estatus : gen.data[0].estatus,
+                    cantidad_usuarios : gen.data[0].base_cantidad_usuarios,
+                    manejador : gen.data[0].manejador,
+                    tipo : gen.data[0].tipo,
+                    ambiente : gen.data[0].ambiente,
+                });
+                
+                setLoad(false);
             }catch (error) { console.log(error); }
         } 
         fetchData();  
-    }, []);
+    }, [id]); 
 
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
-    async function updateData(e) {
+    async function actualizar(e) {
         e.preventDefault();
 
         try {
-          console.log('TRY DEL CREATE');
           if(Autorizacion.obtenerUsuario().rol === 'admin'){
-            
-            await Autorizacion.actualizarDatosDB(id,datos);
+            await Base.actualizarDatosDB(id, datos, tableDataServidor);
           }
         }
         catch (error) { 
@@ -72,41 +108,129 @@ function ActualizarBD() {
         }
       }
 
+    const [isOpen, setIsOpen] = useState(false);
+    const [select_servidor, setSelectServidor] = useState([]);
+    const [tableDataServidor, setDataServidor] = useState([]);
+
+    const obtenerSeleccionesServidor = (respuesta) => {
+        let selecciones = [];
+        setDataServidor([]);
+
+        for (let i = 0; i < respuesta.length; i++) {
+            const x = respuesta[i];
+            setDataServidor(tableDataServidor => [...tableDataServidor, { servidor_id: x.servidor_id, servidor: x.servidor}]);
+            selecciones.push(respuesta[i].servidor_id);
+        }
+
+        setSelectServidor(selecciones); 
+    };
+
+    const eliminarElemento = (row, elemento, tabla, setTabla, setSelecciones) => {
+
+        if (window.confirm(`Estas seguro de eliminar: ${row[elemento]}?`)) {
+            const nuevo = tabla.filter((i) => i[elemento] !== row[elemento]);
+            setTabla(nuevo);
+
+            let selecciones = [];
+            for (let i = 0; i < nuevo.length; i++) 
+                selecciones.push(nuevo[i][elemento]);
+                
+            setSelecciones(selecciones);
+        }
+    };
+
+    // -------------------- COLUMNAS PARA TABLAS DE ELEMENTOS SELECCIONADOS --------------------
+    const generarColumna = (titulo,key,width) => {
+        return{
+            name: titulo,
+            selector: row => row[key],
+            left: true,
+            width: width
+        }
+    }
+
+    const columnasServidor = [
+        generarColumna('Servidor ID','servidor_id','160px'),
+        generarColumna('Servidor Nombre','servidor',null),
+        {
+            name: 'Remover',
+            button: true,
+            cell: row => 
+            <div>
+                <FaTimesCircle
+                    onClick={() => eliminarElemento(row,'servidor_id',tableDataServidor,setDataServidor,setSelectServidor)} 
+                    className="ml-3 text-red-500 text-lg cursor-pointer"
+                />
+            </div>,
+            left: true
+        },
+    ];
+
+
     if(Autorizacion.obtenerUsuario().rol !== 'admin')
         return <Navigate to='/' />
     
-    if(!load)
+    if(load)
         <BiLoaderAlt className='text-6xl text-blue-500 animate-spin' />
     else{
         return (
             <Container>
-                <h1 className='font-bold text-lg'>Actualizacion de Base de datos</h1>
-    
-                <form className="flex flex-col relative w-3/4 bg-zinc-400 p-4 pb-24 mb-10 rounded drop-shadow-md" onSubmit={updateData}>
+
+            {/* --------------- VENTANA MODAL PARA REGISTRAR SERVIDORES --------------- */}
+            {isOpen ? (
+                <Modal>
+                    <TableRegistro
+                        setIsOpen={setIsOpen}
+                        devolverSelecciones={obtenerSeleccionesServidor}
+                        columnas={columnasModalServidor}
+                        objetivo='servidor'
+                        busqueda={true}
+                        selectDefault={select_servidor}
+                    />
+                </Modal>
+            ) : (null) }
+
+
+            <h1 className='font-bold text-lg'>Registro de Base de datos</h1>
+
+            <form className="flex flex-col items-center space-y-4 relative w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" onSubmit={actualizar}>
+
+                <div className='w-full'>
+                    <TextArea campo='Nombre' name='base_datos' required={true} editable={true} propiedad={general.base_datos} manejador={setValores} />
+                </div>
+
+                <div className="w-full grid grid-cols-1 md:grid-cols-2 relative space-x-4 mb-0">
+                    <Select campo='Estatus' name='estatus' required={true} byId={false} propiedad={general.estatus} opciones={estatus ? estatus : ['SELECCIONE']} manejador={setValores}/>
+                    <Select campo='Tipo' name='tipo' required={true} byId={false} propiedad={general.tipo} opciones={tipos ? tipos : ['SELECCIONE']} manejador={setValores} />
+                    <Select campo='Manejador' name='manejador' required={true} byId={false} propiedad={general.manejador} opciones={mane ? mane : ['SELECCIONE']} manejador={setValores} />
+                    <Input campo='Version' name='version_manejador' propiedad={general.version_manejador} editable={true} manejador={setValores} />
+                    <Select campo='Ambiente' name='ambiente' required={true} byId={false} propiedad={general.ambiente} opciones={ambientes ? ambientes : ['SELECCIONE']} manejador={setValores} />
+                    <Input campo='N° Usuario' name='cantidad_usuarios' propiedad={general.base_cantidad_usuarios} required={true} editable={true} manejador={setValores} />
+                </div>
+ 
+                {/* --------------- SERVIDOR --------------- */}
+                <p className='font-bold text-sm my-4'>Servidor</p>
+                    <div className='w-full flex flex-col justify-center items-center space-y-4'>
+
+                        <button type='button' className="p-1 bg-blue-600 text-white rounded" 
+                            onClick={(e) => {setIsOpen(!isOpen)}} >
+                            Agregar
+                        </button>
+
+                        <div className="w-full">
+                        <Tabla columnas={columnasServidor} datos={tableDataServidor} />
+                    </div>
+                </div>
                     
-                    <h2 className='font-bold text-base mb-6'>Informacion General</h2>
-    
-                    <Input campo='Nombre' name='base_datos' propiedad={valor.base_datos} editable={true} area={true} manejador={handleInputChange} />
-                    <div className="relative grid grid-cols-2 space-x-4 mb-0">
-                        <Select campo='Estatus' name='estatus' propiedad={valor.bas_estatus} opciones={['SELECCIONE','DESARROLLO','ESTABILIZACION','MANTENIMIENTO']} manejador={handleInputChange}/>
-                        <Select campo='Tipo' name='tipo' propiedad={valor.tipo} opciones={['SELECCIONE','RELACIONAL','NO RELACIONAL','DISTRIBUIDA']} manejador={handleInputChange} />
-                        <Select campo='Manejador' name='manejador' propiedad={valor.manejador} opciones={['SELECCIONE','MYSQL','POSTGRESS','ORACLE',]} manejador={handleInputChange} />
-                        <Input campo='Version' name='version_manejador' propiedad={valor.version_manejador} editable={true} manejador={handleInputChange} />
-                        <Select campo='Ambiente' name='tipo_ambiente' propiedad={valor.bas_tipo_ambiente} opciones={['SELECCIONE','DESARROLLO','ESTABILIZACION','MANTENIMIENTO']} manejador={handleInputChange} />
-                        <Input campo='N° Usuario' name='cantidad_usuarios' propiedad={valor.bas_cantidad_usuarios} editable={true} manejador={handleInputChange} />
-                    </div>
-                        
-                    <div className="absolute bottom-4 right-1/3">
-                        <Button color='blue' width={32}>Actualizar</Button>
-                    </div>
-                    <div className="absolute bottom-4 left-1/3">
-                        <Button color='blue' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
-                    </div>
-    
-                </form>
-                
-    
-            </Container>
+                <div className="flex space-x-2 md:space-x-12 mt-12">
+                    <Button tipo='button' color='blue' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
+                    <Button tipo='submit' color='blue' width={32}>Actualizar</Button>
+                </div>
+
+            </form>
+            
+
+        </Container>
         )
     }
 };

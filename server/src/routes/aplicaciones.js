@@ -2,14 +2,11 @@
 const router = require("express").Router();
 const { obtenerDatos, obtenerDato, registrarAplicacion, actualizarAplicacion, eliminarAplicacion, 
     obtenerBusqueda, obtenerLenguajes,obtenerPlataformas,obtenerFrameworks, obtenerBaseDatos, 
-    obtenerServidores,general, tecno, basedatos, servidor, responsable, documentacion, 
-    obtenerResponsables, registrarResponsable, custodio, registrarCustodio, obtenerCustodios } = require("../controllers/aplicaciones");
-const { auth, authAdmin } = require("../middlewares/auth");
-const { autenticarUser } = require("../middlewares/ad");
+    obtenerServidores,general, tecno, basedatos, servidor, 
+    documentacion, custodio, obtenerCustodios } = require("../controllers/aplicaciones");
+const { auth } = require("../middlewares/auth");
 const { fallas, registrarFalla, actualizarFalla, buscarFalla } = require("../controllers/fallas");
-const { validatorResponsable, validatorApp, validatorCustodio } = require("../validators/aplicaciones");
-
-
+const { validatorApp } = require("../validators/aplicaciones");
 
 /* 
     ***********************************                             ***********************************
@@ -39,10 +36,6 @@ router.post("/busqueda", auth, obtenerBusqueda);
 
 // *************** RUTA PARA ELIMINAR DATOS POR ID *************** 
 router.delete("/:id", auth, eliminarAplicacion);
-
-
-// *************** RUTA REGISTRAR UN RESPONSABLE *************** 
-router.post("/custodio", auth, validatorCustodio, registrarCustodio);
 
 
 

@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import { Container, Tabla } from "../components";
 import { BiLoaderAlt } from "react-icons/bi";
-import Aplicacion from "../services/aplicacion.service";
-import Linea from "../chart/Linea";
 import { FaEye } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import Aplicacion from "../services/aplicacion.service";
+import Linea from "../chart/Linea";
 
 const columns = [
 	{
@@ -47,7 +47,7 @@ const columns = [
   },
   {
       name: 'Direccion',
-      cell: row => (<a className="text-blue-500" href={row.apl_direccion} target="_blank">{row.apl_direccion}</a>),
+      cell: row => (<a className="text-blue-500" href={row.apl_direccion} target="_blank" rel="noreferrer">{row.apl_direccion}</a>),
       grow: 2,
       left: true
   },
@@ -99,16 +99,13 @@ function Dashboard() {
             <BiLoaderAlt className='text-6xl text-blue-500 animate-spin' />
         ) : (
           <>
-            <div className="flex flex-col items-center space-y-4">
-
+            <div className="flex flex-col items-center space-y-4 ">
               <h3 className='font-bold text-lg'>Modificaciones Recientes</h3>
-
-              <div className="w-4/3 px-12">
+              <div className="w-4/3">
                 <Tabla columnas={columns} datos={datos} />
               </div>
-
             </div>
-            
+
             <Linea />
           </>
         )

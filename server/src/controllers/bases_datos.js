@@ -138,14 +138,15 @@ const crearBaseDatos = async (req,res) => {
             `SELECT * FROM bases_datos WHERE base_datos = ?`, [base_datos]);
         const bd = query[0][0];
 
+        if(!select_servidor[0]){
+            return res.status(401).json({ message: 'ERROR, SERVIDOR SIN SELECCIONAR' });
+        }
+
         // ****************************** VERIFICA QUE LA APLICACION NO EXISTA ******************************
         if(bd){
-            console.log('ERROR, BASE DE DATOS YA EXISTE');
-            return res.status(401).json({ message: 'ERROR, APLICACION YA EXISTE' });
+            return res.status(401).json({ message: 'ERROR, BASE DE DATOS YA EXISTE' });
         }
         else{
-            console.log(base_datos,estatus,cantidad_usuarios, tipo, manejador, 
-                version_manejador,ambiente, usuario_registro, select_servidor);
 
             // if(version_manejador){
             //     const datos_version = await pool.query(
@@ -168,7 +169,6 @@ const crearBaseDatos = async (req,res) => {
                 );`, 
                 [base_datos,estatus,tipo,manejador,ambiente,cantidad_usuarios,usuario_registro,usuario_registro]
             );
-            console.log('REGISTRO GENERAL BASE DE DATOS');
 
             const selectBase = await pool.query(`SELECT * FROM bases_datos ORDER BY base_datos_id DESC LIMIT 1`);
             let base_datos_id = selectBase[0][0].base_datos_id;
@@ -177,18 +177,14 @@ const crearBaseDatos = async (req,res) => {
             if(select_servidor){
 
                 for (const element of select_servidor) {
-                    console.log(element.servidor_id);
             
                     const datos_ser = await pool.query(
                         `INSERT INTO basedatos_servidor (base_datos_id,servidor_id) VALUES (?,?);`,
                     [base_datos_id,element.servidor_id]);
                 }
-                console.log('SERVIDOR GENERAL REGISTRADO');
 
             }
             
-
-            console.log('CREACION EXITOSA');
             res.send('CREACION EXITOSA');
         }
     } catch (error) {
@@ -200,28 +196,23 @@ const crearBaseDatos = async (req,res) => {
 // *********************************** ACTUALIZAR REGISTRO ***********************************
 const actualizarBaseDatos = async (req,res) => {
     try {
-        console.log('EN EN UPDATE DEL SERVER');
         const { id } = req.params;
 
         const {
-            select_aplicacion, select_servidor,
-            base_datos,estatus,cantidad_usuarios, tipo, manejador, manejador_version,
-            ambiente
+            base_datos,estatus,cantidad_usuarios, tipo, manejador, 
+            manejador_version,ambiente, select_servidor
         } = req.body;
-
-        console.log(
-            select_aplicacion, select_servidor,
-            base_datos,estatus,cantidad_usuarios, tipo, manejador, manejador_version,
-            ambiente
-        );
 
         // ACTUALIZAR LA BASE DE DATOS
         const [result] = await pool.query(
             `UPDATE bases_datos  SET 
-                base_datos = ?,base_estatus = ?,base_cantidad_usuarios = ?,
-                base_tipo = (SELECT tipo_base_id FROM tipos_bases WHERE tipo = ? LIMIT 1),
-                base_manejador = (SELECT manejador_id FROM manejadores WHERE manejador = ? LIMIT 1),
-                base_ambiente = ?
+                base_datos = ?,
+                base_estatus = (SELECT estatus_id FROM estatus WHERE estatus = ?),
+                base_cantidad_usuarios = ?,
+                base_tipo = (SELECT tipo_id FROM tipos_bases WHERE tipo = ?),
+                base_manejador = (SELECT manejador_id FROM manejadores WHERE manejador = ?),
+                base_ambiente = (SELECT ambiente_id FROM ambientes WHERE ambiente = ?),
+                base_fecha_actualizacion = now()
             WHERE 
                 base_datos_id = ?`,
             [   
@@ -229,8 +220,14 @@ const actualizarBaseDatos = async (req,res) => {
                 manejador,ambiente,id
             ]
         );
-        console.log('ACTUALIZACION EXITOSA'); 
-            
+
+        const deleteSer = await pool.query(`DELETE FROM basedatos_servidor WHERE base_datos_id = ?;`,[id]);
+        for (const element of select_servidor) {
+            const datos_ser = await pool.query(
+                `INSERT INTO basedatos_servidor (base_datos_id,servidor_id) VALUES (?,?)`,
+            [id,element.servidor_id]); 
+        }
+
         res.json('UPDATE EXITOSO');
 
     } catch (error) {
@@ -249,11 +246,14 @@ const general = async (req,res) => {
 
         const data = await pool.query(`
         SELECT 
-            bases_datos.base_datos_id,base_datos,base_estatus,tipo, manejador,
-            base_cantidad_usuarios,base_ambiente
+            bases_datos.base_datos_id,base_datos,estatus,tipo, manejador,
+            base_cantidad_usuarios,ambiente,
+            DATE_FORMAT (base_fecha_actualizacion, '%d-%m-%Y %H:%i') as base_fecha_actualizacion
         FROM bases_datos
-            JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.base_tipo
+            JOIN estatus ON bases_datos.base_estatus = estatus.estatus_id
+            JOIN tipos_bases ON tipos_bases.tipo_id = bases_datos.base_tipo
             JOIN manejadores ON manejadores.manejador_id = bases_datos.base_manejador
+            JOIN ambientes ON ambientes.ambiente_id = bases_datos.base_ambiente
         WHERE bases_datos.base_datos_id = ?`, [id]);
 
         res.send(data[0]);
@@ -264,7 +264,7 @@ const general = async (req,res) => {
 };
 
 
-// *********************************** OBTENER SERVIDOR ***********************************
+// *********************************** OBTENER APLICACIONES ***********************************
 const aplicacion = async (req,res) => {
     try {
         const { id } = req.params;
@@ -299,10 +299,11 @@ const servidor = async (req,res) => {
         
         const data = await pool.query(`
             SELECT 
-                servidores.servidor_id,servidor,ser_direccion,ser_estatus,sistema,modelo,marca,region, localidad
+                servidores.servidor_id,servidor,ser_direccion,estatus,sistema,modelo,marca,region, localidad
             FROM bases_datos
                 JOIN basedatos_servidor ON bases_datos.base_datos_id = basedatos_servidor.base_datos_id
                 JOIN servidores ON basedatos_servidor.servidor_id = servidores.servidor_id
+                JOIN estatus ON servidores.ser_estatus = estatus.estatus_id
                 JOIN sistemas_operativos ON sistemas_operativos.sistema_id = servidores.ser_sistema
                 JOIN modelos ON modelos.modelo_id = servidores.ser_modelo
                 JOIN marcas ON marcas.marca_id = modelos.mod_marca

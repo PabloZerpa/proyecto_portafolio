@@ -84,21 +84,11 @@ class Aplicacion {
     // =============== OBTIENE OPCIONES PARA LOS SELECTS DE LA TABLA SEGUN EL PARAMETRO ===============
     async obtenerOpcion(nombre) {
         try { 
-            console.log(nombre);
             const respuesta = await axios.get(`${baseUrl}aplicaciones/${nombre}`, { headers: authHeader() });
             return respuesta;
         } catch (error) {
             console.log('ERROR AL OBTENER ROLES');
         }
-    }
-
-    // ---------------- REGISTRO DE LA INFO DEL RESPONSABLE ------------------
-    async registrarCustodio(datos) {
-        console.log(datos);
-        return await axios.post(`${baseUrl}aplicaciones/custodio`, datos, { headers: authHeader() })
-        .then(response => {
-            return response.data;
-        });
     }
 
 
@@ -182,7 +172,6 @@ class Aplicacion {
     async obtenerBaseDatos(id) { 
         try { 
             const respuesta = await axios.get(`${baseUrl}aplicaciones/basedatos/${id}`, { headers: authHeader() });
-            //console.log(respuesta); 
             return respuesta;
         } catch (error) {
             console.log('Error al obtener datos'); 
@@ -193,7 +182,6 @@ class Aplicacion {
     async obtenerServidor(id) { 
         try { 
             const respuesta = await axios.get(`${baseUrl}aplicaciones/servidor/${id}`, { headers: authHeader() });
-            //console.log(respuesta);
             return respuesta;
         } catch (error) {
             console.log('Error al obtener datos'); 
@@ -214,7 +202,6 @@ class Aplicacion {
     async obtenerDocumentacion(id) { 
         try { 
             const respuesta = await axios.get(`${baseUrl}aplicaciones/documentacion/${id}`, { headers: authHeader() });
-            //console.log(respuesta);
             return respuesta;
         } catch (error) { 
             console.log('Error al obtener datos'); 
@@ -225,7 +212,6 @@ class Aplicacion {
     async obtenerFallas(id) { 
         try { 
             const respuesta = await axios.get(`${baseUrl}aplicaciones/fallas/${id}`, { headers: authHeader() });
-            //console.log(respuesta);
             return respuesta;
         } catch (error) { 
             console.log('Error al obtener datos'); 

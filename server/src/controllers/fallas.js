@@ -30,8 +30,6 @@ const registrarFalla = async (req,res) => {
     try {
         
         const { aplicacion,clase,impacto,descripcion,solucion, usuario } = req.body;
-        console.log( aplicacion,clase,impacto,descripcion,solucion, usuario );
-
         const x = await pool.query(`SELECT usuario_id FROM usuarios WHERE indicador = ?`, [usuario]); 
         const usuario_id = x[0][0].usuario_id;
 
@@ -45,7 +43,6 @@ const registrarFalla = async (req,res) => {
                 (?,?,?,?,?,?);`, 
             [aplicacion_id,clase,descripcion,solucion,impacto, usuario_id]); 
                 
-        console.log('FALLA REGISTRADA CORRECTAMENTE');
         res.send('FALLA REGISTRADA CORRECTAMENTE');
     } catch (error) {
         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
@@ -102,8 +99,6 @@ const actualizarFalla = async (req,res) => {
             fal_solucion = ?
         WHERE falla_id = ?`, [clase, impacto, descripcion, solucion, id]
         );
-
-        console.log(id);
         
         res.send('ACTUALIZACION EXITOSA');
     } catch (error) {

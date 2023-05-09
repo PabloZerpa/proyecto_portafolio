@@ -20,20 +20,17 @@ const login = async (req, res) => {
 
         // ********** VERIFICA QUE EL USUARIO EXISTA **********
         if(!user){
-            console.log('USUARIO NO EXISTE');
             return res.status(401).json({ message: 'USUARIO INCORRECTO' });
         }
 
         // ********** VERIFICA QUE EL USUARIO POSEA UN ROL **********
         if(!rol){
-            console.log('USUARIO NO EXISTE');
             return res.status(401).json({ message: 'USUARIO INCORRECTO' });
         }
 
         // ********** VERIFICA LA CONTRASEÑA **********
         const passwordVerificado = await comparar(password, user.password);
         if (!passwordVerificado) {
-            console.log('CONTRASEÑA INCORRECTA');
             return res.status(401).json({ message: 'CONTRASEÑA INCORRECTA' });
         }
 
@@ -45,7 +42,6 @@ const login = async (req, res) => {
             token 
         }
 
-        console.log('LOGIN COMPLETADO');
         // console.log(datos);
         // console.log('Token: ' + token);
         res.status(200).json(datos);
@@ -61,7 +57,6 @@ const registrar = async (req, res) => {
     try {
         const password = await encriptar(req.body.password);
         const datos = {...req.body, password };
-        //console.log(datos);
         
         const buscarUsuario = await pool.query('SELECT * FROM usuarios WHERE indicador = ?', [datos.indicador]);
         const user = buscarUsuario[0][0];
@@ -78,7 +73,6 @@ const registrar = async (req, res) => {
             [datos.indicador, datos.password, datos.nombre, datos.apellido, datos.rol, datos.cargo, datos.gerencia]
         );
 
-        console.log('USUARIO CREADO SATISFACTORIAMENTE');
         res.status(200).json(datos);
     } catch (error) {
         return res.status(401).json({ message: 'ERROR AL REGISTRAR USUARIO' });

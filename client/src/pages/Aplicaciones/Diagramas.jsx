@@ -20,7 +20,7 @@ function Diagramas() {
 
     // const [categoria, setCategoria] = useState('region');
     // const obtenerCategoria = (respuesta) => { setCategoria(respuesta) };
-    // const [orden, setOrden] = useState('porcentaje');
+    // const [orden, setOrden] = useState('porcentaje'); 
     // const obtenerOrden = (respuesta) => { setOrden(respuesta) };
 
     const [datos, setDatos] = useState({
@@ -28,7 +28,7 @@ function Diagramas() {
         orden: '',
     });
 
-    const handleInputChange = (e) => {
+    const setValores = (e) => {
         if(e.target.value === 'TODAS')
             setDatos({ ...datos, [e.target.name] : null })
         else
@@ -61,8 +61,8 @@ function Diagramas() {
             <h2 className='font-bold text-lg'>Generar graficos</h2>
 
             <form className='flex flex-col items-center space-y-4 p-4 bg-zinc-400 border-solid rounded'>
-                <Radio label='Categoria' name='categoria' opciones={opcionCategoria} manejador={handleInputChange} size='small' />
-                <Radio label='Ordernar' name='orden' opciones={opcionOrden} manejador={handleInputChange} size='small' />
+                <Radio label='Categoria' name='categoria' opciones={opcionCategoria} manejador={setValores} size='small' />
+                <Radio label='Ordernar' name='orden' opciones={opcionOrden} manejador={setValores} size='small' />
                 <Button color='blue' manejador={handleSearch}>Generar</Button>
             </form>
 

@@ -10,16 +10,18 @@ import Opciones from "../../utils/Opciones";
 
 function CrearUsuario() {
 
+    // ---------- FUNCION PARA NAVEGAR A RUTA INDICADA ----------
     const navigate = useNavigate();
     function navegar(ruta) { navigate(ruta) };
 
+    // ---------- ESTADOS ----------
+    const [roles, setRoles] = useState('');
+    const [gerencias, setGerencias] = useState('');
+    const [cargos, setCargos] = useState('');
     const [datos, setDatos] = useState({
         creador: Autorizacion.obtenerUsuario().indicador,
     });
 
-    const [roles, setRoles] = useState('');
-    const [gerencias, setGerencias] = useState('');
-    const [cargos, setCargos] = useState('');
 
     // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
     async function establecerDatos(){
@@ -28,10 +30,9 @@ function CrearUsuario() {
         setCargos(await Opciones('cargos'));
     }
 
-    useEffect(() => {
+    useEffect(() => { 
         establecerDatos();
     }, []);
-
 
     // =================== FUNCION PARA OBTENER Y GUARDAR VALORES DEL LOS INPUTS ===================
     const setValores = (e) => {

@@ -10,19 +10,18 @@ class Base {
         
         let datosServidor = datos;
         datosServidor.select_servidor = servidores;
-        try {  
-
-            const respuesta = await axios.post(`${baseUrl}basedatos/`, datosServidor, { headers: authHeader() });
-            return respuesta;
-        } catch (error) {
-            console.log('ERROR AL CREAR auth.service');
-        }
+        return await axios.post(`${baseUrl}basedatos/`, datosServidor, { headers: authHeader() })
+        .then(response => {
+            return response.data;
+        });
     }
 
     // ---------------- CREATE DE LA INFO DE NUEVA APP ------------------
-    async actualizarDatosDB(id,datos) {
+    async actualizarDatosDB(id,datos,servidores) {
         try { 
-            const respuesta = await axios.patch(`${baseUrl}basedatos/${id}`, datos, { headers: authHeader() });
+            let datosServidor = datos;
+            datosServidor.select_servidor = servidores;
+            const respuesta = await axios.patch(`${baseUrl}basedatos/${id}`, datosServidor, { headers: authHeader() });
             return respuesta;
         } catch (error) {
             console.log('ERROR AL CREAR auth.service');

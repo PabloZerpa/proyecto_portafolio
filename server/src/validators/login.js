@@ -3,7 +3,7 @@ const { check, validationResult } = require("express-validator");
 
 // *************** VALIDAR DATOS DE LOGIN ***************
 const validatorLogin = [
-    check("indicador").exists().notEmpty().isString(),
+    check("indicador").exists().notEmpty().isString().isLength({min:4, max:10}),
     check("password").exists().notEmpty().isLength({min:8, max:12}),
     (req,res,next) => {
         try{

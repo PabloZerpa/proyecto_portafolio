@@ -1,5 +1,4 @@
 
-import { frameworkPhp, frameworkJS, frameworkJAVA, frameworkCPP, frameworkCS, frameworkPY } from "../services/campos.service";
 
 const generarColumna = (titulo,key,width) => {
     return{
@@ -36,23 +35,6 @@ export const columnasModalServidor = [
     generarColumna('Por','indicador',null),
 ];
 
-
-function crearInputs (array) {
-
-    return(
-        <>
-            {array.map((elemento, index) => {
-                if(index > 0){
-                    return(
-                        <div key={index} className="text-center">
-                            <input className='mx-8 rounded' type="checkbox" value={elemento} /> 
-                            <label className='text-xs' >{elemento}</label>
-                        </div> );
-                }
-            })}
-        </>
-    );
-}
 
 export const columnasModalLenguaje = [
     generarColumna('Lenguaje ID','lenguaje_id','150px'),
