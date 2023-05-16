@@ -20,15 +20,13 @@ function ActualizarBD() {
     const { id } = useParams();
     const [load, setLoad] = useState(true);
     const [datos, setDatos] = useState({
-        actualizador: Autorizacion.obtenerUsuario().indicador,
+        usuario_actualizo: Autorizacion.obtenerUsuario().indicador,
     });
 
     // FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS
     const setValores = (e) => {
-        if(e.target.value === 'TODAS')
-            setDatos({ ...datos, [e.target.name] : null })
-        else
-            setDatos({ ...datos, [e.target.name] : e.target.value })
+        const valor = e.target.value.toUpperCase();
+        setDatos({ ...datos, [e.target.name] : valor });
     }
 
     const [mane, setMane] = useState('');
@@ -39,7 +37,7 @@ function ActualizarBD() {
     // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
     async function establecerDatos(){
         setMane(await Opciones('manejadores'));
-        setEstatus(await Opciones('estatus'));
+        setEstatus(['SELECCIONE', 'POR DETERMINAR', 'ACTIVO', 'INACTIVO']);
         setTipos(await Opciones('tipos'));
         setAmbientes(await Opciones('ambientes'));
     }
@@ -101,6 +99,8 @@ function ActualizarBD() {
         try {
           if(Autorizacion.obtenerUsuario().rol === 'admin'){
             await Base.actualizarDatosDB(id, datos, tableDataServidor);
+            Notificacion('ACTUALIZACION EXITOSA', 'success');
+            navigate(`/basedatos/${id}`);
           }
         }
         catch (error) { 
@@ -166,9 +166,6 @@ function ActualizarBD() {
         },
     ];
 
-
-    if(Autorizacion.obtenerUsuario().rol !== 'admin')
-        return <Navigate to='/' />
     
     if(load)
         <BiLoaderAlt className='text-6xl text-blue-500 animate-spin' />

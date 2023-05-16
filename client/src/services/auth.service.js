@@ -9,11 +9,19 @@ class Autorizacion {
         
         return axios.post(`${baseUrl}login`, {indicador,password})
         .then(response => {
-            if (response.data.token)
-                localStorage.setItem("user", JSON.stringify(response.data));
+            if(!response.data.exp){
+                if (response.data.token)
+                    localStorage.setItem("user", JSON.stringify(response.data));
+            }
 
             return response.data;
         });
+    }
+
+    // ---------------- LOGIN ------------------
+    async cambiarContraseña(indicador, passwordNuevo) {
+        return axios.patch(`${baseUrl}usuarios/password/`, {indicador, passwordNuevo})
+        .then(response => { return response.data });
     }
 
     // ---------------- LOGOUT ------------------

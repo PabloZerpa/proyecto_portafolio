@@ -82,55 +82,63 @@ function VerBD() {
           name: 'Acronimo',
           selector: row => row.apl_acronimo,
           sortable: true,
+          width: '100px',
           left: true,
         },
         {
             name: 'Nombre',
             selector: row => row.apl_nombre,
             sortable: true,
+            width: '150px',
             left: true,
-            grow: 2
+            //grow: 2
         },
-        {
-          name: 'Descripcion',
-          selector: row => row.apl_descripcion,
-          sortable: true,
-          left: true,
-          grow: 2
-        },
+        // {
+        //   name: 'Descripcion',
+        //   selector: row => row.apl_descripcion,
+        //   sortable: true,
+        //   width: '200px',
+        //   left: true,
+        //   //grow: 2
+        // },
         {
             name: 'Estatus',
             selector: row => row.estatus,
             sortable: true,
+            width: '150px',
             left: true,
         },
         {
             name: 'Prioridad',
             selector: row => row.prioridad,
             sortable: true,
+            width: '100px',
             left: true,
-            grow: 1.5
+            //grow: 1.5
         },
         {
             name: 'Alcance',
             selector: row => row.alcance,
             sortable: true,
+            width: '150px',
             left: true
         },
-        {
-            name: 'Codigo Fuente',
-            selector: row => row.apl_codigo_fuente,
-            sortable: true,
-            left: true,
-            grow: 2
-        },
-        {
-          name: 'Version',
-          selector: row => row.apl_version,
-          sortable: true,
-          left: true,
-          grow: 1.5
-        },
+        // {
+        //     name: 'Codigo Fuente',
+        //     selector: row => row.apl_codigo_fuente,
+        //     sortable: true,
+        //     width: '60px',
+        //     left: true,
+        //     //grow: 2
+        // },
+        // {
+        //   name: 'Version',
+        //   selector: row => row.apl_version,
+        //   sortable: true,
+        //   width: '60px',
+        //   left: true,
+        //   //grow: 1.5
+        // },
         {
           name: 'Direccion',
           selector: row => 
@@ -138,22 +146,25 @@ function VerBD() {
               {row.apl_direccion}
             </a>,
           sortable: true,
+          width: '200px',
           left: true,
-          grow: 1.5
+          //grow: 1.5
         },
         {
           name: 'N° Usuarios',
           selector: row => row.apl_cantidad_usuarios,
           sortable: true,
+          width: '150px',
           left: true,
-          grow: 1.5
+          //grow: 1.5
         },
         {
           name: 'Region',
           selector: row => row.region,
           sortable: true,
+          width: '150px',
           left: true,
-          grow: 1.5
+          //grow: 1.5
         },
       ];
 
@@ -183,30 +194,35 @@ function VerBD() {
             name: 'Nombre',
             selector: row => row.servidor,
             sortable: true,
+            width: '150px',
             left: true,
         },
         {
             name: 'Estatus',
             selector: row => row.estatus,
             sortable: true,
+            width: '150px',
             left: true,
         },
         {
             name: 'OS',
             selector: row => row.sistema,
             sortable: true,
+            width: '150px',
             left: true,
         },
         {
             name: 'Modelo',
             selector: row => row.modelo,
             sortable: true,
+            width: '150px',
             left: true
         },
         {
             name: 'Marca',
             selector: row => row.marca,
             sortable: true,
+            width: '150px',
             left: true,
         },
         {
@@ -216,19 +232,22 @@ function VerBD() {
               {row.ser_direccion}
             </a>,
           sortable: true,
+          width: '200px',
           left: true,
-          grow: 2
+          //grow: 2
         },
         {
           name: 'Region',
           selector: row => row.region,
           sortable: true,
+          width: '150px',
           left: true,
         },
         {
           name: 'Localidad',
           selector: row => row.localidad,
           sortable: true,
+          width: '150px',
           left: true,
         },
       ];

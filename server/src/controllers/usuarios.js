@@ -99,14 +99,18 @@ const cambiarPermisos = async (req,res) => {
 
  // *************** LOGEAR USUARIO ***************
 const cambiarPassword = async (req,res) => {
-  
-    const { id } = req.params;
-    const { password } = req.body;
-    const passwordNuevo = await encriptar(password);
+    
+    const { indicador, passwordNuevo } = req.body;
+    const passwordEncript = await encriptar(passwordNuevo);
    
     try {
+        const rows = await pool.query(`SELECT usuario_id FROM usuarios WHERE indicador = ?;`, [indicador]);
+        const usuario_id = rows[0][0].usuario_id;
+
         const query = await pool.query(
-            `UPDATE usuarios SET password = ? WHERE usuario_id = ?;`, [passwordNuevo, id]
+            `UPDATE usuarios 
+            SET password = ?, exp_password = now()
+            WHERE usuario_id = ?;`, [passwordEncript, usuario_id]
         );
         res.send('ACTUALIZACION DE CONTRASEÑA EXITOSA');
     } catch (error) {
@@ -259,9 +263,36 @@ const obtenerGerencias = async (req,res) => {
     }
 
     // *************** OBTENER CARGOS ***************
+    const obtenerTipoDoc = async (req,res) => {
+        try{
+            const data = await pool.query(`SELECT tipo FROM tipos_documentos;`);
+            res.send(data[0]);
+        }
+        catch (error) {
+            return res.status(401).json({ message: 'ERROR' });
+        }
+    }
+
+    // *************** OBTENER REGIONES ***************
     const obtenerRegiones = async (req,res) => {
         try{
-            const data = await pool.query(`SELECT region FROM regiones`);
+            const [rows, fields] = await pool.query('SELECT region FROM regiones');
+            res.send(rows);
+        }
+        catch (error) {
+            return res.status(401).json({ message: 'ERROR' });
+        }
+    }
+
+    // *************** OBTENER LOCALIDADES ***************
+    const obtenerLocalidades = async (req,res) => {
+        const { region } = req.body;
+
+        const query = await pool.query(`SELECT region_id FROM regiones WHERE region = ?;`,[region]);
+        const region_id = query[0][0].region_id;
+
+        try{
+            const data = await pool.query(`SELECT localidad FROM localidades WHERE localidades.region_id = ?;`,[region_id]);
             res.send(data[0]);
         }
         catch (error) {
@@ -323,10 +354,27 @@ const obtenerGerencias = async (req,res) => {
             return res.status(401).json({ message: 'ERROR' });
         }
     }
+
     // *************** OBTENER CARGOS ***************
     const obtenerAcronimos = async (req,res) => {
+        const { elemento } = req.body;
+        let campo = null, tabla = null;
+
+        if(elemento === 'APLICACION'){
+            campo = 'apl_acronimo';
+            tabla = 'aplicaciones';
+        }
+        else if(elemento === 'BASE DE DATOS'){
+            campo = 'base_datos';
+            tabla = 'bases_datos';
+        }
+        else if(elemento === 'SERVIDOR'){
+            campo = 'servidor';
+            tabla = 'servidores';
+        }
+        
         try{
-            const data = await pool.query(`SELECT apl_acronimo FROM aplicaciones`);
+            const data = await pool.query(`SELECT ${campo} FROM ${tabla}`);
             res.send(data[0]);
         }
         catch (error) {
@@ -334,9 +382,94 @@ const obtenerGerencias = async (req,res) => {
         }
     }
 
+    // *************** OBTENER CANTIDAD ***************
+    const obtenerCantidad = async (req,res) => {
+        try{
+            const aplicaciones = await pool.query(`SELECT COUNT(*) as cantidad FROM aplicaciones`);
+            const bases_datos = await pool.query(`SELECT COUNT(*) as cantidad FROM bases_datos`);
+            const servidores = await pool.query(`SELECT COUNT(*) as cantidad FROM servidores`);
+
+            const respuesta = {
+                aplicaciones: aplicaciones[0][0].cantidad,
+                bases_datos: bases_datos[0][0].cantidad,
+                servidores: servidores[0][0].cantidad,
+            }
+
+            res.send(respuesta);
+        }
+        catch (error) {
+            return res.status(401).json({ message: 'ERROR' });
+        }
+    }
+
+    // *************** OBTENER CANTIDAD POR REGIONES ***************
+    const obtenerCantidadRegiones = async (req,res) => {
+        const { categoria,orden } = req.body;
+
+        try{
+            let cantidad = {};
+            let clave = {};
+
+            if(categoria === 'region'){
+                const [rows] = await pool.query(`SELECT COUNT(*) as cantidad FROM regiones`);
+                const regiones = rows[0].cantidad;
+    
+                for (let i = 1; i <= regiones; i++) {
+                    const [rows] = await pool.query(`SELECT COUNT(*) as cantidad FROM aplicaciones WHERE apl_region = ?;`, [i]);
+                    cantidad[`region${i}`] = rows[0].cantidad;
+                }
+            }
+            else if(categoria ===  'prioridad'){
+                const [rows] = await pool.query(`SELECT COUNT(*) as cantidad FROM prioridades`);
+                const prioridades = rows[0].cantidad;
+    
+                for (let i = 1; i <= prioridades; i++) {
+                    const [rows] = await pool.query(`SELECT COUNT(*) as cantidad FROM aplicaciones WHERE apl_prioridad = ?;`, [i]);
+                    cantidad[`prioridad${i}`] = rows[0].cantidad;
+                }
+            }
+            else if(categoria ===  'estatus'){
+                const [rows] = await pool.query(`SELECT COUNT(*) as cantidad FROM estatus`);
+                const estatus = rows[0].cantidad;
+    
+                for (let i = 1; i <= estatus; i++) {
+                    const [rows] = await pool.query(`SELECT COUNT(*) as cantidad FROM aplicaciones WHERE apl_estatus = ?;`, [i]);
+                    cantidad[`estatus${i}`] = rows[0].cantidad;
+                }
+            }
+            else if(categoria ===  'plataforma'){
+                const [rows] = await pool.query(`SELECT COUNT(*) as cantidad FROM plataformas`);
+                const plataformas = rows[0].cantidad;
+    
+                for (let i = 1; i <= plataformas; i++) {
+                    const [rows] = await pool.query(`SELECT COUNT(*) as cantidad FROM aplicacion_plataforma WHERE plataforma_id = ?;`, [i]);
+                    cantidad[`plataforma${i}`] = rows[0].cantidad;
+                }
+            }
+            else if(categoria ===  'modificacion'){
+                for (let i = 1; i <= 12; i++) {
+                    const mes = `0${i}`;
+                    const [rows] = await pool.query(
+                        `SELECT COUNT(*) as cantidad FROM aplicaciones WHERE DATE_FORMAT(apl_fecha_actualizacion,'%m') = ?;`,
+                        [mes]);
+                    cantidad[`modificacion${i}`] = rows[0].cantidad;
+                }
+            }
+
+            const respuesta = {
+                cantidad: cantidad,
+                clave: categoria,
+            }
+
+            res.send(respuesta);
+        }
+        catch (error) {
+            return res.status(401).json({ message: 'ERROR' });
+        }
+    }
 
 module.exports = { obtenerUsuarios, cambiarPermisos, cambiarPassword, obtenerPorBusqueda, obtenerRoles, 
     obtenerGerencias, obtenerCargos, obtenerCustodios, obtenerLenguajes, obtenerPlataformas, obtenerBasesDatos,
     obtenerServidores, obtenerEstatus, obtenerAlcance, obtenerFrecuencias, obtenerRegiones, obtenerTipos,
     obtenerMane, obtenerAmbientes,obtenerMarcas,obtenerSistemas, eliminarUsuario, obtenerLenguajesTabla, 
-    obtenerFrameworksTabla, obtenerAcronimos };
+    obtenerFrameworksTabla, obtenerAcronimos, obtenerLocalidades,obtenerCantidad, obtenerCantidadRegiones,obtenerTipoDoc };

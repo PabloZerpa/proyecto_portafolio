@@ -80,7 +80,6 @@ const obtenerBusqueda = async (req,res) => {
 // *********************************** OBTENER FALLAS ***********************************
 const registrarCustodio = async (req,res) => {
     try {
-        const { id } = req.params;
         const { nombre,apellido,indicador,cedula,telefono,cargo,gerencia,region,localidad,usuario_registro } = req.body;
         
         const query = await pool.query(`SELECT custodio_id FROM custodios WHERE cus_indicador = ?`, [indicador]); 
@@ -91,13 +90,17 @@ const registrarCustodio = async (req,res) => {
             return res.status(401).json({ message: 'PERSONA YA REGISTRADA' });
         }
         else{
-            const data = await pool.query(`
+            const data = await pool.query(` 
                 INSERT INTO custodios
                     (cus_nombre,cus_apellido,cus_indicador,cus_cedula,cus_cargo,
-                        cus_gerencia,cus_region,cus_localidad)
+                    cus_gerencia,cus_region,cus_localidad,cus_usuario_registro,cus_usuario_actualizo)
                 VALUES
-                    (?,?,?,?,?,?,?,?);`, 
-                [nombre,apellido,indicador,cedula,cargo,gerencia,region,localidad]);
+                    (?,?,?,?,?,?,
+                    (SELECT region_id FROM regiones WHERE region = ?),
+                    (SELECT localidad_id FROM localidades WHERE localidad = ?),
+                    (SELECT usuario_id FROM usuarios WHERE indicador = ?),
+                    (SELECT usuario_id FROM usuarios WHERE indicador = ?));`, 
+                [nombre,apellido,indicador,cedula,cargo,gerencia,region,localidad,usuario_registro,usuario_registro]);
 
             const buscarcustodio = await pool.query(
                 `SELECT custodio_id FROM custodios WHERE cus_indicador = ?`, [indicador]);
@@ -105,9 +108,10 @@ const registrarCustodio = async (req,res) => {
 
             const datos_telefono = await pool.query( 
                 `INSERT INTO telefonos (custodio_id,telefono) VALUES (?,?)`, [custodio_id,telefono] );
-        }
 
-        res.json('custodio REGISTRADO CORRECTAMENTE');
+            res.send(`${custodio_id}`);
+        }
+        
 
     } catch (error) {
         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
@@ -128,10 +132,7 @@ const eliminarCustodio = async (req,res) => {
 // *********************************** ACTUALIZAR REGISTRO ***********************************
 const actualizarCustodio = async (req,res) => {
     const { id } = req.params;
-    const { nombre, apellido, region, localidad, gerencia, cargo, telefono } = req.body;
-
-    console.log('aqui');
-    console.log(id, nombre, apellido, region, localidad, gerencia, cargo, telefono);
+    const { nombre, apellido, region, localidad, gerencia, cargo, telefono, usuario_actualizo } = req.body;
     
     try {
         const query = await pool.query(`
@@ -143,9 +144,11 @@ const actualizarCustodio = async (req,res) => {
                 cus_region = (SELECT region_id FROM regiones WHERE region = ?),
                 cus_localidad = (SELECT localidad_id FROM localidades WHERE localidad = ?),
                 cus_gerencia = (SELECT gerencia_id FROM gerencias WHERE gerencia = ?),
-                cus_cargo = (SELECT cargo_id FROM cargos WHERE cargo = ?) 
+                cus_cargo = (SELECT cargo_id FROM cargos WHERE cargo = ?),
+                cus_usuario_actualizo = (SELECT usuario_id FROM usuarios WHERE indicador = ?),
+                cus_fecha_actualizacion = now()
             WHERE 
-                custodio_id = ?;`, [nombre, apellido, region, localidad, gerencia, cargo, id]
+                custodio_id = ?;`, [nombre, apellido, region, localidad, gerencia, cargo, usuario_actualizo, id]
         );
 
         const query2 = await pool.query( 
@@ -187,23 +190,40 @@ const aplicacion = async (req,res) => {
     try {
         const { id } = req.params;
 
-        const data = await pool.query(`
+        const data1 = await pool.query(`
             SELECT 
                 aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_descripcion,estatus,
                 prioridad,apl_critico,alcance,apl_codigo_fuente,
                 apl_version,apl_direccion,apl_cantidad_usuarios,region
             FROM aplicaciones
-                LEFT JOIN aplicacion_basedatos ON aplicaciones.aplicacion_id = aplicacion_basedatos.aplicacion_id
-                LEFT JOIN bases_datos ON bases_datos.base_datos_id = aplicacion_basedatos.base_datos_id
-
+                LEFT JOIN custodios_funcionales ON custodios_funcionales.aplicacion_id = aplicaciones.aplicacion_id
+                LEFT JOIN custodios ON custodios_funcionales.custodio_id = custodios.custodio_id
                 LEFT JOIN estatus ON aplicaciones.apl_estatus = estatus.estatus_id
                 LEFT JOIN prioridades ON aplicaciones.apl_prioridad = prioridades.prioridad_id
                 LEFT JOIN alcances ON aplicaciones.apl_alcance = alcances.alcance_id
                 LEFT JOIN regiones ON aplicaciones.apl_region = regiones.region_id
-            WHERE custodios.custodio_id = ?;`, 
-            [id]);
+            WHERE custodios.custodio_id = ?;`, [id]);
 
-        res.send(data[0]);
+        const data2 = await pool.query(`
+            SELECT 
+                aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_descripcion,estatus,
+                prioridad,apl_critico,alcance,apl_codigo_fuente,
+                apl_version,apl_direccion,apl_cantidad_usuarios,region
+            FROM aplicaciones
+                LEFT JOIN custodios_tecnicos ON custodios_tecnicos.aplicacion_id = aplicaciones.aplicacion_id
+                LEFT JOIN custodios ON custodios_tecnicos.custodio_id = custodios.custodio_id
+                LEFT JOIN estatus ON aplicaciones.apl_estatus = estatus.estatus_id
+                LEFT JOIN prioridades ON aplicaciones.apl_prioridad = prioridades.prioridad_id
+                LEFT JOIN alcances ON aplicaciones.apl_alcance = alcances.alcance_id
+                LEFT JOIN regiones ON aplicaciones.apl_region = regiones.region_id
+            WHERE custodios.custodio_id = ?;`, [id]);
+
+        const respuesta = {
+            aplicacionFuncional: data1[0],
+            aplicacionTecnico: data2[0],
+        };
+
+        res.send(respuesta);
 
     } catch (error) {
         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });

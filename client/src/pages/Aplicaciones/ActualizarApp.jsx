@@ -41,6 +41,7 @@ function ActualizarApp() {
     const [alcance, setAlcance] = useState('');
     const [plataformas, setPlataformas] = useState('');
     const [frecuencia, setFrecu] = useState('');
+    const [documentos, setDoc] = useState('');
     const [regiones, setRegiones] = useState('');
 
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
@@ -50,7 +51,7 @@ function ActualizarApp() {
             if(Autorizacion.obtenerUsuario().rol === 'admin'){
                 await Aplicacion.actualizarDatos(id, datos, tableDataLenguaje, tableDataBase, tableDataServidor); 
                 Notificacion('ACTUALIZACION EXITOSA', 'success');
-                //navigate("/dashboard");
+                navigate(`/aplicaciones/${id}`);
             }
         } 
         catch (error) { 
@@ -60,10 +61,12 @@ function ActualizarApp() {
 
     // FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS
     const setValores = (e) => {
-        if(e.target.value === 'TODAS')
-            setDatos({ ...datos, [e.target.name] : null });
+        const valor = e.target.value.toUpperCase();
+
+        if(e.target.name === 'apl_direccion' || e.target.name === 'doc_direccion')
+            setDatos({ ...datos, [e.target.name] : e.target.value.toLowerCase() });
         else
-            setDatos({ ...datos, [e.target.name] : e.target.value });
+            setDatos({ ...datos, [e.target.name] : valor });
     }
 
     // -------------------- FUNCION Y VARIABLES PARA LA SELECCION DE BASES DE DATOS --------------------
@@ -215,6 +218,7 @@ function ActualizarApp() {
         setEstatus(await Opciones('estatus'));
         setAlcance(await Opciones('alcance'));
         setFrecu(await Opciones('frecuencias'));
+        setDoc(await Opciones('documentos'));
         setRegiones(await Opciones('regiones')); 
     }
 
@@ -286,16 +290,13 @@ function ActualizarApp() {
             if(Autorizacion.obtenerUsuario().rol === 'admin'){
                 await Aplicacion.eliminar(id); 
                 Notificacion('USUARIO ELIMINADO EXITOSAMENTE', 'success');
-                navegar('/');
+                navegar(`/aplicaciones/`);
             }
           }
           catch (error) { 
             Notificacion(error.response.data.message, 'error');
           }
     }
-
-    if(Autorizacion.obtenerUsuario().rol !== 'admin') 
-        return <Navigate to='/' />
 
     if(load){
         return <BiLoaderAlt className='text-6xl text-blue-500 animate-spin' />
@@ -353,7 +354,7 @@ function ActualizarApp() {
                     <div className="grid grid-cols-2 space-x-4">
                         {/* --------------- INFORMACION BASICA --------------- */}
                         <Input campo='Acronimo' name='apl_acronimo' required={true} propiedad={general.apl_acronimo} manejador={setValores} />
-                        <Select campo='Estatus' name='apl_estatus' required={true} opciones={estatus ? estatus : ['SELECCIONE']} propiedad={general.estatus} manejador={setValores}/>
+                        <Select campo='Estatus' name='apl_estatus' required={true} byId={false} opciones={estatus ? estatus : ['SELECCIONE']} propiedad={general.estatus} manejador={setValores}/>
                     </div>
 
                     <TextArea campo='Nombre' name='apl_nombre' required={true} propiedad={general.apl_nombre} manejador={setValores} />
@@ -361,11 +362,11 @@ function ActualizarApp() {
 
                     <div className="relative grid grid-cols-2 space-x-4 mb-0">
                         <Input campo='Version' name='apl_version' required={true} propiedad={general.apl_version} manejador={setValores} />
-                        <Select campo='Prioridad' name='apl_prioridad' required={true} propiedad={general.prioridad} opciones={['SELECCIONE','ALTA','MEDIA','BAJA',]} manejador={setValores} />
-                        <Select campo='Alcance' name='apl_alcance' required={true} propiedad={general.alcance} opciones={alcance ? alcance : ['SELECCIONE']} manejador={setValores} />
+                        <Select campo='Prioridad' name='apl_prioridad' required={true} byId={false} opciones={['SELECCIONE','ALTA','MEDIA','BAJA',]} propiedad={general.prioridad} manejador={setValores} />
+                        <Select campo='Alcance' name='apl_alcance' required={true} byId={false} opciones={alcance ? alcance : ['SELECCIONE']} propiedad={general.alcance} manejador={setValores} />
                         <Input campo='Direccion' name='apl_direccion' required={true} propiedad={general.apl_direccion} manejador={setValores} />
                         <Input campo='N° Usuarios' name='apl_cantidad_usuarios' required={true} propiedad={general.apl_cantidad_usuarios} manejador={setValores} />
-                        <Select campo='Region' name='apl_region' required={true} propiedad={general.region} opciones={regiones ? regiones : ['SELECCIONE']} manejador={setValores} />
+                        <Select campo='Region' name='apl_region' required={true} opciones={regiones ? regiones : ['SELECCIONE']} propiedad={general.region} manejador={setValores} />
                         <Radio label='Critico' name='apl_critico' required={true} opciones={['SI','NO']} manejador={setValores} />
                         <Radio label='Codigo Fuente' name='apl_codigo_fuente' required={true} opciones={['SI', 'NO']} manejador={setValores} />
                     </div>
@@ -446,7 +447,7 @@ function ActualizarApp() {
                     <div className="grid grid-cols-2 space-x-4">
                         <Input campo='Descripcion' name='doc_descripcion' propiedad={datos.doc_descripcion} manejador={setValores} />
                         <Input campo='Direccion' name='doc_direccion' propiedad={datos.doc_direccion} manejador={setValores} />
-                        <Input campo='Tipo de Doc' name='doc_tipo' propiedad={datos.doc_tipo} manejador={setValores} />
+                        <Select campo='Tipo de Doc' name='doc_tipo' propiedad={datos.doc_tipo} required={true} opciones={documentos ? documentos : ['SELECCIONAR']} manejador={setValores} />
                     </div>
 
                     {/* --------------- MANTENIMIENTO --------------- */}
@@ -458,7 +459,7 @@ function ActualizarApp() {
                     </div>
                 </div>
 
-                <div className="flex gap-2 md:gap-12">
+                <div className="flex space-x-2 md:space-x-12">
                     <Button tipo='button' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
                     <Button tipo='submit' width={32}>Actualizar</Button>
                     <Button tipo='button' color='red' width={32} manejador={(e) => {

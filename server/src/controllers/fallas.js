@@ -9,10 +9,10 @@ const fallas = async (req,res) => {
 
         const data = await pool.query(`
             SELECT 
-                falla_id,fal_clase,fal_descripcion,fal_solucion,fal_impacto
-            FROM aplicaciones
-                JOIN fallas on aplicaciones.aplicacion_id = fallas.aplicacion_id
-            WHERE aplicaciones.aplicacion_id = ?;`, 
+                falla_id,fal_nombre,elemento,fal_descripcion,fal_solucion,fal_impacto
+            FROM fallas
+                LEFT JOIN elementos ON elementos.elemento_id = fallas.fal_elemento
+            WHERE fallas.falla_id = ?;`, 
             [id]); 
             
         const respuestas = {
@@ -29,19 +29,18 @@ const fallas = async (req,res) => {
 const registrarFalla = async (req,res) => {
     try {
         
-        const { aplicacion,clase,impacto,descripcion,solucion, usuario } = req.body;
-        const x = await pool.query(`SELECT usuario_id FROM usuarios WHERE indicador = ?`, [usuario]); 
-        const usuario_id = x[0][0].usuario_id;
-
-        const query = await pool.query(`SELECT aplicacion_id FROM aplicaciones WHERE apl_acronimo = ?`, [aplicacion]); 
-        const aplicacion_id = query[0][0].aplicacion_id;
+        const { nombre,elemento,impacto,descripcion,solucion,usuario_creador } = req.body;
 
         const data = await pool.query(`
             INSERT INTO fallas
-                (aplicacion_id,fal_clase,fal_descripcion,fal_solucion,fal_impacto,fal_usuario_creador)
+                (fal_nombre,fal_elemento,fal_descripcion,fal_solucion,fal_impacto,fal_usuario_creador,fal_usuario_actualizo)
             VALUES
-                (?,?,?,?,?,?);`, 
-            [aplicacion_id,clase,descripcion,solucion,impacto, usuario_id]); 
+                (?,
+                (SELECT elemento_id FROM elementos WHERE elemento = ?),
+                ?,?,?,
+                (SELECT usuario_id FROM usuarios WHERE indicador = ?),
+                (SELECT usuario_id FROM usuarios WHERE indicador = ?));`, 
+            [nombre,elemento,descripcion,solucion,impacto,usuario_creador,usuario_creador]); 
                 
         res.send('FALLA REGISTRADA CORRECTAMENTE');
     } catch (error) {
@@ -54,26 +53,36 @@ const registrarFalla = async (req,res) => {
 const buscarFalla = async (req,res) => {
     const { term } = req.body;
     const termino = `%${term}%`;
+    let data = null;
 
     if (term === undefined || null)
         return res.status(404).json({ message: "Error al recibir consulta" });
 
     try{
-        const data = await pool.query(`
-            SELECT falla_id, apl_acronimo, apl_nombre, fal_clase, fal_impacto, fal_descripcion, fal_solucion
-            FROM fallas 
-                JOIN aplicaciones ON aplicaciones.aplicacion_id = fallas.aplicacion_id
-            WHERE 
-                aplicaciones.apl_acronimo LIKE ? OR
-                aplicaciones.apl_nombre LIKE ? OR
-                falla_id LIKE ? OR 
-                fal_clase LIKE ? OR 
-                fal_impacto LIKE ? OR 
-                fal_descripcion LIKE ? OR 
-                fal_solucion LIKE ?
-            ORDER BY falla_id ASC;`,
-            [termino,termino,termino,termino,termino,termino,termino]
-        );
+        if(term===''){
+            data = await pool.query(`
+                SELECT 
+                    falla_id, fal_nombre, elemento, fal_impacto, fal_descripcion, fal_solucion
+                FROM fallas
+                    LEFT JOIN elementos ON elementos.elemento_id = fallas.fal_elemento
+                ORDER BY falla_id ASC;`);
+        }
+        else{
+            data = await pool.query(`
+                SELECT falla_id, fal_nombre, elemento, fal_impacto, fal_descripcion, fal_solucion
+                FROM fallas
+                    LEFT JOIN elementos ON elementos.elemento_id = fallas.fal_elemento
+                WHERE 
+                    falla_id LIKE ? OR 
+                    fal_nombre LIKE ? OR 
+                    elemento LIKE ? OR 
+                    fal_impacto LIKE ? OR 
+                    fal_descripcion LIKE ? OR 
+                    fal_solucion LIKE ?
+                ORDER BY falla_id ASC;`,
+                [termino,termino,termino,termino,termino,termino,termino]
+            );
+        }
 
         res.send(data[0]);
     }
@@ -86,18 +95,17 @@ const buscarFalla = async (req,res) => {
 // *************** CAMBIAR PERMISOS ***************
 const actualizarFalla = async (req,res) => {
     const { id } = req.params;
-    const { clase, impacto, descripcion, solucion } = req.body;
+    const { impacto, descripcion, solucion } = req.body;
    
     try {
         const query = await pool.query(`
         UPDATE 
             fallas 
-        SET 
-            fal_clase = ?, 
+        SET  
             fal_impacto = ?,
             fal_descripcion = ?, 
             fal_solucion = ?
-        WHERE falla_id = ?`, [clase, impacto, descripcion, solucion, id]
+        WHERE falla_id = ?`, [impacto, descripcion, solucion, id]
         );
         
         res.send('ACTUALIZACION EXITOSA');
@@ -106,5 +114,15 @@ const actualizarFalla = async (req,res) => {
     }
  }
 
+ // *************** ELIMINAR FALLA ***************
+ const eliminarFalla = async (req,res) => {
+    try {
+        const { id } = req.params;
+        const [result] = await pool.query('DELETE FROM fallas WHERE falla_id = ?', [id]);
+        res.sendStatus(204);
+    } catch (error) {
+        console.log("ERROR_DELETE_ITEMS");
+    }
+};
 
-module.exports = { fallas,registrarFalla,buscarFalla,actualizarFalla, };
+module.exports = { fallas,registrarFalla,buscarFalla,actualizarFalla,eliminarFalla };

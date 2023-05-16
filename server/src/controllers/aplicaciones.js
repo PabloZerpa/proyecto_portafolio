@@ -17,13 +17,16 @@ const query = `
     SELECT 
         aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_version,
         alcance,estatus,prioridad,apl_direccion,region,
-        apl_codigo_fuente,apl_critico,man_frecuencia
+        apl_codigo_fuente,apl_critico,frecuencia,plataforma
     FROM aplicaciones
         LEFT JOIN estatus ON aplicaciones.apl_estatus = estatus.estatus_id
         LEFT JOIN prioridades ON aplicaciones.apl_prioridad = prioridades.prioridad_id
         LEFT JOIN alcances ON aplicaciones.apl_alcance = alcances.alcance_id
         LEFT JOIN regiones ON aplicaciones.apl_region = regiones.region_id
         LEFT JOIN mantenimientos ON aplicaciones.aplicacion_id = mantenimientos.aplicacion_id
+        LEFT JOIN frecuencias ON frecuencias.frecuencia_id = mantenimientos.man_frecuencia
+        LEFT JOIN aplicacion_plataforma ON aplicaciones.aplicacion_id = aplicacion_plataforma.aplicacion_id
+        LEFT JOIN plataformas ON aplicacion_plataforma.plataforma_id = plataformas.plataforma_id
 `;
 
 
@@ -85,7 +88,7 @@ const registrarAplicacion = async (req,res) => {
             await insertarMantenimiento(aplicacion_id,man_frecuencia,man_horas_prom,man_horas_anuales);          
             await insertarDocumentacion(aplicacion_id,doc_descripcion,doc_direccion,doc_tipo);
 
-            res.send('CREACION EXITOSA');
+            res.send(`${aplicacion_id}`);
         }
     } catch (error) {
         console.log("ERROR_CREATE_ITEMS");
@@ -203,7 +206,9 @@ const actualizarAplicacion = async (req,res) => {
                     UPDATE documentaciones 
                         JOIN aplicaciones ON aplicaciones.aplicacion_id = documentaciones.aplicacion_id
                     SET 
-                        doc_descripcion = ?, doc_direccion = ?, doc_tipo = ?, doc_fecha_actualizacion = now(), 
+                        doc_descripcion = ?, doc_direccion = ?, 
+                        doc_tipo = (SELECT tipo_id FROM tipos_documentos WHERE tipo = ?), 
+                        doc_fecha_actualizacion = now(), 
                         doc_usuario_actualizo = (SELECT usuario_id FROM usuarios WHERE indicador = ?)
                     WHERE aplicaciones.aplicacion_id = ?;`,
                     [doc_descripcion,doc_direccion,doc_tipo,usuario_actualizo,id]
@@ -380,10 +385,11 @@ const obtenerDato = async (req,res) => {
 const obtenerBusqueda = async (req,res) => {
     try {
         const { term,estatus,prioridad,region,alcance,mantenimiento,
-                critico,codigo,count,order,pagina } = req.body;
+                critico,codigo,count,order,pagina,plataforma,cantidad } = req.body;
         const termino = '%' + term + '%';
+        const maxCantidad = parseInt(cantidad) + 9;
         let data;
-
+        
         if (term === undefined || null)
             return res.status(404).json({ message: "Error al recibir consulta" });
         
@@ -395,6 +401,25 @@ const obtenerBusqueda = async (req,res) => {
                     apl_nombre LIKE ? )
                     AND region LIKE ? ORDER BY aplicaciones.aplicacion_id ${order};`, 
             [termino,termino,termino,region]);
+        }
+        else if(plataforma){
+            data = await pool.query(
+                `${query}
+                WHERE (aplicaciones.aplicacion_id LIKE ? OR 
+                    apl_acronimo LIKE ? OR 
+                    apl_nombre LIKE ? )
+                    AND plataforma LIKE ? ORDER BY aplicaciones.aplicacion_id ${order};`, 
+            [termino,termino,termino,plataforma]);
+        }
+        else if(cantidad){
+            data = await pool.query(
+                `${query}
+                WHERE (aplicaciones.aplicacion_id LIKE ? OR 
+                    apl_acronimo LIKE ? OR 
+                    apl_nombre LIKE ? )
+                    AND (apl_cantidad_usuarios > ? AND apl_cantidad_usuarios < ?) 
+                    ORDER BY aplicaciones.aplicacion_id ${order};`, 
+            [termino,termino,termino,cantidad,maxCantidad]);
         }
         else if(alcance){
             data = await pool.query(
@@ -411,7 +436,7 @@ const obtenerBusqueda = async (req,res) => {
                 WHERE (aplicaciones.aplicacion_id LIKE ? OR 
                     apl_acronimo LIKE ? OR 
                     apl_nombre LIKE ? )
-                    AND man_frecuencia LIKE ? ORDER BY aplicaciones.aplicacion_id ${order};`, 
+                    AND frecuencia LIKE ? ORDER BY aplicaciones.aplicacion_id ${order};`, 
             [termino,termino,termino,mantenimiento]);
         }
         else if(critico){
@@ -488,90 +513,6 @@ const eliminarAplicacion = async (req,res) => {
         console.log("ERROR_DELETE_ITEMS");
     }
 };
-
-
-// // *********************************** OBTENER DATOS PARA GENERAR GRAFICOS ***********************************
-// const obtenerPorGraficos = async (req,res) => {
-//     try { 
-//         const opcionRegion = ['CARABOBO NORTE', 'CENTRO', 'CENTRO SUR', 'CORPORATIVO','ORIENTE NORTE', 
-//         'ORIENTE SUR', 'OCCIDENTE','ANDES',''];
-//         const { categoria, orden } = req.body;
-//         let regiones = '';
-//         let cantidad = [];
-
-//         console.log(categoria,orden);
-
-//         if (categoria === undefined || null)
-//             return res.status(404).json({ message: "Error al recibir consulta" });
-
-//         const query = await pool.query( `SELECT ${categoria} FROM apps`);
-//         regiones = query[0]; 
-//         console.log(regiones);
-//         console.log(regiones.length);
-
-//         //          (POSICION_ARREGLO/CANTIDAD_TOTAL)*100
-//         // console.log(regiones[5].region);
-//         // const data = await pool.query( `SELECT ${categoria} FROM apps WHERE region = ?`, [regiones[5].region]);
-//         // console.log(data[0]);
-//         // console.log(data[0].length);
-//         // cantidad.orienteNorte = data[0].length
-//         // //cantidad.push(data[0].length)
-//         // console.log(cantidad);
-
-//         for(let i=0; i < opcionRegion.length; i++){
-//             console.log(opcionRegion[i]);
-
-//             const data = await pool.query( `SELECT ${categoria} FROM apps WHERE region = ?`, [opcionRegion[i]]);
-
-//             console.log(data[0]);
-//             console.log(data[0].length);
-//             cantidad.push(data[0].length)
-//             console.log(cantidad); 
-//         }
-
-//         // if (data.affectedRows === 0)
-//         //     return res.status(404).json({ message: "Sin coincidencias" });
-
-//         // res.json(data[0]);
-        
-//     } catch (error) {
-//         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
-//     }
-// };
-
-// // *********************************** OBTENER CANTIDAD TOTAL ***********************************
-// const obtenerCantidadTotal = async (req,res) => {
-//     try {
-//         const data = await pool.query(`
-//             SELECT 
-//                 COUNT(*)
-//             FROM aplicaciones
-//                 JOIN aplicacion_plataforma
-//                 ON aplicaciones.aplicacion_id = aplicacion_plataforma.aplicacion_id
-//                 JOIN plataformas
-//                 ON aplicacion_plataforma.plataforma_id = plataformas.plataforma_id
-//                 inner join aplicacion_lenguaje
-//                 on aplicaciones.aplicacion_id = aplicacion_lenguaje.aplicacion_id
-//                 inner join lenguajes
-//                 on aplicacion_lenguaje.lenguaje_id = lenguajes.lenguaje_id
-//                 inner join aplicacion_basedatos
-//                 on aplicaciones.aplicacion_id = aplicacion_basedatos.aplicacion_id
-//                 inner join bases_datos
-//                 on aplicacion_basedatos.base_datos_id = bases_datos.base_datos_id
-//                 join servidores
-//                 on aplicaciones.aplicacion_id = servidores.servidor_id
-//                 inner join regiones
-//                 on aplicaciones.aplicacion_id = regiones.region_id
-//                 inner join custodios_funcionales
-//                 on aplicaciones.aplicacion_id = custodios_funcionales.aplicacion_id
-//                 inner join custodios
-//                 on custodios.custodio_id = custodios_funcionales.custodio_id
-//             `);
-//         res.send(data[0]);
-//     } catch (error) {
-//         return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
-//     }
-// };
 
 
 
@@ -830,9 +771,10 @@ const documentacion = async (req,res) => {
 
         const data = await pool.query(`
             SELECT 
-                doc_descripcion,doc_direccion,doc_tipo,doc_fecha_actualizacion
+                doc_descripcion,doc_direccion,tipo as doc_tipo,doc_fecha_actualizacion
             FROM aplicaciones
                 inner join documentaciones on aplicaciones.aplicacion_id = documentaciones.aplicacion_id
+                inner join tipos_documentos on documentaciones.doc_tipo = tipos_documentos.tipo_id
             WHERE aplicaciones.aplicacion_id = ?;`, 
             [id]); 
             

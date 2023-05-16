@@ -70,11 +70,11 @@ class Aplicacion {
 
     // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
     async obtenerPorBusqueda(term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
-        critico,codigo,count,order,pagina) {
+        critico,codigo,count,order,cantidad) {
         try {
             return axios.post(`${baseUrl}aplicaciones/busqueda`, 
                 {term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
-                critico,codigo,count,order,pagina}, { headers: authHeader() });
+                critico,codigo,count,order,cantidad}, { headers: authHeader() });
         } catch (error) {
             console.log('Error al obtener dato');
             
@@ -91,30 +91,9 @@ class Aplicacion {
         }
     }
 
-
-    // // =============== OBTIENE EL DATO DE UNA APP POR SU ID ===============
-    // async obtenerCantidadTotal() {
-    //     try {
-    //         const respuesta = await axios.get(`${baseUrl}aplicaciones/total`, { headers: authHeader() });
-    //         return respuesta;
-    //     } catch (error) {
-    //         console.log('Error al obtener dato'); 
-            
-    //     }
-    // }  
-
-    // // =============== OBTIENE LOS DATOS PARA GENERAR LOS GRAFICOS ===============
-    // async datosGraficos(categoria,orden) {
-    //     try {
-    //         return axios.post(`${baseUrl}aplicaciones/grafico`, {categoria,orden}, { headers: authHeader() });
-    //     } catch (error) {
-    //         console.log('Error al obtener dato');
-            
-    //     }
-    // }
     
 
-
+    
     // =============== OBTIENE TOTAL LLAMANDO A LAS OTRAS FUNCIONES ===============
     async obtenerTodo(id) { 
         try { 

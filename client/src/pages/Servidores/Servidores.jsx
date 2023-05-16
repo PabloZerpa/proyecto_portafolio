@@ -18,12 +18,12 @@ const columns = [
                 <FaEye className="text-blue-500 text-lg" />
             </Link>
             
-            {Autorizacion.obtenerUsuario.rol !== 'user' ? 
-                <Link to={row ? `/servidor/actualizacion/${row.servidor_id}` : `/dashboard`} >
-                <FaEdit className="text-blue-500 text-lg" />
-                </Link>
-            : 
+            {Autorizacion.obtenerUsuario().rol === 'user' ? 
                 null
+            : 
+                <Link to={row ? `/servidor/actualizacion/${row.servidor_id}` : `/dashboard`} >
+                    <FaEdit className="text-blue-500 text-lg" />
+                </Link>
             }
         </div>,
     },
@@ -31,69 +31,77 @@ const columns = [
         name: 'ID',
         selector: row => row.servidor_id,
         sortable: true,
+        width: '60px',
         left: true,
-        width: '60px'
     },
     {
         name: 'Nombre',
         selector: row => row.servidor,
         sortable: true,
+        width: '150px',
         left: true
     },
     {
         name: 'Estatus',
         selector: row => row.estatus,
         sortable: true,
+        width: '150px',
         left: true
     },
     {
         name: 'Direccion',
         selector: row => row.ser_direccion,
         sortable: true,
+        width: '200px',
         left: true
     },
     {
         name: 'OS',
         selector: row => row.sistema,
         sortable: true,
+        width: '150px',
         left: true
     },
     {
       name: 'Modelo',
       selector: row => row.modelo,
       sortable: true,
+      width: '150px',
       left: true
     },
     {
       name: 'Marca',
       selector: row => row.marca,
       sortable: true,
+      width: '150px',
       left: true
     },
     {
         name: 'Region',
         selector: row => row.region,
         sortable: true,
+        width: '150px',
         left: true
       },
       {
         name: 'Localidad',
         selector: row => row.localidad,
         sortable: true,
+        width: '150px',
         left: true
       },
     {
         name: 'Ultima Actualizacion',
         selector: row => row.ser_fecha_actualizacion,
         sortable: true,
-        grow: 2,
+        width: '160px',
         left: true
     },
     {
       name: 'Por',
       selector: row => row.indicador,
       sortable: true,
-      grow: 1,
+      width: '100px',
       left: true
   },
 ];
@@ -130,8 +138,7 @@ function Servidores() {
         if(e.target.value === 'TODAS')
             setDatos({ ...datos, [e.target.name] : null })
         else
-            setDatos({ ...datos, [e.target.name] : e.target.value })
-            
+            setDatos({ ...datos, [e.target.name] : e.target.value })    
     }
 
     // FUNCION PARA BUSCAR DATOS EN LA DATABASE
@@ -178,7 +185,7 @@ function Servidores() {
 
                     <div className="border-solid">
                         <div className="grid grid-cols-2 md:grid-cols-4 space-x-4">
-                            <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={opcionEstatus} manejador={setValores} />
+                            <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={['SELECCIONE', 'TODAS', 'POR DETERMINAR', 'ACTIVO', 'INACTIVO']} manejador={setValores} />
                             <Select campo='Region' name='region' busqueda={true} byId={false} opciones={opcionRegion} manejador={setValores} />
                             <Select campo='Sistema' name='sistema' busqueda={true} byId={false} opciones={['SELECCIONE','TODAS','WINDOWS','RED HAT','DEBIAN','FEDORA','ARCH',]} manejador={setValores} />
                             <Select campo='Marca' name='marca' busqueda={true} byId={false} opciones={['SELECCIONE','TODAS','HP','VIT','LENOVO','ACER','ASUS']} manejador={setValores} />

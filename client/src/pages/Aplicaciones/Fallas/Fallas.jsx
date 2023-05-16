@@ -2,18 +2,21 @@
 import { useEffect, useState } from "react";
 import { Container, Button, Tabla } from "../../../components";
 import { useDebounce } from 'use-debounce';
-import { FaEdit, FaEye, FaSearch } from 'react-icons/fa';
+import { FaEdit, FaEye, FaSearch, FaTimesCircle } from 'react-icons/fa';
 import Falla from "../../../services/falla.service";
 import { Link } from "react-router-dom";
+import Autorizacion from '../../../services/auth.service';
+import { Notificacion } from "../../../utils/Notificacion";
 import ActualizarFalla from "./ActualizarFalla";
 import VerFalla from "./VerFalla";
+import swal from "sweetalert";
 
 function Fallas() {
 
     // =================== VARIABLES PARA LA BUSQUEDA ===================
-    const [searchTerm, setSearchTerm] = useState("a");
+    const [datos, setDatos] = useState({terminoBusqueda: ''});
     const [resultados, setResultados] = useState('');
-    const [debounceValue] = useDebounce(searchTerm, 500);
+    const [debounceValue] = useDebounce(datos, 500);
 
     // =================== VARIABLES PARA LA EDICION ===================
     const [falla, setFalla] = useState("");
@@ -31,11 +34,17 @@ function Fallas() {
             setIsOpen2(!isOpen2);
     }
 
+    // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
+    const setValores = (e) => {
+        setDatos({ ...datos, [e.target.name] : e.target.value })    
+    }
+
 
     // FUNCION PARA BUSCAR DATOS EN LA DATABASE
     const onSearch = async (termino) => {
         try {
-            const datos = await Falla.obtenerFallaPorBusqueda(termino);
+            const { terminoBusqueda } = termino;
+            const datos = await Falla.obtenerFallaPorBusqueda(terminoBusqueda);
             setResultados(datos.data);
         } catch (error) { 
             console.log('ERROR AL BUSCAR DATOS') 
@@ -49,7 +58,21 @@ function Fallas() {
         else
             setResultados(null) 
         
-    }, [debounceValue, update]);
+    }, [debounceValue, update, datos]);
+
+    // =================== FUNCION PARA ELIMINAR USUARIO ===================
+  const eliminarFalla = async (row) => {
+    try {
+      if(Autorizacion.obtenerUsuario().rol === 'admin'){
+        await Falla.eliminarFalla(row.falla_id); 
+        onSearch(debounceValue);
+        Notificacion('USUARIO ELIMINADO EXITOSAMENTE', 'success');
+      }
+    }
+    catch (error) { 
+      Notificacion(error.response.data.message, 'error');
+    }
+  }
 
     const columnas = [
         {
@@ -61,56 +84,80 @@ function Fallas() {
                     onClick={(e) => habilitar(row, 'ver')}
                     className="text-blue-500 text-lg" 
                 />
-                <FaEdit
-                    onClick={(e) => habilitar(row, 'editar')}
-                    className="text-blue-500 text-lg" 
-                />
+                
+                {Autorizacion.obtenerUsuario().rol === 'user' ? 
+                    null
+                :
+                    <FaEdit
+                        onClick={(e) => habilitar(row, 'editar')}
+                        className="text-blue-500 text-lg" 
+                    />
+                }
             </div>
         },
         {
             name: 'Falla ID',
             selector: row => row.falla_id,
             sortable: true,
+            width: "100px",
             left: true,
-            width: "60px"
-        },
-        {
-            name: 'Acronimo',
-            selector: row => row.apl_acronimo,
-            sortable: true,
-            left: true
         },
         {
             name: 'Nombre',
-            selector: row => row.apl_nombre,
+            selector: row => row.fal_nombre,
             sortable: true,
+            width: "150px",
             left: true
         },
         {
-            name: 'Clase',
-            selector: row => row.fal_clase,
+            name: 'Elemento',
+            selector: row => row.elemento,
             sortable: true,
+            width: "150px",
             left: true
         },
         {
             name: 'Impacto',
             selector: row => row.fal_impacto,
             sortable: true,
+            width: "100px",
             left: true
         },
         {
-            name: 'Descripcion',
-            selector: row => row.fal_descripcion,
-            sortable: true,
-            left: true
+            name: 'Remover',
+            button: true,
+            cell: row => 
+              <div>
+                <FaTimesCircle
+                    onClick={() => {
+                      swal({
+                        text: `¿Esta seguro de Eliminar a la falla numero ${row.falla_id}?`,
+                        icon: 'warning',
+                        buttons: {
+                          cancel: {
+                            text: "Cancel",
+                            value: false,
+                            visible: true,
+                            className: "bg-red-600 text-white outline-none border-none hover:bg-red-500",
+                          },
+                          confirm: {
+                            text: "Aceptar",
+                            value: true,
+                            visible: true,
+                            className: "bg-blue-600 text-white outline-none border-none hover:bg-blue-500",
+                          }
+                        },
+                      }).then((result) => {
+                        if (result)
+                          eliminarFalla(row);
+                      })
+                    }} 
+                    className="ml-3 text-red-500 text-lg cursor-pointer"
+                />
+              </div>,
+            center: true
         },
-        {
-            name: 'Solucion',
-            selector: row => row.fal_solucion,
-            sortable: true,
-            left: true
-        },
-      ];
+    ];
 
     // =================== FUNCION PARA MOSTRAR LOAD EN TABLA DE BUSQUEDA ===================
     const [pending, setPending] = useState(true);
@@ -155,22 +202,28 @@ function Fallas() {
                 <div className="relative w-96">
                     <input 
                         type="search"
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        name='terminoBusqueda'
+                        onChange={(e) => setValores(e)}
                         className="block p-2 pr-12 w-96 text-xs text-black bg-white rounded border-none outline-none" placeholder="Buscar" />
                     <button 
                         type="button" 
+                        onClick={(e) => {e.preventDefault(); onSearch(debounceValue)}}
                         className="absolute top-0 right-0 p-2 h-8 text-xs font-medium text-white bg-blue-600 rounded-r border border-blue-700 hover:bg-blue-700">          
                         <FaSearch />
                     </button>
                 </div>
-
-                <Link to={`/aplicaciones/fallas/registro`}><Button>Registrar +</Button></Link>
+                
+                { Autorizacion.obtenerUsuario().rol === 'user' ?
+                    null
+                    :
+                    <Link to={`/aplicaciones/fallas/registro`}><Button>Registrar +</Button></Link>
+                }
 
             </form>
 
             {resultados ? (
                 <>
-                <div className="w-[480px] md:w-[720px] lg:w-[960px] px-8">
+                <div className="w-[480px] lg:w-[800px] px-8">
                     <Tabla columnas={columnas} datos={resultados} paginacion={true} pending={pending} />
                 </div>
                 </>

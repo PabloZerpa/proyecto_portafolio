@@ -20,12 +20,12 @@ const columns = [
                 <FaEye className="text-blue-500 text-lg" />
             </Link>
             
-            {Autorizacion.obtenerUsuario.rol !== 'user' ? 
-                <Link to={row ? `/basedatos/actualizacion/${row.base_datos_id}` : `/dashboard`} >
-                <FaEdit className="text-blue-500 text-lg" />
-                </Link>
-            : 
+            {Autorizacion.obtenerUsuario().rol === 'user' ? 
                 null
+            : 
+                <Link to={row ? `/basedatos/actualizacion/${row.base_datos_id}` : `/dashboard`} >
+                <   FaEdit className="text-blue-500 text-lg" />
+                </Link>
             }
         </div>,
     },
@@ -40,50 +40,56 @@ const columns = [
         name: 'Nombre',
         selector: row => row.base_datos,
         sortable: true,
+        width: "150px",
         left: true
     },
     {
         name: 'Estatus',
         selector: row => row.estatus,
         sortable: true,
+        width: "150px",
         left: true
     },
     {
         name: 'Tipo',
         selector: row => row.tipo,
         sortable: true,
+        width: "150px",
         left: true
     },
     {
         name: 'Manejador',
         selector: row => row.manejador,
         sortable: true,
+        width: "150px",
         left: true
     },
     {
         name: 'N° de Usuarios',
         selector: row => row.base_cantidad_usuarios,
         sortable: true,
+        width: "60px",
         left: true
     },
     {
         name: 'Ambiente',
         selector: row => row.ambiente,
         sortable: true,
+        width: "150px",
         left: true
     },
     {
         name: 'Ultima Actualizacion',
         selector: row => row.base_fecha_actualizacion,
         sortable: true,
-        grow: 2,
+        width: "160px",
         left: true
     },
     {
         name: 'Por',
         selector: row => row.indicador,
         sortable: true,
-        grow: 1,
+        width: "100px",
         left: true
     },
 ];
@@ -169,7 +175,7 @@ function BaseDatos() {
 
                     <div className="border-solid">
                         <div className="grid grid-cols-2 md:grid-cols-4 space-x-4">
-                            <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={opcionEstatus} manejador={setValores} />
+                            <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={['SELECCIONE', 'TODAS', 'POR DETERMINAR', 'ACTIVO', 'INACTIVO']} manejador={setValores} />
                             <Select campo='Tipo' name='tipo' busqueda={true} byId={false} opciones={opcionTipoBD} manejador={setValores} />
                             <Select campo='Manejador' name='manejador' busqueda={true} byId={false} opciones={opcionManejadores} manejador={setValores} />
                             <Select campo='Ambiente' name='ambiente' busqueda={true} byId={false} opciones={selectTipoAmbiente} manejador={setValores} />

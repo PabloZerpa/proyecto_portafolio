@@ -13,9 +13,13 @@ import { useDebounce } from "use-debounce";
 
 function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busqueda=false, selectDefault=0}) {
 
-    const [searchTerm, setSearchTerm] = useState(" ");
+    // =================== VARIABLES PARA LA BUSQUEDA ===================
     const [resultado, setResultado] = useState('');
-    const [debounceValue] = useDebounce(searchTerm, 500);
+    const [datos, setDatos] = useState({
+        terminoBusqueda: '',
+    }); 
+    const [debounceValue] = useDebounce(datos, 500);
+
     const [elementos, setElementos] = useState([0]);
 
     useEffect(() => {
@@ -25,16 +29,22 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
             setResultado(null);
 	}, [debounceValue]); 
 
+    // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
+    const setValores = (e) => {
+        setDatos({ ...datos, [e.target.name] : e.target.value })    
+    }
+
 
     const onSearch = async (value) => {
         try {
             let respuesta = null;
+            const { terminoBusqueda } = value;
 
             if(objetivo === 'base_datos'){
-                respuesta = await Base.obtenerBDPorBusqueda(value);
+                respuesta = await Base.obtenerBDPorBusqueda(terminoBusqueda);
             }
             else if(objetivo === 'servidor'){
-                respuesta = await Servidor.obtenerServidorPorBusqueda(value);
+                respuesta = await Servidor.obtenerServidorPorBusqueda(terminoBusqueda);
             }
             else if(objetivo === 'lenguaje'){
                 respuesta = await Usuario.obtenerOpcion('lenguajesTabla');
@@ -85,7 +95,9 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
                                 <div className="relative w-96">
                                     <input 
                                         type="search" 
-                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        name='terminoBusqueda'
+                                        // onChange={(e) => setSearchTerm(e.target.value)}
+                                        onChange={(e) => setValores(e)}
                                         className="block p-2 pr-12 w-96 text-sm text-black bg-white rounded border-none outline-none" placeholder="Buscar" />
                                     <button 
                                         type="submit" 

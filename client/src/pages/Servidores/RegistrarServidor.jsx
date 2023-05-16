@@ -3,11 +3,9 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { Button, Container, Input, Select, TextArea } from '../../components';
 import Autorizacion from '../../services/auth.service';
 import Servidor from '../../services/servidor.service';
+import Usuario from '../../services/usuario.service';
 import { useEffect, useState } from 'react';
 import { Notificacion } from '../../utils/Notificacion';
-import { localidadCentro, localidadCentroOccidente, localidadCentroSur, 
-    localidadFaja, localidadMetropolitana, localidadOccidente, localidadOrienteNorte, 
-    localidadOrienteSur, opcionLocalidad } from '../../services/campos.service';
 import Opciones from '../../utils/Opciones';
 
 function RegistrarServidor() {
@@ -19,20 +17,18 @@ function RegistrarServidor() {
     // ---------- ESTADOS ----------
     const [datos, setDatos] = useState({
         usuario_registro: Autorizacion.obtenerUsuario().indicador,
-        usuario_actualizo: Autorizacion.obtenerUsuario().indicador,
     });
 
     const [marcas, setMarcas] = useState('');
     const [sistemas, setSistemas] = useState('');
     const [estatus, setEstatus] = useState('');
     const [regiones, setRegiones] = useState('');
-    // OPCIONES DE SELECT ANIDADOS
-    const [opcion1, setOpcion1] = useState(opcionLocalidad);
+    const [localidades, setLocalidades] = useState('');
 
     // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
     async function establecerDatos(){
         setMarcas(await Opciones('marcas'));
-        setEstatus(await Opciones('estatus'));
+        setEstatus(['SELECCIONE', 'POR DETERMINAR', 'ACTIVO', 'INACTIVO']);
         setSistemas(await Opciones('sistemas'));
         setRegiones(await Opciones('regiones'));
     }
@@ -41,35 +37,32 @@ function RegistrarServidor() {
         establecerDatos();
     }, []);
 
-    // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
-    const setValores = (e) => {
-        if(e.target.value === 'TODAS')
-            setDatos({ ...datos, [e.target.name] : null })
-        else
-            setDatos({ ...datos, [e.target.name] : e.target.value })
-
-        if(e.target.name === 'region')
-            cambioLocalidad(e.target.value, setOpcion1);
+    async function OpcionesLocalidades(valor){
+        try {
+            const respuesta = await Usuario.obtenerLocalidades(valor);
+            const data = respuesta.data;
+            let opciones = ['SELECCIONE'];
+        
+            for (let i = 0; i < data.length; i++) {
+                const valor = Object.values(data[i]);
+                opciones.push(valor[0]);
+            }
+        
+            return opciones;
+            
+        } catch (error) {
+            console.error(error);
+        }
     }
 
-    function cambioLocalidad(valor, elemento){
-        if(valor === '1')
-            elemento(localidadOrienteSur);
-        else if(valor === '2')
-            elemento(localidadOrienteNorte);
-        else if(valor === '3')
-            elemento(localidadCentro);
-        else if(valor === '4')
-            elemento(localidadCentroSur);
-        else if(valor === '5')
-            elemento(localidadCentroOccidente);
-        else if(valor === '6')
-            elemento(localidadOccidente);
-        else if(valor === '7')
-            elemento(localidadFaja);
-        else if(valor === '8')
-            elemento(localidadMetropolitana);
+    // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
+    const setValores = async (e) => {
+        const valor = e.target.value.toUpperCase();
+        setDatos({ ...datos, [e.target.name] : valor })
 
+        if(e.target.name === 'region'){
+            setLocalidades(await OpcionesLocalidades(e.target.value));
+        }
     }
 
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
@@ -78,19 +71,16 @@ function RegistrarServidor() {
 
         try {
             if(Autorizacion.obtenerUsuario().rol === 'admin'){
-
-                await Servidor.crearDatosServidor(datos);
+                console.log(datos);
+                const id = await Servidor.crearDatosServidor(datos);
                 Notificacion('REGISTRO EXITOSO', 'success');
-                navigate("/dashboard");
+                navigate(`/servidor/${id}`);
             }
         }
         catch (error) { 
             Notificacion(error.response.data.message, 'error');
         }
     }
-
-    if(Autorizacion.obtenerUsuario().rol !== 'admin')
-        return <Navigate to='/' />
     
     return (
         <Container>
@@ -115,8 +105,8 @@ function RegistrarServidor() {
                     <Input campo='Cantidad CPU' name='cantidad' required={true} editable={true} manejador={setValores} />
                     <Input campo='Memoria' name='memoria' required={true} editable={true} manejador={setValores} />
 
-                    <Select campo='Region' name='region' required={true} opciones={regiones ? regiones : ['SELECCIONE']} manejador={setValores} />
-                    <Select campo='Localidad' name='localidad' required={true} opciones={opcion1} manejador={setValores} />
+                    <Select campo='Region' name='region' required={true} byId={false} opciones={regiones ? regiones : ['SELECCIONE']} manejador={setValores} />
+                    <Select campo='Localidad' name='localidad' required={true} byId={false} opciones={localidades ? localidades : ['SELECCIONE']} manejador={setValores} />
                 </div>
                     
                 <div className="flex space-x-2 md:space-x-12">

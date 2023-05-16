@@ -50,13 +50,19 @@ function Login() {
 
     if(password.length > 7 && indicador !== ''){
       try {
-        await Autorizacion.login(indicador,password);
-        Notificacion('LOGIN EXITOSO', 'success');
-        
-        setTimeout(() => {
-          window.location.reload();
-          navigate("/dashboard");
-        }, "2000");
+        const loginData = await Autorizacion.login(indicador,password);
+
+        if(loginData.exp){
+          navigate("/cambio_password", {state: { indicador: indicador, passwordVieja: password}} );
+        }
+        else{
+          Notificacion('LOGIN EXITOSO', 'success');
+          
+          setTimeout(() => {
+            window.location.reload();
+            navigate("/dashboard");
+          }, "2000");
+        }
       } 
       catch (error) {
         if(error.response)

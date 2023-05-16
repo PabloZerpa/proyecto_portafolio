@@ -30,7 +30,7 @@ export const ProtegidaAdm = ({children}) => {
 // ===================== RUTA PROTEGIDA PARA SUPERUSUARIO =====================
 export const ProtegidaSuper = ({children}) => {
 
-    if(Autorizacion.obtenerUsuario().rol !== 'superuser' && Autorizacion.obtenerUsuario().rol !== 'admin')
+    if( (Autorizacion.obtenerUsuario().rol !== 'superuser') && (Autorizacion.obtenerUsuario().rol !== 'admin') )
         return <Navigate to='/' />
 
     return children ? children : <Outlet />;

@@ -38,10 +38,8 @@ function ActualizarUsuario({setIsOpen, valores, setUpdate}) {
 
     // =================== FUNCION PARA OBTENER Y GUARDAR VALORES DEL LOS INPUTS ===================
     const setValores = (e) => {
-        if(e.target.value === 'TODAS')
-            setDatos({ ...datos, [e.target.name] : null })
-        else
-            setDatos({ ...datos, [e.target.name] : e.target.value })
+        const valor = e.target.value.toUpperCase();
+        setDatos({ ...datos, [e.target.name] : valor });
     }
 
     // =================== FUNCION PARA ACTUALIZAR DATOS ===================
@@ -67,7 +65,7 @@ function ActualizarUsuario({setIsOpen, valores, setUpdate}) {
 
             <div className="flex flex-col items-center space-y-2 pb-4 bg-zinc-400 rounded">
 
-                <div className="grid grid-cols-1 md:grid-cols-2 w-[300px] lg:w-[500px] gap-4 p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 w-[300px] lg:w-[500px] space-x-4 p-4">
                     <Input campo='Indicador' name='indicador' direccion="col" editable={false} propiedad={valores.indicador} />
                     <Select campo='Rol' name='rol' direccion="col" required={true} byId={false} propiedad={valores.rol} opciones={roles ? roles : ['SELECCIONE']} manejador={setValores} />
                     <Input campo='Nombre' name='nombre' direccion="col" required={true} propiedad={valores.nombre} editable={true} manejador={setValores} />

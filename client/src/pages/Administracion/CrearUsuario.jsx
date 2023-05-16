@@ -19,7 +19,7 @@ function CrearUsuario() {
     const [gerencias, setGerencias] = useState('');
     const [cargos, setCargos] = useState('');
     const [datos, setDatos] = useState({
-        creador: Autorizacion.obtenerUsuario().indicador,
+        usuario_registro: Autorizacion.obtenerUsuario().indicador,
     });
 
 
@@ -36,10 +36,12 @@ function CrearUsuario() {
 
     // =================== FUNCION PARA OBTENER Y GUARDAR VALORES DEL LOS INPUTS ===================
     const setValores = (e) => {
-        if(e.target.value === 'TODAS')
-            setDatos({ ...datos, [e.target.name] : null })
+        const valor = e.target.value.toUpperCase();
+
+        if(e.target.name === 'indicador')
+            setDatos({ ...datos, [e.target.name] : e.target.value.toLowerCase() });
         else
-            setDatos({ ...datos, [e.target.name] : e.target.value })
+            setDatos({ ...datos, [e.target.name] : valor });
     }
 
     // =================== CREAR USUARIOS ===================
@@ -50,7 +52,7 @@ function CrearUsuario() {
             try {
                 await Usuario.crearUsuario(datos);
                 Notificacion('USUARIO REGISTRADO EXITOSAMENTE', 'success');
-                setTimeout(() => { navegar("/administracion/permisos/buscar") }, "2000");
+                setTimeout(() => { navegar("/administracion/permisos/buscar") }, "500");
             }
             catch (error) { 
                 Notificacion(error.response.data.message, 'error');
@@ -65,7 +67,7 @@ function CrearUsuario() {
 
                 <div className="flex flex-col space-y-4">
                     <h2 className='font-bold text-base'>Datos del Nuevo Usuario</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 w-[600px] lg:w-[800px] space-x-4 p-4 bg-zinc-400 rounded">
+                    <div className="grid grid-cols-1 md:grid-cols-2 w-[400px] md:w-[600px] lg:w-[800px] space-x-4 p-4 bg-zinc-400 rounded">
                         <Input campo='Indicador' name='indicador' direccion="col" required={true} editable={true} manejador={setValores} />
                         <Select campo='Rol' name='rol' direccion="col" required={true} opciones={roles ? roles : ['SELECCIONE']} manejador={setValores} />
                         <Input campo='Nombre' name='nombre' direccion="col" required={true} editable={true} manejador={setValores} />

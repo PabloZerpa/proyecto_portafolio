@@ -5,7 +5,6 @@ import { useDebounce } from 'use-debounce';
 import { FaEdit, FaEye, FaSearch } from 'react-icons/fa';
 import Autorizacion from "../../services/auth.service";
 import Custodio from "../../services/custodios.service";
-import { opcionEstatus, opcionRegion } from '../../services/campos.service';
 import { Link } from "react-router-dom";
 import Opciones from "../../utils/Opciones";
 
@@ -19,12 +18,12 @@ const columns = [
                 <FaEye className="text-blue-500 text-lg" />
             </Link>
 
-            {Autorizacion.obtenerUsuario.rol !== 'user' ? 
-                <Link to={row ? `/custodios/actualizacion/${row.custodio_id}` : `/dashboard`} >
-                <FaEdit className="text-blue-500 text-lg" />
-                </Link>
-            : 
+            {Autorizacion.obtenerUsuario().rol === 'user' ? 
                 null
+            : 
+                <Link to={row ? `/custodios/actualizacion/${row.custodio_id}` : `/dashboard`} >
+                    <FaEdit className="text-blue-500 text-lg" />
+                </Link>
             }
         </div>,
     },
@@ -32,43 +31,49 @@ const columns = [
         name: 'ID',
         selector: row => row.custodio_id,
         sortable: true,
+        width: '60px',
         left: true,
-        width: '60px'
     },
     {
         name: 'Indicador',
         selector: row => row.cus_indicador,
         sortable: true,
+        width: '120px',
         left: true
     },
     {
         name: 'Nombre',
         selector: row => row.cus_nombre,
         sortable: true,
+        width: '120px',
         left: true
     },
     {
         name: 'Apellido',
         selector: row => row.cus_apellido,
         sortable: true,
+        width: '120px',
         left: true
     },
     {
         name: 'Cedula',
         selector: row => row.cus_cedula,
         sortable: true,
+        width: '100px',
         left: true
     },
     {
       name: 'Telefono',
       selector: row => row.telefono,
       sortable: true,
+      width: '120px',
       left: true
     },
     {
       name: 'Cargo',
       selector: row => row.cargo,
       sortable: true,
+      width: '120px',
       left: true
     },
     {
@@ -81,13 +86,14 @@ const columns = [
         name: 'Region',
         selector: row => row.region,
         sortable: true,
+        width: '150px',
         left: true
       },
     {
         name: 'Localidad',
         selector: row => row.localidad,
         sortable: true,
-        grow: 2,
+        width: '150px',
         left: true
     },
 ];

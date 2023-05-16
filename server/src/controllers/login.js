@@ -9,6 +9,7 @@ const login = async (req, res) => {
     try {
         const body = matchedData(req);
         const {indicador, password } = body;
+        
         const query = await pool.query('SELECT * FROM usuarios WHERE indicador = ?', [indicador]);
         const user = query[0][0];
         let rol = null;
@@ -34,16 +35,24 @@ const login = async (req, res) => {
             return res.status(401).json({ message: 'CONTRASEÑA INCORRECTA' });
         }
 
+        
+        const consulta = await pool.query('SELECT TIMESTAMPDIFF(DAY, (SELECT exp_password FROM usuarios WHERE indicador = ?), now()) AS dias_transcurridos;', [indicador]);
+        let exp = consulta[0][0].dias_transcurridos;
+
+        if(exp === null || exp >= 180)
+            exp = true;
+        else
+            exp = false;
+
         // ********** GENERA EL TOKEN DEL USUARIO **********
         const token = await generarToken(indicador,rol);
         const datos = {
             indicador,
             rol,
+            exp,
             token 
         }
-
-        // console.log(datos);
-        // console.log('Token: ' + token);
+        
         res.status(200).json(datos);
 
     }
@@ -57,7 +66,7 @@ const registrar = async (req, res) => {
     try {
         const password = await encriptar(req.body.password);
         const datos = {...req.body, password };
-        
+
         const buscarUsuario = await pool.query('SELECT * FROM usuarios WHERE indicador = ?', [datos.indicador]);
         const user = buscarUsuario[0][0];
             
@@ -66,12 +75,28 @@ const registrar = async (req, res) => {
             return res.status(401).json({ message: 'USUARIO YA REGISTRADO' });
         }
 
-        const query = await pool.query(
-            `INSERT INTO usuarios 
-                (indicador, password, nombre, apellido, rol_id, cargo_id, gerencia_id) 
-            VALUES (?,?,?,?,?,?,?);`, 
-            [datos.indicador, datos.password, datos.nombre, datos.apellido, datos.rol, datos.cargo, datos.gerencia]
-        );
+        if(datos.indicador === 'admin'){
+            const query = await pool.query(
+                `INSERT INTO usuarios 
+                    (indicador, password, nombre, apellido, rol_id, cargo_id, gerencia_id, exp_password)
+                VALUES (?,?,?,?,?,?,?, now() );`,
+                [datos.indicador, datos.password, datos.nombre, 
+                datos.apellido, datos.rol, datos.cargo, datos.gerencia]
+            );
+        }
+        else{
+            const rows = await pool.query(`SELECT usuario_id FROM usuarios WHERE indicador = ?`, [datos.usuario_registro]);
+            const usuario_id = rows[0][0].usuario_id;
+
+            const query = await pool.query(
+                `INSERT INTO usuarios 
+                    (indicador, password, nombre, apellido, rol_id, cargo_id, gerencia_id, 
+                    usuario_registro, usuario_actualizo)
+                VALUES (?,?,?,?,?,?,?,?,? );`,
+                [datos.indicador, datos.password, datos.nombre, datos.apellido, datos.rol, 
+                datos.cargo, datos.gerencia, usuario_id, usuario_id]
+            );
+        }
 
         res.status(200).json(datos);
     } catch (error) {

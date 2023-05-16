@@ -21,7 +21,7 @@ function Busqueda({manejarBusqueda}) {
         mantenimiento: '',
         critico: '',
         codigo: '',
-        cantidad_usuarios: '',
+        cantidad: '',
         orden: 'ASC',
     }); 
     const [debounceValue] = useDebounce(datos, 500);
@@ -46,22 +46,22 @@ function Busqueda({manejarBusqueda}) {
     }
 
     useEffect(() => {
-		if (debounceValue) {
+		if (debounceValue) 
             onSearch(debounceValue);
-        } else {
+        else
             setResultados(null);
-        }
+        
 	}, [debounceValue, datos]); 
 
 
     const onSearch = async (datos) => {
         try {
             const { terminoBusqueda, estatus,plataforma,prioridad,region,alcance,mantenimiento,
-                critico,codigo,registros,orden } = datos;
+                critico,codigo,registros,orden,cantidad } = datos;
 
             const respuesta = await Aplicacion.obtenerPorBusqueda
             (terminoBusqueda,estatus,plataforma,prioridad,region,alcance,mantenimiento,
-                critico,codigo,registros,orden);
+                critico,codigo,registros,orden,cantidad);
 
             setResultados(respuesta.data);
             manejarBusqueda(respuesta.data);
@@ -87,7 +87,7 @@ function Busqueda({manejarBusqueda}) {
                     <div className="flex flex-wrap justify-center items-center space-x-4">
                         <Select campo='Alcance' name='alcance' busqueda={true} byId={false} opciones={opcionAlcance} manejador={setValores} />
                         <Select campo='Mantenimiento' name='mantenimiento' busqueda={true} byId={false} opciones={opcionMantenimiento} manejador={setValores} />
-                        <Select campo='N° Usuarios' name='cantidad_usuarios' busqueda={true} byId={false} opciones={opcionCount} manejador={setValores} />
+                        <Select campo='N° Usuarios' name='cantidad' busqueda={true} byId={false} opciones={opcionCount} manejador={setValores} />
                     </div>
                 </div>
                 

@@ -20,7 +20,6 @@ function RegistrarBD() {
     // ---------- ESTADOS ----------
     const [datos, setDatos] = useState({
         usuario_registro: Autorizacion.obtenerUsuario().indicador,
-        usuario_actualizo: Autorizacion.obtenerUsuario().indicador,
     });
 
     const [mane, setMane] = useState('');
@@ -31,7 +30,7 @@ function RegistrarBD() {
     // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
     async function establecerDatos(){
         setMane(await Opciones('manejadores'));
-        setEstatus(await Opciones('estatus'));
+        setEstatus(['SELECCIONE', 'POR DETERMINAR', 'ACTIVO', 'INACTIVO']);
         setTipos(await Opciones('tipos'));
         setAmbientes(await Opciones('ambientes'));
     }
@@ -43,10 +42,8 @@ function RegistrarBD() {
 
     // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
     const setValores = (e) => {
-        if(e.target.value === 'TODAS')
-            setDatos({ ...datos, [e.target.name] : null })
-        else
-            setDatos({ ...datos, [e.target.name] : e.target.value })
+        const valor = e.target.value.toUpperCase();
+        setDatos({ ...datos, [e.target.name] : valor })
     }
 
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
@@ -55,9 +52,9 @@ function RegistrarBD() {
 
         try {
             if(Autorizacion.obtenerUsuario().rol === 'admin'){
-                await Base.crearDatosDB(datos, tableDataServidor);
+                const id = await Base.crearDatosDB(datos, tableDataServidor);
                 Notificacion('REGISTRO EXITOSO', 'success');
-                navigate("/dashboard");
+                navigate(`/basedatos/${id}`);
             }
         } 
         catch (error) { 
@@ -114,9 +111,6 @@ function RegistrarBD() {
         },
     ];
 
-
-    if(Autorizacion.obtenerUsuario().rol !== 'admin')
-        return <Navigate to='/' />
     
     return (
         <Container>

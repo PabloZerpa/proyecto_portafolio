@@ -35,6 +35,16 @@ class Falla {
         }
     }
 
+    // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
+    async eliminarFalla(id) {
+        try { 
+            const respuesta = await axios.delete(`${baseUrl}aplicaciones/fallas/${id}`, { headers: authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log('ERROR AL ACTUALIZAR auth.service');
+        }
+    }
+
 
 }
 

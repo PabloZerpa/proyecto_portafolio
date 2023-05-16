@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { FaEdit, FaEye } from 'react-icons/fa';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { Container, Input, Radio, Tabla, TextArea } from '../../components';
 import Aplicacion from '../../services/aplicacion.service';
@@ -52,9 +53,7 @@ function VerAplicacion() {
     } 
     fetchData();
   }, [id]);
-  
-    if(load === null) 
-      return <Navigate to='/' />
+
 
       function General(){
         return(
@@ -93,13 +92,15 @@ function VerAplicacion() {
             name: 'Frecuencia',
             selector: row => row.frecuencia,
             sortable: true,
+            width: "240px",
             left: true,
-            grow: 2
+            //grow: 2
         },
         {
             name: 'Horas Promedio',
             selector: row => row.man_horas_prom,
             sortable: true,
+            width: "240px",
             left: true,
         },
         {
@@ -107,7 +108,8 @@ function VerAplicacion() {
             selector: row => row.man_horas_anuales,
             sortable: true,
             left: true,
-            grow: 1.5
+            width: "240px",
+            //grow: 1.5
         },
       ];
 
@@ -116,22 +118,25 @@ function VerAplicacion() {
           name: 'Lenguaje ID',
           selector: row => row.lenguaje_id,
           sortable: true,
+          width: "240px",
           left: true,
-          grow: 2
+          // grow: 2
       },
         {
             name: 'Lenguaje',
             selector: row => row.lenguaje,
             sortable: true,
+            width: "240px",
             left: true,
-            grow: 2
+            // grow: 2
         },
-        {
-            name: 'Framework',
-            selector: row => row.framework,
-            sortable: true,
-            left: true,
-        },
+        // {
+        //     name: 'Framework',
+        //     selector: row => row.framework,
+        //     sortable: true,
+        //     width: "240px",
+        //     left: true,
+        // },
       ];
 
       function Tecnologia() {
@@ -163,55 +168,62 @@ function VerAplicacion() {
                 {row.base_datos_id}
               </Link>,
             sortable: true,
+            width: "60px",
             left: true,
-            width: '60px'
         },
         {
             name: 'Nombre',
             selector: row => row.base_datos,
             sortable: true,
+            width: "150px",
             left: true,
-            grow: 2
+            // grow: 2
         },
         {
             name: 'Estatus',
             selector: row => row.estatus,
             sortable: true,
+            width: "150px",
             left: true,
         },
         {
             name: 'Tipo',
             selector: row => row.tipo,
             sortable: true,
+            width: "150px",
             left: true,
-            grow: 1.5
+            // grow: 1.5
         },
         {
             name: 'Manejador',
             selector: row => row.manejador,
             sortable: true,
+            width: "150px",
             left: true
         },
         {
             name: 'Tipo Ambiente',
             selector: row => row.ambiente,
             sortable: true,
+            width: "150px",
             left: true,
-            grow: 2
+            //grow: 2
         },
         {
           name: 'N° Usuarios',
           selector: row => row.base_cantidad_usuarios,
           sortable: true,
+          width: "100px",
           left: true,
-          grow: 1.5
+          //grow: 1.5
         },
         {
             name: 'Ultima Actualizacion',
             selector: row => row.base_fecha_actualizacion,
             sortable: true,
+            width: "200px",
             left: true,
-            grow: 2
+            //grow: 2
         },
       ];
   
@@ -236,61 +248,70 @@ function VerAplicacion() {
                 {row.servidor_id}
               </Link>,
             sortable: true,
+            width: '60px',
             left: true,
-            width: '60px'
         },
         {
             name: 'Nombre',
             selector: row => row.servidor,
             sortable: true,
+            width: '150px',
             left: true,
         },
         {
             name: 'Estatus',
             selector: row => row.ser_estatus,
             sortable: true,
+            width: '150px',
             left: true,
         },
         {
             name: 'Direccion',
             selector: row => row.ser_direccion,
             sortable: true,
+            width: '200px',
             left: true,
         },
         {
             name: 'OS',
             selector: row => row.sistema,
             sortable: true,
+            width: '150px',
             left: true
         },
         {
           name: 'Modelo',
           selector: row => row.modelo,
           sortable: true,
+          width: '150px',
           left: true,
         },
         {
           name: 'Marca',
           selector: row => row.marca,
           sortable: true,
+          width: '150px',
           left: true,
         },
         {
           name: 'Region',
           selector: row => row.region,
           sortable: true,
+          width: '150px',
           left: true,
         },
         {
           name: 'Localidad',
           selector: row => row.localidad,
           sortable: true,
+          width: '150px',
           left: true,
         },
         {
             name: 'Ultima Actualizacion',
             selector: row => row.ser_fecha_actualizacion,
             sortable: true,
+            width: '150px',
             left: true,
         },
       ];
@@ -309,66 +330,68 @@ function VerAplicacion() {
 
 
       const columnsCus = [
+          {
+            name: 'Indicador',
+            selector: row => row.cus_indicador,
+            sortable: true,
+            width: '150px',
+            left: true,
+        },
         {
             name: 'Nombre',
             selector: row => row.cus_nombre,
             sortable: true,
+            width: '150px',
             left: true,
-            grow: 2
         },
         {
             name: 'Apellido',
             selector: row => row.cus_apellido,
             sortable: true,
+            width: '150px',
             left: true,
-        },
-        {
-            name: 'Indicador',
-            selector: row => row.cus_indicador,
-            sortable: true,
-            left: true,
-            grow: 1.5
         },
         {
             name: 'Cedula',
             selector: row => row.cus_cedula,
             sortable: true,
+            width: '100px',
             left: true
         },
         {
             name: 'Telefono',
             selector: row => row.telefono,
             sortable: true,
+            width: '150px',
             left: true,
-            grow: 2
         },
         {
           name: 'Cargo',
           selector: row => row.cargo,
           sortable: true,
+          width: '150px',
           left: true,
-          grow: 1.5
         },
         {
           name: 'Gerencia',
           selector: row => row.gerencia,
           sortable: true,
+          width: '150px',
           left: true,
-          grow: 1.5
         },
         {
             name: 'Region',
             selector: row => row.region,
             sortable: true,
+            width: '150px',
             left: true,
-            grow: 2
         },
         {
           name: 'Localidad',
           selector: row => row.localidad,
           sortable: true,
+          width: '150px',
           left: true,
-          grow: 2
       },
       ];
   
@@ -400,6 +423,7 @@ function VerAplicacion() {
             name: 'Descripcion',
             selector: row => row.doc_descripcion,
             sortable: true,
+            width: '150px',
             left: true,
         },
         {
@@ -409,18 +433,21 @@ function VerAplicacion() {
                 {row.doc_direccion}
               </a>,
             sortable: true,
+            width: '200px',
             left: true,
         },
         {
             name: 'Tipo',
             selector: row => row.doc_tipo,
             sortable: true,
+            width: '150px',
             left: true,
         },
         {
             name: 'Ultima Actualizacion',
             selector: row => row.doc_fecha_actualizacion,
             sortable: true,
+            width: '150px',
             left: true
         },
       ];
@@ -440,34 +467,35 @@ function VerAplicacion() {
       const columnsFal = [
         {
             name: 'ID',
-            selector: row => row.falla_id,
+            selector: row => 
+              <Link className='text-blue-700' to={row ? `/aplicaciones/fallas` : `/dashboard`} >
+                {row.falla_id}
+              </Link>,
             sortable: true,
+            width: '100px',
             left: true,
         },
         {
-            name: 'Clase',
-            selector: row => row.fal_clase,
+            name: 'Elemento',
+            selector: row => row.elemento,
             sortable: true,
+            width: '100px',
             left: true,
+        },
+        {
+          name: 'Nombre',
+          selector: row => row.fal_nombre,
+          sortable: true,
+          width: '100px',
+          left: true,
         },
         {
             name: 'Impacto',
             selector: row => row.fal_impacto,
             sortable: true,
+            width: '100px',
             left: true,
         },
-        {
-            name: 'Descripcion',
-            selector: row => row.fal_descripcion,
-            sortable: true,
-            left: true
-        },
-        {
-          name: 'Solucion',
-          selector: row => row.fal_solucion,
-          sortable: true,
-          left: true
-      },
       ];
 
       function Fallas(){
@@ -475,7 +503,7 @@ function VerAplicacion() {
         return (
           <>
             <h2 className='font-bold text-lg'>Fallas</h2>
-            <form className="grid grid-cols-1 justify-center items-center relative w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
+            <form className="grid grid-cols-1 justify-center items-center relative w-1/2 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
               <Tabla columnas={columnsFal} datos={datos} />
             </form>
           </>

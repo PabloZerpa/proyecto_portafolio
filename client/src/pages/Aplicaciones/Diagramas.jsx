@@ -5,52 +5,73 @@ import { useDebounce } from "use-debounce";
 import { BiLoaderAlt } from "react-icons/bi";
 import Barra from "../../chart/Barra";
 import Circulo from "../../chart/Circulo";
-import Aplicacion from "../../services/aplicacion.service";
+import Linea from "../../chart/Linea";
 import Radio from "../../components/Radio";
+import Usuario from "../../services/usuario.service";
+import Opciones from "../../utils/Opciones";
 
-const opcionCategoria = ['Plataforma', 'Region', 'Estatus', 'Prioridad', 'Registro', 'Modificacion'];
-const opcionOrden = ['Porcentaje', 'Cantidad', 'Tiempo', 'Interrelacion'];
+const opcionCategoria = ['Region', 'Plataforma', 'Estatus', 'Prioridad', 'Modificacion'];
+const opcionMostrar = ['Cantidad', 'Porcentaje', 'Tiempo'];
+
 
 function Diagramas() {
 
-    const [isLoading, setIsLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [resultados, setResultados] = useState([]);
-    const [debounceValue] = useDebounce(searchTerm, 500);
+    const [isLoading, setIsLoading] = useState(false);
+    const [resultados, setResultados] = useState('');
+    const [claves, setClaves] = useState('');
 
-    // const [categoria, setCategoria] = useState('region');
-    // const obtenerCategoria = (respuesta) => { setCategoria(respuesta) };
-    // const [orden, setOrden] = useState('porcentaje'); 
-    // const obtenerOrden = (respuesta) => { setOrden(respuesta) };
+    const [regiones, setRegiones] = useState('');
+    const [estatus, setEstatus] = useState('');
+    const [plataformas, setPlataformas] = useState('');
+    const [prioridades, setPrioridades] = useState('');
+    const [meses, setMeses] = useState('');
+
+    async function establecerDatos(){ 
+        setRegiones(await Opciones('regiones')); 
+        setEstatus(await Opciones('estatus')); 
+        setPlataformas(await Opciones('plataformas')); 
+        setPrioridades(['SELECCIONE','BAJA', 'MEDIA', 'ALTA']); 
+        setMeses(['SELECCIONE','ENERO', 'FEBERERO', 'MARZO','ABRIL','MAYO', 'JUNIO',
+        'JULIO','AGOSTO','SEQPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE']); 
+    }
+
+    useEffect(() => { establecerDatos(); }, []);
 
     const [datos, setDatos] = useState({
-        categoria: '',
-        orden: '',
+        categoria: 'region',
+        mostrar: 'cantidad',
     });
 
     const setValores = (e) => {
-        if(e.target.value === 'TODAS')
-            setDatos({ ...datos, [e.target.name] : null })
-        else
-            setDatos({ ...datos, [e.target.name] : e.target.value })
+        const valor = e.target.value.toLowerCase();
+        setDatos({ ...datos, [e.target.name] : valor });
     }
 
-    useEffect(() => {
-        setIsLoading(false);
-    }, []);
-
-    const handleSearch = (e) => {
+    const handleSearch = async (e) => {
         e.preventDefault();
-        const { categoria, orden } = datos;
-        const cat = categoria.toLowerCase();
-        const ord = orden.toLowerCase();
-        onSearch(cat,ord);
+        const { categoria, mostrar } = datos;
+        console.log(categoria, mostrar);
+
+        setResultados(null);
+        onSearch(categoria, mostrar);
     }
 
-    const onSearch = async (categoria,orden) => {
+    const onSearch = async (categoria,mostrar) => {
       try {
-        const datos = await Aplicacion.datosGraficos(categoria,orden);
-        setResultados(datos.data);
+        const {data} = await Usuario.obtenerCantidadRegiones(categoria,mostrar);
+
+        setResultados(data.cantidad);
+
+        if(data.clave === 'region')
+            setClaves(regiones);
+        else if(data.clave === 'plataforma')
+            setClaves(plataformas);
+        else if(data.clave === 'estatus')
+            setClaves(estatus);
+        else if(data.clave === 'prioridad')
+            setClaves(prioridades);
+        else if(data.clave === 'modificacion')
+            setClaves(meses);
         
       } catch (error) { console.log('ERROR AL BUSCAR DATOS') }
     }
@@ -60,18 +81,34 @@ function Diagramas() {
             
             <h2 className='font-bold text-lg'>Generar graficos</h2>
 
-            <form className='flex flex-col items-center space-y-4 p-4 bg-zinc-400 border-solid rounded'>
+            <form className='flex flex-col items-center space-y-4 p-4 bg-zinc-400 border-solid rounded' onSubmit={handleSearch}>
                 <Radio label='Categoria' name='categoria' opciones={opcionCategoria} manejador={setValores} size='small' />
-                <Radio label='Ordernar' name='orden' opciones={opcionOrden} manejador={setValores} size='small' />
-                <Button color='blue' manejador={handleSearch}>Generar</Button>
+                <Radio label='Mostrar' name='mostrar' opciones={opcionMostrar} manejador={setValores} size='small' />
+                <Button tipo="submit">Generar</Button>
             </form>
 
             {isLoading ? (
                 <BiLoaderAlt className='text-6xl text-blue-500 animate-spin' />
             ) : (
             <>
-              <Barra />
-              <Circulo />
+                {resultados && datos.mostrar === 'cantidad' ? 
+                    ( <Barra datos={resultados} categoria={datos.categoria} claves={claves} /> ) 
+                    : 
+                    ( null )
+                }
+              
+                {resultados  && datos.mostrar === 'porcentaje' ? 
+                    ( <Circulo datos={resultados} categoria={datos.categoria} claves={claves} /> ) 
+                    : 
+                    ( null )
+                }
+
+                {resultados  && datos.mostrar === 'tiempo' ? 
+                    ( <Linea datos={resultados} categoria={datos.categoria} claves={claves} /> ) 
+                    : 
+                    ( null )
+                }
+              
             </>
             )}
             

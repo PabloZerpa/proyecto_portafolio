@@ -5,7 +5,7 @@ const { obtenerDatos, obtenerDato, registrarAplicacion, actualizarAplicacion, el
     obtenerServidores,general, tecno, basedatos, servidor, 
     documentacion, custodio, obtenerCustodios } = require("../controllers/aplicaciones");
 const { auth } = require("../middlewares/auth");
-const { fallas, registrarFalla, actualizarFalla, buscarFalla } = require("../controllers/fallas");
+const { fallas, registrarFalla, actualizarFalla, buscarFalla, eliminarFalla } = require("../controllers/fallas");
 const { validatorApp } = require("../validators/aplicaciones");
 
 /* 
@@ -107,6 +107,9 @@ router.patch("/fallas/:id", auth, actualizarFalla);
 
 // *************** RUTA PARA BUSCAR FALLA *************** 
 router.post("/fallas/busqueda", auth, buscarFalla);
+
+// *************** RUTA PARA BUSCAR FALLA *************** 
+router.delete("/fallas/:id", auth, eliminarFalla);
 
 
 

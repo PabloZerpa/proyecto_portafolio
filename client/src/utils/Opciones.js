@@ -1,11 +1,13 @@
 
-import Usuario from "../services/usuario.service";
+import axios from "axios";
+import { rutaUsuario } from "./APIRoutes";
+import authHeader from "../services/header.service";
 
-async function Opciones(ruta, busqueda=false){
+export async function Opciones(ruta, busqueda=false){
 
     try {
-        const respuesta = await Usuario.obtenerOpcion(ruta);
-        const data = respuesta.data;
+
+        const {data} = await axios.get(`${rutaUsuario}${ruta}`, { headers: authHeader() });
         let opciones = ['SELECCIONE'];
 
         if(busqueda)

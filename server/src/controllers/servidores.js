@@ -2,10 +2,10 @@ const pool = require('../config');
 
 const query = `
 SELECT 
-    servidores.servidor_id,servidor,estatus,ser_direccion,sistema,modelo,marca,
+    servidores.servidor_id,servidor,estado as estatus,ser_direccion,sistema,modelo,marca,
     region,localidad,DATE_FORMAT (ser_fecha_actualizacion, '%d-%m-%Y %H:%i') as ser_fecha_actualizacion,indicador
 FROM servidores
-    LEFT JOIN estatus ON servidores.ser_estatus = estatus.estatus_id
+    LEFT JOIN estados ON servidores.ser_estatus = estados.estado_id
     LEFT JOIN sistemas_operativos ON sistemas_operativos.sistema_id = servidores.ser_sistema
     LEFT JOIN modelos ON modelos.modelo_id = servidores.ser_modelo
     LEFT JOIN marcas ON marcas.marca_id = modelos.mod_marca
@@ -28,7 +28,7 @@ const obtenerBusqueda = async (req,res) => {
             data = await pool.query(
                 `${query}
                 WHERE (servidores.servidor_id LIKE ? OR servidor LIKE ? ) 
-                    AND estatus LIKE ? ORDER BY servidores.servidor_id ${orden ? orden : 'ASC'};`, 
+                    AND estado LIKE ? ORDER BY servidores.servidor_id ${orden ? orden : 'ASC'};`, 
             [termino,termino,estatus]);
         }
         else if(region){
@@ -123,15 +123,20 @@ const registrarServidor = async (req,res) => {
                     (servidor,ser_estatus,ser_direccion,ser_sistema,ser_modelo,ser_region_id,
                     ser_localidad_id,ser_usuario_registro,ser_usuario_actualizo) 
                 VALUES 
-                    (?,?,?,?,?,?,
-                    (SELECT localidad_id FROM localidades WHERE localidad_id = ? AND localidades.region_id = ?),
+                    (?,?,?,?,?,
+                    (SELECT region_id FROM regiones WHERE region = ?),
+                    (SELECT localidad_id FROM localidades WHERE localidad = ? AND localidades.region_id = 
+                        (SELECT region_id FROM regiones WHERE region = ?)   ),
                     (SELECT usuario_id FROM usuarios WHERE indicador = ?),
                     (SELECT usuario_id FROM usuarios WHERE indicador = ?)
                 );`, 
                 [servidor,estatus,direccion,sistema,modelo_id,region,localidad,region,usuario_registro,usuario_registro]
             );
 
-            res.send('CREACION EXITOSA');
+            const selectServidor = await pool.query(`SELECT * FROM servidores ORDER BY servidor_id DESC LIMIT 1`);
+            let servidor_id = selectServidor[0][0].servidor_id;
+
+            res.send(`${servidor_id}`);
         }
     } catch (error) {
         console.log("ERROR_CREATE_ITEMS");
@@ -147,7 +152,7 @@ const actualizarServidor = async (req,res) => {
 
         const {
             servidor,estatus,direccion,sistema,marca,modelo,serial,
-            velocidad,cantidad,memoria,region,localidad,actualizador
+            velocidad,cantidad,memoria,region,localidad,usuario_actualizo
         } = req.body;
 
         const query = await pool.query(`SELECT modelo_id FROM modelos WHERE mod_serial = ?;`,[serial]);
@@ -165,7 +170,7 @@ const actualizarServidor = async (req,res) => {
         const [result] = await pool.query(
             `UPDATE servidores  SET 
                 servidor = ?,
-                ser_estatus = (SELECT estatus_id FROM estatus WHERE estatus = ?),
+                ser_estatus = (SELECT estado_id FROM estados WHERE estado = ?),
                 ser_direccion = ?,
                 ser_sistema = (SELECT sistema_id FROM sistemas_operativos WHERE sistema = ?),
                 ser_region_id = (SELECT region_id FROM regiones WHERE region = ?),
@@ -173,7 +178,7 @@ const actualizarServidor = async (req,res) => {
                 ser_usuario_actualizo = (SELECT usuario_id FROM usuarios WHERE indicador = ?),
                 ser_fecha_actualizacion = now()
             WHERE servidor_id = ?`,
-            [servidor,estatus,direccion,sistema,region,localidad,actualizador,id]
+            [servidor,estatus,direccion,sistema,region,localidad,usuario_actualizo,id]
         );
             
         res.json('UPDATE EXITOSO');
@@ -194,11 +199,11 @@ const general = async (req,res) => {
 
         const data = await pool.query(`
         SELECT 
-            servidores.servidor_id,servidor,estatus,ser_direccion,
+            servidores.servidor_id,servidor,estado as estatus,ser_direccion,
             sistema,modelo,marca,mod_serial,mod_cantidad_cpu,mod_velocidad_cpu,mod_memoria,region,localidad,
             DATE_FORMAT (ser_fecha_actualizacion, '%d-%m-%Y %H:%i') as ser_fecha_actualizacion, indicador
         FROM servidores
-            LEFT JOIN estatus ON servidores.ser_estatus = estatus.estatus_id
+            LEFT JOIN estados ON servidores.ser_estatus = estados.estado_id
             LEFT JOIN sistemas_operativos ON sistemas_operativos.sistema_id = servidores.ser_sistema
             LEFT JOIN modelos ON modelos.modelo_id = servidores.ser_modelo
             LEFT JOIN marcas ON marcas.marca_id = modelos.mod_marca

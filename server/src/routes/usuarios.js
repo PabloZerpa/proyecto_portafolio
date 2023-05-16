@@ -7,7 +7,7 @@ const { cambiarPermisos, cambiarPassword,
     obtenerBasesDatos, obtenerServidores, obtenerAlcance, obtenerEstatus, 
     obtenerRegiones, obtenerMantenimientos, obtenerAmbientes, obtenerMane, obtenerTipos, 
     obtenerSistemas, obtenerMarcas, eliminarAplicacion, obtenerLenguajesTabla, obtenerFrameworksTabla, 
-    obtenerAcronimos, obtenerFrecuencias, obtenerCustodios, eliminarUsuario } = require("../controllers/usuarios");
+    obtenerAcronimos, obtenerFrecuencias, obtenerCustodios, eliminarUsuario, obtenerLocalidades, obtenerCantidad, obtenerCantidadRegiones, obtenerTipoDoc } = require("../controllers/usuarios");
 
 router.get("/", auth, obtenerUsuarios);
 
@@ -27,6 +27,7 @@ router.get("/estatus", auth, obtenerEstatus);
 router.get("/alcance", auth, obtenerAlcance);
 router.get("/frecuencias", auth, obtenerFrecuencias);
 router.get("/regiones", auth, obtenerRegiones);
+router.post("/localidades", auth, obtenerLocalidades);
 
 router.get("/tipos", auth, obtenerTipos);
 router.get("/manejadores", auth, obtenerMane);
@@ -35,7 +36,16 @@ router.get("/ambientes", auth, obtenerAmbientes);
 router.get("/sistemas", auth, obtenerSistemas);
 router.get("/marcas", auth, obtenerMarcas);
 
-router.get("/acronimos", auth, obtenerAcronimos);
+router.get("/documentos", auth, obtenerTipoDoc);
+
+
+
+router.get("/cantidad", auth, obtenerCantidad);
+router.post("/cantidadRegiones", auth, obtenerCantidadRegiones);
+
+
+
+router.post("/acronimos", auth, obtenerAcronimos);
 
 
 router.get("/cargos", auth, obtenerUsuarios);
@@ -44,7 +54,7 @@ router.post("/busqueda", auth, obtenerPorBusqueda);
 
 router.patch("/permisos/:id", auth, cambiarPermisos);
 
-router.patch("/password/:id", auth, cambiarPassword);
+router.patch("/password/", cambiarPassword);
 
 router.delete("/eliminar/:id", auth, eliminarUsuario);
 

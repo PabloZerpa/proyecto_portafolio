@@ -49,7 +49,47 @@ class Usuario {
             const respuesta = await axios.get(`${baseUrl}usuarios/${nombre}`, { headers: authHeader() });
             return respuesta;
         } catch (error) {
-            console.log('ERROR AL OBTENER ROLES');
+            console.log('ERROR AL OBTENER OPCIONES');
+        }
+    }
+
+    // ---------------- UPDATE DE UN CAMPO DE UN USUARIO ------------------
+    async obtenerLocalidades(region) {
+        try { 
+            const respuesta = await axios.post(`${baseUrl}usuarios/localidades`, {region}, { headers: authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log('ERROR AL OBTENER LOCALIDADES');
+        }
+    }
+
+    // ---------------- UPDATE DE UN CAMPO DE UN USUARIO ------------------
+    async obtenerAcronimos(elemento) {
+        try { 
+            const respuesta = await axios.post(`${baseUrl}usuarios/acronimos`, {elemento}, { headers: authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log('ERROR AL OBTENER ACRONIMOS');
+        }
+    }
+
+    // ---------------- OBTENER CANTIDAD DE REGISTROS DE LOS ELEMENTOS ------------------
+    async obtenerCantidad() {
+        try { 
+            const respuesta = await axios.get(`${baseUrl}usuarios/cantidad`, { headers: authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log('ERROR AL OBTENER ACRONIMOS');
+        }
+    }
+
+    // ---------------- OBTENER CANTIDAD DE REGISTROS POR REGIONES ------------------
+    async obtenerCantidadRegiones(categoria,orden) {
+        try { 
+            const respuesta = await axios.post(`${baseUrl}usuarios/cantidadRegiones`, {categoria,orden}, { headers: authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log('ERROR AL OBTENER ACRONIMOS');
         }
     }
 

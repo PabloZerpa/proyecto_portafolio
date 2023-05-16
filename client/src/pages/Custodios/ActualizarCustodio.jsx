@@ -1,12 +1,12 @@
 
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
-import { Button, Checkbox, Container, Input, Select } from '../../components';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Button, Container, Input, Select } from '../../components';
 import { BiLoaderAlt } from "react-icons/bi";
 import Autorizacion from '../../services/auth.service';
 import Custodio from '../../services/custodios.service';
+import Usuario from '../../services/usuario.service';
 import { Notificacion } from '../../utils/Notificacion';
 import { useEffect, useState } from 'react';
-import { localidadCentro, localidadCentroOccidente, localidadCentroSur, localidadFaja, localidadMetropolitana, localidadOccidente, localidadOrienteNorte, localidadOrienteSur, opcionLocalidad } from '../../services/campos.service';
 import Opciones from '../../utils/Opciones';
 
 function ActualizarCustodio() {
@@ -17,18 +17,17 @@ function ActualizarCustodio() {
     const { id } = useParams();
     const [load, setLoad] = useState(true);
     const [datos, setDatos] = useState({
-        creador: Autorizacion.obtenerUsuario().indicador,
+        usuario_actualizo: Autorizacion.obtenerUsuario().indicador,
     });
 
     // VALORES POR DEFECTO EN LOS INPUTS
     const [general, setGeneral] = useState('');
     
     // =================== OPCIONES PARA LOS SELECTS ===================
-    // OPCIONES DE SELECT ANIDADOS
-    const [opcion1, setOpcion1] = useState(opcionLocalidad);
     const [gerencias, setGerencias] = useState('');
     const [cargos, setCargos] = useState('');
     const [regiones, setRegiones] = useState('');
+    const [localidades, setLocalidades] = useState('');
 
     // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
     async function establecerDatos(){
@@ -37,34 +36,31 @@ function ActualizarCustodio() {
         setRegiones(await Opciones('regiones'));
     }
 
-    function cambioLocalidad(valor, elemento){
-
-        if(valor === '1')
-            elemento(localidadOrienteSur);
-        else if(valor === '2')
-            elemento(localidadOrienteNorte);
-        else if(valor === '3')
-            elemento(localidadCentro);
-        else if(valor === '4')
-            elemento(localidadCentroSur);
-        else if(valor === '5')
-            elemento(localidadCentroOccidente);
-        else if(valor === '6')
-            elemento(localidadOccidente);
-        else if(valor === '7')
-            elemento(localidadFaja);
-        else if(valor === '8')
-            elemento(localidadMetropolitana);
+    async function OpcionesLocalidades(valor){
+        try {
+            const respuesta = await Usuario.obtenerLocalidades(valor);
+            const data = respuesta.data;
+            let opciones = ['SELECCIONE'];
+        
+            for (let i = 0; i < data.length; i++) {
+                const valor = Object.values(data[i]);
+                opciones.push(valor[0]);
+            }
+        
+            return opciones;
+            
+        } catch (error) {
+            console.error(error);
+        }
     }
 
-    const setValores = (e) => {
-        if(e.target.value === 'TODAS')
-            setDatos({ ...datos, [e.target.name] : null })
-        else
-            setDatos({ ...datos, [e.target.name] : e.target.value })
+    const setValores = async (e) => {
+        const valor = e.target.value.toUpperCase();
+        setDatos({ ...datos, [e.target.name] : valor });
 
-        if(e.target.name === 'region')
-            cambioLocalidad(e.target.value, setOpcion1);
+        if(e.target.name === 'region'){
+            setLocalidades(await OpcionesLocalidades(e.target.value));
+        }
     }
 
     useEffect(() => {
@@ -85,7 +81,8 @@ function ActualizarCustodio() {
                 region : gen.data[0].region,
                 localidad : gen.data[0].localidad,
             });
-
+            
+            setLocalidades(await OpcionesLocalidades(gen.data[0].region));
             setLoad(false);
         }
         fetchData();
@@ -100,7 +97,7 @@ function ActualizarCustodio() {
           if(Autorizacion.obtenerUsuario().rol === 'admin'){
             await Custodio.actualizarDatosCustodio(id,datos);
             Notificacion('ACTUALIZACION EXITOSA', 'success');
-            navigate("/dashboard");
+            navigate(`/custodios/${id}`);
           }
         }
         catch (error) { 
@@ -108,9 +105,7 @@ function ActualizarCustodio() {
         }
       }
 
-    if(Autorizacion.obtenerUsuario().rol !== 'admin')
-        return <Navigate to='/' />
-    
+      
     if(load)
         <BiLoaderAlt className='text-6xl text-blue-500 animate-spin' />
     else{
@@ -126,8 +121,8 @@ function ActualizarCustodio() {
                         <Select campo='Cargo' name='cargo' required={true} byId={false} propiedad={general.cargo} opciones={cargos ? cargos : ['SELECCIONE']} manejador={setValores} />
                         <Select campo='Gerencia' name='gerencia' required={true} byId={false} propiedad={general.gerencia} opciones={gerencias ? gerencias : ['SELECCIONE']} manejador={setValores} />
                         <Select campo='Region' name='region' required={true} byId={false} propiedad={general.region} opciones={regiones ? regiones : ['SELECCIONE']} manejador={setValores} />
-                        <Select campo='Localidad' name='localidad' required={true} byId={false} propiedad={general.localidad} opciones={localidadOrienteSur} manejador={setValores} />
-                    </div>
+                        <Select campo='Localidad' name='localidad' required={true} byId={false} propiedad={general.localidad} opciones={localidades ? localidades : ['SELECCIONE']} manejador={setValores} />
+                    </div>  
 
                     <div className="flex space-x-2 md:space-x-12">
                         <Button tipo='button' color='blue' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>

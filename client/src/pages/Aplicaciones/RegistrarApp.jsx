@@ -32,6 +32,7 @@ function RegistrarApp() {
     const [alcance, setAlcance] = useState('');
     const [plataformas, setPlataformas] = useState('');
     const [frecuencia, setFrecu] = useState('');
+    const [documentos, setDoc] = useState('');
     const [regiones, setRegiones] = useState('');
 
     // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
@@ -41,6 +42,7 @@ function RegistrarApp() {
         setEstatus(await Opciones('estatus'));
         setAlcance(await Opciones('alcance'));
         setFrecu(await Opciones('frecuencias'));
+        setDoc(await Opciones('documentos'));
         setRegiones(await Opciones('regiones'));
     }
 
@@ -50,10 +52,8 @@ function RegistrarApp() {
 
     // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
     const setValores = (e) => {
-        if(e.target.value === 'TODAS')
-            setDatos({ ...datos, [e.target.name] : null });
-        else
-            setDatos({ ...datos, [e.target.name] : e.target.value });
+        const valor = e.target.value.toUpperCase();
+        setDatos({ ...datos, [e.target.name] : valor });
     }
 
     // =================== FUNCION PARA ACTUALIZAR DATOS ===================
@@ -62,9 +62,9 @@ function RegistrarApp() {
 
         if(Autorizacion.obtenerUsuario().rol === 'admin'){
             try {
-                await Aplicacion.crearDatos(datos, tableDataLenguaje, tableDataBase, tableDataServidor);
+                const id = await Aplicacion.crearDatos(datos, tableDataLenguaje, tableDataBase, tableDataServidor);
                 Notificacion('REGISTRO EXITOS', 'success');
-                navigate("/dashboard");
+                navigate(`/aplicaciones/${id}`);
             }
             catch (error) { 
                 Notificacion(error.response.data.message, 'error');
@@ -205,10 +205,6 @@ function RegistrarApp() {
             left: true
         },
     ];
-
-
-    if(Autorizacion.obtenerUsuario().rol !== 'admin')
-        return <Navigate to='/' />
     
     return (
         <Container>
@@ -359,7 +355,7 @@ function RegistrarApp() {
                     <div className="flex flex-col">
                         <Input campo='Descripcion' name='doc_descripcion' required={true} manejador={setValores} />
                         <Input campo='Direccion' name='doc_direccion' required={true} manejador={setValores} />
-                        <Input campo='Tipo de Doc' name='doc_tipo' required={true} manejador={setValores} />
+                        <Select campo='Tipo de Doc' name='doc_tipo' required={true} opciones={documentos ? documentos : ['SELECCIONAR']} manejador={setValores} />
                     </div>
 
                     {/* --------------- MANTENIMIENTO --------------- */}
@@ -371,7 +367,7 @@ function RegistrarApp() {
                     </div>
                 </div>
 
-                <div className="flex gap-2 md:gap-12">
+                <div className="flex space-x-2 md:space-x-12">
                     <Button tipo='button' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
                     <Button tipo='submit' width={32}>Registrar</Button>
                 </div>

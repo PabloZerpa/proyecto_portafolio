@@ -12,15 +12,6 @@ class Custodio {
         });
     }
 
-    // ---------------- REGISTRO DE LA INFO DEL RESPONSABLE ------------------
-    // async registrarCustodio(datos) {
-    //     console.log(datos);
-    //     return await axios.post(`${baseUrl}aplicaciones/custodio`, datos, { headers: authHeader() })
-    //     .then(response => {
-    //         return response.data;
-    //     });
-    // }
-
     // ---------------- CREATE DE LA INFO DE NUEVA APP ------------------
     async actualizarDatosCustodio(id,datos) {
         try { 

@@ -124,7 +124,7 @@ export const opcionGerencia = ['SELECCIONE','AIT', 'SERVIDORES', 'TELECOMUNICACI
 
 export const opcionCargo = ['SELECCIONE','ANALISTA', 'ESPECIALISTA', 'GERENTE'];
 
-export const opcionCount = ['SELECCIONE',10,20,30,40,50];
+export const opcionCount = ['SELECCIONE','TODAS',10,20,30,40,50];
 
 export const opcionPlataforma = ['SELECCIONE','TODAS', 'WEB', 'ESCRITORIO', 'MOVIL', 'CLIENTE-SERVIDOR', 'STAND ALONE', 'MINI', 'MAINFRAME'];
 export const selectPlataforma = ['SELECCIONE','WEB', 'ESCRITORIO', 'MOVIL', 'CLIENTE-SERVIDOR', 'STAND ALONE', 'MINI', 'MAINFRAME'];

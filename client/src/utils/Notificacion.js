@@ -11,3 +11,4 @@ export const Notificacion = (texto,tipo) => {
     }
   );
 }
+

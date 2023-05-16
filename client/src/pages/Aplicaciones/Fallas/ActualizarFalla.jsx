@@ -19,10 +19,8 @@ function ActualizarFalla({setIsOpen, valores, setUpdate}) {
 
     // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
     const setValores = (e) => {
-        if(e.target.value === 'TODAS')
-            setDatos({ ...datos, [e.target.name] : null })
-        else
-            setDatos({ ...datos, [e.target.name] : e.target.value })
+        const valor = e.target.value.toUpperCase();
+        setDatos({ ...datos, [e.target.name] : valor })
     }
 
     // =================== FUNCION PARA ACTUALIZAR FALLA ===================
@@ -46,7 +44,7 @@ function ActualizarFalla({setIsOpen, valores, setUpdate}) {
             <form className="flex flex-col items-center space-y-8 pb-4 overflow-y-auto" onSubmit={actualizarFalla}>
                 <div className="flex flex-col items-center space-y-2 pb-4 bg-zinc-400 rounded">
                     <div className="flex flex-col p-4 w-[300px] md:w-[400px] lg:w-[500px] bg-zinc-400 rounded">
-                        <Select campo='Clase' name='clase' byId={false} propiedad={valores.fal_clase} opciones={['SELECCIONE','CLASE 1','CLASE 2','CLASE 3']} manejador={setValores} />
+                        {/* <Select campo='Clase' name='clase' byId={false} propiedad={valores.fal_clase} opciones={['SELECCIONE','CLASE 1','CLASE 2','CLASE 3']} manejador={setValores} /> */}
                         <Select campo='Impacto' name='impacto' byId={false} propiedad={valores.fal_impacto} opciones={['SELECCIONE','ALTA','MEDIA','BAJA']} manejador={setValores}/>
                         <div className="col-span-2">
                             <TextArea campo='Descripcion' name='descripcion' area={true} propiedad={valores.fal_descripcion} editable={true} manejador={setValores} />

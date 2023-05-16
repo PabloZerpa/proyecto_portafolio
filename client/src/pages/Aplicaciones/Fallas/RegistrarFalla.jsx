@@ -1,9 +1,10 @@
 
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { Button, Container, Select, TextArea } from "../../../components";
 import Autorizacion from "../../../services/auth.service";
 import Falla from "../../../services/falla.service";
+import Usuario from "../../../services/usuario.service";
 import { Notificacion } from "../../../utils/Notificacion";
 import Opciones from "../../../utils/Opciones";
 import { FaArrowLeft } from "react-icons/fa";
@@ -17,18 +18,35 @@ function RegistrarFalla() {
     // ---------- ESTADOS ----------
     const [acronimos, setAcronimos] = useState('');
     const [datos, setDatos] = useState({
-        aplicacion: '',
-        clase: '',
+        nombre: '',
+        elemento: '',
         impacto: '',
         descripcion: '',
         solucion: '',
-        usuario: Autorizacion.obtenerUsuario().indicador,
-		actualizador: Autorizacion.obtenerUsuario().indicador,
+        usuario_creador: Autorizacion.obtenerUsuario().indicador,
     });
+
+    async function OpcionesAcronimos(valor){
+        try {
+            const respuesta = await Usuario.obtenerAcronimos(valor);
+            const data = respuesta.data;
+            let opciones = ['SELECCIONE'];
+        
+            for (let i = 0; i < data.length; i++) {
+                const valor = Object.values(data[i]);
+                opciones.push(valor[0]);
+            }
+        
+            return opciones;
+            
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
     async function establecerDatos(){
-        setAcronimos(await Opciones('acronimos'));
+        //setAcronimos(await OpcionesAcronimos('acronimos'));
     }
 
     useEffect(() => {
@@ -36,11 +54,13 @@ function RegistrarFalla() {
     }, []);
 
     // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
-    const setValores = (e) => {
-        if(e.target.value === 'TODAS')
-            setDatos({ ...datos, [e.target.name] : null })
-        else
-            setDatos({ ...datos, [e.target.name] : e.target.value })
+    const setValores = async (e) => {
+        const valor = e.target.value.toUpperCase();
+        setDatos({ ...datos, [e.target.name] : valor })
+
+        if(e.target.name === 'elemento'){
+            setAcronimos(await OpcionesAcronimos(e.target.value));
+        }
     }
 
     // =================== FUNCION PARA REGISTRAR DATOS ===================
@@ -48,8 +68,8 @@ function RegistrarFalla() {
         e.preventDefault();
         
         try {
-        	if(Autorizacion.obtenerUsuario().rol === 'admin'){
-            	await Falla.registrarFalla(datos);
+            if(Autorizacion.obtenerUsuario().rol === 'admin'){
+                await Falla.registrarFalla(datos);
                 Notificacion('REGISTRO EXITOSO', 'success');
                 setTimeout(() => { navigate("/aplicaciones/fallas") }, "2000");
             }
@@ -67,8 +87,8 @@ function RegistrarFalla() {
                     <h2 className='font-bold text-base'>Datos de la Falla</h2>
 
                     <div className="flex flex-col p-4 w-[320px] md:w-[640px] lg:w-[800px] bg-zinc-400 rounded">
-                        <Select campo='Aplicacion' name='aplicacion' required={true} byId={false} opciones={acronimos ? acronimos : ['SELECCIONE']} manejador={setValores} />
-                        <Select campo='Clase' name='clase' required={true} byId={false} opciones={['SELECCIONE','CLASE 1','CLASE 2','CLASE 3']} manejador={setValores} />
+                        <Select campo='Elemento' name='elemento' required={true} byId={false} opciones={['SELECCIONE','APLICACION','BASE DE DATOS','SERVIDOR']} manejador={setValores} />
+                        <Select campo='Nombre' name='nombre' required={true} byId={false} opciones={acronimos ? acronimos : ['SELECCIONE']} manejador={setValores} />
                         <Select campo='Impacto' name='impacto' required={true} byId={false} opciones={['SELECCIONE','ALTA','MEDIA','BAJA']} manejador={setValores}/>
                         <div className="col-span-2">
                             <TextArea campo='Descripcion' name='descripcion' area={true} required={true} editable={true} manejador={setValores} />

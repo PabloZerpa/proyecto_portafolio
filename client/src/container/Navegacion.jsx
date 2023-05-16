@@ -1,54 +1,47 @@
 
 import { useEffect, useState } from "react";
-import { FaHome, FaCode,FaDatabase, FaChevronDown, FaChevronUp, FaKey, FaSignOutAlt, FaBars, FaTimes, FaHardHat, FaServer, FaChevronRight } from "react-icons/fa";
+import { FaHome, FaCode,FaDatabase, FaChevronDown, FaChevronUp, FaKey, FaSignOutAlt, FaBars, FaTimes, FaHardHat, FaServer, FaChevronRight, FaBug } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import Autorizacion from '../services/auth.service';
 
 function Navegacion() {
-
-    const [open, setOpen] = useState(true);
     
     const [open1, setOpen1] = useState(false);
     const [open2, setOpen2] = useState(false);
     const [open3, setOpen3] = useState(false);
     const [open4, setOpen4] = useState(false);
     const [open5, setOpen5] = useState(false);
+    const [open6, setOpen6] = useState(false);
     const openMenu1 = () => setOpen1(!open1);
     const openMenu2 = () => setOpen2(!open2);
     const openMenu3 = () => setOpen3(!open3);
     const openMenu4 = () => setOpen4(!open4);
     const openMenu5 = () => setOpen5(!open5);
+    const openMenu6 = () => setOpen6(!open6);
+
+    const [check, setCheck] = useState(false);
 
     if (Autorizacion.obtenerUsuario() === null)
         return null
-    
+
     return (
-        <div className='relative'>
-            <span
-                className="fixed flex mt-32 ml-4 text-zinc-800 text-xl z-50 cursor-pointer"
-                onClick={(e) => setOpen(!open)}
-            >
-                <FaChevronRight />
-            </span>
+        <div>
+            <input className="hidden" type="checkbox" id="check" onClick={(e) => setCheck(!check)} />
+            <label htmlFor="check" className="fixed flex mt-24 ml-4 text-zinc-500 text-3xl z-50 cursor-pointer lg:hidden "><FaBars /></label>
 
-            <div className={` ${ open ? "flex" : "hidden" }
-                h-screen p-3 px-5 overflow-y-auto bg-gray-200 m-0 mt-20 p-0 z-50 fixed drop-shadow-md`}>
+            <div className={` ${ check ? "flex" : "hidden lg:flex" } `} id="responsiveNav">
+                <nav className="flex flex-col mt-20 pt-20 space-y-10 items-center 
+                fixed z-40 text-gray-400 bg-gray-200 w-2/3 h-screen lg:w-1/6">
 
-                <div className="pt-12 space-y-3">
-
-                    <div className="flex items-center justify-between">
-                        <button onClick={(e) => setOpen(!open)}>
-                            {<FaTimes className="ml-32" />}
-                        </button>
-                    </div>
-                    
-                        <ul className="list-none p-0 m-0 flex flex-col space-y-4">
+                    <ul className="list-none p-0 m-0 flex flex-col space-y-4">
                             <li>
                                 <Link to="/dashboard" className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100">
                                     <FaHome />
                                     <span className="px-2">Inicio</span>
                                 </Link>
                             </li>
+
+                            <div className="w-full h-0.5 bg-gray-500 opacity-50"></div>
                             
                             {Autorizacion.obtenerUsuario().rol==='user' ? (
                                 null
@@ -86,10 +79,10 @@ function Navegacion() {
                                         className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                         Busqueda
                                     </Link>
-                                    <Link to="/aplicaciones/fallas" 
+                                    {/*<Link to="/aplicaciones/fallas" 
                                         className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                         Fallas
-                                    </Link>
+                                    </Link>*/}
                                     <Link to="/aplicaciones/diagramas" 
                                         className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                         Charts
@@ -122,7 +115,7 @@ function Navegacion() {
                                 <div style={open4 ? {display: 'block'} : {display: 'none'}} className='pl-4'>
                                     <Link to="/servidores" 
                                         className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
-                                        Servidores
+                                        Busqueda
                                     </Link>
                                 </div>
                             </li>
@@ -137,10 +130,27 @@ function Navegacion() {
                                 <div style={open5 ? {display: 'block'} : {display: 'none'}} className='pl-4'>
                                     <Link to="/custodios" 
                                         className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
-                                        Custodios
+                                        Busqueda
                                     </Link>
                                 </div>
                             </li>
+                            <li>
+                                <div className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg cursor-pointer hover:bg-gray-800 hover:text-gray-100" 
+                                    onClick={openMenu6}>
+                                    <FaBug />
+                                    <span className="px-2">Fallas</span>
+                                    {open6 ? <FaChevronUp /> : <FaChevronDown />}
+                                </div>
+
+                                <div style={open6 ? {display: 'block'} : {display: 'none'}} className='pl-4'>
+                                    <Link to="/aplicaciones/fallas" 
+                                        className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
+                                        Busqueda
+                                    </Link>
+                                </div>
+                            </li>
+                            
+                            <div className="w-full h-0.5 bg-gray-500 opacity-50"></div>
 
                             <li>
                                 <span className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100 cursor-pointer" onClick={Autorizacion.logout} >
@@ -150,8 +160,7 @@ function Navegacion() {
                             </li>
                             
                         </ul>
-
-                </div>
+                </nav>
             </div>
         </div>
         

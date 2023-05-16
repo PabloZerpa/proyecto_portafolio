@@ -16,12 +16,12 @@ const columns = [
         <FaEye className="text-blue-500 text-lg" />
       </Link>
       
-      {Autorizacion.obtenerUsuario.rol !== 'user' ? 
-        <Link to={row ? `/administracion/actualizacion/${row.aplicacion_id}` : `/dashboard`} >
-          <FaEdit className="text-blue-500 text-lg" />
-        </Link>
-      : 
+      {Autorizacion.obtenerUsuario().rol === 'user' ? 
         null
+      : 
+      <Link to={row ? `/administracion/actualizacion/${row.aplicacion_id}` : `/dashboard`} >
+        <FaEdit className="text-blue-500 text-lg" />
+      </Link>
       }
       
     </div>,
@@ -31,32 +31,27 @@ const columns = [
       selector: row => row.aplicacion_id,
       sortable: true,
       left: true,
-      width: '60px'
+      width: '60px',
   },
   {
       name: 'Acronimo',
       selector: row => row.apl_acronimo,
       sortable: true,
-      left: true
+      left: true,
+      width: "100px",
   },
   {
       name: 'Nombre',
       selector: row => row.apl_nombre,
       sortable: true,
       left: true,
-      width: '150px'
-  },
-  {
-      name: 'Version',
-      selector: row => row.apl_version,
-      sortable: true,
-      left: true,
-      width: '100px'
+      width: '150px',
   },
   {
     name: 'Alcance',
     selector: row => row.alcance,
     sortable: true,
+    width: "150px",
     left: true
 },
   {
@@ -64,12 +59,13 @@ const columns = [
       selector: row => row.estatus,
       sortable: true,
       left: true,
-      width: '150px'
+      width: "150px",
   },
   {
       name: 'Prioridad',
       selector: row => row.prioridad,
       sortable: true,
+      width: "100px",
       left: true
   },
   {
@@ -79,31 +75,29 @@ const columns = [
           {row.apl_direccion}
         </a>,
       sortable: true,
+      width: "200px",
       left: true
   },
   {
       name: 'Region',
       selector: row => row.region,
       sortable: true,
+      width: "150px",
       left: true
   },
   {
-    name: 'Critico',
-    selector: row => row.apl_critico,
+    name: 'Plataforma',
+    selector: row => row.plataforma,
     sortable: true,
-    left: true,
+    width: "150px",
+    left: true
   },
   {
-    name: 'Codigo Fuente',
-    selector: row => row.apl_codigo_fuente,
+    name: 'Mantenimiento',
+    selector: row => row.frecuencia,
     sortable: true,
-    left: true,
-  },
-  {
-      name: 'Mantenimiento',
-      selector: row => row.man_frecuencia,
-      sortable: true,
-      left: true
+    width: "150px",
+    left: true
   },
 ];
 
