@@ -3,6 +3,7 @@
 import DataTable from "react-data-table-component";
 import Base from '../services/basedatos.service';
 import Servidor from '../services/servidor.service';
+import Custodio from '../services/custodios.service';
 import Usuario from '../services/usuario.service';
 import { FaSearch } from "react-icons/fa";
 import { paginacionOpciones } from "../utils/TablaOpciones";
@@ -15,11 +16,8 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
 
     // =================== VARIABLES PARA LA BUSQUEDA ===================
     const [resultado, setResultado] = useState('');
-    const [datos, setDatos] = useState({
-        terminoBusqueda: '',
-    }); 
+    const [datos, setDatos] = useState({ terminoBusqueda: '',});
     const [debounceValue] = useDebounce(datos, 500);
-
     const [elementos, setElementos] = useState([0]);
 
     useEffect(() => {
@@ -33,7 +31,6 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
     const setValores = (e) => {
         setDatos({ ...datos, [e.target.name] : e.target.value })    
     }
-
 
     const onSearch = async (value) => {
         try {
@@ -49,8 +46,8 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
             else if(objetivo === 'lenguaje'){
                 respuesta = await Usuario.obtenerOpcion('lenguajesTabla');
             }
-            else if(objetivo === 'framework'){
-                respuesta = await Usuario.obtenerOpcion('frameworksTabla');
+            else if(objetivo === 'custodio'){
+                respuesta = await Custodio.obtenerCustodioPorBusqueda(terminoBusqueda);
             }
 
             setResultado(respuesta.data);
@@ -60,7 +57,16 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
     }
 
     const handleRowSelected = useCallback(state => {
-        setElementos(elementos[0] = state.selectedRows);
+        if(objetivo === 'custodio'){
+            console.log(state.selectedRows[0] ? state.selectedRows[0].cus_indicador : null);
+            if(state.selectedRows[0]){
+                devolverSelecciones(state.selectedRows[0].cus_indicador);
+                setIsOpen(false);
+            }
+        }
+        else{
+            setElementos(elementos[0] = state.selectedRows);
+        }
 	}, []);
     
 
@@ -121,7 +127,7 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
                         pagination
                         paginationComponentOptions={paginacionOpciones}
                         paginationRowsPerPageOptions={[10,20,30,50,100]}
-                        selectableRows 
+                        selectableRows
                         selectableRowSelected={rowSelectCritera}
                         onSelectedRowsChange={handleRowSelected}
                         noDataComponent={"SIN RESULTADOS"}
@@ -135,10 +141,15 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
                 </div>
             ) : (null)}
 
-            <div className="flex items-center space-x-8 p-0 ">
-                <Button color='blue' manejador={(e) => {sendDatos()}}>Agregar</Button>
-                <Button color='blue' manejador={(e) => setIsOpen(false)}>Cerrar</Button>
-            </div>
+            {objetivo !== 'custodio' ? 
+                <div className="flex items-center space-x-8 p-0 ">
+                    <Button color='blue' manejador={(e) => {sendDatos()}}>Agregar</Button>
+                    <Button color='blue' manejador={(e) => setIsOpen(false)}>Cerrar</Button>
+                </div>
+                : 
+                null
+            }
+
         </>
     );
 }

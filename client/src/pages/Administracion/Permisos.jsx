@@ -20,7 +20,7 @@ function Permisos() {
                 <Link to="/administracion/permisos/buscar" className="flex items-center justify-between w-72 p-4 text-gray-600 bg-white border-2 border-white rounded-lg cursor-pointer hover:text-blue-500 hover:border-blue-500">            
                     <div className="block">
                         <FaUserEdit className="text-2xl" />
-                        <div className="w-full text-lg font-semibold">Editar Usuario</div>
+                        <div className="w-full text-lg font-semibold">Buscar Usuario</div>
                     </div>
                 </Link>
             </ul>

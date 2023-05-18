@@ -6,12 +6,14 @@ const baseUrl = process.env.REACT_APP_URL;
 class Aplicacion {
 
     // ---------------- CREATE DE LA INFO DE NUEVA APP ------------------
-    async crearDatos(datos, lenguajes, bases, servidores) {
+    async crearDatos(datos, lenguajes, bases, servidores, documentos) {
 
         let datosServidor = datos;
         datosServidor.select_lenguaje = lenguajes;
         datosServidor.select_base = bases;
         datosServidor.select_servidor = servidores;
+        datosServidor.select_documentos = documentos;
+        console.log(datosServidor);
 
         return await axios.post(`${baseUrl}aplicaciones/`, datosServidor, { headers: authHeader() })
         .then(response => {
@@ -20,13 +22,15 @@ class Aplicacion {
     }
 
     // ---------------- UPDATE DE TODOS LOS DATOS ------------------
-    async actualizarDatos(id, datos, lenguajes, bases, servidores) {
+    async actualizarDatos(id, datos, lenguajes, bases, servidores, documentos) {
         try { 
 
             let datosServidor = datos;
             datosServidor.select_lenguaje = lenguajes;
             datosServidor.select_base = bases;
             datosServidor.select_servidor = servidores;
+            datosServidor.select_documentos = documentos;
+            console.log(datosServidor);
             
             const respuesta = await axios.put(`${baseUrl}aplicaciones/${id}`, datosServidor, { headers: authHeader() });
             return respuesta;

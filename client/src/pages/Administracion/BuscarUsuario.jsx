@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Button, Container, Tabla } from "../../components/";
-import { FaArrowLeft, FaEdit, FaSearch, FaTimesCircle } from "react-icons/fa";
+import { FaArrowLeft, FaEdit, FaEye, FaSearch, FaTimesCircle } from "react-icons/fa";
 import { useDebounce } from "use-debounce";
 import Autorizacion from '../../services/auth.service';
 import Usuario from "../../services/usuario.service";
@@ -28,8 +28,10 @@ function BuscarUsuario() {
 
   // =================== FUNCION PARA HABILITAR VENTANA MODAL DE EDICION ===================
   const habilitar = (dato) => {
-    setIsOpen(!isOpen);
-    setUsuario(dato); 
+    if(dato.rol !== 'admin'){
+      setIsOpen(!isOpen);
+      setUsuario(dato); 
+    }
   }
 
   // =================== FUNCION PARA BUSCAR DATOS EN LA DATABASE ===================
@@ -69,7 +71,11 @@ function BuscarUsuario() {
       name: 'Editar',
       button: true,
       cell: row => 
-        <div>
+        <div className="flex space-x-4">
+          <FaEye 
+            onClick={(e) => habilitar(row)}
+            className="text-blue-500 text-lg" 
+          />
           <FaEdit 
             onClick={(e) => habilitar(row)}
             className="text-blue-500 text-lg" 

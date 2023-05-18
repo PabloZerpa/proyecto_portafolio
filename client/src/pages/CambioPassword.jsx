@@ -1,6 +1,6 @@
 
-import { useState, useEffect } from "react";
-import { Button, Container, Input } from "../components";
+import { useState } from "react";
+import { Button } from "../components";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Notificacion } from "../utils/Notificacion";
 import Autorizacion from "../services/auth.service";
@@ -36,27 +36,38 @@ function CambioPassword() {
         e.preventDefault();
 
         try {
-            if( (datos.passwordNueva === datos.passwordConfirm) && 
-            (datos.password === passwordVieja) && 
-            (datos.password !== datos.passwordNueva) ){
 
-                const { password, passwordNueva } = datos;
-
-                await Autorizacion.cambiarContraseña(indicador, passwordNueva);
-                Notificacion('CONTRASEÑA CAMBIADA EXITOSAMENTE', 'success');
-                setTimeout(() => { navegar("/") }, "500");
+            if(datos.passwordNueva.length < 8){
+                Notificacion('CONTRASEÑA NUEVA MUY CORTA', 'error');
+                return;
             }
+
+            if(datos.passwordNueva !== datos.passwordConfirm){
+                Notificacion('CONTRASEÑAS NUEVAS NO COINCIDEN', 'error');
+                return;
+            }
+
+            if(datos.password !== passwordVieja){
+                Notificacion('CONTRASEÑA VIEJA INVALIDA ', 'error');
+                return;
+            }
+
+            if(datos.password === datos.passwordNueva){
+                Notificacion('CONTRASEÑA NUEVA DEBE SER DIFERENTE A LA VIEJA ', 'error');
+                return;
+            }
+
+            console.log('AQUI');
+            const { password, passwordNueva } = datos;
+            await Autorizacion.cambiarContraseña(indicador, passwordNueva);
+            Notificacion('CONTRASEÑA CAMBIADA EXITOSAMENTE', 'success');
+            setTimeout(() => { navegar("/") }, "500");
         }
         catch (error) { 
             Notificacion(error.response.data.message, 'error');
         }
         
     }
-
-    useEffect(() => {
-        
-    }, []);
-
 
 
     return (
@@ -68,78 +79,82 @@ function CambioPassword() {
                 >
                     <h2 className='font-bold text-base'>Cambio de Contraseña</h2>
 
-                    <li className="w-72 relative">
+                    <li className="w-72">
 
+                        <label className='w-full'>Contraseña Vieja</label>
+                        <div className="w-72 relative">
+                            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <FaLock />
+                            </div>
+                            <input 
+                                type={showPass1 ? 'text' : 'password' } 
+                                className="w-full h-10 pl-8 p-2 border-solid border-gray-400 outline-blue-500 rounded" 
+                                name="password" 
+                                placeholder="Contraseña Vieja" 
+                                onChange={(e) => {setValores(e)}}
+                                required 
+                            />
+                            <div 
+                                className="text-black absolute inset-y-0 right-5 flex items-center bg-trasparent cursor-pointer "
+                                onClick={handlePass1} >
+                                { showPass1 ? <FaEye/> : <FaEyeSlash /> }
+                            </div>
+                        </div>
+
+                    </li>
+
+                    <li className="w-72">
+
+                    <label className='w-full'>Contraseña Nueva</label>
+                    <div className="w-72 relative">
                         <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                             <FaLock />
                         </div>
-
                         <input 
-                            type={showPass1 ? 'text' : 'password' } 
+                            type={showPass2 ? 'text' : 'password' } 
                             className="w-full h-10 pl-8 p-2 border-solid border-gray-400 outline-blue-500 rounded" 
-                            name="password" 
-                            placeholder="Contraseña Vieja" 
+                            name="passwordNueva" 
+                            placeholder="Contraseña Nueva" 
                             onChange={(e) => {setValores(e)}}
                             required 
                         />
-
                         <div 
                             className="text-black absolute inset-y-0 right-5 flex items-center bg-trasparent cursor-pointer "
-                            onClick={handlePass1} >
-                            { showPass1 ? <FaEye/> : <FaEyeSlash /> }
+                            onClick={handlePass2} >
+                            { showPass2 ? <FaEye/> : <FaEyeSlash /> }
                         </div>
-                    </li>
-
-                    <li className="w-72 relative">
-
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <FaLock />
-                    </div>
-
-                    <input 
-                        type={showPass2 ? 'text' : 'password' } 
-                        className="w-full h-10 pl-8 p-2 border-solid border-gray-400 outline-blue-500 rounded" 
-                        name="passwordNueva" 
-                        placeholder="Contraseña Nueva" 
-                        onChange={(e) => {setValores(e)}}
-                        required 
-                    />
-
-                    <div 
-                        className="text-black absolute inset-y-0 right-5 flex items-center bg-trasparent cursor-pointer "
-                        onClick={handlePass2} >
-                        { showPass2 ? <FaEye/> : <FaEyeSlash /> }
                     </div>
                 </li>
 
-                <li className="w-72 relative">
+                <li className="w-72">
 
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <FaLock />
-                    </div>
-
-                    <input 
-                        type={showPass3 ? 'text' : 'password' } 
-                        className="w-full h-10 pl-8 p-2 border-solid border-gray-400 outline-blue-500 rounded" 
-                        name="passwordConfirm" 
-                        placeholder="Confirmar" 
-                        onChange={(e) => {setValores(e)}}
-                        required 
-                    />
-
-                    <div 
-                        className="text-black absolute inset-y-0 right-5 flex items-center bg-trasparent cursor-pointer "
-                        onClick={handlePass3} >
-                        { showPass3 ? <FaEye/> : <FaEyeSlash /> }
+                    <label className='w-full'>Confirmar</label>
+                    <div className="w-72 relative">
+                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <FaLock />
+                        </div>
+                        <input 
+                            type={showPass3 ? 'text' : 'password' } 
+                            className="w-full h-10 pl-8 p-2 border-solid border-gray-400 outline-blue-500 rounded" 
+                            name="passwordConfirm" 
+                            placeholder="Confirmar" 
+                            onChange={(e) => {setValores(e)}}
+                            required 
+                        />
+                        <div 
+                            className="text-black absolute inset-y-0 right-5 flex items-center bg-trasparent cursor-pointer "
+                            onClick={handlePass3} >
+                            { showPass3 ? <FaEye/> : <FaEyeSlash /> }
+                        </div>
                     </div>
                 </li>
 
-                    <li className='flex space-x-10'>
-                        <Button width={32} manejador={(e) => navegar(-1)} ><FaArrowLeft />Volver</Button>
-                        <input className='w-32 h-8 bg-blue-600 text-white border-none outline-none rounded cursor-pointer hover:bg-blue-500' type='submit' value='Cambiar' />
-                    </li>
+                <li className='flex space-x-10'>
+                    <Button width={32} manejador={(e) => navegar(-1)} ><FaArrowLeft />Volver</Button>
+                    <input className='w-32 h-8 bg-blue-600 text-white border-none outline-none rounded cursor-pointer hover:bg-blue-500' type='submit' value='Cambiar' />
+                </li>
 
-                </form>
+            </form>
         </div>
     )
 };

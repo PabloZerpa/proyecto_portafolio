@@ -4,11 +4,13 @@ const { matchedData } = require("express-validator");
 const { generarToken } = require('../helpers/token');
 const { encriptar, comparar } = require('../helpers/encriptar');
 
+const { generarLogAuditoria } = require('../helpers/auditoria');
+
 // *************** LOGEAR USUARIO ***************
 const login = async (req, res) => { 
     try {
         const body = matchedData(req);
-        const {indicador, password } = body;
+        const {indicador, password} = body;
         
         const query = await pool.query('SELECT * FROM usuarios WHERE indicador = ?', [indicador]);
         const user = query[0][0];
@@ -53,6 +55,14 @@ const login = async (req, res) => {
             token 
         }
         
+        const payload = {
+            mensaje : 'Inicio de sesion exitoso',
+            ip : req.ip,
+            indicador : user.indicador
+        }
+
+        generarLogAuditoria(payload);
+
         res.status(200).json(datos);
 
     }

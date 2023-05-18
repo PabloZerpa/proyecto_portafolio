@@ -4,12 +4,13 @@ import { useNavigate, Navigate } from 'react-router-dom';
 import { Button, Container, Input, Radio, Select, TextArea, Tabla } from '../../components';
 import { Notificacion } from '../../utils/Notificacion';
 import { FaTimesCircle } from 'react-icons/fa';
-import { columnasModalBD,columnasModalLenguaje, columnasModalServidor } from '../../utils/columnas';
+import { columnasModalBD,columnasModalCustodio,columnasModalDoc,columnasModalLenguaje, columnasModalServidor } from '../../utils/columnas';
 import Autorizacion from '../../services/auth.service';
 import Aplicacion from '../../services/aplicacion.service';
 import Opciones from '../../utils/Opciones';
 import TableRegistro from '../../components/TablaRegistro';
 import Modal from '../../components/Modal';
+import DocumentosForm from '../../components/DocumentosForm';
 
  
 function RegistrarApp() {
@@ -62,9 +63,11 @@ function RegistrarApp() {
 
         if(Autorizacion.obtenerUsuario().rol === 'admin'){
             try {
-                const id = await Aplicacion.crearDatos(datos, tableDataLenguaje, tableDataBase, tableDataServidor);
-                Notificacion('REGISTRO EXITOS', 'success');
-                navigate(`/aplicaciones/${id}`);
+                console.log(tableDataDoc);
+                const id = await Aplicacion.crearDatos(
+                    datos, tableDataLenguaje, tableDataBase, tableDataServidor, tableDataDoc);
+                // Notificacion('REGISTRO EXITOS', 'success');
+                // navigate(`/aplicaciones/${id}`);
             }
             catch (error) { 
                 Notificacion(error.response.data.message, 'error');
@@ -112,7 +115,7 @@ function RegistrarApp() {
         setSelectServidor(selecciones); 
     };
 
-    // -------------------- FUNCION Y VARIABLES PARA LA SELECCION DE APLICACIONES --------------------
+    // -------------------- FUNCION Y VARIABLES PARA LA SELECCION DE LENGUAJES --------------------
     const [isOpen3, setIsOpen3] = useState(false);
     const [select_lenguaje, setSelectLenguaje] = useState([]);
     const [tableDataLenguaje, setDataLenguaje] = useState([]);
@@ -128,6 +131,44 @@ function RegistrarApp() {
         }
 
         setSelectLenguaje(selecciones); 
+    };
+
+    // -------------------- FUNCION Y VARIABLES PARA LA SELECCION DE DOCUMENTOS --------------------
+    const [isOpen4, setIsOpen4] = useState(false);
+    const [select_documento, setSelectDoc] = useState([]);
+    const [tableDataDoc, setDataDoc] = useState([]);
+
+    const obtenerSeleccionesDoc = (respuesta) => {
+        let selecciones = [];
+
+        setDataDoc(tableDataDoc => [...tableDataDoc, 
+        { doc_descripcion: respuesta.doc_descripcion, doc_direccion: respuesta.doc_direccion, doc_tipo: respuesta.doc_tipo}]);
+            
+        selecciones.push(respuesta);
+        select_documento.push(respuesta);
+
+        console.log(tableDataDoc);
+        console.log(selecciones);
+        console.log(select_documento);
+
+        setSelectDoc(selecciones);
+    };
+
+    // -------------------- FUNCION Y VARIABLES PARA LA SELECCION DE CUSTODIOS --------------------
+    const [isOpen5, setIsOpen5] = useState(false);
+    const [isOpen6, setIsOpen6] = useState(false);
+    const [select_funcional, setCustodioFuncional] = useState([]);
+    const [select_tecnico, setCustodioTecnico] = useState([]);
+    const [tableDataCustodio, setDataCustodio] = useState([]);
+
+    const obtenerCustodioFuncional = (respuesta) => {
+        console.log(respuesta);
+        setDatos({ ...datos, ['select_funcional'] : respuesta });
+    };
+
+    const obtenerCustodioTecnico = (respuesta) => {
+        console.log(respuesta);
+        setDatos({ ...datos, ['select_tecnico'] : respuesta });
     };
 
     // -------------------- FUNCION QUE ELIMINA ELEMENTO SELECCIONADA DE LA TABLA --------------------
@@ -189,6 +230,7 @@ function RegistrarApp() {
         },
     ];
     
+
     const columnasLenguaje = [
         generarColumna('Lenguaje ID','lenguaje_id','160px'),
         generarColumna('Lenguaje','lenguaje','160px'),
@@ -199,6 +241,24 @@ function RegistrarApp() {
             <div>
                 <FaTimesCircle
                     onClick={() => eliminarElemento(row,'lenguaje_id',tableDataLenguaje,setDataLenguaje,setSelectLenguaje)} 
+                    className="ml-3 text-red-500 text-lg cursor-pointer"
+                />
+            </div>,
+            left: true
+        },
+    ];
+
+    const columnasDoc = [
+        generarColumna('Descripcion','doc_descripcion','150px'),
+        generarColumna('Direccion','doc_direccion','150px'),
+        generarColumna('Tipo','doc_tipo','150px'),
+        {
+            name: 'Remover',
+            button: true,
+            cell: row => 
+            <div>
+                <FaTimesCircle
+                    onClick={() => eliminarElemento(row,'doc_descripcion',tableDataDoc,setDataDoc,setSelectDoc)} 
                     className="ml-3 text-red-500 text-lg cursor-pointer"
                 />
             </div>,
@@ -250,6 +310,45 @@ function RegistrarApp() {
                 </Modal>
             ) : (null) }
 
+            {/* --------------- VENTANA MODAL PARA REGISTRAR DOCUMENTOS --------------- */}
+            {isOpen4 ? (
+                <Modal>
+                    {/* --------------- DOCUMENTACION --------------- */}
+                    <DocumentosForm
+                        setIsOpen={setIsOpen4}
+                        devolverSelecciones={obtenerSeleccionesDoc}
+                    />
+                </Modal>
+            ) : (null) }
+
+            {/* --------------- VENTANA MODAL PARA REGISTRAR CUSTODIOS --------------- */}
+            {isOpen5 ? (
+                <Modal>
+                    <TableRegistro
+                        setIsOpen={setIsOpen5}
+                        devolverSelecciones={obtenerCustodioFuncional}
+                        columnas={columnasModalCustodio}
+                        objetivo='custodio'
+                        busqueda={true}
+                        selectDefault={null}
+                    />
+                </Modal>
+            ) : (null) }
+
+            {isOpen6 ? (
+                <Modal>
+                    <TableRegistro
+                        setIsOpen={setIsOpen6}
+                        devolverSelecciones={obtenerCustodioTecnico}
+                        columnas={columnasModalCustodio}
+                        objetivo='custodio'
+                        busqueda={true}
+                        selectDefault={null}
+                    />
+                </Modal>
+            ) : (null) }
+
+
             <h1 className='font-bold text-lg'>Registro de Aplicacion</h1>
 
             <form className="flex flex-col justify-center items-center w-full p-4 mb-10 z-40" onSubmit={crearDatos} >
@@ -274,6 +373,32 @@ function RegistrarApp() {
                         <Select campo='Region' name='apl_region' opciones={regiones ? regiones : ['SELECCIONE']} manejador={setValores} />
                         <Radio label='Critico' name='apl_critico' opciones={['SI','NO']} manejador={setValores} />
                         <Radio label='Codigo Fuente' name='apl_codigo_fuente' opciones={['SI', 'NO']} manejador={setValores} />
+                    </div>
+                </div>
+
+                {/* --------------- CUSTODIOS --------------- */} 
+                <div className="flex flex-col w-full md:w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 space-y-4 space-x-0 md:space-x-4 md:space-y-0">
+
+                        <div>
+                            <p className='font-bold text-base my-4'>Custodio Funcional</p>
+                            <button type='button' className="p-1 bg-blue-600 text-white rounded" 
+                                onClick={(e) => {setIsOpen5(!isOpen5)}} >
+                                Agregar
+                            </button>
+                            <Input campo='Custodio Funcional' name='select_funcional' editable={false} propiedad={datos.select_funcional ? datos.select_funcional : ''} />
+                        </div>
+
+                        <div>
+                            <p className='font-bold text-base my-4'>Custodio Tecnico</p>
+                            <button type='button' className="p-1 bg-blue-600 text-white rounded" 
+                                onClick={(e) => {setIsOpen6(!isOpen6)}} >
+                                Agregar
+                            </button>
+                            <Input campo='Custodio Tecnico' name='select_tecnico' editable={false} propiedad={datos.select_tecnico ? datos.select_tecnico : ''} />
+                        </div>
+
                     </div>
                 </div>
 
@@ -327,37 +452,24 @@ function RegistrarApp() {
                         </div>
                     </div>
 
-                </div>
+                    {/* --------------- DOCUMENTACION --------------- */}
+                    <p className='font-bold text-sm my-4'>Documentos</p>
+                    <div className='flex flex-col justify-center items-center space-y-4'>
 
-                
-                {/* --------------- CUSTODIOS --------------- */} 
-                <div className="flex flex-col w-full md:w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 space-y-4 space-x-0 md:space-x-4 md:space-y-0">
-                        <div>
-                            <p className='font-bold text-base my-4'>Custodio Funcional</p>
-                            <Select campo='Seleccione Custodio' name='select_funcional' byId={false} opciones={custodios ? custodios : ['SELECCIONE']} manejador={setValores}/>
-                            
+                        <button type='button' className="p-1 bg-blue-600 text-white rounded" 
+                            onClick={(e) => {setIsOpen4(!isOpen4)}} >
+                            Agregar
+                        </button>
+
+                        <div className="w-4/3">
+                            <Tabla columnas={columnasDoc} datos={tableDataDoc} />
                         </div>
-
-                        <div>
-                            <p className='font-bold text-base my-4'>Custodio Tecnico</p>
-                            <Select campo='Seleccione Custodio' name='select_tecnico' byId={false} opciones={custodios ? custodios : ['SELECCIONE']} manejador={setValores}/>
-                        </div>
-
                     </div>
+
                 </div>
 
  
                 <div className="flex flex-col w-full md:w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
-                    {/* --------------- DOCUMENTACION --------------- */}
-                    <p className='font-bold text-base my-4'>Documentacion</p>
-                    <div className="flex flex-col">
-                        <Input campo='Descripcion' name='doc_descripcion' required={true} manejador={setValores} />
-                        <Input campo='Direccion' name='doc_direccion' required={true} manejador={setValores} />
-                        <Select campo='Tipo de Doc' name='doc_tipo' required={true} opciones={documentos ? documentos : ['SELECCIONAR']} manejador={setValores} />
-                    </div>
-
                     {/* --------------- MANTENIMIENTO --------------- */}
                     <p className='font-bold text-base my-4'>Mantenimiento</p>
                     <div className="flex flex-col ">

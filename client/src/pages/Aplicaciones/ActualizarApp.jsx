@@ -6,10 +6,11 @@ import { BiLoaderAlt } from "react-icons/bi";
 import Autorizacion from '../../services/auth.service';
 import Aplicacion from '../../services/aplicacion.service';
 import Opciones from '../../utils/Opciones';
-import { columnasModalBD, columnasModalLenguaje, columnasModalServidor } from '../../utils/columnas';
+import { columnasModalBD, columnasModalCustodio, columnasModalLenguaje, columnasModalServidor } from '../../utils/columnas';
 import { FaTimesCircle } from 'react-icons/fa';
 import { Notificacion } from '../../utils/Notificacion';
 import swal from 'sweetalert';
+import DocumentosForm from '../../components/DocumentosForm';
 
 function ActualizarApp() {
 
@@ -49,7 +50,8 @@ function ActualizarApp() {
         e.preventDefault();
         try {
             if(Autorizacion.obtenerUsuario().rol === 'admin'){
-                await Aplicacion.actualizarDatos(id, datos, tableDataLenguaje, tableDataBase, tableDataServidor); 
+                await Aplicacion.actualizarDatos(
+                    id, datos, tableDataLenguaje, tableDataBase, tableDataServidor, tableDataDoc); 
                 Notificacion('ACTUALIZACION EXITOSA', 'success');
                 navigate(`/aplicaciones/${id}`);
             }
@@ -122,17 +124,59 @@ function ActualizarApp() {
         setSelectLenguaje(selecciones); 
     };
 
-    // -------------------- FUNCION PARA LLENAR TABLA POR DEFECTO --------------------
-    const llenarTabla = async (datos, id, nombre, setTabla, setSelect) => {
+    // -------------------- FUNCION Y VARIABLES PARA LA SELECCION DE DOCUMENTOS --------------------
+    const [isOpen4, setIsOpen4] = useState(false);
+    const [select_documento, setSelectDoc] = useState([]);
+    const [tableDataDoc, setDataDoc] = useState([]);
+
+    const obtenerSeleccionesDoc = (respuesta) => {
         let selecciones = [];
 
-        for (let i = 0; i < datos.length; i++) {
-            const x = datos[i];
-            setTabla(tabla => [...tabla, { [`${id}`]: x[id], [`${nombre}`]: x[nombre]}]); 
-            selecciones.push(datos[i][id]); 
+        setDataDoc(tableDataDoc => [...tableDataDoc, 
+        { doc_descripcion: respuesta.doc_descripcion, doc_direccion: respuesta.doc_direccion, doc_tipo: respuesta.doc_tipo}]);
+
+        selecciones.push(respuesta);
+        select_documento.push(respuesta);
+        setSelectDoc(selecciones);
+    };
+
+    // -------------------- FUNCION Y VARIABLES PARA LA SELECCION DE CUSTODIOS --------------------
+    const [isOpen5, setIsOpen5] = useState(false);
+    const [isOpen6, setIsOpen6] = useState(false);
+
+    const obtenerCustodioFuncional = (respuesta) => {
+        console.log(respuesta);
+        setDatos({ ...datos, ['select_funcional'] : respuesta });
+    };
+
+    const obtenerCustodioTecnico = (respuesta) => {
+        console.log(respuesta);
+        setDatos({ ...datos, ['select_tecnico'] : respuesta });
+    };
+
+    // -------------------- FUNCION PARA LLENAR TABLA POR DEFECTO --------------------
+    const llenarTabla = async (datos, id, nombre, setTabla, setSelect) => {
+
+        if(nombre === 'documentacion'){
+            console.log(datos);
+            let selecciones = [];
+            for (let i = 0; i < datos.length; i++) {
+                const x = datos[i];
+                setTabla(tabla => [...tabla, 
+                    { [`doc_descripcion`]: x[`doc_descripcion`], [`doc_direccion`]: x[`doc_direccion`], [`doc_tipo`]: x[`doc_tipo`]}]); 
+                selecciones.push(datos[i][id]); 
+            }
+            setSelect(selecciones);
         }
-        
-        setSelect(selecciones);
+        else{
+            let selecciones = [];
+            for (let i = 0; i < datos.length; i++) {
+                const x = datos[i];
+                setTabla(tabla => [...tabla, { [`${id}`]: x[id], [`${nombre}`]: x[nombre]}]); 
+                selecciones.push(datos[i][id]); 
+            }
+            setSelect(selecciones);
+        }
     }
 
     // -------------------- FUNCION PARA ELIMINAR ELEMENTOS DE LA TABLA --------------------
@@ -211,6 +255,24 @@ function ActualizarApp() {
         },
     ];
 
+    const columnasDoc = [
+        generarColumna('Descripcion','doc_descripcion','150px'),
+        generarColumna('Direccion','doc_direccion','150px'),
+        generarColumna('Tipo','doc_tipo','150px'),
+        {
+            name: 'Remover',
+            button: true,
+            cell: row => 
+            <div>
+                <FaTimesCircle
+                    onClick={() => eliminarElemento(row,'doc_descripcion',tableDataDoc,setDataDoc,setSelectDoc)} 
+                    className="ml-3 text-red-500 text-lg cursor-pointer"
+                />
+            </div>,
+            left: true
+        },
+    ];
+
     // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
     async function establecerDatos(){
         setCustodios(await Opciones('custodios'));
@@ -260,6 +322,8 @@ function ActualizarApp() {
 
             // ========== DATOS POR DEFECTO ==========
             const todo = await Aplicacion.obtenerTodo(id);
+
+            console.log(todo.documentacion);
     
             setGeneral(todo.general);
             setBaseDatos(todo.basedatos);
@@ -268,13 +332,14 @@ function ActualizarApp() {
             setTecnico(todo.tecnico); 
             setLenguaje(todo.lenguajes);
             setPlataforma(todo.plataformas.plataforma);
-            {todo.documentacion[0] ? setDocumentacion(todo.documentacion[0]) : setDocumentacion('')}
+            {todo.documentacion ? setDocumentacion(todo.documentacion) : setDocumentacion('')}
             {todo.tecnologia ? setMantenimiento(todo.tecnologia) : setMantenimiento('')}
 
             // ========== LLENA LA TABLA CON LOS VALORES POR DEFECTO ==========
             llenarTabla(lenguaje,'lenguaje_id','lenguaje',setDataLenguaje,setSelectLenguaje);
             llenarTabla(basedatos,'base_datos_id','base_datos',setDataBase,setSelectBase);
             llenarTabla(servidor,'servidor_id','servidor',setDataServidor,setSelectServidor);
+            llenarTabla(documentacion,'documentacion_id','documentacion',setDataDoc,setSelectDoc);
 
             await llenarDatos(); 
             setLoad(false);
@@ -289,7 +354,7 @@ function ActualizarApp() {
         try {
             if(Autorizacion.obtenerUsuario().rol === 'admin'){
                 await Aplicacion.eliminar(id); 
-                Notificacion('USUARIO ELIMINADO EXITOSAMENTE', 'success');
+                Notificacion('APLICACION ELIMINADA EXITOSAMENTE', 'success');
                 navegar(`/aplicaciones/`);
             }
           }
@@ -343,6 +408,42 @@ function ActualizarApp() {
                     />
                 </Modal>
             ) : (null) }
+            {/* --------------- VENTANA MODAL PARA REGISTRAR DOCUMENTOS --------------- */}
+            {isOpen4 ? (
+                <Modal>
+                    {/* --------------- DOCUMENTACION --------------- */}
+                    <DocumentosForm
+                        setIsOpen={setIsOpen4}
+                        devolverSelecciones={obtenerSeleccionesDoc}
+                    />
+                </Modal>
+            ) : (null) }
+            {/* --------------- VENTANA MODAL PARA REGISTRAR CUSTODIOS --------------- */}
+            {isOpen5 ? (
+                <Modal>
+                    <TableRegistro
+                        setIsOpen={setIsOpen5}
+                        devolverSelecciones={obtenerCustodioFuncional}
+                        columnas={columnasModalCustodio}
+                        objetivo='custodio'
+                        busqueda={true}
+                        selectDefault={null}
+                    />
+                </Modal>
+            ) : (null) }
+
+            {isOpen6 ? (
+                <Modal>
+                    <TableRegistro
+                        setIsOpen={setIsOpen6}
+                        devolverSelecciones={obtenerCustodioTecnico}
+                        columnas={columnasModalCustodio}
+                        objetivo='custodio'
+                        busqueda={true}
+                        selectDefault={null}
+                    />
+                </Modal>
+            ) : (null) }
 
             <h2 className='font-bold text-lg'>Actualizacion de Aplicacion</h2>
 
@@ -371,6 +472,32 @@ function ActualizarApp() {
                         <Radio label='Codigo Fuente' name='apl_codigo_fuente' required={true} opciones={['SI', 'NO']} manejador={setValores} />
                     </div>
                 </div> 
+
+                {/* --------------- CUSTODIOS --------------- */} 
+                <div className="flex flex-col w-full md:w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 space-y-4 space-x-0 md:space-x-4 md:space-y-0">
+
+                        <div>
+                            <p className='font-bold text-base my-4'>Custodio Funcional</p>
+                            <button type='button' className="p-1 bg-blue-600 text-white rounded" 
+                                onClick={(e) => {setIsOpen5(!isOpen5)}} >
+                                Agregar
+                            </button>
+                            <Input campo='Custodio Funcional' name='select_funcional' editable={false} propiedad={datos.select_funcional ? datos.select_funcional : ''} />
+                        </div>
+
+                        <div>
+                            <p className='font-bold text-base my-4'>Custodio Tecnico</p>
+                            <button type='button' className="p-1 bg-blue-600 text-white rounded" 
+                                onClick={(e) => {setIsOpen6(!isOpen6)}} >
+                                Agregar
+                            </button>
+                            <Input campo='Custodio Tecnico' name='select_tecnico' editable={false} propiedad={datos.select_tecnico ? datos.select_tecnico : ''} />
+                        </div>
+
+                    </div>
+                </div>
 
                 {/* --------------- TECNOLOGIAS --------------- */}
                 <div className="flex flex-col relative w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
@@ -422,34 +549,23 @@ function ActualizarApp() {
                         </div>
                     </div>
 
-                </div>
-
-                {/* --------------- CUSTODIOS --------------- */} 
-                <div className="flex flex-col relative w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
-                        
-                    <div className="grid grid-cols-2 space-x-4">
-                        <p className='font-bold text-base my-4'>Custodio Funcional</p>
-                        <p className='font-bold text-base my-4'>Custodio Tecnico</p>
- 
-                        <div className="grid grid-cols-2 space-x-4">
-                            <Select campo='Seleccione Custodio' name='select_funcional' byId={false} propiedad={datos.select_funcional} opciones={custodios ? custodios : ['SELECCIONE']} manejador={setValores}/>
-                        </div>
-                        <div className="grid grid-cols-2 space-x-4">
-                            <Select campo='Seleccione Custodio' name='select_tecnico' byId={false} propiedad={datos.select_tecnico} opciones={custodios ? custodios : ['SELECCIONE']} manejador={setValores}/>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div className="flex flex-col relative w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
                     {/* --------------- DOCUMENTACION --------------- */}
-                    <p className='font-bold text-base my-4'>Documentacion</p>
-                    <div className="grid grid-cols-2 space-x-4">
-                        <Input campo='Descripcion' name='doc_descripcion' propiedad={datos.doc_descripcion} manejador={setValores} />
-                        <Input campo='Direccion' name='doc_direccion' propiedad={datos.doc_direccion} manejador={setValores} />
-                        <Select campo='Tipo de Doc' name='doc_tipo' propiedad={datos.doc_tipo} required={true} opciones={documentos ? documentos : ['SELECCIONAR']} manejador={setValores} />
+                    <p className='font-bold text-sm my-4'>Documentos</p>
+                    <div className='flex flex-col justify-center items-center space-y-4'>
+
+                        <button type='button' className="p-1 bg-blue-600 text-white rounded" 
+                            onClick={(e) => {setIsOpen4(!isOpen4)}} >
+                            Agregar
+                        </button>
+
+                        <div className="w-4/3">
+                            <Tabla columnas={columnasDoc} datos={tableDataDoc} />
+                        </div>
                     </div>
 
+                </div>
+
+                <div className="flex flex-col relative w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
                     {/* --------------- MANTENIMIENTO --------------- */}
                     <p className='font-bold text-base my-4'>Mantenimiento</p>
                     <div className="grid grid-cols-2 space-x-4">

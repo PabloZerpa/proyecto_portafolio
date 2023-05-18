@@ -5,7 +5,7 @@ const pool = require('../config');
 const insertarAplicacion = async (acronimo,nombre,descripcion,estatus,prioridad,critico,alcance,
     codigo_fuente,version,direccion,cantidad_usuarios,region,usuario_registro) => {
 
-    const datos_apl = await pool.query(
+    await pool.query(
         `INSERT INTO aplicaciones (
             apl_acronimo,apl_nombre,apl_descripcion,apl_estatus,apl_prioridad,
             apl_critico,apl_alcance,apl_codigo_fuente,apl_version,apl_direccion,
@@ -31,7 +31,7 @@ const insertarAplicacion = async (acronimo,nombre,descripcion,estatus,prioridad,
 }
 
 const insertarPlataforma = async (id, plataforma) => {
-    const datos_pla = await pool.query(
+    await pool.query(
         `INSERT INTO aplicacion_plataforma (aplicacion_id,plataforma_id) VALUES (?,?)`, 
         [id,plataforma]
     );
@@ -41,40 +41,18 @@ const insertarLenguaje = async (id, select_lenguaje) => {
     
     for (const element of select_lenguaje) {
 
-        const datos_len = await pool.query(
+        await pool.query(
             `INSERT INTO aplicacion_lenguaje (aplicacion_id,lenguaje_id) VALUES (?,?)`,
         [id,element.lenguaje_id]); 
     }
 	
-}
-    
-const insertarFramework = async (id, framework1,framework2,framework3) => {
-
-    if(framework1){
-        const datos_fra = await pool.query(
-            `INSERT INTO aplicacion_framework (aplicacion_id,framework_id) VALUES (?,?)`, 
-            [id,framework1]
-        );
-    }
-    if(framework2){
-        const datos_fra = await pool.query(
-            `INSERT INTO aplicacion_framework (aplicacion_id,framework_id) VALUES (?,?)`, 
-            [id,framework2]
-        );  
-    }
-    if(framework2){
-        const datos_fra = await pool.query(
-            `INSERT INTO aplicacion_framework (aplicacion_id,framework_id) VALUES (?,?)`, 
-            [id,framework2]
-        );  
-    }
 }
 
 const insertarServidor = async (id,select_servidor) => {
 
     for (const element of select_servidor) {
 
-        const datos_ser = await pool.query(
+        await pool.query(
             `INSERT INTO aplicacion_servidor (aplicacion_id,servidor_id) VALUES (?,?)`,
         [id,element.servidor_id]);
     }
@@ -85,7 +63,7 @@ const insertarBase = async (id,select_base) => {
 
     for (const element of select_base) {
 
-        const datos_bas = await pool.query(
+        await pool.query(
             `INSERT INTO aplicacion_basedatos (aplicacion_id,base_datos_id) VALUES (?,?)`,
         [id,element.base_datos_id]);
     }
@@ -103,11 +81,11 @@ const insertarCustodio = async (tipo,id,select_custodio) => {
 
     // crea los datos del tipo de custodio
     if(tipo === 'funcional'){
-        const datos_tipo_custodio = await pool.query(
+        await pool.query(
             `INSERT INTO custodios_funcionales (aplicacion_id,custodio_id) VALUES (?,?)`,[id,custodio_id]);
     }
     else if(tipo === 'tecnico'){
-        const datos_tipo_custodio = await pool.query(
+        await pool.query(
             `INSERT INTO custodios_tecnicos (aplicacion_id,custodio_id) VALUES (?,?)`,[id,custodio_id]);
     }
 
@@ -115,7 +93,7 @@ const insertarCustodio = async (tipo,id,select_custodio) => {
 }
 
 const insertarMantenimiento = async (id,frecuencia,horas_prom,horas_anuales) => {
-    const datos_man = await pool.query(
+    await pool.query(
         `INSERT INTO mantenimientos 
         (aplicacion_id,man_frecuencia,man_horas_prom,man_horas_anuales)
         VALUES (?,?,?,?)`,
@@ -123,17 +101,29 @@ const insertarMantenimiento = async (id,frecuencia,horas_prom,horas_anuales) => 
     );
 }
 
-const insertarDocumentacion = async (id,descripcion,direccion,tipo) => {
-    // registra una nueva documentacion
-    const datos_doc = await pool.query(
-        `INSERT INTO documentaciones (aplicacion_id,doc_descripcion,doc_direccion,doc_tipo)
-        VALUES (?,?,?,?)`,
-        [id,descripcion,direccion,tipo,]
-    );
+const insertarDocumentacion = async (id,select_documentos) => {
+
+    for (const element of select_documentos) {
+        await pool.query(
+            `INSERT INTO documentaciones (aplicacion_id,doc_descripcion,doc_direccion,doc_tipo)
+            VALUES (?,?,?,
+                (SELECT tipo_id FROM tipos_documentos WHERE tipo = ?)
+            );`,
+        [id,element.doc_descripcion,element.doc_direccion,element.doc_tipo]);
+    }
 }
+
+// const insertarDocumentacion = async (id,descripcion,direccion,tipo) => {
+//     // registra una nueva documentacion
+//     const datos_doc = await pool.query(
+//         `INSERT INTO documentaciones (aplicacion_id,doc_descripcion,doc_direccion,doc_tipo)
+//         VALUES (?,?,?,?)`,
+//         [id,descripcion,direccion,tipo,]
+//     );
+// }
 
 
 
 module.exports = { insertarAplicacion, insertarPlataforma, 
-    insertarLenguaje, insertarFramework, insertarServidor, 
+    insertarLenguaje, insertarServidor, 
     insertarBase, insertarMantenimiento,insertarDocumentacion, insertarCustodio };

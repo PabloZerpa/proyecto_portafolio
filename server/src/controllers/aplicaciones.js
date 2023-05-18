@@ -5,7 +5,6 @@ const {
     insertarAplicacion, 
     insertarPlataforma, 
     insertarLenguaje, 
-    insertarFramework, 
     insertarMantenimiento, 
     insertarDocumentacion, 
     insertarServidor, 
@@ -46,11 +45,21 @@ const registrarAplicacion = async (req,res) => {
             apl_codigo_fuente,apl_direccion,apl_cantidad_usuarios,apl_usuario_registro,
             plataforma,
             man_frecuencia,man_horas_prom,man_horas_anuales, 
-            doc_descripcion,doc_tipo, doc_direccion,
             
-            select_lenguaje, select_base, select_servidor,
+            select_lenguaje, select_base, select_servidor,select_documentos,
             select_funcional, select_tecnico
         } = req.body;
+
+        // console.log(
+        //     apl_acronimo,apl_nombre,apl_descripcion,apl_region,
+        //     apl_version,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
+        //     apl_codigo_fuente,apl_direccion,apl_cantidad_usuarios,apl_usuario_registro,
+        //     plataforma,
+        //     man_frecuencia,man_horas_prom,man_horas_anuales,
+            
+        //     select_lenguaje, select_base, select_servidor,select_documentos,
+        //     select_funcional, select_tecnico
+        //  );
 
 
         const query = await pool.query(
@@ -72,21 +81,13 @@ const registrarAplicacion = async (req,res) => {
             );
 
             await insertarPlataforma(aplicacion_id, plataforma);
-            
             await insertarLenguaje(aplicacion_id, select_lenguaje);    
-            
-            //if(framework1 || framework2 || framework3)
-                //await insertarFramework(aplicacion_id, framework1, framework2, framework3);
-
             await insertarServidor(aplicacion_id,select_servidor);
             await insertarBase(aplicacion_id,select_base);
-
             await insertarCustodio('funcional',aplicacion_id,select_funcional);
-                
             await insertarCustodio('tecnico',aplicacion_id,select_tecnico);
-
             await insertarMantenimiento(aplicacion_id,man_frecuencia,man_horas_prom,man_horas_anuales);          
-            await insertarDocumentacion(aplicacion_id,doc_descripcion,doc_direccion,doc_tipo);
+            await insertarDocumentacion(aplicacion_id,select_documentos);
 
             res.send(`${aplicacion_id}`);
         }
@@ -105,13 +106,12 @@ const actualizarAplicacion = async (req,res) => {
             apl_codigo_fuente,apl_direccion,apl_cantidad_usuarios,usuario_actualizo,
             plataforma,
             man_frecuencia,man_horas_prom,man_horas_anuales, 
-            doc_descripcion,doc_tipo, doc_direccion,
             
-            select_lenguaje, select_base, select_servidor,
+            select_lenguaje, select_base, select_servidor,select_documentos,
             select_funcional, select_tecnico
         } = req.body;
-
-        const query = await pool.query(`SELECT aplicacion_id FROM aplicaciones WHERE apl_acronimo = ?`,[apl_acronimo]);
+        
+        const query = await pool.query(`SELECT aplicacion_id FROM aplicaciones WHERE aplicacion_id = ?`,[id]);
         const app = query[0][0].aplicacion_id; 
 
         if(app === id){
@@ -201,18 +201,12 @@ const actualizarAplicacion = async (req,res) => {
             }
     
             // ============= UPDATE DE LOS DATOS GENERALES =============
-            if(doc_descripcion || doc_direccion || doc_tipo){
-                const doc = await pool.query(`
-                    UPDATE documentaciones 
-                        JOIN aplicaciones ON aplicaciones.aplicacion_id = documentaciones.aplicacion_id
-                    SET 
-                        doc_descripcion = ?, doc_direccion = ?, 
-                        doc_tipo = (SELECT tipo_id FROM tipos_documentos WHERE tipo = ?), 
-                        doc_fecha_actualizacion = now(), 
-                        doc_usuario_actualizo = (SELECT usuario_id FROM usuarios WHERE indicador = ?)
-                    WHERE aplicaciones.aplicacion_id = ?;`,
-                    [doc_descripcion,doc_direccion,doc_tipo,usuario_actualizo,id]
-                );
+            await pool.query(`DELETE FROM documentaciones WHERE aplicacion_id = ?;`,[id]);
+            for (const element of select_documentos) {
+                await pool.query(
+                    `INSERT INTO documentaciones (aplicacion_id,doc_descripcion,doc_direccion,doc_tipo)
+                    VALUES (?,?,?,(SELECT tipo_id FROM tipos_documentos WHERE tipo = ?));`,
+                [id,element.doc_descripcion,element.doc_direccion,element.doc_tipo]);
             }
     
             // ============= UPDATE DE LOS DATOS GENERALES =============
@@ -504,7 +498,7 @@ const eliminarAplicacion = async (req,res) => {
         const tec = await pool.query(`DELETE FROM custodios_tecnicos WHERE aplicacion_id = ?;`, [id]);
         const man = await pool.query(`DELETE FROM mantenimientos WHERE aplicacion_id = ?;`, [id]);
         const doc = await pool.query(`DELETE FROM documentaciones WHERE aplicacion_id = ?;`, [id]);
-        const fal = await pool.query(`DELETE FROM fallas WHERE aplicacion_id = ?;`, [id]);
+        //const fal = await pool.query(`DELETE FROM fallas WHERE aplicacion_id = ?;`, [id]);
         const app = await pool.query(`DELETE FROM aplicaciones WHERE aplicacion_id = ?;`, [id]);
 
 

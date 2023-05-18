@@ -39,65 +39,56 @@ export const columnasModalServidor = [
 export const columnasModalLenguaje = [
     generarColumna('Lenguaje ID','lenguaje_id','150px'),
     generarColumna('Lenguaje','lenguaje','150px'),
-    // {
-    //     name: 'Framework',
-    //     button: true,
-    //     cell: row => {
-    //         if(row.lenguaje_id === 1){
-    //             return(
-    //                 <div className="flex">
-    //                     {crearInputs(frameworkPhp)}
-    //                 </div>
-    //             )
-    //         }
-
-    //         if(row.lenguaje_id === 2){
-    //             return(
-    //                 <div className="flex">
-    //                     {crearInputs(frameworkJS)}
-    //                 </div>
-    //             )
-    //         }
-
-    //         if(row.lenguaje_id === 3){
-    //             return(
-    //                 <div className="flex">
-    //                     {crearInputs(frameworkJAVA)}
-    //                 </div>
-    //             )
-    //         }
-
-    //         if(row.lenguaje_id === 4){
-    //             return(
-    //                 <div className="flex">
-    //                     {crearInputs(frameworkCPP)}
-    //                 </div>
-    //             )
-    //         }
-
-    //         if(row.lenguaje_id === 5){
-    //             return(
-    //                 <div className="flex">
-    //                     {crearInputs(frameworkCS)}
-    //                 </div>
-    //             )
-    //         }
-
-    //         if(row.lenguaje_id === 8){
-    //             return(
-    //                 <div className="flex">
-    //                     {crearInputs(frameworkPY)}
-    //                 </div>
-    //             )
-    //         }
-            
-    //     },
-    //     left: true
-    // },
 ];
 
-export const columnasModalFramework = [
-    generarColumna('Framework ID','framework_id','150px'),
-    generarColumna('Framework','framework','200px'),
-];
 
+export const columnasModalCustodio = [
+    {
+        name: 'ID',
+        selector: row => row.custodio_id,
+        sortable: true,
+        width: '60px',
+        left: true,
+    },
+    {
+        name: 'Indicador',
+        selector: row => row.cus_indicador,
+        sortable: true,
+        width: '120px',
+        left: true
+    },
+    {
+        name: 'Nombre',
+        selector: row => row.cus_nombre,
+        sortable: true,
+        width: '120px',
+        left: true
+    },
+    {
+        name: 'Apellido',
+        selector: row => row.cus_apellido,
+        sortable: true,
+        width: '120px',
+        left: true
+    },
+    {
+        name: 'Cedula',
+        selector: row => row.cus_cedula,
+        sortable: true,
+        width: '100px',
+        left: true
+    },
+    {
+      name: 'Cargo',
+      selector: row => row.cargo,
+      sortable: true,
+      width: '120px',
+      left: true
+    },
+    {
+        name: 'Gerencia',
+        selector: row => row.gerencia,
+        sortable: true,
+        left: true
+      },
+];
