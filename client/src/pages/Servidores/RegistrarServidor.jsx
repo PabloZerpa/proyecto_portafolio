@@ -71,7 +71,6 @@ function RegistrarServidor() {
 
         try {
             if(Autorizacion.obtenerUsuario().rol === 'admin'){
-                console.log(datos);
                 const id = await Servidor.crearDatosServidor(datos);
                 Notificacion('REGISTRO EXITOSO', 'success');
                 navigate(`/servidor/${id}`);

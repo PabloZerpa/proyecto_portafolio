@@ -36,7 +36,6 @@ const login = async (req, res) => {
         if (!passwordVerificado) {
             return res.status(401).json({ message: 'CONTRASEÑA INCORRECTA' });
         }
-
         
         const consulta = await pool.query('SELECT TIMESTAMPDIFF(DAY, (SELECT exp_password FROM usuarios WHERE indicador = ?), now()) AS dias_transcurridos;', [indicador]);
         let exp = consulta[0][0].dias_transcurridos;
@@ -47,7 +46,7 @@ const login = async (req, res) => {
             exp = false;
 
         // ********** GENERA EL TOKEN DEL USUARIO **********
-        const token = await generarToken(indicador,rol);
+        const token = await generarToken(user.usuario_id,indicador,rol);
         const datos = {
             indicador,
             rol,
@@ -55,13 +54,12 @@ const login = async (req, res) => {
             token 
         }
         
-        const payload = {
+        const datosAuditoria = {
             mensaje : 'Inicio de sesion exitoso',
             ip : req.ip,
-            indicador : user.indicador
+            usuario_id : user.usuario_id
         }
-
-        generarLogAuditoria(payload);
+        generarLogAuditoria(datosAuditoria);
 
         res.status(200).json(datos);
 
@@ -107,6 +105,13 @@ const registrar = async (req, res) => {
                 datos.cargo, datos.gerencia, usuario_id, usuario_id]
             );
         }
+
+        const datosAuditoria = {
+            mensaje : `Registro de Usuario ${datos.indicador}`,
+            ip : req.ip,
+            usuario_id : req.usuario_id
+        }
+        generarLogAuditoria(datosAuditoria);
 
         res.status(200).json(datos);
     } catch (error) {

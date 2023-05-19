@@ -57,7 +57,6 @@ function CambioPassword() {
                 return;
             }
 
-            console.log('AQUI');
             const { password, passwordNueva } = datos;
             await Autorizacion.cambiarContraseña(indicador, passwordNueva);
             Notificacion('CONTRASEÑA CAMBIADA EXITOSAMENTE', 'success');

@@ -1,5 +1,6 @@
 
 const pool = require('../config');
+const { generarLogAuditoria } = require('../helpers/auditoria');
 
 const { 
     insertarAplicacion, 
@@ -50,18 +51,6 @@ const registrarAplicacion = async (req,res) => {
             select_funcional, select_tecnico
         } = req.body;
 
-        // console.log(
-        //     apl_acronimo,apl_nombre,apl_descripcion,apl_region,
-        //     apl_version,apl_estatus,apl_prioridad,apl_critico,apl_alcance,
-        //     apl_codigo_fuente,apl_direccion,apl_cantidad_usuarios,apl_usuario_registro,
-        //     plataforma,
-        //     man_frecuencia,man_horas_prom,man_horas_anuales,
-            
-        //     select_lenguaje, select_base, select_servidor,select_documentos,
-        //     select_funcional, select_tecnico
-        //  );
-
-
         const query = await pool.query(
             `SELECT * FROM aplicaciones WHERE apl_acronimo = ? OR apl_nombre = ?`, 
             [apl_acronimo,apl_nombre]);
@@ -88,6 +77,13 @@ const registrarAplicacion = async (req,res) => {
             await insertarCustodio('tecnico',aplicacion_id,select_tecnico);
             await insertarMantenimiento(aplicacion_id,man_frecuencia,man_horas_prom,man_horas_anuales);          
             await insertarDocumentacion(aplicacion_id,select_documentos);
+
+            const datosAuditoria = {
+                mensaje : `Registro de aplicacion ${apl_acronimo}`,
+                ip : req.ip,
+                usuario_id : req.usuario_id
+            }
+            generarLogAuditoria(datosAuditoria);
 
             res.send(`${aplicacion_id}`);
         }
@@ -155,33 +151,33 @@ const actualizarAplicacion = async (req,res) => {
     
             // ============= UPDATE DE LOS LENGUAJES =============
             // CONDICION QUE VERIFIQUE SI LOS ELEMENTOS NUEVOS SON LOS MISMOS PARA PERMITIR O NO EJECUTAR LA ACTUALIZACION
-            const deleteLen = await pool.query(`DELETE FROM aplicacion_lenguaje WHERE aplicacion_id = ?;`,[id]);
+            await pool.query(`DELETE FROM aplicacion_lenguaje WHERE aplicacion_id = ?;`,[id]);
             for (const element of select_lenguaje) {
-                const datos_len = await pool.query(
+                await pool.query(
                     `INSERT INTO aplicacion_lenguaje (aplicacion_id,lenguaje_id) VALUES (?,?)`,
                 [id,element.lenguaje_id]); 
             }
     
-            const deleteBas = await pool.query(`DELETE FROM aplicacion_basedatos WHERE aplicacion_id = ?;`,[id]);
+            await pool.query(`DELETE FROM aplicacion_basedatos WHERE aplicacion_id = ?;`,[id]);
             // ============= UPDATE DE LAS BASES DE DATOS =============
             for (const element of select_base) {
-                const datos_bas = await pool.query(
+                await pool.query(
                     `INSERT INTO aplicacion_basedatos (aplicacion_id,base_datos_id) VALUES (?,?)`,
                 [id,element.base_datos_id]); 
             }
     
 
             // ============= UPDATE DE LOS SERVIDORES =============
-            const deleteSer = await pool.query(`DELETE FROM aplicacion_servidor WHERE aplicacion_id = ?;`,[id]);
+            await pool.query(`DELETE FROM aplicacion_servidor WHERE aplicacion_id = ?;`,[id]);
             for (const element of select_servidor) {
-                const datos_ser = await pool.query(
+                await pool.query(
                     `INSERT INTO aplicacion_servidor (aplicacion_id,servidor_id) VALUES (?,?)`,
                 [id,element.servidor_id]); 
             }
 
             // ============= UPDATE DE LOS custodioS =============
             if(select_funcional){
-                const fun = await pool.query(`
+                await pool.query(`
                     UPDATE custodios_funcionales
                     SET custodios_funcionales.custodio_id = 
                         (SELECT custodio_id FROM custodios WHERE cus_indicador = ?)
@@ -191,7 +187,7 @@ const actualizarAplicacion = async (req,res) => {
             }
 
             if(select_tecnico){
-                const tec = await pool.query(`
+                await pool.query(`
                     UPDATE custodios_tecnicos
                     SET custodios_tecnicos.custodio_id = 
                         (SELECT custodio_id FROM custodios WHERE cus_indicador = ?)
@@ -211,7 +207,7 @@ const actualizarAplicacion = async (req,res) => {
     
             // ============= UPDATE DE LOS DATOS GENERALES =============
             if(man_frecuencia || man_horas_prom || man_horas_anuales){
-                const man = await pool.query(`
+                await pool.query(`
                     UPDATE mantenimientos 
                         JOIN aplicaciones ON aplicaciones.aplicacion_id = mantenimientos.aplicacion_id
                     SET 
@@ -221,6 +217,13 @@ const actualizarAplicacion = async (req,res) => {
                     [man_frecuencia,man_horas_prom,man_horas_anuales,id]
                 );
             }
+
+            const datosAuditoria = {
+                mensaje : `Actualizacion de aplicacion ${apl_acronimo}`,
+                ip : req.ip,
+                usuario_id : req.usuario_id
+            }
+            generarLogAuditoria(datosAuditoria);
 
             res.json('UPDATE EXITOSO');
         }
@@ -501,6 +504,13 @@ const eliminarAplicacion = async (req,res) => {
         //const fal = await pool.query(`DELETE FROM fallas WHERE aplicacion_id = ?;`, [id]);
         const app = await pool.query(`DELETE FROM aplicaciones WHERE aplicacion_id = ?;`, [id]);
 
+        const datosAuditoria = {
+            mensaje : `Eliminacion de aplicacion ${id}`,
+            ip : req.ip,
+            usuario_id : req.usuario_id
+        }
+        generarLogAuditoria(datosAuditoria);
+
 
         res.sendStatus(204);
     } catch (error) {
@@ -602,6 +612,13 @@ const general = async (req,res) => {
             LEFT JOIN alcances ON aplicaciones.apl_alcance = alcances.alcance_id
             LEFT JOIN regiones ON aplicaciones.apl_region = regiones.region_id
         WHERE aplicaciones.aplicacion_id = ?`, [id]);
+
+        const datosAuditoria = {
+            mensaje : `Visualizacion de aplicacion ${data[0][0].apl_acronimo}`,
+            ip : req.ip,
+            usuario_id : req.usuario_id
+        }
+        generarLogAuditoria(datosAuditoria);
 
         res.send(data[0]);
     } catch (error) {

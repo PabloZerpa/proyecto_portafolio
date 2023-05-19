@@ -19,6 +19,13 @@ const fallas = async (req,res) => {
         const respuestas = {
             datos: data[0],
         }
+
+        const datosAuditoria = {
+            mensaje : `Visualizacion de Falla ${id}`,
+            ip : req.ip,
+            usuario_id : req.usuario_id
+        }
+        generarLogAuditoria(datosAuditoria);
                 
         res.send(respuestas);
     } catch (error) {
@@ -32,7 +39,7 @@ const registrarFalla = async (req,res) => {
         
         const { nombre,elemento,impacto,descripcion,solucion,usuario_creador } = req.body;
 
-        const data = await pool.query(`
+        await pool.query(`
             INSERT INTO fallas
                 (fal_nombre,fal_elemento,fal_descripcion,fal_solucion,fal_impacto,fal_usuario_creador,fal_usuario_actualizo)
             VALUES
@@ -43,13 +50,12 @@ const registrarFalla = async (req,res) => {
                 (SELECT usuario_id FROM usuarios WHERE indicador = ?));`, 
             [nombre,elemento,descripcion,solucion,impacto,usuario_creador,usuario_creador]); 
                 
-        const payload = {
-            mensaje : 'Registro falla N° ' + data[0].insertId + ' para el elemento ' + nombre,
+        const datosAuditoria = {
+            mensaje : `Registro de Falla ${nombre} `,
             ip : req.ip,
-            indicador : usuario_creador
+            usuario_id : req.usuario_id
         }
-
-        generarLogAuditoria(payload);
+        generarLogAuditoria(datosAuditoria);
         
         res.send('FALLA REGISTRADA CORRECTAMENTE');
     } catch (error) {
@@ -107,7 +113,7 @@ const actualizarFalla = async (req,res) => {
     const { impacto, descripcion, solucion } = req.body;
    
     try {
-        const query = await pool.query(`
+        await pool.query(`
         UPDATE 
             fallas 
         SET  
@@ -116,6 +122,13 @@ const actualizarFalla = async (req,res) => {
             fal_solucion = ?
         WHERE falla_id = ?`, [impacto, descripcion, solucion, id]
         );
+
+        const datosAuditoria = {
+            mensaje : `Actualizacion de Falla ${id}`,
+            ip : req.ip,
+            usuario_id : req.usuario_id
+        }
+        generarLogAuditoria(datosAuditoria);
         
         res.send('ACTUALIZACION EXITOSA');
     } catch (error) {
@@ -127,7 +140,15 @@ const actualizarFalla = async (req,res) => {
  const eliminarFalla = async (req,res) => {
     try {
         const { id } = req.params;
-        const [result] = await pool.query('DELETE FROM fallas WHERE falla_id = ?', [id]);
+        await pool.query('DELETE FROM fallas WHERE falla_id = ?', [id]);
+
+        const datosAuditoria = {
+            mensaje : `Eliminada Falla ${id}`,
+            ip : req.ip,
+            usuario_id : req.usuario_id
+        }
+        generarLogAuditoria(datosAuditoria);
+
         res.sendStatus(204);
     } catch (error) {
         console.log("ERROR_DELETE_ITEMS");

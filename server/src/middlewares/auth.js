@@ -11,10 +11,13 @@ const auth = async (req, res, next) => {
     try {
         const token = await verificarToken(authorization);
 
-        if(token)
+        if(token){
+            req.usuario_id = token.usuario_id;
             next();
-        else 
+        }
+        else
             return res.status(401).send('NO AUTORIZADO');
+
     } catch (error) {
         if (error instanceof TokenExpiredError) {
             console.log("Unauthorized! Access Token was expired!"); 

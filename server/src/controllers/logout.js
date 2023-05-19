@@ -5,13 +5,13 @@ const { generarLogAuditoria } = require('../helpers/auditoria');
 // *************** CERRAR SESION ***************
 const logout = (req, res) => {
 
-    const payload = {
-        mensaje : 'Cerro la session',
+    const datosAuditoria = {
+        mensaje : 'Cerro Sesion',
         ip : req.ip,
-        indicador : 'prueba'
+        usuario_id : req.usuario_id
     }
 
-    generarLogAuditoria(payload);
+    generarLogAuditoria(datosAuditoria);
 
 
     console.log('Sesion Cerrada');

@@ -15,35 +15,6 @@ function Login() {
   const navigate = useNavigate();
   const handlePass = () => {setShowPass(!showPass)}
 
-  async function iniciarUsuario(){
-    try {
-      const data = await Autorizacion.obtenerTotal();
-      const total = data.data; 
-
-      if(!total[0]){
-
-        const datos = {
-          indicador: 'admin',
-          rol: 1,
-          password: '12345678',
-          nombre: 'USUARIO',
-          apellido: 'DE INICIO',
-          cargo: 1,
-          gerencia: 1,
-        }
-        await Usuario.crearUsuario(datos);
-
-      }
-    }
-    catch (error) {
-      console.log(error.message);
-    }
-  }
-
-  useEffect(() => {
-    iniciarUsuario();
-  }, []);
-
   // -------------------- FUNCION PARA INICIAR SESION --------------------
   async function iniciarSesion(e) {
     e.preventDefault();

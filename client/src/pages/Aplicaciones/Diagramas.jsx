@@ -50,7 +50,6 @@ function Diagramas() {
     const handleSearch = async (e) => {
         e.preventDefault();
         const { categoria, mostrar } = datos;
-        console.log(categoria, mostrar);
 
         setResultados(null);
         onSearch(categoria, mostrar);

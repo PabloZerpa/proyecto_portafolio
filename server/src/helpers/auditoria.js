@@ -1,18 +1,12 @@
 const pool = require('../config');
 
-const generarLogAuditoria = (payload) => {
+const generarLogAuditoria = (datos) => {
 
-    const { ip, mensaje, indicador } = payload;
-    console.log(payload);
-
-    // pool.query(
-    //     `INSERT INTO auditoria (indicador, mensaje, ip) VALUES (?, ?, ?)`, 
-    //     [indicador, mensaje, ip]
-    // );
+    const { ip, mensaje, usuario_id } = datos;
 
     pool.query(
-        `INSERT INTO auditoria (indicador, mensaje, ip, fecha) VALUES (?, ?, ?, now() )`, 
-        [indicador, mensaje, ip]
+        `INSERT INTO auditoria (usuario_id, mensaje, ip, fecha) VALUES (?, ?, ?, now() )`, 
+        [usuario_id, mensaje, ip]
     );
 }
  

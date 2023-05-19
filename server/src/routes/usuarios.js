@@ -7,7 +7,7 @@ const { cambiarPermisos, cambiarPassword,
     obtenerBasesDatos, obtenerServidores, obtenerAlcance, obtenerEstatus, 
     obtenerRegiones, obtenerMantenimientos, obtenerAmbientes, obtenerMane, obtenerTipos, 
     obtenerSistemas, obtenerMarcas, eliminarAplicacion, obtenerLenguajesTabla, obtenerFrameworksTabla, 
-    obtenerAcronimos, obtenerFrecuencias, obtenerCustodios, eliminarUsuario, obtenerLocalidades, obtenerCantidad, obtenerCantidadRegiones, obtenerTipoDoc } = require("../controllers/usuarios");
+    obtenerAcronimos, obtenerFrecuencias, obtenerCustodios, eliminarUsuario, obtenerLocalidades, obtenerCantidad, obtenerCantidadRegiones, obtenerTipoDoc, obtenerActividad } = require("../controllers/usuarios");
 
 router.get("/", auth, obtenerUsuarios);
 
@@ -39,18 +39,19 @@ router.get("/marcas", auth, obtenerMarcas);
 router.get("/documentos", auth, obtenerTipoDoc);
 
 
-
 router.get("/cantidad", auth, obtenerCantidad);
 router.post("/cantidadRegiones", auth, obtenerCantidadRegiones);
-
 
 
 router.post("/acronimos", auth, obtenerAcronimos);
 
 
+
 router.get("/cargos", auth, obtenerUsuarios);
 
 router.post("/busqueda", auth, obtenerPorBusqueda);
+
+router.get("/actividad/:id", auth, obtenerActividad);
 
 router.patch("/permisos/:id", auth, cambiarPermisos);
 

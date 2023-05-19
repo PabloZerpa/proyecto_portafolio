@@ -14,6 +14,15 @@ class Usuario {
         }
     }
 
+    // =============== OBTIENE LA ACTIVIDAD DEL USUARIO ===============
+    async obtenerActividad(id) { 
+        try { 
+            return axios.get(`${baseUrl}usuarios/actividad/${id}`, { headers: authHeader() });
+        } catch (error) {
+            console.log('Error al obtener dato');
+        }
+    }
+
     
     async crearUsuario(datos) {
         return await axios.post(`${baseUrl}login/registro`, datos) 

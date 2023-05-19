@@ -1,4 +1,5 @@
 const pool = require('../config');
+const { generarLogAuditoria } = require('../helpers/auditoria');
 
 const query = `
 SELECT 
@@ -148,7 +149,7 @@ const crearBaseDatos = async (req,res) => {
         }
         else{
 
-            const datos_basedatos = await pool.query(
+            await pool.query(
                 `INSERT INTO bases_datos 
                     (base_datos,base_estatus,base_tipo,base_manejador,base_ambiente,base_cantidad_usuarios,
                     base_usuario_registro,base_usuario_actualizo) 
@@ -168,12 +169,19 @@ const crearBaseDatos = async (req,res) => {
 
                 for (const element of select_servidor) {
             
-                    const datos_ser = await pool.query(
+                    await pool.query(
                         `INSERT INTO basedatos_servidor (base_datos_id,servidor_id) VALUES (?,?);`,
                     [base_datos_id,element.servidor_id]);
                 }
 
             }
+
+            const datosAuditoria = {
+                mensaje : `Registro de Base de datos ${base_datos_id}`,
+                ip : req.ip,
+                usuario_id : req.usuario_id
+            }
+            generarLogAuditoria(datosAuditoria);
             
             res.send(`${base_datos_id}`);
         }
@@ -212,12 +220,19 @@ const actualizarBaseDatos = async (req,res) => {
             ]
         );
 
-        const deleteSer = await pool.query(`DELETE FROM basedatos_servidor WHERE base_datos_id = ?;`,[id]);
+        await pool.query(`DELETE FROM basedatos_servidor WHERE base_datos_id = ?;`,[id]);
         for (const element of select_servidor) {
-            const datos_ser = await pool.query(
+            await pool.query(
                 `INSERT INTO basedatos_servidor (base_datos_id,servidor_id) VALUES (?,?)`,
             [id,element.servidor_id]); 
         }
+
+        const datosAuditoria = {
+            mensaje : `Actualizacion de Base de datos ${id}`,
+            ip : req.ip,
+            usuario_id : req.usuario_id
+        }
+        generarLogAuditoria(datosAuditoria);
 
         res.json('UPDATE EXITOSO');
 
@@ -246,6 +261,13 @@ const general = async (req,res) => {
             JOIN manejadores ON manejadores.manejador_id = bases_datos.base_manejador
             JOIN ambientes ON ambientes.ambiente_id = bases_datos.base_ambiente
         WHERE bases_datos.base_datos_id = ?`, [id]);
+
+        const datosAuditoria = {
+            mensaje : `Visualizacion de Base de datos ${data[0][0].base_datos_id}`,
+            ip : req.ip,
+            usuario_id : req.usuario_id
+        }
+        generarLogAuditoria(datosAuditoria);
 
         res.send(data[0]);
 

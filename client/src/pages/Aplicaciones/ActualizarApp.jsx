@@ -145,12 +145,10 @@ function ActualizarApp() {
     const [isOpen6, setIsOpen6] = useState(false);
 
     const obtenerCustodioFuncional = (respuesta) => {
-        console.log(respuesta);
         setDatos({ ...datos, ['select_funcional'] : respuesta });
     };
 
     const obtenerCustodioTecnico = (respuesta) => {
-        console.log(respuesta);
         setDatos({ ...datos, ['select_tecnico'] : respuesta });
     };
 
@@ -158,7 +156,6 @@ function ActualizarApp() {
     const llenarTabla = async (datos, id, nombre, setTabla, setSelect) => {
 
         if(nombre === 'documentacion'){
-            console.log(datos);
             let selecciones = [];
             for (let i = 0; i < datos.length; i++) {
                 const x = datos[i];
@@ -322,8 +319,6 @@ function ActualizarApp() {
 
             // ========== DATOS POR DEFECTO ==========
             const todo = await Aplicacion.obtenerTodo(id);
-
-            console.log(todo.documentacion);
     
             setGeneral(todo.general);
             setBaseDatos(todo.basedatos);

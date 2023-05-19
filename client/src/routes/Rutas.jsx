@@ -26,7 +26,7 @@ import {
   ActualizarServidor,
   Custodios,
   ActualizarCustodio,
-  VerCustodio
+  VerCustodio,
 } from '../pages';
 import CambioPassword from "../pages/CambioPassword";
 

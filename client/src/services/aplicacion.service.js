@@ -13,7 +13,6 @@ class Aplicacion {
         datosServidor.select_base = bases;
         datosServidor.select_servidor = servidores;
         datosServidor.select_documentos = documentos;
-        console.log(datosServidor);
 
         return await axios.post(`${baseUrl}aplicaciones/`, datosServidor, { headers: authHeader() })
         .then(response => {
@@ -30,7 +29,6 @@ class Aplicacion {
             datosServidor.select_base = bases;
             datosServidor.select_servidor = servidores;
             datosServidor.select_documentos = documentos;
-            console.log(datosServidor);
             
             const respuesta = await axios.put(`${baseUrl}aplicaciones/${id}`, datosServidor, { headers: authHeader() });
             return respuesta;

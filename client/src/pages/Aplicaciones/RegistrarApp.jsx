@@ -63,11 +63,10 @@ function RegistrarApp() {
 
         if(Autorizacion.obtenerUsuario().rol === 'admin'){
             try {
-                console.log(tableDataDoc);
                 const id = await Aplicacion.crearDatos(
                     datos, tableDataLenguaje, tableDataBase, tableDataServidor, tableDataDoc);
-                // Notificacion('REGISTRO EXITOS', 'success');
-                // navigate(`/aplicaciones/${id}`);
+                Notificacion('REGISTRO EXITOS', 'success');
+                navigate(`/aplicaciones/${id}`);
             }
             catch (error) { 
                 Notificacion(error.response.data.message, 'error');
@@ -147,27 +146,18 @@ function RegistrarApp() {
         selecciones.push(respuesta);
         select_documento.push(respuesta);
 
-        console.log(tableDataDoc);
-        console.log(selecciones);
-        console.log(select_documento);
-
         setSelectDoc(selecciones);
     };
 
     // -------------------- FUNCION Y VARIABLES PARA LA SELECCION DE CUSTODIOS --------------------
     const [isOpen5, setIsOpen5] = useState(false);
     const [isOpen6, setIsOpen6] = useState(false);
-    const [select_funcional, setCustodioFuncional] = useState([]);
-    const [select_tecnico, setCustodioTecnico] = useState([]);
-    const [tableDataCustodio, setDataCustodio] = useState([]);
 
     const obtenerCustodioFuncional = (respuesta) => {
-        console.log(respuesta);
         setDatos({ ...datos, ['select_funcional'] : respuesta });
     };
 
     const obtenerCustodioTecnico = (respuesta) => {
-        console.log(respuesta);
         setDatos({ ...datos, ['select_tecnico'] : respuesta });
     };
 
@@ -382,21 +372,21 @@ function RegistrarApp() {
                     <div className="grid grid-cols-1 md:grid-cols-2 space-y-4 space-x-0 md:space-x-4 md:space-y-0">
 
                         <div>
-                            <p className='font-bold text-base my-4'>Custodio Funcional</p>
+                            <p className='font-bold text-base my-1'>Custodio Funcional</p>
+                            <Input campo='' name='select_funcional' editable={false} propiedad={datos.select_funcional ? datos.select_funcional : ''} />
                             <button type='button' className="p-1 bg-blue-600 text-white rounded" 
                                 onClick={(e) => {setIsOpen5(!isOpen5)}} >
                                 Agregar
                             </button>
-                            <Input campo='Custodio Funcional' name='select_funcional' editable={false} propiedad={datos.select_funcional ? datos.select_funcional : ''} />
                         </div>
 
                         <div>
-                            <p className='font-bold text-base my-4'>Custodio Tecnico</p>
+                            <p className='font-bold text-base my-1'>Custodio Tecnico</p>
+                            <Input campo='' name='select_tecnico' editable={false} propiedad={datos.select_tecnico ? datos.select_tecnico : ''} />
                             <button type='button' className="p-1 bg-blue-600 text-white rounded" 
                                 onClick={(e) => {setIsOpen6(!isOpen6)}} >
                                 Agregar
                             </button>
-                            <Input campo='Custodio Tecnico' name='select_tecnico' editable={false} propiedad={datos.select_tecnico ? datos.select_tecnico : ''} />
                         </div>
 
                     </div>

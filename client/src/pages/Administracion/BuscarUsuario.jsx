@@ -9,6 +9,7 @@ import { Notificacion } from "../../utils/Notificacion";
 import { useNavigate } from "react-router-dom";
 import ActualizarUsuario from "./ActualizarUsuario"; 
 import swal from "sweetalert";
+import VerActividad from "./VerActividad";
 
 function BuscarUsuario() {
 
@@ -24,14 +25,21 @@ function BuscarUsuario() {
   // =================== VARIABLES PARA LA EDICION ===================
   const [usuario, setUsuario] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpen2, setIsOpen2] = useState(false);
   const [update, setUpdate] = useState(false);
 
   // =================== FUNCION PARA HABILITAR VENTANA MODAL DE EDICION ===================
-  const habilitar = (dato) => {
+  const habilitarEdicion = (dato) => {
     if(dato.rol !== 'admin'){
       setIsOpen(!isOpen);
       setUsuario(dato); 
     }
+  }
+
+  const habilitarActividad = async (dato) => {
+    const x = await Usuario.obtenerActividad(dato.usuario_id);
+    setIsOpen2(!isOpen2);
+    setUsuario(x.data); 
   }
 
   // =================== FUNCION PARA BUSCAR DATOS EN LA DATABASE ===================
@@ -68,16 +76,29 @@ function BuscarUsuario() {
 
   const columns = [
     {
-      name: 'Editar',
+      name: 'Actividad',
       button: true,
+      width: "60px",
       cell: row => 
         <div className="flex space-x-4">
           <FaEye 
-            onClick={(e) => habilitar(row)}
+            onClick={(e) => habilitarActividad(row)}
             className="text-blue-500 text-lg" 
           />
-          <FaEdit 
+        </div>
+    },
+    {
+      name: 'Editar',
+      button: true,
+      width: "60px",
+      cell: row => 
+        <div className="flex space-x-4">
+          {/* <FaEye 
             onClick={(e) => habilitar(row)}
+            className="text-blue-500 text-lg" 
+          /> */}
+          <FaEdit 
+            onClick={(e) => habilitarEdicion(row)}
             className="text-blue-500 text-lg" 
           />
         </div>
@@ -170,6 +191,18 @@ function BuscarUsuario() {
           <div className="fixed w-full max-w-2xl max-h-full z-50 overflow-y-auto">
             <ActualizarUsuario 
               setIsOpen={setIsOpen} 
+              valores={usuario ? usuario : null}
+              setUpdate={setUpdate}
+            />
+          </div>
+                
+      ) : (null) }
+
+      {/* --------------- VENTANA MODAL PARA ACTUALIZAR DATOS --------------- */}
+      {isOpen2 ? (
+          <div className="fixed w-full max-w-2xl max-h-full z-50 overflow-y-auto">
+            <VerActividad
+              setIsOpen={setIsOpen2} 
               valores={usuario ? usuario : null}
               setUpdate={setUpdate}
             />

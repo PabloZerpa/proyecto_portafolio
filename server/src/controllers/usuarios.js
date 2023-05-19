@@ -21,7 +21,9 @@ const obtenerUsuarios = async (req,res) => {
  const eliminarUsuario = async (req,res) => {
     try {
         const { id } = req.params;
-        const [result] = await pool.query('DELETE FROM usuarios WHERE usuario_id = ?', [id]);
+
+        await pool.query('DELETE FROM auditoria WHERE usuario_id = ?', [id]);
+        await pool.query('DELETE FROM usuarios WHERE usuario_id = ?', [id]);
         res.sendStatus(204);
     } catch (error) {
         console.log("ERROR_DELETE_ITEMS");
@@ -29,7 +31,7 @@ const obtenerUsuarios = async (req,res) => {
 };
  
 
- // *************** OBTENER USUARIO POR BUSQUEDA ***************
+// *************** OBTENER USUARIO POR BUSQUEDA ***************
 const obtenerPorBusqueda = async (req,res) => {
 
     const { term } = req.body;
@@ -66,6 +68,25 @@ const obtenerPorBusqueda = async (req,res) => {
         }
 
         res.send(data[0]);
+    }
+    catch (error) {
+        return res.status(401).json({ message: 'ERROR' });
+    }
+ }
+
+// *************** OBTENER ACTIVIDAD DE USUARIO ***************
+const obtenerActividad = async (req,res) => {
+
+    const { id } = req.params;
+
+    try{
+        const [rows] = await pool.query(`
+            SELECT indicador,mensaje,ip,
+            DATE_FORMAT (fecha, '%d-%m-%Y %H:%i') as fecha
+                FROM auditoria 
+            LEFT JOIN usuarios ON auditoria.usuario_id = usuarios.usuario_id  
+                WHERE auditoria.usuario_id = ? ORDER BY fecha DESC;`,[id]);
+        res.send(rows);
     }
     catch (error) {
         return res.status(401).json({ message: 'ERROR' });
@@ -131,7 +152,7 @@ const obtenerRoles = async (req,res) => {
  }
 
   // *************** OBTENER GERENCIAS ***************
-const obtenerGerencias = async (req,res) => {
+    const obtenerGerencias = async (req,res) => {
     try{
         const data = await pool.query(`SELECT gerencia FROM gerencias`);
         res.send(data[0]);
@@ -139,7 +160,7 @@ const obtenerGerencias = async (req,res) => {
     catch (error) {
         return res.status(401).json({ message: 'ERROR' });
     }
- }
+    }
 
   // *************** OBTENER CARGOS ***************
     const obtenerCargos = async (req,res) => {
@@ -472,4 +493,5 @@ module.exports = { obtenerUsuarios, cambiarPermisos, cambiarPassword, obtenerPor
     obtenerGerencias, obtenerCargos, obtenerCustodios, obtenerLenguajes, obtenerPlataformas, obtenerBasesDatos,
     obtenerServidores, obtenerEstatus, obtenerAlcance, obtenerFrecuencias, obtenerRegiones, obtenerTipos,
     obtenerMane, obtenerAmbientes,obtenerMarcas,obtenerSistemas, eliminarUsuario, obtenerLenguajesTabla, 
-    obtenerFrameworksTabla, obtenerAcronimos, obtenerLocalidades,obtenerCantidad, obtenerCantidadRegiones,obtenerTipoDoc };
+    obtenerFrameworksTabla, obtenerAcronimos, obtenerLocalidades,obtenerCantidad, obtenerCantidadRegiones,
+    obtenerTipoDoc, obtenerActividad };

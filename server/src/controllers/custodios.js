@@ -1,4 +1,5 @@
 const pool = require('../config');
+const { generarLogAuditoria } = require('../helpers/auditoria');
 
 const query = `
 SELECT 
@@ -90,7 +91,7 @@ const registrarCustodio = async (req,res) => {
             return res.status(401).json({ message: 'PERSONA YA REGISTRADA' });
         }
         else{
-            const data = await pool.query(` 
+            await pool.query(` 
                 INSERT INTO custodios
                     (cus_nombre,cus_apellido,cus_indicador,cus_cedula,cus_cargo,
                     cus_gerencia,cus_region,cus_localidad,cus_usuario_registro,cus_usuario_actualizo)
@@ -106,8 +107,15 @@ const registrarCustodio = async (req,res) => {
                 `SELECT custodio_id FROM custodios WHERE cus_indicador = ?`, [indicador]);
             let custodio_id = buscarcustodio[0][0].custodio_id;
 
-            const datos_telefono = await pool.query( 
+            await pool.query( 
                 `INSERT INTO telefonos (custodio_id,telefono) VALUES (?,?)`, [custodio_id,telefono] );
+
+            const datosAuditoria = {
+                mensaje : `Registro de Custodio ${indicador}`,
+                ip : req.ip,
+                usuario_id : req.usuario_id
+            }
+            generarLogAuditoria(datosAuditoria);
 
             res.send(`${custodio_id}`);
         }
@@ -122,7 +130,15 @@ const registrarCustodio = async (req,res) => {
 const eliminarCustodio = async (req,res) => {
     try {
         const { id } = req.params;
-        const data = await pool.query('DELETE FROM custodios WHERE custodio_id = ?', [id]);
+        await pool.query('DELETE FROM custodios WHERE custodio_id = ?', [id]);
+
+        const datosAuditoria = {
+            mensaje : `Eliminado de Custodio ${id}`,
+            ip : req.ip,
+            usuario_id : req.usuario_id
+        }
+        generarLogAuditoria(datosAuditoria);
+
         res.sendStatus(204);
     } catch (error) {
         console.log("ERROR_DELETE_ITEMS");
@@ -135,7 +151,7 @@ const actualizarCustodio = async (req,res) => {
     const { nombre, apellido, region, localidad, gerencia, cargo, telefono, usuario_actualizo } = req.body;
     
     try {
-        const query = await pool.query(`
+        await pool.query(`
             UPDATE 
                 custodios 
             SET  
@@ -151,8 +167,15 @@ const actualizarCustodio = async (req,res) => {
                 custodio_id = ?;`, [nombre, apellido, region, localidad, gerencia, cargo, usuario_actualizo, id]
         );
 
-        const query2 = await pool.query( 
+        await pool.query( 
             `UPDATE telefonos SET telefono = ? WHERE custodio_id = ?`, [telefono, id] );
+            
+        const datosAuditoria = {
+            mensaje : `Actualizacion de Custodio ${id}`,
+            ip : req.ip,
+            usuario_id : req.usuario_id
+        }
+        generarLogAuditoria(datosAuditoria);
         
         res.send('ACTUALIZACION EXITOSA');
     } catch (error) {
@@ -178,6 +201,13 @@ const general = async (req,res) => {
             LEFT JOIN regiones ON regiones.region_id = custodios.cus_region
             LEFT JOIN localidades ON localidades.localidad_id = custodios.cus_localidad
         WHERE custodios.custodio_id = ?`, [id]);
+
+        const datosAuditoria = {
+            mensaje : `Visualizacion de Custodio ${data[0][0].cus_indicador}`,
+            ip : req.ip,
+            usuario_id : req.usuario_id
+        }
+        generarLogAuditoria(datosAuditoria);
 
         res.send(data[0]);
     } catch (error) {

@@ -1,4 +1,5 @@
 const pool = require('../config');
+const { generarLogAuditoria } = require('../helpers/auditoria');
 
 const query = `
 SELECT 
@@ -136,6 +137,14 @@ const registrarServidor = async (req,res) => {
             const selectServidor = await pool.query(`SELECT * FROM servidores ORDER BY servidor_id DESC LIMIT 1`);
             let servidor_id = selectServidor[0][0].servidor_id;
 
+            const datosAuditoria = {
+                mensaje : `Registro de Servidor ${servidor_id}`,
+                ip : req.ip,
+                usuario_id : req.usuario_id
+            }
+            generarLogAuditoria(datosAuditoria);
+
+
             res.send(`${servidor_id}`);
         }
     } catch (error) {
@@ -180,6 +189,14 @@ const actualizarServidor = async (req,res) => {
             WHERE servidor_id = ?`,
             [servidor,estatus,direccion,sistema,region,localidad,usuario_actualizo,id]
         );
+
+        const datosAuditoria = {
+            mensaje : `Actualizar de Servidor ${id}`,
+            ip : req.ip,
+            usuario_id : req.usuario_id
+        }
+        generarLogAuditoria(datosAuditoria);
+
             
         res.json('UPDATE EXITOSO');
 
@@ -211,6 +228,14 @@ const general = async (req,res) => {
             LEFT JOIN localidades ON localidades.localidad_id = servidores.ser_localidad_id
             LEFT JOIN usuarios ON usuarios.usuario_id = servidores.ser_usuario_actualizo
         WHERE servidores.servidor_id = ?`, [id]);
+
+        const datosAuditoria = {
+            mensaje : `Visualizacion de Servidor ${id}`,
+            ip : req.ip,
+            usuario_id : req.usuario_id
+        }
+        generarLogAuditoria(datosAuditoria);
+
         
         res.send(data[0]);
 

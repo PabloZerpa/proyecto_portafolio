@@ -58,7 +58,6 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
 
     const handleRowSelected = useCallback(state => {
         if(objetivo === 'custodio'){
-            console.log(state.selectedRows[0] ? state.selectedRows[0].cus_indicador : null);
             if(state.selectedRows[0]){
                 devolverSelecciones(state.selectedRows[0].cus_indicador);
                 setIsOpen(false);
