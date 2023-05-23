@@ -16,16 +16,12 @@ const validatorApp = [
     check("apl_cantidad_usuarios").notEmpty().isInt(),
     check("plataforma").exists().notEmpty().isInt(),
     check("man_frecuencia").exists().notEmpty().isString(),
-    check("man_horas_prom").exists().notEmpty().isInt(),
-    check("man_horas_anuales").exists().notEmpty().isInt(),
-    // check("doc_descripcion").exists().notEmpty().isString(),
-    // check("doc_tipo").exists().notEmpty().isString(),
-    // check("doc_direccion").exists().notEmpty().isString(),
-
-    // check("select_lenguaje").exists().notEmpty().isLength({min:1}),
-    // check("select_base").exists().notEmpty().isLength({min:1}),
-    // check("select_servidor").exists().notEmpty().isLength({min:1}),
-    // check("select_documentos").exists().notEmpty().isLength({min:1}),
+    // check("man_horas_prom").exists().notEmpty().isInt(),
+    // check("man_horas_anuales").exists().notEmpty().isInt(),
+    check("select_lenguaje").exists().notEmpty().isLength({min:1}),
+    check("select_base").exists().notEmpty().isLength({min:1}),
+    check("select_servidor").exists().notEmpty().isLength({min:1}),
+    check("select_documentos").exists().notEmpty().isLength({min:1}),
     (req,res,next) => {
         try{
             validationResult(req).throw();
@@ -36,17 +32,15 @@ const validatorApp = [
     }
 ];
 
-// *************** VALIDAR DATOS APLICACION ***************
-const validatorCustodio = [
+
+// *************** VALIDAR DATOS FALLA ***************
+const validatorFalla = [
     check("nombre").exists().notEmpty().isString(),
-    check("apellido").exists().notEmpty().isString(),
-    check("indicador").exists().notEmpty().isString().isLength({min:4, max:12}),
-    check("cedula").exists().notEmpty().isString(),
-    check("telefono").exists().notEmpty().isString(),
-    check("cargo").exists().notEmpty().isString(),
-    check("gerencia").exists().notEmpty().isString(),
-    check("region").exists().notEmpty().isString(),
-    check("localidad").exists().notEmpty().isString(),
+    check("elemento").exists().notEmpty().isString(),
+    check("impacto").exists().notEmpty().isString(),
+    check("descripcion").exists().notEmpty().isString(),
+    check("solucion").exists().notEmpty().isString(),
+    check("usuario_creador").exists().notEmpty().isString(),
     (req,res,next) => {
         try{
             validationResult(req).throw();
@@ -57,5 +51,5 @@ const validatorCustodio = [
     }
 ];
 
-module.exports = { validatorApp, validatorCustodio };
+module.exports = { validatorApp, validatorFalla };
 

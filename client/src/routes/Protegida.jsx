@@ -1,16 +1,16 @@
 
 import { Navigate, Outlet } from "react-router-dom";
-import Autorizacion from '../services/auth.service';
+import { obtenerUsuario } from '../../src/utils/APIRoutes';
 
 // ===================== RUTA PROTEGIDA PARA EL LOGIN =====================
 export const Protegida = ({children, redirectTo}) => {
 
     if(redirectTo === '/dashboard'){
-        if(Autorizacion.obtenerUsuario() !== null){
+        if(obtenerUsuario() !== null){
             return <Navigate to={redirectTo} />
         }
     }
-    else if(Autorizacion.obtenerUsuario() === null)
+    else if(obtenerUsuario() === null)
         return <Navigate to={redirectTo} />
 
         
@@ -20,7 +20,7 @@ export const Protegida = ({children, redirectTo}) => {
 // ===================== RUTA PROTEGIDA PARA ADMINISTRADORES =====================
 export const ProtegidaAdm = ({children}) => {
 
-    if(Autorizacion.obtenerUsuario().rol !== 'admin')
+    if(obtenerUsuario().rol !== 'admin')
         return <Navigate to='/' />
 
     return children ? children : <Outlet />;
@@ -30,7 +30,7 @@ export const ProtegidaAdm = ({children}) => {
 // ===================== RUTA PROTEGIDA PARA SUPERUSUARIO =====================
 export const ProtegidaSuper = ({children}) => {
 
-    if( (Autorizacion.obtenerUsuario().rol !== 'superuser') && (Autorizacion.obtenerUsuario().rol !== 'admin') )
+    if( (obtenerUsuario().rol !== 'superuser') && (obtenerUsuario().rol !== 'admin') )
         return <Navigate to='/' />
 
     return children ? children : <Outlet />;

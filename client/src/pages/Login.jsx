@@ -1,11 +1,11 @@
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaUserCircle, FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
-import Autorizacion from '../services/auth.service';
-import Usuario from '../services/usuario.service';
 import { Notificacion } from '../utils/Notificacion';
- 
+import { rutaAuth } from '../utils/APIRoutes';
+import axios from 'axios';
+
 function Login() {
   
   const [password, setPassword] = useState('');
@@ -21,7 +21,16 @@ function Login() {
 
     if(password.length > 7 && indicador !== ''){
       try {
-        const loginData = await Autorizacion.login(indicador,password);
+        
+        const loginData = await axios.post(rutaAuth, {indicador,password})
+        .then(response => {
+          if(!response.data.exp){
+              if (response.data.token)
+                  localStorage.setItem("user", JSON.stringify(response.data));
+          }
+          return response.data;
+        });
+        
 
         if(loginData.exp){
           navigate("/cambio_password", {state: { indicador: indicador, passwordVieja: password}} );

@@ -3,10 +3,11 @@ import { useEffect, useState } from "react";
 import { Container, Select, Tabla } from "../../components";
 import { useDebounce } from 'use-debounce';
 import { FaEdit, FaEye, FaSearch } from 'react-icons/fa';
-import Autorizacion from "../../services/auth.service";
-import Custodio from "../../services/custodios.service";
 import { Link } from "react-router-dom";
 import Opciones from "../../utils/Opciones";
+import axios from "axios";
+import { obtenerUsuario, rutaCustodio } from "../../utils/APIRoutes";
+import authHeader from "../../utils/header";
 
 const columns = [
     {
@@ -18,7 +19,7 @@ const columns = [
                 <FaEye className="text-blue-500 text-lg" />
             </Link>
 
-            {Autorizacion.obtenerUsuario().rol === 'user' ? 
+            {obtenerUsuario().rol === 'user' ? 
                 null
             : 
                 <Link to={row ? `/custodios/actualizacion/${row.custodio_id}` : `/dashboard`} >
@@ -147,17 +148,24 @@ function Custodios() {
             setDatos({ ...datos, [e.target.name] : e.target.value })
     }
 
+    async function obtenerCustodioPorBusqueda(term,cargo,gerencia,region) {
+        try {
+            return axios.post(`${rutaCustodio}/busqueda`, 
+            {term,cargo,gerencia,region}, { headers: authHeader() });
+        } catch (error) {
+            console.log('Error al obtener dato');
+        }
+    }
+
     // FUNCION PARA BUSCAR DATOS EN LA DATABASE
     const onSearch = async (datos) => {
         try {
             const { terminoBusqueda,cargo,gerencia,region } = datos;
-
-            const respuesta = await Custodio.obtenerCustodioPorBusqueda(
-                terminoBusqueda,cargo,gerencia,region);
+            const respuesta = await obtenerCustodioPorBusqueda(terminoBusqueda,cargo,gerencia,region);
             setResultado(respuesta.data);
             
         } catch (error) {
-            console.log('ERROR AL BUSCAR DATOS');
+            console.log(error);
         }
     }
 

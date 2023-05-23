@@ -1,7 +1,7 @@
 
 const { obtenerBusqueda, registrarCustodio, actualizarCustodio, eliminarCustodio, general, aplicacion } = require("../controllers/custodios");
 const { auth } = require("../middlewares/auth");
-const { validatorCustodio } = require("../validators/aplicaciones");
+const { validatorCustodio } = require("../validators/custodios");
 const router = require("express").Router();
 
 

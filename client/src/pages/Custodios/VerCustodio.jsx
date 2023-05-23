@@ -3,7 +3,9 @@ import { useState, useEffect } from 'react';
 import { BiLoaderAlt } from "react-icons/bi";
 import { useParams, Link } from 'react-router-dom';
 import { Container, Input, Radio, Tabla } from '../../components';
-import Custodio from '../../services/custodios.service';
+import axios from 'axios';
+import { rutaCustodio } from '../../utils/APIRoutes';
+import authHeader from '../../utils/header';
 
 const opcionesVista = ['General','Aplicacion'];
 
@@ -26,8 +28,8 @@ function VerCustodio() {
   useEffect(() => {
     async function fetchData(){
       try {
-        const gen = await Custodio.obtenerGeneral(id);
-        const apl = await Custodio.obtenerAplicacion(id);
+        const gen = await axios.get(`${rutaCustodio}/general/${id}`, { headers: authHeader() });
+        const apl = await axios.get(`${rutaCustodio}/aplicacion/${id}`, { headers: authHeader() });
         const funcional = await apl.data.aplicacionFuncional;
         const tecnico = await apl.data.aplicacionTecnico;
 
@@ -53,7 +55,6 @@ function VerCustodio() {
               <h2 className='font-bold text-lg'>Custodio</h2>
               <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
                 <div className='grid space-x-4 mb-6 md:grid-cols-2'> 
-                  {/* <Input campo='ID' editable={false} propiedad={general.custodio_id} /> */}
                   <Input campo='Nombre' editable={false} propiedad={general.cus_nombre} />
                   <Input campo='Apellido' editable={false} propiedad={general.cus_apellido} />
                   <Input campo='Indicador' editable={false} propiedad={general.cus_indicador} />
@@ -95,15 +96,7 @@ function VerCustodio() {
             sortable: true,
             width: '150px',
             left: true,
-            //grow: 2
         },
-        // {
-        //   name: 'Descripcion',
-        //   selector: row => row.apl_descripcion,
-        //   sortable: true,
-        //   left: true,
-        //   grow: 2
-        // },
         {
             name: 'Estatus',
             selector: row => row.estatus,
@@ -117,7 +110,6 @@ function VerCustodio() {
             sortable: true,
             width: '150px',
             left: true,
-            //grow: 1.5
         },
         {
             name: 'Alcance',
@@ -126,30 +118,15 @@ function VerCustodio() {
             width: '150px',
             left: true
         },
-        // {
-        //     name: 'Codigo Fuente',
-        //     selector: row => row.apl_codigo_fuente,
-        //     sortable: true,
-        //     left: true,
-        //     grow: 2
-        // },
-        // {
-        //   name: 'Version',
-        //   selector: row => row.apl_version,
-        //   sortable: true,
-        //   left: true,
-        //   grow: 1.5
-        // },
         {
           name: 'Direccion',
           selector: row => 
-            <a className='text-blue-700' href={row.apl_direccion} rel='nonferrer' target='_blank' >
+            <a className='text-blue-700' href={row.apl_direccion} rel="noreferrer" target='_blank' >
               {row.apl_direccion}
             </a>,
           sortable: true,
           width: '200px',
           left: true,
-          //grow: 1.5
         },
         {
           name: 'N° Usuarios',
@@ -157,7 +134,6 @@ function VerCustodio() {
           sortable: true,
           width: '100px',
           left: true,
-          //grow: 1.5
         },
         {
           name: 'Region',
@@ -165,7 +141,6 @@ function VerCustodio() {
           sortable: true,
           width: '150px',
           left: true,
-          //grow: 1.5
         },
       ];
 

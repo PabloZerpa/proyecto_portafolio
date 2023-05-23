@@ -1,8 +1,9 @@
 
-import { useEffect, useState } from "react";
-import { FaHome, FaCode,FaDatabase, FaChevronDown, FaChevronUp, FaKey, FaSignOutAlt, FaBars, FaTimes, FaHardHat, FaServer, FaChevronRight, FaBug } from "react-icons/fa";
+import { useState } from "react";
+import { FaHome, FaCode,FaDatabase, FaChevronDown, FaChevronUp, 
+    FaKey, FaSignOutAlt, FaBars, FaHardHat, FaServer, FaBug } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import Autorizacion from '../services/auth.service';
+import { logout, obtenerUsuario } from "../utils/APIRoutes";
 
 function Navegacion() {
     
@@ -21,7 +22,7 @@ function Navegacion() {
 
     const [check, setCheck] = useState(false);
 
-    if (Autorizacion.obtenerUsuario() === null)
+    if (obtenerUsuario() === null)
         return null
 
     return (
@@ -31,7 +32,7 @@ function Navegacion() {
 
             <div className={` ${ check ? "flex" : "hidden lg:flex" } `} id="responsiveNav">
                 <nav className="flex flex-col mt-20 pt-20 space-y-10 items-center 
-                fixed z-40 text-gray-400 bg-gray-200 w-2/3 h-screen lg:w-1/6">
+                fixed z-40 text-gray-400 bg-gray-100 w-2/3 h-screen lg:w-1/6">
 
                     <ul className="list-none p-0 m-0 flex flex-col space-y-4">
                             <li>
@@ -43,7 +44,7 @@ function Navegacion() {
 
                             <div className="w-full h-0.5 bg-gray-500 opacity-50"></div>
                             
-                            {Autorizacion.obtenerUsuario().rol==='user' ? (
+                            {obtenerUsuario().rol==='user' ? (
                                 null
                             ) : (
                                 <li>
@@ -54,7 +55,7 @@ function Navegacion() {
                                     </div>
                                     <div style={open2 ? {display: 'block'} : {display: 'none'}} className='pl-4'>
                                         <Link 
-                                            style={Autorizacion.obtenerUsuario().rol!=='admin' ? {pointerEvents: 'none', display: 'none'} : {pointerEvents: 'auto'} }
+                                            style={obtenerUsuario().rol!=='admin' ? {pointerEvents: 'none', display: 'none'} : {pointerEvents: 'auto'} }
                                             to="/administracion/permisos" 
                                             className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                                 Permisos
@@ -149,7 +150,7 @@ function Navegacion() {
                             <div className="w-full h-0.5 bg-gray-500 opacity-50"></div>
 
                             <li>
-                                <span className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100 cursor-pointer" onClick={Autorizacion.logout} >
+                                <span className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100 cursor-pointer" onClick={logout} >
                                     <FaSignOutAlt />
                                     <span className="px-2">Cerrar Sesion</span>
                                 </span>

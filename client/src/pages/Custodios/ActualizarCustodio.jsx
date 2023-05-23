@@ -1,13 +1,13 @@
 
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Container, Input, Select } from '../../components';
 import { BiLoaderAlt } from "react-icons/bi";
-import Autorizacion from '../../services/auth.service';
-import Custodio from '../../services/custodios.service';
-import Usuario from '../../services/usuario.service';
 import { Notificacion } from '../../utils/Notificacion';
 import { useEffect, useState } from 'react';
 import Opciones from '../../utils/Opciones';
+import { obtenerUsuario, rutaCustodio, rutaUsuario } from '../../utils/APIRoutes';
+import axios from 'axios';
+import authHeader from '../../utils/header';
 
 function ActualizarCustodio() {
 
@@ -17,7 +17,7 @@ function ActualizarCustodio() {
     const { id } = useParams();
     const [load, setLoad] = useState(true);
     const [datos, setDatos] = useState({
-        usuario_actualizo: Autorizacion.obtenerUsuario().indicador,
+        usuario_actualizo: obtenerUsuario().indicador,
     });
 
     // VALORES POR DEFECTO EN LOS INPUTS
@@ -36,9 +36,21 @@ function ActualizarCustodio() {
         setRegiones(await Opciones('regiones'));
     }
 
+    // ---------------- UPDATE DE UN CAMPO DE UN USUARIO ------------------
+    async function obtenerLocalidades(region) {
+        try { 
+            const respuesta = await axios.post(`${rutaUsuario}/localidades`, {region}, { headers: authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log('ERROR AL OBTENER LOCALIDADES');
+        }
+    }
+
     async function OpcionesLocalidades(valor){
         try {
-            const respuesta = await Usuario.obtenerLocalidades(valor);
+
+            //const respuesta = await axios.post(`${rutaUsuario}/localidades`, {valor}, { headers: authHeader() });
+            const respuesta = await obtenerLocalidades(valor);
             const data = respuesta.data;
             let opciones = ['SELECCIONE'];
         
@@ -68,7 +80,7 @@ function ActualizarCustodio() {
             establecerDatos();
     
             // ========== DATOS POR DEFECTO ==========
-            const gen = await Custodio.obtenerGeneral(id);
+            const gen = await axios.get(`${rutaCustodio}/general/${id}`, { headers: authHeader() });
             setGeneral(gen.data[0]);
  
             setDatos({
@@ -94,8 +106,11 @@ function ActualizarCustodio() {
         e.preventDefault();
 
         try {
-          if(Autorizacion.obtenerUsuario().rol === 'admin'){
-            await Custodio.actualizarDatosCustodio(id,datos);
+          if(obtenerUsuario().rol === 'admin'){
+
+            await axios.patch(`${rutaCustodio}/${id}`, datos, { headers: authHeader() }) 
+            .then(response => { return response.data; });
+            
             Notificacion('ACTUALIZACION EXITOSA', 'success');
             navigate(`/custodios/${id}`);
           }

@@ -1,15 +1,16 @@
 
 import { useEffect, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button, Container, Input, Select, Tabla, TextArea } from '../../components';
-import Autorizacion from '../../services/auth.service';
-import Base from '../../services/basedatos.service';
 import { Notificacion } from '../../utils/Notificacion';
 import { FaTimesCircle } from 'react-icons/fa';
 import Modal from '../../components/Modal';
 import TableRegistro from '../../components/TablaRegistro';
 import { columnasModalServidor } from '../../utils/columnas';
 import Opciones from '../../utils/Opciones';
+import { obtenerUsuario, rutaBaseDatos } from '../../utils/APIRoutes';
+import axios from 'axios';
+import authHeader from '../../utils/header';
 
 function RegistrarBD() {
 
@@ -19,7 +20,7 @@ function RegistrarBD() {
     
     // ---------- ESTADOS ----------
     const [datos, setDatos] = useState({
-        usuario_registro: Autorizacion.obtenerUsuario().indicador,
+        usuario_registro: obtenerUsuario().indicador,
     });
 
     const [mane, setMane] = useState('');
@@ -51,8 +52,13 @@ function RegistrarBD() {
         e.preventDefault();
 
         try {
-            if(Autorizacion.obtenerUsuario().rol === 'admin'){
-                const id = await Base.crearDatosDB(datos, tableDataServidor);
+            if(obtenerUsuario().rol === 'admin'){
+                let datosServidor = datos;
+                datosServidor.select_servidor = tableDataServidor;
+
+                const id = await axios.post(`${rutaBaseDatos}/`, datosServidor, { headers: authHeader() }) 
+                .then(response => { return response.data; });
+                
                 Notificacion('REGISTRO EXITOSO', 'success');
                 navigate(`/basedatos/${id}`);
             }

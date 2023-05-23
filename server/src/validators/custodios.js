@@ -1,16 +1,17 @@
 const { check, validationResult } = require("express-validator");
 
-// *************** VALIDAR DATOS APLICACION ***************
-const validatorResponsable = [
+
+// *************** VALIDAR DATOS CUSTODIO ***************
+const validatorCustodio = [
     check("nombre").exists().notEmpty().isString(),
     check("apellido").exists().notEmpty().isString(),
-    check("indicador").exists().notEmpty().isString(),
+    check("indicador").exists().notEmpty().isString().isLength({min:4, max:12}),
     check("cedula").exists().notEmpty().isString(),
     check("telefono").exists().notEmpty().isString(),
-    check("cargo").exists().notEmpty().isInt(),
-    check("gerencia").exists().notEmpty().isInt(),
-    check("region").exists().notEmpty().isInt(),
-    check("localidad").exists().notEmpty().isInt(),
+    check("cargo").exists().notEmpty().isString(),
+    check("gerencia").exists().notEmpty().isString(),
+    check("region").exists().notEmpty().isString(),
+    check("localidad").exists().notEmpty().isString(),
     (req,res,next) => {
         try{
             validationResult(req).throw();
@@ -21,4 +22,4 @@ const validatorResponsable = [
     }
 ];
 
-module.exports = { validatorResponsable };
+module.exports = { validatorCustodio };

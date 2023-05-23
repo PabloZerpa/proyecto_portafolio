@@ -2,18 +2,18 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Dropdown } from "./";
-import Autorizacion from '../services/auth.service';
 import Logo from "../components/logo_pdvsa.png";
+import { obtenerUsuario } from "../utils/APIRoutes";
 
 // -------------------- NAVEGACION --------------------
 function Header() {
   const [user, setUser] = useState('');
   
-  useEffect(() => { setUser(Autorizacion.obtenerUsuario()); }, []);
+  useEffect(() => { setUser(obtenerUsuario()); }, []);
 
   return (
     
-    <div className="flex flex-row justify-between items-center w-full h-20 bg-gray-200 fixed z-50 drop-shadow-md" >
+    <div className="flex flex-row justify-between items-center w-full h-20 bg-blue-500 fixed z-50 drop-shadow-md" >
       
       <Link className="linkNav" to="/">
         <img className="ml-8 w-28" src={Logo} alt="logo" />

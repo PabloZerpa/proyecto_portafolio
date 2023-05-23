@@ -1,9 +1,7 @@
 
-
 import { Container } from "../../components/";
 import { FaUserCog, FaUserPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
-
 
 function Permisos() {
 

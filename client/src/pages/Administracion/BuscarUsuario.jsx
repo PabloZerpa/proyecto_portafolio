@@ -3,13 +3,14 @@ import { useState, useEffect } from "react";
 import { Button, Container, Tabla } from "../../components/";
 import { FaArrowLeft, FaEdit, FaEye, FaSearch, FaTimesCircle } from "react-icons/fa";
 import { useDebounce } from "use-debounce";
-import Autorizacion from '../../services/auth.service';
-import Usuario from "../../services/usuario.service";
 import { Notificacion } from "../../utils/Notificacion";
 import { useNavigate } from "react-router-dom";
 import ActualizarUsuario from "./ActualizarUsuario"; 
 import swal from "sweetalert";
 import VerActividad from "./VerActividad";
+import axios from "axios";
+import { obtenerUsuario, rutaUsuario } from "../../utils/APIRoutes";
+import authHeader from "../../utils/header";
 
 function BuscarUsuario() {
 
@@ -37,15 +38,26 @@ function BuscarUsuario() {
   }
 
   const habilitarActividad = async (dato) => {
-    const x = await Usuario.obtenerActividad(dato.usuario_id);
+    const x = await axios.get(`${rutaUsuario}/actividad/${dato.usuario_id}`, { headers: authHeader() });
+    
     setIsOpen2(!isOpen2);
     setUsuario(x.data); 
   }
 
+  // =============== OBTIENE LOS DATOS DE LOS USUARIOS ===============
+  async function obtenerUsuarios(term) { 
+    try { 
+        return axios.post(`${rutaUsuario}/busqueda`, {term}, { headers: authHeader() });
+    } catch (error) {
+        console.log('Error al obtener dato');
+    }
+}
+
   // =================== FUNCION PARA BUSCAR DATOS EN LA DATABASE ===================
   const onSearch = async (termino) => {
     try {
-      const datos = await Usuario.obtenerUsuarios(termino);
+
+      const datos = await obtenerUsuarios(termino);
       setResultados(datos.data); 
     } catch (error) { 
       console.log('ERROR AL BUSCAR DATOS') 
@@ -63,8 +75,9 @@ function BuscarUsuario() {
   // =================== FUNCION PARA ELIMINAR USUARIO ===================
   const eliminarUsuario = async (row) => {
     try {
-      if(Autorizacion.obtenerUsuario().rol === 'admin'){
-        await Usuario.eliminarUsuario(row.usuario_id); 
+      if(obtenerUsuario().rol === 'admin'){
+        
+        await axios.delete(`${rutaUsuario}/eliminar/${row.usuario_id}`, { headers: authHeader() });
         onSearch(debounceValue);
         Notificacion('USUARIO ELIMINADO EXITOSAMENTE', 'success');
       }
@@ -93,10 +106,6 @@ function BuscarUsuario() {
       width: "60px",
       cell: row => 
         <div className="flex space-x-4">
-          {/* <FaEye 
-            onClick={(e) => habilitar(row)}
-            className="text-blue-500 text-lg" 
-          /> */}
           <FaEdit 
             onClick={(e) => habilitarEdicion(row)}
             className="text-blue-500 text-lg" 
@@ -139,32 +148,34 @@ function BuscarUsuario() {
       button: true,
       cell: row => 
         <div>
-          <FaTimesCircle
-              onClick={() => {
-                swal({
-                  text: `¿Esta seguro de Eliminar a ${row.indicador}?`,
-                  icon: 'warning',
-                  buttons: {
-                    cancel: {
-                      text: "Cancel",
-                      value: false,
-                      visible: true,
-                      className: "bg-red-600 text-white outline-none border-none hover:bg-red-500",
+          {row.rol === 'admin' ? null : 
+            <FaTimesCircle
+                onClick={() => {
+                  swal({
+                    text: `¿Esta seguro de Eliminar a ${row.indicador}?`,
+                    icon: 'warning',
+                    buttons: {
+                      cancel: {
+                        text: "Cancel",
+                        value: false,
+                        visible: true,
+                        className: "bg-red-600 text-white outline-none border-none hover:bg-red-500",
+                      },
+                      confirm: {
+                        text: "Aceptar",
+                        value: true,
+                        visible: true,
+                        className: "bg-blue-600 text-white outline-none border-none hover:bg-blue-500",
+                      }
                     },
-                    confirm: {
-                      text: "Aceptar",
-                      value: true,
-                      visible: true,
-                      className: "bg-blue-600 text-white outline-none border-none hover:bg-blue-500",
-                    }
-                  },
-                }).then((result) => {
-                  if (result)
-                    eliminarUsuario(row);
-                })
-              }} 
-              className="ml-3 text-red-500 text-lg cursor-pointer"
-          />
+                  }).then((result) => {
+                    if (result)
+                      eliminarUsuario(row);
+                  })
+                }} 
+                className="ml-3 text-red-500 text-lg cursor-pointer"
+            />
+          }
         </div>,
       center: true
     },

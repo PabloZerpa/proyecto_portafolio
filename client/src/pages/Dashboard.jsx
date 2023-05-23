@@ -5,13 +5,9 @@ import { Card, Container, Tabla } from "../components";
 import { BiLoaderAlt } from "react-icons/bi";
 import { FaCode, FaDatabase, FaEye, FaServer } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import Aplicacion from "../services/aplicacion.service";
-import Usuario from "../services/usuario.service";
-import Linea from "../chart/Linea";
-import authHeader from "../services/header.service";
+import authHeader from "../utils/header";
 import axios from "axios";
 import { rutaAplicacion, rutaUsuario } from "../utils/APIRoutes";
-import { Notificacion } from "../utils/Notificacion";
 
 const columns = [
 	{
@@ -34,7 +30,6 @@ const columns = [
       name: 'Acronimo',
       selector: row => row.apl_acronimo,
       sortable: true,
-      // grow: 0,
       width: "100px",
       left: true
   },
@@ -42,21 +37,18 @@ const columns = [
       name: 'Nombre',
       selector: row => row.apl_nombre,
       sortable: true,
-      // grow: 2,
       width: "150px",
       left: true
   },
   {
       name: 'Estatus',
       selector: row => row.estatus,
-      //grow: 2,
       width: "150px",
       left: true,
   },
   {
       name: 'Direccion',
       cell: row => (<a className="text-blue-500" href={row.apl_direccion} target="_blank" rel="noreferrer">{row.apl_direccion}</a>),
-      //grow: 2,
       width: "150px",
       left: true
   }, 
@@ -64,7 +56,6 @@ const columns = [
       name: 'Ultima Actualizacion',
       selector: row => row.apl_fecha_actualizacion,
       sortable: true,
-      //grow: 2,
       width: "150px",
       left: true,
   },
@@ -72,7 +63,6 @@ const columns = [
     name: 'Por',
     selector: row => row.indicador,
     sortable: true,
-    //grow: 1,
     width: "100px",
     left: true,
 },
@@ -123,16 +113,13 @@ function Dashboard() {
               </div>
             </div>
 
-          <div className="flex flex-wrap space-x-8 space-y-4">
-            <div></div>
-            <Card titulo={'Aplicaciones'} icono={<FaCode />} datos={aplicaciones} link='/aplicaciones' />
-            <Card titulo={'Bases de Datos'} icono={<FaDatabase />} datos={bases_datos} link='/basedatos' />
-            <Card titulo={'Servidores'} icono={<FaServer />} datos={servidores} link='/servidores' />
-          </div>
-
-            <div className="w-[540px] lg:w-[720px] px-2">
-              {/* <Linea /> */}
+            <div className="flex flex-wrap space-x-8 space-y-4">
+              <div></div>
+              <Card titulo={'Aplicaciones'} icono={<FaCode />} datos={aplicaciones} link='/aplicaciones' />
+              <Card titulo={'Bases de Datos'} icono={<FaDatabase />} datos={bases_datos} link='/basedatos' />
+              <Card titulo={'Servidores'} icono={<FaServer />} datos={servidores} link='/servidores' />
             </div>
+
           </>
         )
       }

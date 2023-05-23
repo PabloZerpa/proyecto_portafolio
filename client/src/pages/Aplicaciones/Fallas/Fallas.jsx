@@ -3,13 +3,14 @@ import { useEffect, useState } from "react";
 import { Container, Button, Tabla } from "../../../components";
 import { useDebounce } from 'use-debounce';
 import { FaEdit, FaEye, FaSearch, FaTimesCircle } from 'react-icons/fa';
-import Falla from "../../../services/falla.service";
 import { Link } from "react-router-dom";
-import Autorizacion from '../../../services/auth.service';
 import { Notificacion } from "../../../utils/Notificacion";
 import ActualizarFalla from "./ActualizarFalla";
 import VerFalla from "./VerFalla";
 import swal from "sweetalert";
+import axios from "axios";
+import { obtenerUsuario, rutaAplicacion } from "../../../utils/APIRoutes";
+import authHeader from "../../../utils/header";
 
 function Fallas() {
 
@@ -39,12 +40,21 @@ function Fallas() {
         setDatos({ ...datos, [e.target.name] : e.target.value })    
     }
 
+    // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
+    async function obtenerFallaPorBusqueda(term) {
+        try {
+            return axios.post(`${rutaAplicacion}/fallas/busqueda`,{term}, { headers: authHeader() });
+        } catch (error) {
+            console.log('Error al obtener dato');
+        }
+    }
+
 
     // FUNCION PARA BUSCAR DATOS EN LA DATABASE
     const onSearch = async (termino) => {
         try {
             const { terminoBusqueda } = termino;
-            const datos = await Falla.obtenerFallaPorBusqueda(terminoBusqueda);
+            const datos = await obtenerFallaPorBusqueda(terminoBusqueda);
             setResultados(datos.data);
         } catch (error) { 
             console.log('ERROR AL BUSCAR DATOS') 
@@ -57,14 +67,14 @@ function Fallas() {
             onSearch(debounceValue);
         else
             setResultados(null) 
-        
     }, [debounceValue, update, datos]);
+
 
     // =================== FUNCION PARA ELIMINAR USUARIO ===================
   const eliminarFalla = async (row) => {
     try {
-      if(Autorizacion.obtenerUsuario().rol === 'admin'){
-        await Falla.eliminarFalla(row.falla_id); 
+      if(obtenerUsuario().rol === 'admin'){
+        await axios.delete(`${rutaAplicacion}/fallas/${row.falla_id}`, { headers: authHeader() });
         onSearch(debounceValue);
         Notificacion('USUARIO ELIMINADO EXITOSAMENTE', 'success');
       }
@@ -85,7 +95,7 @@ function Fallas() {
                     className="text-blue-500 text-lg" 
                 />
                 
-                {Autorizacion.obtenerUsuario().rol === 'user' ? 
+                {obtenerUsuario().rol === 'user' ? 
                     null
                 :
                     <FaEdit
@@ -213,7 +223,7 @@ function Fallas() {
                     </button>
                 </div>
                 
-                { Autorizacion.obtenerUsuario().rol === 'user' ?
+                { obtenerUsuario().rol === 'user' ?
                     null
                     :
                     <Link to={`/aplicaciones/fallas/registro`}><Button>Registrar +</Button></Link>

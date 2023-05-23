@@ -1,17 +1,17 @@
 
 import { useState } from "react";
 import { Button } from "../components";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { Notificacion } from "../utils/Notificacion";
-import Autorizacion from "../services/auth.service";
 import { FaArrowLeft, FaEye, FaEyeSlash, FaLock } from "react-icons/fa";
+import axios from "axios";
+import { rutaUsuario } from "../utils/APIRoutes";
 
 
 function CambioPassword() {
     
     const [datos, setDatos] = useState({});
     const {state} = useLocation();
-    const { indicador, passwordVieja } = state;
 
     const [showPass1, setShowPass1] = useState(false);
     const handlePass1 = () => {setShowPass1(!showPass1)}
@@ -23,8 +23,8 @@ function CambioPassword() {
     const handlePass3 = () => {setShowPass3(!showPass3)}
 
      // ---------- FUNCION PARA NAVEGAR A RUTA INDICADA ----------
-     const navigate = useNavigate();
-     function navegar(ruta) { navigate(ruta) };
+    const navigate = useNavigate();
+    function navegar(ruta) { navigate(ruta) };
 
     // =================== FUNCION PARA OBTENER Y GUARDAR VALORES DEL LOS INPUTS ===================
     const setValores = (e) => {
@@ -36,6 +36,7 @@ function CambioPassword() {
         e.preventDefault();
 
         try {
+            const { indicador, passwordVieja } = state;
 
             if(datos.passwordNueva.length < 8){
                 Notificacion('CONTRASEÑA NUEVA MUY CORTA', 'error');
@@ -57,17 +58,25 @@ function CambioPassword() {
                 return;
             }
 
-            const { password, passwordNueva } = datos;
-            await Autorizacion.cambiarContraseña(indicador, passwordNueva);
+            const { passwordNueva } = datos;
+
+            // ---------------- CAMBIO DE CONTRASEÑA ------------------
+            async function cambiarContraseña(indicador, passwordNuevo) {
+                return axios.patch(`${rutaUsuario}/password/`, {indicador, passwordNuevo})
+                .then(response => { return response.data });
+            }
+
+            await cambiarContraseña(indicador, passwordNueva);
             Notificacion('CONTRASEÑA CAMBIADA EXITOSAMENTE', 'success');
             setTimeout(() => { navegar("/") }, "500");
         }
         catch (error) { 
             Notificacion(error.response.data.message, 'error');
         }
-        
     }
 
+    if(state === null)
+        return <Navigate to='/' />
 
     return (
         <div className='relative flex flex-col justify-center items-center w-full h-screen bg-zinc-300'>

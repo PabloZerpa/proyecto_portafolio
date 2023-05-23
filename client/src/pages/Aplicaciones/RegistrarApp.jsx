@@ -1,17 +1,17 @@
 
 import { useEffect, useState } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button, Container, Input, Radio, Select, TextArea, Tabla } from '../../components';
 import { Notificacion } from '../../utils/Notificacion';
 import { FaTimesCircle } from 'react-icons/fa';
-import { columnasModalBD,columnasModalCustodio,columnasModalDoc,columnasModalLenguaje, columnasModalServidor } from '../../utils/columnas';
-import Autorizacion from '../../services/auth.service';
-import Aplicacion from '../../services/aplicacion.service';
+import { columnasModalBD,columnasModalCustodio,columnasModalLenguaje,columnasModalServidor } from '../../utils/columnas';
 import Opciones from '../../utils/Opciones';
 import TableRegistro from '../../components/TablaRegistro';
 import Modal from '../../components/Modal';
 import DocumentosForm from '../../components/DocumentosForm';
-
+import axios from 'axios';
+import { obtenerUsuario, rutaAplicacion } from '../../utils/APIRoutes';
+import authHeader from '../../utils/header';
  
 function RegistrarApp() {
 
@@ -23,27 +23,23 @@ function RegistrarApp() {
     const [datos, setDatos] = useState({
         apl_codigo_fuente: 'SI',
         apl_critico: 'SI',
-        apl_usuario_registro: Autorizacion.obtenerUsuario().indicador,
-        apl_usuario_actualizo: Autorizacion.obtenerUsuario().indicador,
+        apl_usuario_registro: obtenerUsuario().indicador,
+        apl_usuario_actualizo: obtenerUsuario().indicador,
     });
 
     // =================== OPCIONES PARA LOS SELECTS ===================
-    const [custodios, setCustodios] = useState('');
     const [estatus, setEstatus] = useState('');
     const [alcance, setAlcance] = useState('');
     const [plataformas, setPlataformas] = useState('');
     const [frecuencia, setFrecu] = useState('');
-    const [documentos, setDoc] = useState('');
     const [regiones, setRegiones] = useState('');
 
     // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
     async function establecerDatos(){
-        setCustodios(await Opciones('custodios'));
         setPlataformas(await Opciones('plataformas'));
         setEstatus(await Opciones('estatus'));
         setAlcance(await Opciones('alcance'));
         setFrecu(await Opciones('frecuencias'));
-        setDoc(await Opciones('documentos'));
         setRegiones(await Opciones('regiones'));
     }
 
@@ -61,10 +57,17 @@ function RegistrarApp() {
     async function crearDatos(e) {
         e.preventDefault();
 
-        if(Autorizacion.obtenerUsuario().rol === 'admin'){
+        if(obtenerUsuario().rol === 'admin'){
             try {
-                const id = await Aplicacion.crearDatos(
-                    datos, tableDataLenguaje, tableDataBase, tableDataServidor, tableDataDoc);
+                let datosServidor = datos;
+                datosServidor.select_lenguaje = tableDataLenguaje;
+                datosServidor.select_base = tableDataBase;
+                datosServidor.select_servidor = tableDataServidor;
+                datosServidor.select_documentos = tableDataDoc;
+
+                const id = await axios.post(`${rutaAplicacion}/`, datosServidor, { headers: authHeader() }) 
+                .then(response => { return response.data; });
+
                 Notificacion('REGISTRO EXITOS', 'success');
                 navigate(`/aplicaciones/${id}`);
             }
@@ -464,8 +467,8 @@ function RegistrarApp() {
                     <p className='font-bold text-base my-4'>Mantenimiento</p>
                     <div className="flex flex-col ">
                         <Select campo='Frecuencia' name='man_frecuencia' opciones={frecuencia ? frecuencia : ['SELECCIONAR']} manejador={setValores}/>
-                        <Input campo='Horas Pro' name='man_horas_prom' required={true} manejador={setValores} />
-                        <Input campo='Horas Anu' name='man_horas_anuales' required={true} manejador={setValores} />
+                        <Input campo='Horas Pro' name='man_horas_prom' manejador={setValores} />
+                        <Input campo='Horas Anu' name='man_horas_anuales' manejador={setValores} />
                     </div>
                 </div>
 

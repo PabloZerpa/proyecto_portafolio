@@ -8,7 +8,6 @@ import Opciones from "../utils/Opciones";
 function DocumentosForm({devolverSelecciones, setIsOpen}) {
 
     const [datos, setDatos] = useState({}); 
-    const [elementos, setElementos] = useState([0]);
     const [documentos, setDoc] = useState('');
 
     // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
@@ -24,8 +23,6 @@ function DocumentosForm({devolverSelecciones, setIsOpen}) {
     const sendDatos = () => {
         devolverSelecciones(datos);
         setIsOpen(false)
-        if(elementos[0] !== 0){
-        }
     }
 
     // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================

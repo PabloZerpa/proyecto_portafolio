@@ -1,14 +1,15 @@
 
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Container, Input, Modal, Select, Tabla, TableRegistro, TextArea } from '../../components';
 import { BiLoaderAlt } from "react-icons/bi";
-import Autorizacion from '../../services/auth.service';
-import Base from '../../services/basedatos.service';
 import { useEffect, useState } from 'react';
 import { columnasModalServidor } from '../../utils/columnas';
 import { FaTimesCircle } from 'react-icons/fa';
 import Opciones from '../../utils/Opciones';
 import { Notificacion } from '../../utils/Notificacion';
+import axios from 'axios';
+import authHeader from '../../utils/header';
+import { obtenerUsuario, rutaBaseDatos } from '../../utils/APIRoutes';
 
 function ActualizarBD() {
 
@@ -20,7 +21,7 @@ function ActualizarBD() {
     const { id } = useParams();
     const [load, setLoad] = useState(true);
     const [datos, setDatos] = useState({
-        usuario_actualizo: Autorizacion.obtenerUsuario().indicador,
+        usuario_actualizo: obtenerUsuario().indicador,
     });
 
     // FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS
@@ -66,8 +67,8 @@ function ActualizarBD() {
                 establecerDatos();
 
                 // ========== DATOS POR DEFECTO ==========
-                const gen = await Base.obtenerGeneralBD(id);
-                const ser = await Base.obtenerServidorBD(id);
+                const gen = await axios.get(`${rutaBaseDatos}/general/${id}`, { headers: authHeader() });
+                const ser = await axios.get(`${rutaBaseDatos}/servidor/${id}`, { headers: authHeader() });
 
                 setGeneral(gen.data[0]);
                 setServidor(ser.data.datos);
@@ -97,8 +98,14 @@ function ActualizarBD() {
         e.preventDefault();
 
         try {
-          if(Autorizacion.obtenerUsuario().rol === 'admin'){
-            await Base.actualizarDatosDB(id, datos, tableDataServidor);
+          if(obtenerUsuario().rol === 'admin'){
+
+            let datosServidor = datos;
+            datosServidor.select_servidor = tableDataServidor;
+
+            await axios.patch(`${rutaBaseDatos}/${id}`, datosServidor, { headers: authHeader() }) 
+            .then(response => { return response.data; });
+
             Notificacion('ACTUALIZACION EXITOSA', 'success');
             navigate(`/basedatos/${id}`);
           }

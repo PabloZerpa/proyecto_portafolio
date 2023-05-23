@@ -1,9 +1,10 @@
 
 import { useState, useEffect } from 'react';
-import { FaEdit, FaEye } from 'react-icons/fa';
-import { useParams, Navigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Container, Input, Radio, Tabla, TextArea } from '../../components';
-import Aplicacion from '../../services/aplicacion.service';
+import { rutaAplicacion } from '../../utils/APIRoutes';
+import axios from 'axios';
+import authHeader from '../../utils/header';
 
 const opcionesVista = ['General','Tecnologia', 'Base de datos',
 'Servidor','Custodios','Documentacion','Fallas'];
@@ -31,13 +32,14 @@ function VerAplicacion() {
   useEffect(() => {
     async function fetchData(){
       try {
-        const gen = await Aplicacion.obtenerGeneral(id);
-        const tec = await Aplicacion.obtenerTecnologia(id);
-        const bas = await Aplicacion.obtenerBaseDatos(id);
-        const ser = await Aplicacion.obtenerServidor(id);
-        const cus = await Aplicacion.obtenerCustodios(id);
-        const doc = await Aplicacion.obtenerDocumentacion(id);
-        const fal = await Aplicacion.obtenerFallas(id);
+
+        const gen = await axios.get(`${rutaAplicacion}/general/${id}`, { headers: authHeader() });
+        const tec = await axios.get(`${rutaAplicacion}/tecnologia/${id}`, { headers: authHeader() });
+        const bas = await axios.get(`${rutaAplicacion}/basedatos/${id}`, { headers: authHeader() });
+        const ser = await axios.get(`${rutaAplicacion}/servidor/${id}`, { headers: authHeader() });
+        const cus = await axios.get(`${rutaAplicacion}/custodio/${id}`, { headers: authHeader() });
+        const doc = await axios.get(`${rutaAplicacion}/documentacion/${id}`, { headers: authHeader() });
+        const fal = await axios.get(`${rutaAplicacion}/fallas/${id}`, { headers: authHeader() });
 
         setGeneral(gen.data[0]);
         setTecnologia(tec);
@@ -94,7 +96,6 @@ function VerAplicacion() {
             sortable: true,
             width: "240px",
             left: true,
-            //grow: 2
         },
         {
             name: 'Horas Promedio',
@@ -109,7 +110,6 @@ function VerAplicacion() {
             sortable: true,
             left: true,
             width: "240px",
-            //grow: 1.5
         },
       ];
 
@@ -120,7 +120,6 @@ function VerAplicacion() {
           sortable: true,
           width: "240px",
           left: true,
-          // grow: 2
       },
         {
             name: 'Lenguaje',
@@ -128,15 +127,7 @@ function VerAplicacion() {
             sortable: true,
             width: "240px",
             left: true,
-            // grow: 2
         },
-        // {
-        //     name: 'Framework',
-        //     selector: row => row.framework,
-        //     sortable: true,
-        //     width: "240px",
-        //     left: true,
-        // },
       ];
 
       function Tecnologia() {
@@ -177,7 +168,6 @@ function VerAplicacion() {
             sortable: true,
             width: "150px",
             left: true,
-            // grow: 2
         },
         {
             name: 'Estatus',
@@ -192,7 +182,6 @@ function VerAplicacion() {
             sortable: true,
             width: "150px",
             left: true,
-            // grow: 1.5
         },
         {
             name: 'Manejador',
@@ -207,7 +196,6 @@ function VerAplicacion() {
             sortable: true,
             width: "150px",
             left: true,
-            //grow: 2
         },
         {
           name: 'N° Usuarios',
@@ -215,7 +203,6 @@ function VerAplicacion() {
           sortable: true,
           width: "100px",
           left: true,
-          //grow: 1.5
         },
         {
             name: 'Ultima Actualizacion',
@@ -223,7 +210,6 @@ function VerAplicacion() {
             sortable: true,
             width: "200px",
             left: true,
-            //grow: 2
         },
       ];
   

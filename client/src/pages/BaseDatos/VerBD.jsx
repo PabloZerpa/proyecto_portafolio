@@ -3,7 +3,9 @@ import { useState, useEffect } from 'react';
 import { BiLoaderAlt } from "react-icons/bi";
 import { useParams, Link } from 'react-router-dom';
 import { Container, Input, Radio, Tabla } from '../../components';
-import Base from '../../services/basedatos.service';
+import { rutaBaseDatos } from '../../utils/APIRoutes';
+import axios from 'axios';
+import authHeader from '../../utils/header';
 
 const opcionesVista = ['General','Aplicacion','Servidor'];
 
@@ -26,9 +28,9 @@ function VerBD() {
   useEffect(() => {
     async function fetchData(){
       try {
-        const gen = await Base.obtenerGeneralBD(id);
-        const apl = await Base.obtenerAplicacionBD(id);
-        const ser = await Base.obtenerServidorBD(id); 
+        const gen = await axios.get(`${rutaBaseDatos}/general/${id}`, { headers: authHeader() });
+        const apl = await axios.get(`${rutaBaseDatos}/aplicacion/${id}`, { headers: authHeader() });
+        const ser = await axios.get(`${rutaBaseDatos}/servidor/${id}`, { headers: authHeader() });
 
         setGeneral(gen.data);
         setAplicacion(apl.data);
@@ -91,16 +93,7 @@ function VerBD() {
             sortable: true,
             width: '150px',
             left: true,
-            //grow: 2
         },
-        // {
-        //   name: 'Descripcion',
-        //   selector: row => row.apl_descripcion,
-        //   sortable: true,
-        //   width: '200px',
-        //   left: true,
-        //   //grow: 2
-        // },
         {
             name: 'Estatus',
             selector: row => row.estatus,
@@ -114,7 +107,6 @@ function VerBD() {
             sortable: true,
             width: '100px',
             left: true,
-            //grow: 1.5
         },
         {
             name: 'Alcance',
@@ -123,22 +115,6 @@ function VerBD() {
             width: '150px',
             left: true
         },
-        // {
-        //     name: 'Codigo Fuente',
-        //     selector: row => row.apl_codigo_fuente,
-        //     sortable: true,
-        //     width: '60px',
-        //     left: true,
-        //     //grow: 2
-        // },
-        // {
-        //   name: 'Version',
-        //   selector: row => row.apl_version,
-        //   sortable: true,
-        //   width: '60px',
-        //   left: true,
-        //   //grow: 1.5
-        // },
         {
           name: 'Direccion',
           selector: row => 
@@ -148,7 +124,6 @@ function VerBD() {
           sortable: true,
           width: '200px',
           left: true,
-          //grow: 1.5
         },
         {
           name: 'N° Usuarios',
@@ -156,7 +131,6 @@ function VerBD() {
           sortable: true,
           width: '150px',
           left: true,
-          //grow: 1.5
         },
         {
           name: 'Region',
@@ -164,7 +138,6 @@ function VerBD() {
           sortable: true,
           width: '150px',
           left: true,
-          //grow: 1.5
         },
       ];
 
@@ -234,7 +207,6 @@ function VerBD() {
           sortable: true,
           width: '200px',
           left: true,
-          //grow: 2
         },
         {
           name: 'Region',

@@ -121,17 +121,4 @@ const registrar = async (req, res) => {
  }
 
 
-// *************** OBTENER USUARIO ***************
-const obtenerTotal = async (req,res) => {
-    try{
-        const data = await pool.query(`
-            SELECT usuario_id FROM usuarios`);
-        res.send(data[0]);
-    }
-    catch (error) {
-        return res.status(401).json({ message: 'ERROR' });
-    }
- }
-
-
-module.exports = { login, registrar, obtenerTotal };
+module.exports = { login, registrar };

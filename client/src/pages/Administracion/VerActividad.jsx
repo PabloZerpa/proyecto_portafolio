@@ -4,9 +4,8 @@ import { Button } from "../../components/";
 import DataTable from "react-data-table-component";
 import { paginacionOpciones } from "../../utils/TablaOpciones";
 
+function VerActividad({setIsOpen, valores}) {
 
-function VerActividad({setIsOpen, valores, setUpdate}) {
- 
     const [resultados, setResultados] = useState([]);
 
     useEffect(() => {
@@ -36,7 +35,6 @@ function VerActividad({setIsOpen, valores, setUpdate}) {
           left: true
       },
     ];
-
 
     return(
         <div className="flex flex-col space-y-8 justify-center items-center rounded bg-zinc-400 p-4">

@@ -1,17 +1,18 @@
 
 import { useState, useEffect } from "react";
 import { Container, Button } from "../../components";
-import { useDebounce } from "use-debounce";
 import { BiLoaderAlt } from "react-icons/bi";
 import Barra from "../../chart/Barra";
 import Circulo from "../../chart/Circulo";
 import Linea from "../../chart/Linea";
 import Radio from "../../components/Radio";
-import Usuario from "../../services/usuario.service";
 import Opciones from "../../utils/Opciones";
+import axios from "axios";
+import authHeader from "../../utils/header";
+import { rutaUsuario } from "../../utils/APIRoutes";
 
 const opcionCategoria = ['Region', 'Plataforma', 'Estatus', 'Prioridad', 'Modificacion'];
-const opcionMostrar = ['Cantidad', 'Porcentaje', 'Tiempo'];
+const opcionMostrar = ['Cantidad', 'Porcentaje', 'Histograma'];
 
 
 function Diagramas() {
@@ -57,7 +58,8 @@ function Diagramas() {
 
     const onSearch = async (categoria,mostrar) => {
       try {
-        const {data} = await Usuario.obtenerCantidadRegiones(categoria,mostrar);
+
+        const {data} = await axios.post(`${rutaUsuario}/cantidadRegiones`, {categoria,mostrar}, { headers: authHeader() });
 
         setResultados(data.cantidad);
 
@@ -102,7 +104,7 @@ function Diagramas() {
                     ( null )
                 }
 
-                {resultados  && datos.mostrar === 'tiempo' ? 
+                {resultados  && datos.mostrar === 'histograma' ? 
                     ( <Linea datos={resultados} categoria={datos.categoria} claves={claves} /> ) 
                     : 
                     ( null )

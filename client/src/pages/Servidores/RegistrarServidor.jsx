@@ -1,12 +1,12 @@
 
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button, Container, Input, Select, TextArea } from '../../components';
-import Autorizacion from '../../services/auth.service';
-import Servidor from '../../services/servidor.service';
-import Usuario from '../../services/usuario.service';
 import { useEffect, useState } from 'react';
 import { Notificacion } from '../../utils/Notificacion';
 import Opciones from '../../utils/Opciones';
+import { obtenerUsuario, rutaServidor, rutaUsuario } from '../../utils/APIRoutes';
+import axios from 'axios';
+import authHeader from '../../utils/header';
 
 function RegistrarServidor() {
 
@@ -16,7 +16,7 @@ function RegistrarServidor() {
 
     // ---------- ESTADOS ----------
     const [datos, setDatos] = useState({
-        usuario_registro: Autorizacion.obtenerUsuario().indicador,
+        usuario_registro: obtenerUsuario().indicador,
     });
 
     const [marcas, setMarcas] = useState('');
@@ -37,9 +37,19 @@ function RegistrarServidor() {
         establecerDatos();
     }, []);
 
+    // ---------------- UPDATE DE UN CAMPO DE UN USUARIO ------------------
+    async function obtenerLocalidades(region) {
+        try { 
+            const respuesta = await axios.post(`${rutaUsuario}/localidades`, {region}, { headers: authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log('ERROR AL OBTENER LOCALIDADES');
+        }
+    }
+
     async function OpcionesLocalidades(valor){
         try {
-            const respuesta = await Usuario.obtenerLocalidades(valor);
+            const respuesta = await obtenerLocalidades(valor);
             const data = respuesta.data;
             let opciones = ['SELECCIONE'];
         
@@ -70,8 +80,11 @@ function RegistrarServidor() {
         e.preventDefault();
 
         try {
-            if(Autorizacion.obtenerUsuario().rol === 'admin'){
-                const id = await Servidor.crearDatosServidor(datos);
+            if(obtenerUsuario().rol === 'admin'){
+
+                const id = await axios.post(`${rutaServidor}/`, datos, { headers: authHeader() }) 
+                .then(response => { return response.data; });
+
                 Notificacion('REGISTRO EXITOSO', 'success');
                 navigate(`/servidor/${id}`);
             }

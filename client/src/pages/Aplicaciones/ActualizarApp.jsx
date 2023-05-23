@@ -1,16 +1,17 @@
 
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Navigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Container, Input, Radio, Select, Tabla, TextArea, Modal, TableRegistro } from '../../components';
 import { BiLoaderAlt } from "react-icons/bi";
-import Autorizacion from '../../services/auth.service';
-import Aplicacion from '../../services/aplicacion.service';
 import Opciones from '../../utils/Opciones';
 import { columnasModalBD, columnasModalCustodio, columnasModalLenguaje, columnasModalServidor } from '../../utils/columnas';
 import { FaTimesCircle } from 'react-icons/fa';
 import { Notificacion } from '../../utils/Notificacion';
 import swal from 'sweetalert';
 import DocumentosForm from '../../components/DocumentosForm';
+import { obtenerUsuario, rutaAplicacion } from '../../utils/APIRoutes';
+import axios from 'axios';
+import authHeader from '../../utils/header';
 
 function ActualizarApp() {
 
@@ -22,9 +23,9 @@ function ActualizarApp() {
     const { id } = useParams();
     const [load, setLoad] = useState(true);
     const [datos, setDatos] = useState({
-        usuario_actualizo: Autorizacion.obtenerUsuario().indicador, 
+        usuario_actualizo: obtenerUsuario().indicador, 
     });
-     
+
     // VALORES POR DEFECTO EN LOS INPUTS
     const [general, setGeneral] = useState('');
     const [lenguaje, setLenguaje] = useState('');
@@ -37,27 +38,33 @@ function ActualizarApp() {
     const [documentacion, setDocumentacion] = useState('');
 
     // =================== OPCIONES PARA LOS SELECTS ===================
-    const [custodios, setCustodios] = useState('');
     const [estatus, setEstatus] = useState('');
     const [alcance, setAlcance] = useState('');
     const [plataformas, setPlataformas] = useState('');
     const [frecuencia, setFrecu] = useState('');
-    const [documentos, setDoc] = useState('');
     const [regiones, setRegiones] = useState('');
 
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
     async function actualizar(e) {
         e.preventDefault();
         try {
-            if(Autorizacion.obtenerUsuario().rol === 'admin'){
-                await Aplicacion.actualizarDatos(
-                    id, datos, tableDataLenguaje, tableDataBase, tableDataServidor, tableDataDoc); 
+            if(obtenerUsuario().rol === 'admin'){
+
+                let datosServidor = datos;
+                datosServidor.select_lenguaje = tableDataLenguaje;
+                datosServidor.select_base = tableDataBase;
+                datosServidor.select_servidor = tableDataServidor;
+                datosServidor.select_documentos = tableDataDoc;
+
+                await axios.put(`${rutaAplicacion}/${id}`, datosServidor, { headers: authHeader() }) 
+                .then(response => { return response.data; });
+
                 Notificacion('ACTUALIZACION EXITOSA', 'success');
                 navigate(`/aplicaciones/${id}`);
             }
         } 
         catch (error) { 
-            Notificacion(error.cusponse.data.message, 'error');
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
@@ -272,12 +279,10 @@ function ActualizarApp() {
 
     // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
     async function establecerDatos(){
-        setCustodios(await Opciones('custodios'));
         setPlataformas(await Opciones('plataformas'));
         setEstatus(await Opciones('estatus'));
         setAlcance(await Opciones('alcance'));
         setFrecu(await Opciones('frecuencias'));
-        setDoc(await Opciones('documentos'));
         setRegiones(await Opciones('regiones')); 
     }
 
@@ -309,6 +314,38 @@ function ActualizarApp() {
         });
     }
 
+    // =============== OBTIENE TOTAL LLAMANDO A LAS OTRAS FUNCIONES ===============
+    async function obtenerTodo(id) { 
+        try { 
+            const general = await axios.get(`${rutaAplicacion}/general/${id}`, { headers: authHeader() });
+            const tecnologia = await axios.get(`${rutaAplicacion}/tecnologia/${id}`, { headers: authHeader() });
+            const plataformas = await tecnologia.data.plataformas[0];
+            const lenguajes = await tecnologia.data.lenguajes;
+            const basedatos = await axios.get(`${rutaAplicacion}/basedatos/${id}`, { headers: authHeader() });
+            const servidor = await axios.get(`${rutaAplicacion}/servidor/${id}`, { headers: authHeader() });
+            const custodio = await axios.get(`${rutaAplicacion}/custodio/${id}`, { headers: authHeader() });
+            const funcional = await custodio.data.funcional[0];
+            const tecnico = await custodio.data.tecnico[0];
+            const documentacion = await axios.get(`${rutaAplicacion}/documentacion/${id}`, { headers: authHeader() });
+
+            const respuesta = {
+                general: general.data[0],
+                tecnologia: tecnologia.data.datos[0],
+                plataformas: plataformas,
+                lenguajes: lenguajes,
+                basedatos: basedatos.data.datos,
+                servidor: servidor.data.datos,
+                funcional: funcional,
+                tecnico: tecnico,
+                documentacion: documentacion.data.datos,
+            } 
+
+            return respuesta;
+        } catch (error) {
+            console.log('Error al obtener datos'); 
+        }
+    }
+
 
     useEffect(() => {
         async function fetchData(){
@@ -318,7 +355,7 @@ function ActualizarApp() {
             establecerDatos();
 
             // ========== DATOS POR DEFECTO ==========
-            const todo = await Aplicacion.obtenerTodo(id);
+            const todo = await obtenerTodo(id);
     
             setGeneral(todo.general);
             setBaseDatos(todo.basedatos);
@@ -347,8 +384,9 @@ function ActualizarApp() {
 
     const eliminar = async (id) => {
         try {
-            if(Autorizacion.obtenerUsuario().rol === 'admin'){
-                await Aplicacion.eliminar(id); 
+            if(obtenerUsuario().rol === 'admin'){
+                await axios.delete(`${rutaAplicacion}/${id}`, { headers: authHeader() });
+
                 Notificacion('APLICACION ELIMINADA EXITOSAMENTE', 'success');
                 navegar(`/aplicaciones/`);
             }
@@ -462,7 +500,7 @@ function ActualizarApp() {
                         <Select campo='Alcance' name='apl_alcance' required={true} byId={false} opciones={alcance ? alcance : ['SELECCIONE']} propiedad={general.alcance} manejador={setValores} />
                         <Input campo='Direccion' name='apl_direccion' required={true} propiedad={general.apl_direccion} manejador={setValores} />
                         <Input campo='N° Usuarios' name='apl_cantidad_usuarios' required={true} propiedad={general.apl_cantidad_usuarios} manejador={setValores} />
-                        <Select campo='Region' name='apl_region' required={true} opciones={regiones ? regiones : ['SELECCIONE']} propiedad={general.region} manejador={setValores} />
+                        <Select campo='Region' name='apl_region' required={true} byId={false} opciones={regiones ? regiones : ['SELECCIONE']} propiedad={general.region} manejador={setValores} />
                         <Radio label='Critico' name='apl_critico' required={true} opciones={['SI','NO']} manejador={setValores} />
                         <Radio label='Codigo Fuente' name='apl_codigo_fuente' required={true} opciones={['SI', 'NO']} manejador={setValores} />
                     </div>

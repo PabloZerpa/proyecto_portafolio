@@ -1,13 +1,12 @@
 
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button, Container, Select, TextArea } from "../../../components";
-import Autorizacion from "../../../services/auth.service";
-import Falla from "../../../services/falla.service";
-import Usuario from "../../../services/usuario.service";
 import { Notificacion } from "../../../utils/Notificacion";
-import Opciones from "../../../utils/Opciones";
 import { FaArrowLeft } from "react-icons/fa";
+import axios from "axios";
+import { obtenerUsuario, rutaAplicacion, rutaUsuario } from "../../../utils/APIRoutes";
+import authHeader from "../../../utils/header";
 
 function RegistrarFalla() {
 
@@ -23,12 +22,22 @@ function RegistrarFalla() {
         impacto: '',
         descripcion: '',
         solucion: '',
-        usuario_creador: Autorizacion.obtenerUsuario().indicador,
+        usuario_creador: obtenerUsuario().indicador,
     });
+
+     // ---------------- UPDATE DE UN CAMPO DE UN USUARIO ------------------
+     async function obtenerAcronimos(elemento) {
+        try { 
+            const respuesta = await axios.post(`${rutaUsuario}/acronimos`, {elemento}, { headers: authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log('ERROR AL OBTENER ACRONIMOS');
+        }
+    }
 
     async function OpcionesAcronimos(valor){
         try {
-            const respuesta = await Usuario.obtenerAcronimos(valor);
+            const respuesta = await obtenerAcronimos(valor);
             const data = respuesta.data;
             let opciones = ['SELECCIONE'];
         
@@ -68,8 +77,8 @@ function RegistrarFalla() {
         e.preventDefault();
         
         try {
-            if(Autorizacion.obtenerUsuario().rol === 'admin'){
-                await Falla.registrarFalla(datos);
+            if(obtenerUsuario().rol === 'admin'){
+                await axios.post(`${rutaAplicacion}/fallas`, datos, { headers: authHeader() });
                 Notificacion('REGISTRO EXITOSO', 'success');
                 setTimeout(() => { navigate("/aplicaciones/fallas") }, "2000");
             }

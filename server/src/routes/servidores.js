@@ -2,6 +2,7 @@
 
 const { registrarServidor, actualizarServidor, obtenerBusqueda, basedatos, aplicacion, general } = require("../controllers/servidores");
 const { auth, authAdmin } = require("../middlewares/auth");
+const { validatorServidor } = require("../validators/servidores");
 
 const router = require("express").Router();
 
@@ -11,7 +12,7 @@ const router = require("express").Router();
 router.post("/busqueda", auth, obtenerBusqueda);
 
 // *************** RUTA PARA REGISTRAR UNA BASES DE DATOS *************** 
-router.post("/", auth, registrarServidor);
+router.post("/", auth, validatorServidor, registrarServidor);
 
 // *************** RUTA PARA ACTUALIZAR UNA BASES DE DATOS *************** 
 router.patch("/:id", auth, actualizarServidor);

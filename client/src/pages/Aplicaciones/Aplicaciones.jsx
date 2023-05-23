@@ -2,9 +2,9 @@
 import { useEffect, useState } from "react";
 import { Container, Tabla } from "../../components";
 import { Busqueda } from "../../container"
-import Autorizacion from "../../services/auth.service";
 import { FaEdit, FaEye } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { obtenerUsuario } from "../../utils/APIRoutes";
 
 const columns = [
   {
@@ -16,7 +16,7 @@ const columns = [
         <FaEye className="text-blue-500 text-lg" />
       </Link>
       
-      {Autorizacion.obtenerUsuario().rol === 'user' ? 
+      {obtenerUsuario().rol === 'user' ? 
         null
       : 
       <Link to={row ? `/administracion/actualizacion/${row.aplicacion_id}` : `/dashboard`} >

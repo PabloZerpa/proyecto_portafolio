@@ -6,7 +6,7 @@ const { obtenerDatos, obtenerDato, registrarAplicacion, actualizarAplicacion, el
     documentacion, custodio, obtenerCustodios } = require("../controllers/aplicaciones");
 const { auth } = require("../middlewares/auth");
 const { fallas, registrarFalla, actualizarFalla, buscarFalla, eliminarFalla } = require("../controllers/fallas");
-const { validatorApp } = require("../validators/aplicaciones");
+const { validatorApp, validatorFalla } = require("../validators/aplicaciones");
 
 /* 
     ***********************************                             ***********************************
@@ -100,7 +100,7 @@ router.get("/documentacion/:id", auth, documentacion);
 router.get("/fallas/:id", auth, fallas);
 
 // *************** RUTA PARA REGISTRAR FALLA *************** 
-router.post("/fallas/", auth, registrarFalla);
+router.post("/fallas/", validatorFalla, auth, registrarFalla);
 
 // *************** RUTA PARA ACTUALIZAR FALLA *************** 
 router.patch("/fallas/:id", auth, actualizarFalla);

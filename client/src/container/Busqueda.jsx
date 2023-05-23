@@ -3,9 +3,10 @@ import { useState, useEffect } from 'react';
 import { useDebounce } from 'use-debounce';
 import { FaSearch } from 'react-icons/fa';
 import { Select, Radio } from '../components';
-import Aplicacion from "../services/aplicacion.service";
-import { opcionEstatus, opcionRegion, opcionPlataforma, opcionAlcance, 
-    opcionMantenimiento, opcionCount } from '../services/campos.service';
+import { rutaAplicacion } from '../utils/APIRoutes';
+import Opciones from '../utils/Opciones';
+import axios from 'axios';
+import authHeader from '../utils/header';
 
 function Busqueda({manejarBusqueda}) {
 
@@ -25,6 +26,26 @@ function Busqueda({manejarBusqueda}) {
         orden: 'ASC',
     }); 
     const [debounceValue] = useDebounce(datos, 500);
+    
+    // =================== OPCIONES PARA LOS SELECTS ===================
+    const [estatus, setEstatus] = useState('');
+    const [alcance, setAlcance] = useState('');
+    const [plataformas, setPlataformas] = useState('');
+    const [frecuencia, setFrecu] = useState('');
+    const [regiones, setRegiones] = useState('');
+
+    // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
+    async function establecerDatos(){
+        setPlataformas(await Opciones('plataformas',true));
+        setEstatus(await Opciones('estatus',true));
+        setAlcance(await Opciones('alcance',true));
+        setFrecu(await Opciones('frecuencias',true));
+        setRegiones(await Opciones('regiones',true));
+    }
+
+    useEffect(() => {
+        establecerDatos();
+    }, []);
 
     const resetCampos = () => {
         for (let clave in datos){
@@ -54,14 +75,27 @@ function Busqueda({manejarBusqueda}) {
 	}, [debounceValue, datos]); 
 
 
+    // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
+    async function obtenerPorBusqueda(term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
+        critico,codigo,count,order,cantidad) {
+        try {
+            return axios.post(`${rutaAplicacion}/busqueda`, 
+                {term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
+                critico,codigo,count,order,cantidad}, { headers: authHeader() });
+        } catch (error) {
+            console.log('Error al obtener dato');
+            
+        }
+    }
+
     const onSearch = async (datos) => {
         try {
             const { terminoBusqueda, estatus,plataforma,prioridad,region,alcance,mantenimiento,
                 critico,codigo,registros,orden,cantidad } = datos;
 
-            const respuesta = await Aplicacion.obtenerPorBusqueda
-            (terminoBusqueda,estatus,plataforma,prioridad,region,alcance,mantenimiento,
-                critico,codigo,registros,orden,cantidad);
+            const respuesta = await obtenerPorBusqueda
+                (terminoBusqueda,estatus,plataforma,prioridad,region,
+                alcance,mantenimiento,critico,codigo,registros,orden,cantidad);
 
             setResultados(respuesta.data);
             manejarBusqueda(respuesta.data);
@@ -77,17 +111,17 @@ function Busqueda({manejarBusqueda}) {
 
                 <div className="selectArea border-solid">
                     <div className="flex justify-center items-center space-x-4">
-                        <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={opcionEstatus} manejador={setValores} />
-                        <Select campo='Region' name='region' busqueda={true} byId={false} opciones={opcionRegion} manejador={setValores} />
-                        <Select campo='Plataforma' name='plataforma' busqueda={true} byId={false} opciones={opcionPlataforma} manejador={setValores} />
+                        <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={estatus ? estatus : ['SELECCIONAR']} manejador={setValores} />
+                        <Select campo='Region' name='region' busqueda={true} byId={false} opciones={regiones ? regiones : ['SELECCIONAR']} manejador={setValores} />
+                        <Select campo='Plataforma' name='plataforma' busqueda={true} byId={false} opciones={plataformas ? plataformas : ['SELECCIONAR']} manejador={setValores} />
                     </div>
                 </div>
 
                 <div style={avanzados ? {display: 'block'} : {display: 'none'}} className="selectArea">
                     <div className="flex flex-wrap justify-center items-center space-x-4">
-                        <Select campo='Alcance' name='alcance' busqueda={true} byId={false} opciones={opcionAlcance} manejador={setValores} />
-                        <Select campo='Mantenimiento' name='mantenimiento' busqueda={true} byId={false} opciones={opcionMantenimiento} manejador={setValores} />
-                        <Select campo='N° Usuarios' name='cantidad' busqueda={true} byId={false} opciones={opcionCount} manejador={setValores} />
+                        <Select campo='Alcance' name='alcance' busqueda={true} byId={false} opciones={alcance ? alcance : ['SELECCIONAR']} manejador={setValores} />
+                        <Select campo='Mantenimiento' name='mantenimiento' busqueda={true} byId={false} opciones={frecuencia ? frecuencia : ['SELECCIONAR']} manejador={setValores} />
+                        <Select campo='N° Usuarios' name='cantidad' busqueda={true} byId={false} opciones={['SELECCIONE',10,20,30,40,50]} manejador={setValores} />
                     </div>
                 </div>
                 

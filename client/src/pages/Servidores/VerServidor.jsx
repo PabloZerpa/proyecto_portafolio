@@ -3,7 +3,9 @@ import { useState, useEffect } from 'react';
 import { BiLoaderAlt } from "react-icons/bi";
 import { useParams, Link } from 'react-router-dom';
 import { Container, Input, Radio, Tabla } from '../../components';
-import Servidor from '../../services/servidor.service';
+import { rutaServidor } from '../../utils/APIRoutes';
+import axios from 'axios';
+import authHeader from '../../utils/header';
 
 const opcionesVista = ['General','Base de datos','Aplicacion'];
 
@@ -26,9 +28,9 @@ function VerServidor() {
   useEffect(() => {
     async function fetchData(){
       try {
-        const gen = await Servidor.obtenerGeneralServidor(id);
-        const bas = await Servidor.obtenerBDServidor(id);
-        const apl = await Servidor.obtenerAplicacionServidor(id);
+        const gen = await axios.get(`${rutaServidor}/general/${id}`, { headers: authHeader() });
+        const bas = await axios.get(`${rutaServidor}/basedatos/${id}`, { headers: authHeader() });
+        const apl = await axios.get(`${rutaServidor}/aplicacion/${id}`, { headers: authHeader() });
         
         setGeneral(gen.data);
         setBaseDatos(bas.data);
@@ -90,7 +92,6 @@ function VerServidor() {
             sortable: true,
             width: '150px',
             left: true,
-            //grow: 2
         },
         {
             name: 'Estatus',
@@ -105,7 +106,6 @@ function VerServidor() {
             sortable: true,
             width: '150px',
             left: true,
-            //grow: 1.5
         },
         {
             name: 'Manejador',
@@ -120,7 +120,6 @@ function VerServidor() {
             sortable: true,
             width: '150px',
             left: true,
-            //grow: 2
         },
         {
           name: 'N° Usuarios',
@@ -128,7 +127,6 @@ function VerServidor() {
           sortable: true,
           width: '100px',
           left: true,
-          //grow: 1.5
         }
       ];
   
@@ -168,16 +166,7 @@ function VerServidor() {
             sortable: true,
             width: '150px',
             left: true,
-            //grow: 2
         },
-        // {
-        //   name: 'Descripcion',
-        //   selector: row => row.apl_descripcion,
-        //   sortable: true,
-        //   width: '200px',
-        //   left: true,
-        //   //grow: 2
-        // },
         {
             name: 'Estatus',
             selector: row => row.estatus,
@@ -191,7 +180,6 @@ function VerServidor() {
             sortable: true,
             width: '100px',
             left: true,
-            //grow: 1.5
         },
         {
             name: 'Alcance',
@@ -200,20 +188,6 @@ function VerServidor() {
             width: '150px',
             left: true
         },
-        // {
-        //     name: 'Codigo Fuente',
-        //     selector: row => row.apl_codigo_fuente,
-        //     sortable: true,
-        //     left: true,
-        //     grow: 2
-        // },
-        // {
-        //   name: 'Version',
-        //   selector: row => row.apl_version,
-        //   sortable: true,
-        //   left: true,
-        //   grow: 1.5
-        // },
         {
           name: 'Direccion',
           selector: row => 
@@ -223,7 +197,6 @@ function VerServidor() {
           sortable: true,
           width: '200px',
           left: true,
-          //grow: 1.5
         },
         {
           name: 'N° Usuarios',
@@ -231,7 +204,6 @@ function VerServidor() {
           sortable: true,
           width: '100px',
           left: true,
-          //grow: 1.5
         },
         {
           name: 'Region',
@@ -239,7 +211,6 @@ function VerServidor() {
           sortable: true,
           width: '150px',
           left: true,
-          //grow: 1.5
         },
       ];
 

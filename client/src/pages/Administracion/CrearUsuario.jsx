@@ -4,9 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Container, Input, Select } from "../../components/";
 import { FaArrowLeft } from "react-icons/fa";
 import { Notificacion } from "../../utils/Notificacion";
-import Autorizacion from "../../services/auth.service";
-import Usuario from "../../services/usuario.service";
 import Opciones from "../../utils/Opciones";
+import { obtenerUsuario, rutaAuth } from "../../utils/APIRoutes";
+import axios from "axios";
+import authHeader from "../../utils/header";
 
 function CrearUsuario() {
 
@@ -19,7 +20,7 @@ function CrearUsuario() {
     const [gerencias, setGerencias] = useState('');
     const [cargos, setCargos] = useState('');
     const [datos, setDatos] = useState({
-        usuario_registro: Autorizacion.obtenerUsuario().indicador,
+        usuario_registro: obtenerUsuario().indicador,
     });
 
 
@@ -48,9 +49,11 @@ function CrearUsuario() {
     async function crearUsuario(e){
         e.preventDefault();
 
-        if(Autorizacion.obtenerUsuario().rol === 'admin'){
+        if(obtenerUsuario().rol === 'admin'){
             try {
-                await Usuario.crearUsuario(datos);
+                await axios.post(`${rutaAuth}/registro`, datos, { headers: authHeader() }) 
+                .then(response => { return response.data; });
+
                 Notificacion('USUARIO REGISTRADO EXITOSAMENTE', 'success');
                 setTimeout(() => { navegar("/administracion/permisos/buscar") }, "500");
             }

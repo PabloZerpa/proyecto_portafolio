@@ -3,10 +3,11 @@ import { useEffect, useState } from "react";
 import { Container, Select, Tabla } from "../../components";
 import { useDebounce } from 'use-debounce';
 import { FaEdit, FaEye, FaSearch } from 'react-icons/fa';
-import Autorizacion from "../../services/auth.service";
-import Servidor from "../../services/servidor.service";
-import { opcionEstatus, opcionRegion } from '../../services/campos.service';
 import { Link } from "react-router-dom";
+import Opciones from "../../utils/Opciones";
+import { obtenerUsuario, rutaServidor } from "../../utils/APIRoutes";
+import axios from "axios";
+import authHeader from "../../utils/header";
 
 const columns = [
     {
@@ -18,7 +19,7 @@ const columns = [
                 <FaEye className="text-blue-500 text-lg" />
             </Link>
             
-            {Autorizacion.obtenerUsuario().rol === 'user' ? 
+            {obtenerUsuario().rol === 'user' ? 
                 null
             : 
                 <Link to={row ? `/servidor/actualizacion/${row.servidor_id}` : `/dashboard`} >
@@ -120,6 +121,24 @@ function Servidores() {
     }); 
     const [debounceValue] = useDebounce(datos, 500);
 
+    const [marcas, setMarcas] = useState('');
+    const [sistemas, setSistemas] = useState('');
+    const [estatus, setEstatus] = useState('');
+    const [regiones, setRegiones] = useState('');
+    const [localidades, setLocalidades] = useState('');
+
+    // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
+    async function establecerDatos(){
+        setMarcas(await Opciones('marcas',true));
+        setEstatus(['SELECCIONE', 'TODAS', 'POR DETERMINAR', 'ACTIVO', 'INACTIVO']);
+        setSistemas(await Opciones('sistemas',true));
+        setRegiones(await Opciones('regiones',true));
+    }
+
+    useEffect(() => {
+        establecerDatos();
+    }, []);
+
     // =================== RESTABLECE LOS CAMPOS DE BUSQUEDA ===================
     const resetCampos = () => {
         for (let clave in datos){
@@ -141,13 +160,24 @@ function Servidores() {
             setDatos({ ...datos, [e.target.name] : e.target.value })    
     }
 
+    // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
+    async function obtenerServidorPorBusqueda(term,estatus,region,sistema,marca,orden) {
+        try {
+            return axios.post(`${rutaServidor}/busqueda`, 
+            {term,estatus,region,sistema,marca,orden}, { headers: authHeader() });
+        } catch (error) {
+            console.log('Error al obtener dato');
+        }
+    }
+
     // FUNCION PARA BUSCAR DATOS EN LA DATABASE
     const onSearch = async (datos) => {
         try {
             const { terminoBusqueda,estatus,region,sistema,marca,orden } = datos;
 
-            const respuesta = await Servidor.obtenerServidorPorBusqueda(
+            const respuesta = await obtenerServidorPorBusqueda(
                 terminoBusqueda,estatus,region,sistema,marca,orden);
+
             setResultado(respuesta.data);
             
         } catch (error) {
@@ -185,10 +215,10 @@ function Servidores() {
 
                     <div className="border-solid">
                         <div className="grid grid-cols-2 md:grid-cols-4 space-x-4">
-                            <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={['SELECCIONE', 'TODAS', 'POR DETERMINAR', 'ACTIVO', 'INACTIVO']} manejador={setValores} />
-                            <Select campo='Region' name='region' busqueda={true} byId={false} opciones={opcionRegion} manejador={setValores} />
-                            <Select campo='Sistema' name='sistema' busqueda={true} byId={false} opciones={['SELECCIONE','TODAS','WINDOWS','RED HAT','DEBIAN','FEDORA','ARCH',]} manejador={setValores} />
-                            <Select campo='Marca' name='marca' busqueda={true} byId={false} opciones={['SELECCIONE','TODAS','HP','VIT','LENOVO','ACER','ASUS']} manejador={setValores} />
+                            <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={estatus ? estatus : ['SELECCIONE']} manejador={setValores} />
+                            <Select campo='Region' name='region' busqueda={true} byId={false} opciones={regiones ? regiones : ['SELECCIONE']} manejador={setValores} />
+                            <Select campo='Sistema' name='sistema' busqueda={true} byId={false} opciones={sistemas ? sistemas : ['SELECCIONE']} manejador={setValores} />
+                            <Select campo='Marca' name='marca' busqueda={true} byId={false} opciones={marcas ? marcas : ['SELECCIONE']} manejador={setValores} />
                         </div>
                     </div>
 

@@ -3,11 +3,11 @@ import { useEffect, useState } from "react";
 import { Container, Select, Tabla } from "../../components";
 import { useDebounce } from 'use-debounce';
 import { FaEdit, FaEye, FaSearch } from 'react-icons/fa';
-import Autorizacion from "../../services/auth.service";
-import Base from "../../services/basedatos.service";
-import { opcionEstatus, opcionTipoBD, opcionManejadores } from '../../services/campos.service';
 import { Link } from "react-router-dom";
-import { selectTipoAmbiente } from "../../services/campos.service";
+import Opciones from "../../utils/Opciones";
+import { obtenerUsuario, rutaBaseDatos } from "../../utils/APIRoutes";
+import axios from "axios";
+import authHeader from "../../utils/header";
 
 
 const columns = [
@@ -20,7 +20,7 @@ const columns = [
                 <FaEye className="text-blue-500 text-lg" />
             </Link>
             
-            {Autorizacion.obtenerUsuario().rol === 'user' ? 
+            {obtenerUsuario().rol === 'user' ? 
                 null
             : 
                 <Link to={row ? `/basedatos/actualizacion/${row.base_datos_id}` : `/dashboard`} >
@@ -109,6 +109,23 @@ function BaseDatos() {
     }); 
     const [debounceValue] = useDebounce(datos, 500);
 
+    const [mane, setMane] = useState('');
+    const [tipos, setTipos] = useState('');
+    const [estatus, setEstatus] = useState('');
+    const [ambientes, setAmbientes] = useState('');
+
+    // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
+    async function establecerDatos(){
+        setMane(await Opciones('manejadores',true));
+        setEstatus(['SELECCIONE','TODAS', 'POR DETERMINAR', 'ACTIVO', 'INACTIVO']);
+        setTipos(await Opciones('tipos',true));
+        setAmbientes(await Opciones('ambientes',true));
+    }
+
+    useEffect(() => {
+        establecerDatos();
+    }, []);
+
     // =================== RESTABLECE LOS CAMPOS DE BUSQUEDA ===================
     const resetCampos = () => {
         for (let clave in datos){
@@ -131,13 +148,22 @@ function BaseDatos() {
             
     }
 
+    // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
+    async function obtenerBDPorBusqueda(term,estatus,tipo,manejador,ambiente,count,orden) {
+        try {
+            return axios.post(`${rutaBaseDatos}/busqueda`, 
+            {term,estatus,tipo,manejador,ambiente,count,orden}, { headers: authHeader() });
+        } catch (error) {
+            console.log('Error al obtener dato');
+        }
+    }
+
     // FUNCION PARA BUSCAR DATOS EN LA DATABASE
     const onSearch = async (datos) => {
         try {
             const { terminoBusqueda,estatus,tipo,manejador,ambiente,registros,orden } = datos;
 
-            const respuesta = await Base.obtenerBDPorBusqueda(
-                terminoBusqueda,estatus,tipo,manejador,ambiente,registros,orden);
+            const respuesta = await obtenerBDPorBusqueda(terminoBusqueda,estatus,tipo,manejador,ambiente,registros,orden);
             setResultado(respuesta.data);
             
         } catch (error) {
@@ -175,10 +201,10 @@ function BaseDatos() {
 
                     <div className="border-solid">
                         <div className="grid grid-cols-2 md:grid-cols-4 space-x-4">
-                            <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={['SELECCIONE', 'TODAS', 'POR DETERMINAR', 'ACTIVO', 'INACTIVO']} manejador={setValores} />
-                            <Select campo='Tipo' name='tipo' busqueda={true} byId={false} opciones={opcionTipoBD} manejador={setValores} />
-                            <Select campo='Manejador' name='manejador' busqueda={true} byId={false} opciones={opcionManejadores} manejador={setValores} />
-                            <Select campo='Ambiente' name='ambiente' busqueda={true} byId={false} opciones={selectTipoAmbiente} manejador={setValores} />
+                            <Select campo='Estatus' name='estatus' busqueda={true} byId={false} opciones={estatus ? estatus : ['SELECCIONE']} manejador={setValores} />
+                            <Select campo='Tipo' name='tipo' busqueda={true} byId={false} opciones={tipos ? tipos : ['SELECCIONE']} manejador={setValores} />
+                            <Select campo='Manejador' name='manejador' busqueda={true} byId={false} opciones={mane ? mane : ['SELECCIONE']} manejador={setValores} />
+                            <Select campo='Ambiente' name='ambiente' busqueda={true} byId={false} opciones={ambientes ? ambientes : ['SELECCIONE']} manejador={setValores} />
                         </div>
                     </div>
 

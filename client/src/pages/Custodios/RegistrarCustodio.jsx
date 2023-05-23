@@ -1,12 +1,12 @@
 
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button, Container, Input, Select } from '../../components';
-import Autorizacion from '../../services/auth.service';
-import Custodio from '../../services/custodios.service';
-import Usuario from '../../services/usuario.service';
 import { useEffect, useState } from 'react';
 import { Notificacion } from '../../utils/Notificacion';
 import Opciones from '../../utils/Opciones';
+import { obtenerUsuario, rutaCustodio, rutaUsuario } from '../../utils/APIRoutes';
+import authHeader from '../../utils/header';
+import axios from 'axios';
 
 function RegistrarCustodio() {
 
@@ -16,7 +16,7 @@ function RegistrarCustodio() {
 
     // ---------- ESTADOS ----------
     const [datos, setDatos] = useState({
-        usuario_registro: Autorizacion.obtenerUsuario().indicador,
+        usuario_registro: obtenerUsuario().indicador,
     });
 
     // =================== OPCIONES PARA LOS SELECTS ===================
@@ -36,19 +36,28 @@ function RegistrarCustodio() {
         establecerDatos();
     }, []);
 
+    // ---------------- UPDATE DE UN CAMPO DE UN USUARIO ------------------
+    async function obtenerLocalidades(region) {
+        try { 
+            const respuesta = await axios.post(`${rutaUsuario}/localidades`, {region}, { headers: authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log('ERROR AL OBTENER LOCALIDADES');
+        }
+    }
+
     async function OpcionesLocalidades(valor){
         try {
-            const respuesta = await Usuario.obtenerLocalidades(valor);
+            //const respuesta = await axios.post(`${rutaUsuario}/localidades`, {valor}, { headers: authHeader() });
+            const respuesta = await obtenerLocalidades(valor);
             const data = respuesta.data;
             let opciones = ['SELECCIONE'];
-        
+            
             for (let i = 0; i < data.length; i++) {
                 const valor = Object.values(data[i]);
                 opciones.push(valor[0]);
             }
-        
             return opciones;
-            
         } catch (error) {
             console.error(error);
         }
@@ -68,8 +77,10 @@ function RegistrarCustodio() {
     async function registrar(e) {
         e.preventDefault();
         try {
-            if(Autorizacion.obtenerUsuario().rol === 'admin'){
-                const id = await Custodio.registrarCustodio(datos);
+            if(obtenerUsuario().rol === 'admin'){
+                const id = await axios.post(`${rutaCustodio}/`, datos, { headers: authHeader() }) 
+                .then(response => { return response.data; });
+
                 Notificacion('REGISTRO EXITOSO', 'success');
                 navigate(`/custodios/${id}`);
             }

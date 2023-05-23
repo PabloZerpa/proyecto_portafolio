@@ -11,7 +11,7 @@ const {
     insertarServidor, 
     insertarBase,
     insertarCustodio
-} = require('../helpers/verificaciones');
+} = require('../helpers/insertar');
         
 const query = `
     SELECT 
@@ -32,9 +32,9 @@ const query = `
 
 
 /* 
-    ***********************************                             ***********************************
-    *********************************** CREATE-READ-UPDATE-DELETE   ***********************************
-    ***********************************                             ***********************************
+    ***********************************                           ***********************************
+    *********************************** CREATE-READ-UPDATE-DELETE ***********************************
+    ***********************************                           ***********************************
 */
 
 // *********************************** CREAR REGISTRO ***********************************
@@ -106,6 +106,8 @@ const actualizarAplicacion = async (req,res) => {
             select_lenguaje, select_base, select_servidor,select_documentos,
             select_funcional, select_tecnico
         } = req.body;
+
+        console.log(apl_region);
         
         const query = await pool.query(`SELECT aplicacion_id FROM aplicaciones WHERE aplicacion_id = ?`,[id]);
         const app = query[0][0].aplicacion_id; 

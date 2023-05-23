@@ -1,7 +1,7 @@
 
 import axios from "axios";
 import { rutaUsuario } from "./APIRoutes";
-import authHeader from "../services/header.service";
+import authHeader from "../utils/header";
 
 export async function Opciones(ruta, busqueda=false){
 

@@ -1,15 +1,13 @@
 
-
 import DataTable from "react-data-table-component";
-import Base from '../services/basedatos.service';
-import Servidor from '../services/servidor.service';
-import Custodio from '../services/custodios.service';
-import Usuario from '../services/usuario.service';
 import { FaSearch } from "react-icons/fa";
 import { paginacionOpciones } from "../utils/TablaOpciones";
 import Button from "./Button";
 import { useCallback, useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
+import { rutaBaseDatos, rutaCustodio, rutaServidor, rutaUsuario } from "../utils/APIRoutes";
+import axios from "axios";
+import authHeader from "../utils/header";
 
 
 function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busqueda=false, selectDefault=0}) {
@@ -32,24 +30,38 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
         setDatos({ ...datos, [e.target.name] : e.target.value })    
     }
 
+    // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
+    async function obtenerPorBusqueda(objetivo,term) {
+
+        try {
+            if(objetivo === 'base_datos'){
+                return axios.post(`${rutaBaseDatos}/busqueda`, 
+                    {term}, { headers: authHeader() });
+            }
+            else if(objetivo === 'servidor'){
+                return axios.post(`${rutaServidor}/busqueda`, 
+                    {term}, { headers: authHeader() });
+            }
+            else if(objetivo === 'lenguaje'){
+                const respuesta = await axios.get(`${rutaUsuario}/lenguajesTabla`, { headers: authHeader() });
+                return respuesta;
+            }
+            else if(objetivo === 'custodio'){
+                return axios.post(`${rutaCustodio}/busqueda`, 
+                    {term}, { headers: authHeader() });
+            }
+        } catch (error) {
+            console.log('Error al obtener dato');
+        }
+    }
+
     const onSearch = async (value) => {
         try {
             let respuesta = null;
             const { terminoBusqueda } = value;
 
-            if(objetivo === 'base_datos'){
-                respuesta = await Base.obtenerBDPorBusqueda(terminoBusqueda);
-            }
-            else if(objetivo === 'servidor'){
-                respuesta = await Servidor.obtenerServidorPorBusqueda(terminoBusqueda);
-            }
-            else if(objetivo === 'lenguaje'){
-                respuesta = await Usuario.obtenerOpcion('lenguajesTabla');
-            }
-            else if(objetivo === 'custodio'){
-                respuesta = await Custodio.obtenerCustodioPorBusqueda(terminoBusqueda);
-            }
-
+            respuesta = await obtenerPorBusqueda(objetivo,terminoBusqueda);
+            
             setResultado(respuesta.data);
         } catch (error) {
             console.log('ERROR AL BUSCAR DATOS');

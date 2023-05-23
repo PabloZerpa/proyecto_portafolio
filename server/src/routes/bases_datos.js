@@ -2,6 +2,7 @@
 const { obtenerDatos, obtenerBusqueda, crearBaseDatos, actualizarBaseDatos, aplicacion, 
     general, servidor, obtenerBaseDatos } = require("../controllers/bases_datos");
 const { auth, authAdmin } = require("../middlewares/auth");
+const { validatorBase } = require("../validators/base_datos");
 
 const router = require("express").Router();
 
@@ -16,7 +17,7 @@ router.get("/:id", auth, obtenerBaseDatos);
 router.post("/busqueda", auth, obtenerBusqueda);
 
 // *************** RUTA PARA REGISTRAR UNA BASES DE DATOS *************** 
-router.post("/", auth, crearBaseDatos);
+router.post("/", auth, validatorBase, crearBaseDatos);
 
 // *************** RUTA PARA ACTUALIZAR UNA BASES DE DATOS *************** 
 router.patch("/:id", auth, actualizarBaseDatos);

@@ -79,16 +79,16 @@ export const columnasModalCustodio = [
         left: true
     },
     {
-      name: 'Cargo',
-      selector: row => row.cargo,
-      sortable: true,
-      width: '120px',
-      left: true
+        name: 'Cargo',
+        selector: row => row.cargo,
+        sortable: true,
+        width: '120px',
+        left: true
     },
     {
         name: 'Gerencia',
         selector: row => row.gerencia,
         sortable: true,
         left: true
-      },
+    },
 ];

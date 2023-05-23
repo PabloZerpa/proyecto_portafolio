@@ -1,9 +1,10 @@
 
 import { useState } from "react";
 import { Button, Select, TextArea } from "../../../components";
-import Autorizacion from "../../../services/auth.service";
-import Falla from "../../../services/falla.service";
 import { Notificacion } from "../../../utils/Notificacion";
+import { obtenerUsuario, rutaAplicacion } from "../../../utils/APIRoutes";
+import axios from "axios";
+import authHeader from "../../../utils/header";
 
 function ActualizarFalla({setIsOpen, valores, setUpdate}) {
 
@@ -14,7 +15,7 @@ function ActualizarFalla({setIsOpen, valores, setUpdate}) {
         impacto: valores.fal_impacto,
         descripcion: valores.fal_descripcion,
         solucion: valores.fal_solucion,
-		actualizador: Autorizacion.obtenerUsuario().indicador,
+		actualizador: obtenerUsuario().indicador,
     });
 
     // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
@@ -28,8 +29,9 @@ function ActualizarFalla({setIsOpen, valores, setUpdate}) {
         e.preventDefault();
         
         try {
-            if(Autorizacion.obtenerUsuario().rol === 'admin'){
-                await Falla.actualizarFalla(datos); 
+            if(obtenerUsuario().rol === 'admin'){
+                await axios.patch(`${rutaAplicacion}/fallas/${datos.id}`, datos, { headers: authHeader() });
+                
                 Notificacion('FALLA MODDIFICADA EXITOSAMENTE', 'success');
                 setUpdate(true);
                 setIsOpen(false);
