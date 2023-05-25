@@ -84,6 +84,7 @@ function Dashboard() {
         setDatos(data);
 
         const cantidades = await axios.get(`${rutaUsuario}/cantidad`, { headers: authHeader() });
+
         setAplicaciones(cantidades.data.aplicaciones);
         setBasesDatos(cantidades.data.bases_datos);
         setServidores(cantidades.data.servidores);
@@ -91,7 +92,7 @@ function Dashboard() {
         setLoad(false);
       }
       catch (error) {
-        console.log(error.message);
+        console.log(error.response.data.message);
       }
     }
     fetchData();

@@ -42,14 +42,12 @@ function ActualizarCustodio() {
             const respuesta = await axios.post(`${rutaUsuario}/localidades`, {region}, { headers: authHeader() });
             return respuesta;
         } catch (error) {
-            console.log('ERROR AL OBTENER LOCALIDADES');
+            console.log(error.response.data.message);
         }
     }
 
     async function OpcionesLocalidades(valor){
         try {
-
-            //const respuesta = await axios.post(`${rutaUsuario}/localidades`, {valor}, { headers: authHeader() });
             const respuesta = await obtenerLocalidades(valor);
             const data = respuesta.data;
             let opciones = ['SELECCIONE'];
@@ -62,7 +60,7 @@ function ActualizarCustodio() {
             return opciones;
             
         } catch (error) {
-            console.error(error);
+            console.log(error.response.data.message);
         }
     }
 
@@ -80,21 +78,21 @@ function ActualizarCustodio() {
             establecerDatos();
     
             // ========== DATOS POR DEFECTO ==========
-            const gen = await axios.get(`${rutaCustodio}/general/${id}`, { headers: authHeader() });
-            setGeneral(gen.data[0]);
+            const {data} = await axios.get(`${rutaCustodio}/${id}`, { headers: authHeader() });
+            setGeneral(data.general);
  
             setDatos({
                 ...datos,
-                nombre : gen.data[0].cus_nombre,
-                apellido : gen.data[0].cus_apellido,
-                telefono : gen.data[0].telefono,
-                cargo : gen.data[0].cargo,
-                gerencia : gen.data[0].gerencia,
-                region : gen.data[0].region,
-                localidad : gen.data[0].localidad,
+                nombre : data.general.cus_nombre,
+                apellido : data.general.cus_apellido,
+                telefono : data.general.telefono,
+                cargo : data.general.cargo,
+                gerencia : data.general.gerencia,
+                region : data.general.region,
+                localidad : data.general.localidad,
             });
             
-            setLocalidades(await OpcionesLocalidades(gen.data[0].region));
+            setLocalidades(await OpcionesLocalidades(data.general.region));
             setLoad(false);
         }
         fetchData();
@@ -106,7 +104,7 @@ function ActualizarCustodio() {
         e.preventDefault();
 
         try {
-          if(obtenerUsuario().rol === 'admin'){
+          if(obtenerUsuario().rol !== 'user'){
 
             await axios.patch(`${rutaCustodio}/${id}`, datos, { headers: authHeader() }) 
             .then(response => { return response.data; });
@@ -116,7 +114,7 @@ function ActualizarCustodio() {
           }
         }
         catch (error) { 
-            console.log('ERROR AL ACTUALIZAR APL_ACT'); 
+            console.log(error.response.data.message);
         }
       }
 

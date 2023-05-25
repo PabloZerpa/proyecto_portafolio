@@ -74,7 +74,7 @@ const obtenerBusqueda = async (req,res) => {
         res.json(data[0]);
         
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+        return res.status(401).json({ message: 'ERROR AL BUSCAR CUSTODIOS' });
     }
 };
 
@@ -122,7 +122,7 @@ const registrarCustodio = async (req,res) => {
         
 
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+        return res.status(401).json({ message: 'ERROR AL REGISTRAR CUSTODIOS' });
     }
 };
 
@@ -141,7 +141,7 @@ const eliminarCustodio = async (req,res) => {
 
         res.sendStatus(204);
     } catch (error) {
-        console.log("ERROR_DELETE_ITEMS");
+        return res.status(401).json({ message: 'ERROR AL ELIMINAR CUSTODIOS' });
     }
 };
 
@@ -179,7 +179,7 @@ const actualizarCustodio = async (req,res) => {
         
         res.send('ACTUALIZACION EXITOSA');
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR' });
+        return res.status(401).json({ message: 'ERROR AL ACTUALIZAR CUSTODIOS' });
     }
  }
 
@@ -201,24 +201,6 @@ const general = async (req,res) => {
             LEFT JOIN regiones ON regiones.region_id = custodios.cus_region
             LEFT JOIN localidades ON localidades.localidad_id = custodios.cus_localidad
         WHERE custodios.custodio_id = ?`, [id]);
-
-        const datosAuditoria = {
-            mensaje : `Visualizacion de Custodio ${data[0][0].cus_indicador}`,
-            ip : req.ip,
-            usuario_id : req.usuario_id
-        }
-        generarLogAuditoria(datosAuditoria);
-
-        res.send(data[0]);
-    } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
-    }
-};
-
-// *********************************** OBTENER SERVIDOR ***********************************
-const aplicacion = async (req,res) => {
-    try {
-        const { id } = req.params;
 
         const data1 = await pool.query(`
             SELECT 
@@ -249,17 +231,24 @@ const aplicacion = async (req,res) => {
             WHERE custodios.custodio_id = ?;`, [id]);
 
         const respuesta = {
+            general: data[0][0],
             aplicacionFuncional: data1[0],
             aplicacionTecnico: data2[0],
         };
 
-        res.send(respuesta);
+        const datosAuditoria = {
+            mensaje : `Visualizacion de Custodio ${data[0][0].cus_indicador}`,
+            ip : req.ip,
+            usuario_id : req.usuario_id
+        }
+        generarLogAuditoria(datosAuditoria);
 
+        res.send(respuesta);
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+        return res.status(401).json({ message: 'ERROR AL OBTENER CUSTODIOS' });
     }
 };
 
 module.exports = { 
-    obtenerBusqueda,registrarCustodio,eliminarCustodio,actualizarCustodio, general, aplicacion
+    obtenerBusqueda,registrarCustodio,eliminarCustodio,actualizarCustodio, general
  };

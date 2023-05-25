@@ -35,8 +35,7 @@ const validatorApp = [
 
 // *************** VALIDAR DATOS FALLA ***************
 const validatorFalla = [
-    check("nombre").exists().notEmpty().isString(),
-    check("elemento").exists().notEmpty().isString(),
+    check("aplicacion").exists().notEmpty().isString(),
     check("impacto").exists().notEmpty().isString(),
     check("descripcion").exists().notEmpty().isString(),
     check("solucion").exists().notEmpty().isString(),

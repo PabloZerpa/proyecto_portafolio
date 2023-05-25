@@ -67,28 +67,28 @@ function ActualizarBD() {
                 establecerDatos();
 
                 // ========== DATOS POR DEFECTO ==========
-                const gen = await axios.get(`${rutaBaseDatos}/general/${id}`, { headers: authHeader() });
-                const ser = await axios.get(`${rutaBaseDatos}/servidor/${id}`, { headers: authHeader() });
+                const {data} = await axios.get(`${rutaBaseDatos}/${id}`, { headers: authHeader() });
+                const x = await data.general;
 
-                setGeneral(gen.data[0]);
-                setServidor(ser.data.datos);
+                setGeneral(data.general);
+                setServidor(data.datos);
 
                 // ========== LLENAN LA TABLA CON LOS VALORES POR DEFECTO ==========
-                llenarTabla(ser.data.datos,'servidor_id','servidor',setDataServidor,setSelectServidor);
+                llenarTabla(data.servidores.datos,'servidor_id','servidor',setDataServidor,setSelectServidor);
 
                 //await llenarDatos();
                 setDatos({
                     ...datos,
-                    base_datos : gen.data[0].base_datos,
-                    estatus : gen.data[0].estatus,
-                    cantidad_usuarios : gen.data[0].base_cantidad_usuarios,
-                    manejador : gen.data[0].manejador,
-                    tipo : gen.data[0].tipo,
-                    ambiente : gen.data[0].ambiente,
+                    base_datos : x.base_datos,
+                    estatus : x.estatus,
+                    cantidad_usuarios : x.base_cantidad_usuarios,
+                    manejador : x.manejador,
+                    tipo : x.tipo,
+                    ambiente : x.ambiente,
                 });
                 
                 setLoad(false);
-            }catch (error) { console.log(error); }
+            }catch (error) { console.log(error.response.data.message); }
         } 
         fetchData();  
     }, [id]); 
@@ -98,7 +98,7 @@ function ActualizarBD() {
         e.preventDefault();
 
         try {
-          if(obtenerUsuario().rol === 'admin'){
+          if(obtenerUsuario().rol !== 'user'){
 
             let datosServidor = datos;
             datosServidor.select_servidor = tableDataServidor;
@@ -111,7 +111,7 @@ function ActualizarBD() {
           }
         }
         catch (error) { 
-            console.log('ERROR AL ACTUALIZAR APL_ACT'); 
+            console.log(error.response.data.message);
         }
       }
 

@@ -49,7 +49,7 @@ function CrearUsuario() {
     async function crearUsuario(e){
         e.preventDefault();
 
-        if(obtenerUsuario().rol === 'admin'){
+        if(obtenerUsuario().rol !== 'user'){
             try {
                 await axios.post(`${rutaAuth}/registro`, datos, { headers: authHeader() }) 
                 .then(response => { return response.data; });

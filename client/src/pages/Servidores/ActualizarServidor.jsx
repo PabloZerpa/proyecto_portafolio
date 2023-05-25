@@ -43,7 +43,7 @@ function ActualizarServidor() {
             const respuesta = await axios.post(`${rutaUsuario}/localidades`, {region}, { headers: authHeader() });
             return respuesta;
         } catch (error) {
-            console.log('ERROR AL OBTENER LOCALIDADES');
+            console.log(error.response.data.message);
         }
     }
 
@@ -61,7 +61,7 @@ function ActualizarServidor() {
             return opciones;
             
         } catch (error) {
-            console.error(error);
+            console.log(error.response.data.message);
         }
     }
 
@@ -71,26 +71,28 @@ function ActualizarServidor() {
             establecerDatos();
     
             // ========== DATOS POR DEFECTO ==========
-            const gen = await axios.get(`${rutaServidor}/general/${id}`, { headers: authHeader() });
-            setGeneral(gen.data[0]);
+            const {data} = await axios.get(`${rutaServidor}/${id}`, { headers: authHeader() });
+            const x = data.general;
+            //const gen = await axios.get(`${rutaServidor}/general/${id}`, { headers: authHeader() });
+            setGeneral(data.general);
 
             setDatos({
                 ...datos,
-                servidor : gen.data[0].servidor,
-                estatus : gen.data[0].estatus,
-                direccion : gen.data[0].ser_direccion,
-                sistema : gen.data[0].sistema,
-                marca : gen.data[0].marca,
-                modelo : gen.data[0].modelo,
-                serial : gen.data[0].mod_serial,
-                velocidad : gen.data[0].mod_velocidad_cpu,
-                cantidad : gen.data[0].mod_cantidad_cpu,
-                memoria : gen.data[0].mod_memoria,
-                region : gen.data[0].region,
-                localidad : gen.data[0].localidad,
+                servidor : x.servidor,
+                estatus : x.estatus,
+                direccion : x.ser_direccion,
+                sistema : x.sistema,
+                marca : x.marca,
+                modelo : x.modelo,
+                serial : x.mod_serial,
+                velocidad : x.mod_velocidad_cpu,
+                cantidad : x.mod_cantidad_cpu,
+                memoria : x.mod_memoria,
+                region : x.region,
+                localidad : x.localidad,
             });
             
-            setLocalidades(await OpcionesLocalidades(gen.data[0].region));
+            setLocalidades(await OpcionesLocalidades(x.region));
             setLoad(false);
         }
         fetchData();
@@ -115,7 +117,7 @@ function ActualizarServidor() {
         e.preventDefault();
 
         try {
-            if(obtenerUsuario().rol === 'admin'){
+            if(obtenerUsuario().rol !== 'user'){
 
                 await axios.patch(`${rutaServidor}/${id}`, datos, { headers: authHeader() }) 
                 .then(response => { return response.data; });

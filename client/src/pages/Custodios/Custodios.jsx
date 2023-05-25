@@ -153,7 +153,7 @@ function Custodios() {
             return axios.post(`${rutaCustodio}/busqueda`, 
             {term,cargo,gerencia,region}, { headers: authHeader() });
         } catch (error) {
-            console.log('Error al obtener dato');
+            console.log(error.response.data.message);
         }
     }
 
@@ -165,7 +165,7 @@ function Custodios() {
             setResultado(respuesta.data);
             
         } catch (error) {
-            console.log(error);
+            console.log(error.response.data.message);
         }
     }
 

@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { FaHome, FaCode,FaDatabase, FaChevronDown, FaChevronUp, 
-    FaKey, FaSignOutAlt, FaBars, FaHardHat, FaServer, FaBug } from "react-icons/fa";
+    FaKey, FaSignOutAlt, FaBars, FaHardHat, FaServer } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { logout, obtenerUsuario } from "../utils/APIRoutes";
 
@@ -84,6 +84,10 @@ function Navegacion() {
                                         className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                         Diagramas
                                     </Link>
+                                    <Link to="/aplicaciones/fallas" 
+                                        className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
+                                        Fallas
+                                    </Link>
                                 </div>
                             </li>
                             <li>
@@ -126,21 +130,6 @@ function Navegacion() {
 
                                 <div style={open5 ? {display: 'block'} : {display: 'none'}} className='pl-4'>
                                     <Link to="/custodios" 
-                                        className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
-                                        Busqueda
-                                    </Link>
-                                </div>
-                            </li>
-                            <li>
-                                <div className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg cursor-pointer hover:bg-gray-800 hover:text-gray-100" 
-                                    onClick={openMenu6}>
-                                    <FaBug />
-                                    <span className="px-2">Fallas</span>
-                                    {open6 ? <FaChevronUp /> : <FaChevronDown />}
-                                </div>
-
-                                <div style={open6 ? {display: 'block'} : {display: 'none'}} className='pl-4'>
-                                    <Link to="/aplicaciones/fallas" 
                                         className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
                                         Busqueda
                                     </Link>

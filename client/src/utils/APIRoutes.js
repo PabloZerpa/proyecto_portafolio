@@ -18,5 +18,5 @@ export const logout = async () => {
     window.location.reload();
     try {
         await axios.get(`${baseUrl}/logout`);
-    } catch (error) {console.log(error);}
+    } catch (error) {console.log(error.response.data.message); }
 }

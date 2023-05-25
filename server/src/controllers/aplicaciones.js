@@ -30,11 +30,8 @@ const query = `
 `;
 
 
-
 /* 
-    ***********************************                           ***********************************
     *********************************** CREATE-READ-UPDATE-DELETE ***********************************
-    ***********************************                           ***********************************
 */
 
 // *********************************** CREAR REGISTRO ***********************************
@@ -58,7 +55,6 @@ const registrarAplicacion = async (req,res) => {
 
         // ****************************** VERIFICA QUE LA APLICACION NO EXISTA ******************************
         if(app){
-            console.log('ERROR, APLICACION YA EXISTE');
             return res.status(401).json({ message: 'ERROR, APLICACION YA EXISTE' });
         }
         else{   
@@ -88,7 +84,8 @@ const registrarAplicacion = async (req,res) => {
             res.send(`${aplicacion_id}`);
         }
     } catch (error) {
-        console.log("ERROR_CREATE_ITEMS");
+        console.log("ERROR AL REGISTRAR APLICACION");
+        return res.status(401).json({ message: 'ERROR AL REGISTRAR APLICACION' });
     }
 };
 
@@ -106,14 +103,11 @@ const actualizarAplicacion = async (req,res) => {
             select_lenguaje, select_base, select_servidor,select_documentos,
             select_funcional, select_tecnico
         } = req.body;
-
-        console.log(apl_region);
         
         const query = await pool.query(`SELECT aplicacion_id FROM aplicaciones WHERE aplicacion_id = ?`,[id]);
         const app = query[0][0].aplicacion_id; 
 
         if(app === id){
-            console.log('ERROR, ACRONIMO YA OCUPADO');
             return res.status(401).json({ message: 'ACRONIMO YA OCUPADO' });
         }
         else{
@@ -231,8 +225,8 @@ const actualizarAplicacion = async (req,res) => {
         }
 
     } catch (error) {  
-        console.log("ERROR_UPDATE_ITEMS");
-        console.error(error);
+        console.log("ERROR AL ACTUALIZAR APLICACION");
+        return res.status(401).json({ message: 'ERROR AL ACTUALIZAR APLICACION' });
     }
 };
 
@@ -251,7 +245,7 @@ const obtenerDatos = async (req,res) => {
         `);
         res.send(data[0]);
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+        return res.status(401).json({ message: 'ERROR AL OBTENER DATOS' });
     }
 };
 
@@ -372,11 +366,8 @@ const obtenerDato = async (req,res) => {
         }
 
         res.send(respuestas);
-
-
-        //res.send(general[0]);
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+        return res.status(401).json({ message: 'ERROR AL OBTENER DATOS DE APLICACION' });
     }
 };
 
@@ -486,7 +477,7 @@ const obtenerBusqueda = async (req,res) => {
 
         res.json(data[0]);
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+        return res.status(401).json({ message: 'ERROR AL BUSCAR DATOS' });
     }
 };
 
@@ -495,16 +486,16 @@ const eliminarAplicacion = async (req,res) => {
     try {
         const { id } = req.params;
 
-        const pla = await pool.query(`DELETE FROM aplicacion_plataforma WHERE aplicacion_id = ?;`, [id]);
-        const len = await pool.query(`DELETE FROM aplicacion_lenguaje WHERE aplicacion_id = ?;`, [id]);
-        const ser = await pool.query(`DELETE FROM aplicacion_servidor WHERE aplicacion_id = ?;`, [id]);
-        const bas = await pool.query(`DELETE FROM aplicacion_basedatos WHERE aplicacion_id = ?;`, [id]);
-        const fun = await pool.query(`DELETE FROM custodios_funcionales WHERE aplicacion_id = ?;`, [id]);
-        const tec = await pool.query(`DELETE FROM custodios_tecnicos WHERE aplicacion_id = ?;`, [id]);
-        const man = await pool.query(`DELETE FROM mantenimientos WHERE aplicacion_id = ?;`, [id]);
-        const doc = await pool.query(`DELETE FROM documentaciones WHERE aplicacion_id = ?;`, [id]);
-        //const fal = await pool.query(`DELETE FROM fallas WHERE aplicacion_id = ?;`, [id]);
-        const app = await pool.query(`DELETE FROM aplicaciones WHERE aplicacion_id = ?;`, [id]);
+        await pool.query(`DELETE FROM aplicacion_plataforma WHERE aplicacion_id = ?;`, [id]);
+        await pool.query(`DELETE FROM aplicacion_lenguaje WHERE aplicacion_id = ?;`, [id]);
+        await pool.query(`DELETE FROM aplicacion_servidor WHERE aplicacion_id = ?;`, [id]);
+        await pool.query(`DELETE FROM aplicacion_basedatos WHERE aplicacion_id = ?;`, [id]);
+        await pool.query(`DELETE FROM custodios_funcionales WHERE aplicacion_id = ?;`, [id]);
+        await pool.query(`DELETE FROM custodios_tecnicos WHERE aplicacion_id = ?;`, [id]);
+        await pool.query(`DELETE FROM mantenimientos WHERE aplicacion_id = ?;`, [id]);
+        await pool.query(`DELETE FROM documentaciones WHERE aplicacion_id = ?;`, [id]);
+        await pool.query(`DELETE FROM fallas WHERE aplicacion_id = ?;`, [id]);
+        await pool.query(`DELETE FROM aplicaciones WHERE aplicacion_id = ?;`, [id]);
 
         const datosAuditoria = {
             mensaje : `Eliminacion de aplicacion ${id}`,
@@ -513,95 +504,23 @@ const eliminarAplicacion = async (req,res) => {
         }
         generarLogAuditoria(datosAuditoria);
 
-
         res.sendStatus(204);
     } catch (error) {
-        console.log("ERROR_DELETE_ITEMS");
+        console.log("ERROR AL ELIMINAR APLICACION");
+        return res.status(401).json({ message: 'ERROR AL ELIMINAR APLICACION' });
     }
 };
-
 
 
 /* 
-    ***********************************                             ***********************************
-    *********************************** LISTA DE DATOS PARA SELECTS ***********************************
-    ***********************************                             ***********************************
-*/
-
-
-// *********************************** LISTA DE PLATAFORMAS PARA SELECTS ***********************************
-const obtenerPlataformas = async (req,res) => {
-    try{
-        const data = await pool.query(`SELECT plataformas FROM plataforma`);
-        res.send(data[0]);
-    }
-    catch (error) {
-        return res.status(401).json({ message: 'ERROR' });
-    }
-}
-
-// *********************************** LISTA DE LENGUAJES PARA SELECTS ***********************************
-const obtenerLenguajes = async (req,res) => {
-    try {
-        const data = await pool.query(`SELECT lenguaje FROM lenguajes`);
-        res.send(data[0]);
-    } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
-    }
-};
-
-// *********************************** LISTA DE FRAMEWORK PARA SELECTS ***********************************
-const obtenerFrameworks = async (req,res) => {
-    try {
-        const data = await pool.query(`SELECT framework FROM frameworks`);
-        res.send(data[0]);
-    } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
-    }
-};
-
-// *********************************** LISTA DE BASE DE DATOS PARA SELECTS ***********************************
-const obtenerBaseDatos = async (req,res) => {
-    try {
-        const data = await pool.query(`SELECT base_datos FROM bases_datos`);
-        res.send(data[0]);
-    } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
-    }
-};
-
-// *********************************** LISTA DE SERVIDORES PARA SELECTS ***********************************
-const obtenerServidores = async (req,res) => {
-    try {
-        const data = await pool.query(`SELECT servidor FROM servidores`);
-        res.send(data[0]);
-    } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
-    }
-};
-
-// *********************************** LISTA DE custodioS PARA SELECTS ***********************************
-const obtenerCustodios = async (req,res) => {
-    try {
-        const data = await pool.query(`SELECT cus_indicador FROM custodios`);
-    } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
-    }
-};
-
-
-
-/* 
-    ***********************************                        ***********************************
     *********************************** INFORMACION PARA VISTA ***********************************
-    ***********************************                        ***********************************
 */
 
 // *********************************** OBTENER INFORMACION GENERAL ***********************************
 const general = async (req,res) => {
     try {
         const { id } = req.params;
-
+        console.log(id);
         const data = await pool.query(`
         SELECT 
             aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_descripcion,
@@ -624,7 +543,7 @@ const general = async (req,res) => {
 
         res.send(data[0]);
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+        return res.status(401).json({ message: 'ERROR AL OBTENER DATOS GENERALES' });
     }
 };
 
@@ -668,7 +587,7 @@ const tecno = async (req,res) => {
 
         res.send(respuestas);
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+        return res.status(401).json({ message: 'ERROR AL OBTENER DATOS DE TECNOLOGIAS' });
     }
 };
 
@@ -697,7 +616,7 @@ const basedatos = async (req,res) => {
         
         res.send(respuestas);
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+        return res.status(401).json({ message: 'ERROR AL OBTENER DATOS SOBRE BASE DE DATOS' });
     }
 };
 
@@ -727,7 +646,7 @@ const servidor = async (req,res) => {
                 
         res.send(respuestas);
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+        return res.status(401).json({ message: 'ERROR AL OBTENER DATOS DEL SERVIDOR' });
     }
 };
 
@@ -773,7 +692,7 @@ const custodio = async (req,res) => {
                 
         res.send(respuestas);
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+        return res.status(401).json({ message: 'ERROR AL OBTENER DATOS DE LOS CUSTODIOS' });
     }
 };
 
@@ -797,12 +716,9 @@ const documentacion = async (req,res) => {
                 
         res.send(respuestas);
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+        return res.status(401).json({ message: 'ERROR AL OBTENER DATOS DE LOS DOCUMENTOS' });
     }
 };
-
-
-
 
 module.exports = { 
     obtenerDatos, 
@@ -811,12 +727,6 @@ module.exports = {
     actualizarAplicacion, 
     eliminarAplicacion,
     obtenerBusqueda,
-    obtenerLenguajes,
-    obtenerFrameworks,
-    obtenerBaseDatos,
-    obtenerServidores,
-    obtenerCustodios,
-    obtenerPlataformas,
     general,tecno,basedatos,
     servidor,custodio,
     documentacion,

@@ -45,7 +45,7 @@ function Fallas() {
         try {
             return axios.post(`${rutaAplicacion}/fallas/busqueda`,{term}, { headers: authHeader() });
         } catch (error) {
-            console.log('Error al obtener dato');
+            console.log(error.response.data.message);
         }
     }
 
@@ -57,7 +57,7 @@ function Fallas() {
             const datos = await obtenerFallaPorBusqueda(terminoBusqueda);
             setResultados(datos.data);
         } catch (error) { 
-            console.log('ERROR AL BUSCAR DATOS') 
+            console.log(error.response.data.message);
         }
     }
 
@@ -73,7 +73,7 @@ function Fallas() {
     // =================== FUNCION PARA ELIMINAR USUARIO ===================
   const eliminarFalla = async (row) => {
     try {
-      if(obtenerUsuario().rol === 'admin'){
+      if(obtenerUsuario().rol !== 'user'){
         await axios.delete(`${rutaAplicacion}/fallas/${row.falla_id}`, { headers: authHeader() });
         onSearch(debounceValue);
         Notificacion('USUARIO ELIMINADO EXITOSAMENTE', 'success');
@@ -113,15 +113,15 @@ function Fallas() {
             left: true,
         },
         {
-            name: 'Nombre',
-            selector: row => row.fal_nombre,
+            name: 'Acronimo',
+            selector: row => row.apl_acronimo,
             sortable: true,
-            width: "150px",
+            width: "100px",
             left: true
         },
         {
-            name: 'Elemento',
-            selector: row => row.elemento,
+            name: 'Nombre',
+            selector: row => row.apl_nombre,
             sortable: true,
             width: "150px",
             left: true

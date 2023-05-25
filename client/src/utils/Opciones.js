@@ -21,7 +21,7 @@ export async function Opciones(ruta, busqueda=false){
         return opciones;
         
     } catch (error) {
-        console.error(error);
+        console.log(error.response.data.message);
     }
 }
 

@@ -17,27 +17,22 @@ function RegistrarFalla() {
     // ---------- ESTADOS ----------
     const [acronimos, setAcronimos] = useState('');
     const [datos, setDatos] = useState({
-        nombre: '',
-        elemento: '',
-        impacto: '',
-        descripcion: '',
-        solucion: '',
         usuario_creador: obtenerUsuario().indicador,
     });
 
      // ---------------- UPDATE DE UN CAMPO DE UN USUARIO ------------------
-     async function obtenerAcronimos(elemento) {
+     async function obtenerAcronimos() {
         try { 
-            const respuesta = await axios.post(`${rutaUsuario}/acronimos`, {elemento}, { headers: authHeader() });
+            const respuesta = await axios.get(`${rutaUsuario}/acronimos`, { headers: authHeader() });
             return respuesta;
         } catch (error) {
-            console.log('ERROR AL OBTENER ACRONIMOS');
+            console.log(error.response.data.message);
         }
     }
 
-    async function OpcionesAcronimos(valor){
+    async function OpcionesAcronimos(){
         try {
-            const respuesta = await obtenerAcronimos(valor);
+            const respuesta = await obtenerAcronimos();
             const data = respuesta.data;
             let opciones = ['SELECCIONE'];
         
@@ -49,13 +44,13 @@ function RegistrarFalla() {
             return opciones;
             
         } catch (error) {
-            console.error(error);
+            console.log(error.response.data.message);
         }
     }
 
     // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
     async function establecerDatos(){
-        //setAcronimos(await OpcionesAcronimos('acronimos'));
+        setAcronimos(await OpcionesAcronimos());
     }
 
     useEffect(() => {
@@ -66,10 +61,6 @@ function RegistrarFalla() {
     const setValores = async (e) => {
         const valor = e.target.value.toUpperCase();
         setDatos({ ...datos, [e.target.name] : valor })
-
-        if(e.target.name === 'elemento'){
-            setAcronimos(await OpcionesAcronimos(e.target.value));
-        }
     }
 
     // =================== FUNCION PARA REGISTRAR DATOS ===================
@@ -77,7 +68,7 @@ function RegistrarFalla() {
         e.preventDefault();
         
         try {
-            if(obtenerUsuario().rol === 'admin'){
+            if(obtenerUsuario().rol !== 'user'){
                 await axios.post(`${rutaAplicacion}/fallas`, datos, { headers: authHeader() });
                 Notificacion('REGISTRO EXITOSO', 'success');
                 setTimeout(() => { navigate("/aplicaciones/fallas") }, "2000");
@@ -96,8 +87,7 @@ function RegistrarFalla() {
                     <h2 className='font-bold text-base'>Datos de la Falla</h2>
 
                     <div className="flex flex-col p-4 w-[320px] md:w-[640px] lg:w-[800px] bg-zinc-400 rounded">
-                        <Select campo='Elemento' name='elemento' required={true} byId={false} opciones={['SELECCIONE','APLICACION','BASE DE DATOS','SERVIDOR']} manejador={setValores} />
-                        <Select campo='Nombre' name='nombre' required={true} byId={false} opciones={acronimos ? acronimos : ['SELECCIONE']} manejador={setValores} />
+                        <Select campo='Aplicacion' name='aplicacion' required={true} byId={false} opciones={acronimos ? acronimos : ['SELECCIONE']} manejador={setValores} />
                         <Select campo='Impacto' name='impacto' required={true} byId={false} opciones={['SELECCIONE','ALTA','MEDIA','BAJA']} manejador={setValores}/>
                         <div className="col-span-2">
                             <TextArea campo='Descripcion' name='descripcion' area={true} required={true} editable={true} manejador={setValores} />

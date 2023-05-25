@@ -83,8 +83,7 @@ function Busqueda({manejarBusqueda}) {
                 {term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
                 critico,codigo,count,order,cantidad}, { headers: authHeader() });
         } catch (error) {
-            console.log('Error al obtener dato');
-            
+            console.log(error.response.data.message);
         }
     }
 
@@ -101,7 +100,7 @@ function Busqueda({manejarBusqueda}) {
             manejarBusqueda(respuesta.data);
             
         } catch (error) {
-            console.log('ERROR AL BUSCAR DATOS');
+            console.log(error.response.data.message);
         }
     }
 

@@ -154,7 +154,7 @@ function BaseDatos() {
             return axios.post(`${rutaBaseDatos}/busqueda`, 
             {term,estatus,tipo,manejador,ambiente,count,orden}, { headers: authHeader() });
         } catch (error) {
-            console.log('Error al obtener dato');
+            console.log(error.response.data.message);
         }
     }
 
@@ -167,7 +167,7 @@ function BaseDatos() {
             setResultado(respuesta.data);
             
         } catch (error) {
-            console.log('ERROR AL BUSCAR DATOS');
+            console.log(error.response.data.message);
         }
     }
 

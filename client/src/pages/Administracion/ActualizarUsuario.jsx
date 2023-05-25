@@ -48,7 +48,7 @@ function ActualizarUsuario({setIsOpen, valores, setUpdate}) {
     e.preventDefault();
     
     try {
-      if(obtenerUsuario().rol === 'admin'){
+      if(obtenerUsuario().rol !== 'user'){
 
         await axios.patch(`${rutaUsuario}/permisos/${datos.id}`, datos, { headers: authHeader() });
         Notificacion('USUARIO MODDIFICADO EXITOSAMENTE', 'success');

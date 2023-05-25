@@ -1,35 +1,27 @@
 
 const pool = require('../config');
 const { matchedData } = require("express-validator");
-
 const { generarLogAuditoria } = require('../helpers/auditoria');
+
 // *********************************** OBTENER FALLAS ***********************************
 const fallas = async (req,res) => {
     try {
         const { id } = req.params;
-
         const data = await pool.query(`
             SELECT 
-                falla_id,fal_nombre,elemento,fal_descripcion,fal_solucion,fal_impacto
-            FROM fallas
-                LEFT JOIN elementos ON elementos.elemento_id = fallas.fal_elemento
-            WHERE fallas.falla_id = ?;`, 
+                falla_id,apl_acronimo,apl_nombre,fal_descripcion,fal_solucion,fal_impacto
+            FROM aplicaciones
+                JOIN fallas on aplicaciones.aplicacion_id = fallas.aplicacion_id
+            WHERE aplicaciones.aplicacion_id = ?;`, 
             [id]); 
             
         const respuestas = {
             datos: data[0],
         }
-
-        const datosAuditoria = {
-            mensaje : `Visualizacion de Falla ${id}`,
-            ip : req.ip,
-            usuario_id : req.usuario_id
-        }
-        generarLogAuditoria(datosAuditoria);
                 
         res.send(respuestas);
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+        return res.status(401).json({ message: 'ERROR AL OBTENER FALLAS' });
     }
 };
 
@@ -37,75 +29,69 @@ const fallas = async (req,res) => {
 const registrarFalla = async (req,res) => {
     try {
         
-        const { nombre,elemento,impacto,descripcion,solucion,usuario_creador } = req.body;
+        const { aplicacion,impacto,descripcion,solucion,usuario_creador } = req.body;
+
+        console.log(aplicacion,impacto,descripcion,solucion,usuario_creador);
+
+        const x = await pool.query(`SELECT usuario_id FROM usuarios WHERE indicador = ?`, [usuario_creador]); 
+        const usuario_id = x[0][0].usuario_id;
+        const query = await pool.query(`SELECT aplicacion_id FROM aplicaciones WHERE apl_acronimo = ?`, [aplicacion]); 
+        const aplicacion_id = query[0][0].aplicacion_id;
+
+        console.log(aplicacion_id,descripcion,solucion,impacto, usuario_id);
 
         await pool.query(`
             INSERT INTO fallas
-                (fal_nombre,fal_elemento,fal_descripcion,fal_solucion,fal_impacto,fal_usuario_creador,fal_usuario_actualizo)
+                (aplicacion_id,fal_descripcion,fal_solucion,fal_impacto,fal_usuario_creador)
             VALUES
-                (?,
-                (SELECT elemento_id FROM elementos WHERE elemento = ?),
-                ?,?,?,
-                (SELECT usuario_id FROM usuarios WHERE indicador = ?),
-                (SELECT usuario_id FROM usuarios WHERE indicador = ?));`, 
-            [nombre,elemento,descripcion,solucion,impacto,usuario_creador,usuario_creador]); 
-                
+                (?,?,?,?,?);`, 
+            [aplicacion_id,descripcion,solucion,impacto, usuario_id]); 
+
         const datosAuditoria = {
-            mensaje : `Registro de Falla ${nombre} `,
+            mensaje : `Registro de Falla`,
             ip : req.ip,
             usuario_id : req.usuario_id
         }
         generarLogAuditoria(datosAuditoria);
-        
+                
+        console.log('FALLA REGISTRADA CORRECTAMENTE');
         res.send('FALLA REGISTRADA CORRECTAMENTE');
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+        return res.status(401).json({ message: 'ERROR AL REGISTRAR FALLA' });
     }
 };
-
 
 // *********************************** OBTENER FALLAS ***********************************
 const buscarFalla = async (req,res) => {
     const { term } = req.body;
     const termino = `%${term}%`;
-    let data = null;
 
     if (term === undefined || null)
         return res.status(404).json({ message: "Error al recibir consulta" });
 
     try{
-        if(term===''){
-            data = await pool.query(`
-                SELECT 
-                    falla_id, fal_nombre, elemento, fal_impacto, fal_descripcion, fal_solucion
-                FROM fallas
-                    LEFT JOIN elementos ON elementos.elemento_id = fallas.fal_elemento
-                ORDER BY falla_id ASC;`);
-        }
-        else{
-            data = await pool.query(`
-                SELECT falla_id, fal_nombre, elemento, fal_impacto, fal_descripcion, fal_solucion
-                FROM fallas
-                    LEFT JOIN elementos ON elementos.elemento_id = fallas.fal_elemento
-                WHERE 
-                    falla_id LIKE ? OR 
-                    fal_nombre LIKE ? OR 
-                    elemento LIKE ? OR 
-                    fal_impacto LIKE ? OR 
-                    fal_descripcion LIKE ? OR 
-                    fal_solucion LIKE ?
-                ORDER BY falla_id ASC;`,
-                [termino,termino,termino,termino,termino,termino,termino]
-            );
-        }
+        const data = await pool.query(`
+            SELECT falla_id, apl_acronimo, apl_nombre, fal_impacto, fal_descripcion, fal_solucion
+            FROM fallas 
+                JOIN aplicaciones ON aplicaciones.aplicacion_id = fallas.aplicacion_id
+            WHERE 
+                aplicaciones.apl_acronimo LIKE ? OR
+                aplicaciones.apl_nombre LIKE ? OR
+                falla_id LIKE ? OR 
+                fal_impacto LIKE ? OR 
+                fal_descripcion LIKE ? OR 
+                fal_solucion LIKE ?
+            ORDER BY falla_id ASC;`,
+            [termino,termino,termino,termino,termino,termino]
+        );
+        console.log(data[0][0]);
 
         res.send(data[0]);
     }
     catch (error) {
-        return res.status(401).json({ message: 'ERROR' });
+        return res.status(401).json({ message: 'ERROR AL BUSCAR FALLAS' });
     }
 };
-
 
 // *************** CAMBIAR PERMISOS ***************
 const actualizarFalla = async (req,res) => {
@@ -116,23 +102,18 @@ const actualizarFalla = async (req,res) => {
         await pool.query(`
         UPDATE 
             fallas 
-        SET  
+        SET 
             fal_impacto = ?,
             fal_descripcion = ?, 
             fal_solucion = ?
         WHERE falla_id = ?`, [impacto, descripcion, solucion, id]
         );
 
-        const datosAuditoria = {
-            mensaje : `Actualizacion de Falla ${id}`,
-            ip : req.ip,
-            usuario_id : req.usuario_id
-        }
-        generarLogAuditoria(datosAuditoria);
-        
+        console.log(id);
+
         res.send('ACTUALIZACION EXITOSA');
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR' });
+        return res.status(401).json({ message: 'ERROR AL ACTUALIZAR FALLA' });
     }
  }
 
@@ -151,7 +132,7 @@ const actualizarFalla = async (req,res) => {
 
         res.sendStatus(204);
     } catch (error) {
-        console.log("ERROR_DELETE_ITEMS");
+        return res.status(401).json({ message: 'ERROR AL ELIMINAR FALLA' });
     }
 };
 

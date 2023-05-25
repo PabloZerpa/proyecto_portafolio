@@ -32,7 +32,7 @@ const obtenerDatos = async (req,res) => {
         `);
         res.send(data[0]);
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+        return res.status(401).json({ message: 'ERROR AL OBTENER DATOS' });
     }
 };
 
@@ -53,10 +53,9 @@ const obtenerBaseDatos = async (req,res) => {
 
         res.send(data[0][0]);
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+        return res.status(401).json({ message: 'ERROR AL OBTENER DATOS' });
     }
 };
-
 
 // *********************************** OBTENER LOS DATOS POR TERMINO DE BUSQUEDA ***********************************
 const obtenerBusqueda = async (req,res) => {
@@ -122,7 +121,7 @@ const obtenerBusqueda = async (req,res) => {
         res.json(data[0]);
         
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+        return res.status(401).json({ message: 'ERROR AL BUSCAR DATOS' });
     }
 };
 
@@ -186,7 +185,7 @@ const crearBaseDatos = async (req,res) => {
             res.send(`${base_datos_id}`);
         }
     } catch (error) {
-        console.log("ERROR_CREATE_ITEMS");
+        return res.status(401).json({ message: 'ERROR AL REGISTRAR BASE DE DATOS' });
     }
 };
 
@@ -237,12 +236,9 @@ const actualizarBaseDatos = async (req,res) => {
         res.json('UPDATE EXITOSO');
 
     } catch (error) {
-        console.log("ERROR_UPDATE_ITEMS");
-        console.error(error);
+        return res.status(401).json({ message: 'ERROR AL ACTUALIZAR BASE DE DATOS' });
     }
 };
-
-
 
 
 // *********************************** OBTENER INFORMACION GENERAL ***********************************
@@ -250,39 +246,19 @@ const general = async (req,res) => {
     try {
         const { id } = req.params;
 
-        const data = await pool.query(`
-        SELECT 
-            bases_datos.base_datos_id,base_datos,estado as estatus,tipo, manejador,
-            base_cantidad_usuarios,ambiente,
-            DATE_FORMAT (base_fecha_actualizacion, '%d-%m-%Y %H:%i') as base_fecha_actualizacion
-        FROM bases_datos
-            JOIN estados ON bases_datos.base_estatus = estados.estado_id
-            JOIN tipos_bases ON tipos_bases.tipo_id = bases_datos.base_tipo
-            JOIN manejadores ON manejadores.manejador_id = bases_datos.base_manejador
-            JOIN ambientes ON ambientes.ambiente_id = bases_datos.base_ambiente
-        WHERE bases_datos.base_datos_id = ?`, [id]);
+        const db = await pool.query(`
+            SELECT 
+                bases_datos.base_datos_id,base_datos,estado as estatus,tipo, manejador,
+                base_cantidad_usuarios,ambiente,
+                DATE_FORMAT (base_fecha_actualizacion, '%d-%m-%Y %H:%i') as base_fecha_actualizacion
+            FROM bases_datos
+                JOIN estados ON bases_datos.base_estatus = estados.estado_id
+                JOIN tipos_bases ON tipos_bases.tipo_id = bases_datos.base_tipo
+                JOIN manejadores ON manejadores.manejador_id = bases_datos.base_manejador
+                JOIN ambientes ON ambientes.ambiente_id = bases_datos.base_ambiente
+            WHERE bases_datos.base_datos_id = ?`, [id]);
 
-        const datosAuditoria = {
-            mensaje : `Visualizacion de Base de datos ${data[0][0].base_datos_id}`,
-            ip : req.ip,
-            usuario_id : req.usuario_id
-        }
-        generarLogAuditoria(datosAuditoria);
-
-        res.send(data[0]);
-
-    } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
-    }
-};
-
-
-// *********************************** OBTENER APLICACIONES ***********************************
-const aplicacion = async (req,res) => {
-    try {
-        const { id } = req.params;
-
-        const data = await pool.query(`
+        const app = await pool.query(`
             SELECT 
                 aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_descripcion,estatus,
                 prioridad,apl_critico,alcance,apl_codigo_fuente,
@@ -295,22 +271,9 @@ const aplicacion = async (req,res) => {
                 LEFT JOIN bases_datos ON bases_datos.base_datos_id = aplicacion_basedatos.base_datos_id
                 LEFT JOIN regiones ON aplicaciones.apl_region = regiones.region_id
             WHERE bases_datos.base_datos_id = ?;`, 
-            [id]);
+        [id]);
 
-        res.send(data[0]);
-
-    } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
-    }
-};
-
-
-// *********************************** OBTENER SERVIDOR ***********************************
-const servidor = async (req,res) => {
-    try {
-        const { id } = req.params;
-        
-        const data = await pool.query(`
+        const ser = await pool.query(`
             SELECT 
                 servidores.servidor_id,servidor,ser_direccion,estado as estatus,sistema,modelo,marca,region, localidad
             FROM bases_datos
@@ -324,7 +287,7 @@ const servidor = async (req,res) => {
                 JOIN localidades ON servidores.ser_localidad_id = localidades.localidad_id
             WHERE bases_datos.base_datos_id = ?;`, 
             [id]);
-
+            
         const modelos = await pool.query(`
             SELECT 
                 modelo,mod_marca,mod_serial,
@@ -336,18 +299,30 @@ const servidor = async (req,res) => {
             WHERE bases_datos.base_datos_id = ?;`, 
             [id]);
             
-        const respuestas = {
-            datos: data[0],
+        const servidor = {
+            datos: ser[0],
             modelos: modelos[0],
         }
-                
-        res.send(respuestas);
+
+        const respuesta = {
+            general: db[0][0],
+            aplicaciones: app[0],
+            servidores: servidor,
+        }
+
+        const datosAuditoria = {
+            mensaje : `Visualizacion de Base de datos ${db[0][0].base_datos_id}`,
+            ip : req.ip,
+            usuario_id : req.usuario_id
+        }
+        generarLogAuditoria(datosAuditoria);
+
+        res.send(respuesta);
+
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+        return res.status(401).json({ message: 'ERROR AL OBTENER DATOS' });
     }
 };
-
-
 
 
 
@@ -357,5 +332,5 @@ module.exports = {
     obtenerBusqueda,
     crearBaseDatos,
     actualizarBaseDatos,
-    general,aplicacion,servidor
+    general,
 };

@@ -5,6 +5,7 @@ import { Container, Input, Radio, Tabla, TextArea } from '../../components';
 import { rutaAplicacion } from '../../utils/APIRoutes';
 import axios from 'axios';
 import authHeader from '../../utils/header';
+import { FaEdit, FaEye } from 'react-icons/fa';
 
 const opcionesVista = ['General','Tecnologia', 'Base de datos',
 'Servidor','Custodios','Documentacion','Fallas'];
@@ -51,7 +52,7 @@ function VerAplicacion() {
 
         setLoad(false);
         
-      }catch (error) { console.log(error) }
+      }catch (error) { console.log(error.response.data.message); }
     } 
     fetchData();
   }, [id]);
@@ -452,7 +453,7 @@ function VerAplicacion() {
 
       const columnsFal = [
         {
-            name: 'ID',
+            name: 'Falla ID',
             selector: row => 
               <Link className='text-blue-700' to={row ? `/aplicaciones/fallas` : `/dashboard`} >
                 {row.falla_id}
@@ -461,25 +462,41 @@ function VerAplicacion() {
             width: '100px',
             left: true,
         },
-        {
-            name: 'Elemento',
-            selector: row => row.elemento,
-            sortable: true,
-            width: '100px',
-            left: true,
-        },
-        {
-          name: 'Nombre',
-          selector: row => row.fal_nombre,
-          sortable: true,
-          width: '100px',
-          left: true,
-        },
+        // {
+        //     name: 'Acronimo',
+        //     selector: row => row.apl_acronimo,
+        //     sortable: true,
+        //     width: '100px',
+        //     left: true,
+        // },
+        // {
+        //   name: 'Nombre',
+        //   selector: row => row.apl_nombre,
+        //   sortable: true,
+        //   width: '100px',
+        //   left: true,
+        // },
         {
             name: 'Impacto',
             selector: row => row.fal_impacto,
             sortable: true,
             width: '100px',
+            left: true,
+        },
+        {
+          name: 'Descripcion',
+          selector: row => 
+            <TextArea propiedad={row.fal_descripcion} editable={false} />,
+          sortable: true,
+          width: '150px',
+          left: true,
+        },
+        {
+            name: 'Solucion',
+            selector: row => 
+              <TextArea propiedad={row.fal_solucion} editable={false} />,
+            sortable: true,
+            width: '150px',
             left: true,
         },
       ];

@@ -28,20 +28,18 @@ function VerBD() {
   useEffect(() => {
     async function fetchData(){
       try {
-        const gen = await axios.get(`${rutaBaseDatos}/general/${id}`, { headers: authHeader() });
-        const apl = await axios.get(`${rutaBaseDatos}/aplicacion/${id}`, { headers: authHeader() });
-        const ser = await axios.get(`${rutaBaseDatos}/servidor/${id}`, { headers: authHeader() });
+        const {data} = await axios.get(`${rutaBaseDatos}/${id}`, { headers: authHeader() });
 
-        setGeneral(gen.data);
-        setAplicacion(apl.data);
-        setServidor(ser);
+        setGeneral(data.general);
+        setAplicacion(data.aplicaciones);
+        setServidor(data.servidores);
 
         setLoad(false);
           
-      }catch (error) { console.log(error) }
+      }catch (error) { console.log(error.response.data.message); }
     } 
     fetchData();
-  }, [id,load]);
+  }, [id]);
       
       function General(){
         
@@ -54,14 +52,14 @@ function VerBD() {
               <h2 className='font-bold text-lg'>Base de datos</h2>
               <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
                 <div className='grid space-x-4 mb-6 md:grid-cols-2'> 
-                  <Input campo='ID' editable={false} propiedad={general[0].base_datos_id} />
-                  <Input campo='Nombre' editable={false} propiedad={general[0].base_datos} />
-                  <Input campo='Estatus' editable={false} propiedad={general[0].estatus} />
-                  <Input campo='Tipo' editable={false} propiedad={general[0].tipo} />
-                  <Input campo='Manejador' editable={false} propiedad={general[0].manejador} />
-                  <Input campo='Version' editable={false} propiedad={general[0].version_manejador} />
-                  <Input campo='N° Usuarios' editable={false} propiedad={general[0].base_cantidad_usuarios} />
-                  <Input campo='Ambiente' editable={false} propiedad={general[0].ambiente} />
+                  <Input campo='ID' editable={false} propiedad={general.base_datos_id} />
+                  <Input campo='Nombre' editable={false} propiedad={general.base_datos} />
+                  <Input campo='Estatus' editable={false} propiedad={general.estatus} />
+                  <Input campo='Tipo' editable={false} propiedad={general.tipo} />
+                  <Input campo='Manejador' editable={false} propiedad={general.manejador} />
+                  <Input campo='Version' editable={false} propiedad={general.version_manejador} />
+                  <Input campo='N° Usuarios' editable={false} propiedad={general.base_cantidad_usuarios} />
+                  <Input campo='Ambiente' editable={false} propiedad={general.ambiente} />
                 </div>
               </form>
             </>
@@ -225,7 +223,7 @@ function VerBD() {
       ];
 
       function Servidor(){
-        const datos = servidor.data.datos;
+        const datos = servidor.datos;
         return(
           <>
             <h2 className='font-bold text-lg'>Servidor</h2>

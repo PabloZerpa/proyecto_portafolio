@@ -28,20 +28,18 @@ function VerServidor() {
   useEffect(() => {
     async function fetchData(){
       try {
-        const gen = await axios.get(`${rutaServidor}/general/${id}`, { headers: authHeader() });
-        const bas = await axios.get(`${rutaServidor}/basedatos/${id}`, { headers: authHeader() });
-        const apl = await axios.get(`${rutaServidor}/aplicacion/${id}`, { headers: authHeader() });
+        const {data} = await axios.get(`${rutaServidor}/${id}`, { headers: authHeader() });
         
-        setGeneral(gen.data);
-        setBaseDatos(bas.data);
-        setAplicacion(apl.data);
+        setGeneral(data.general);
+        setBaseDatos(data.basedatos);
+        setAplicacion(data.aplicaciones);
 
         setLoad(false);
           
-      }catch (error) { console.log(error) }
+      }catch (error) { console.log(error.response.data.message); }
     } 
     fetchData();
-  }, [id,load]);
+  }, [id]);
       
       function General(){
         
@@ -54,20 +52,20 @@ function VerServidor() {
               <h2 className='font-bold text-lg'>Servidor</h2>
               <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
                 <div className='grid space-x-4 mb-6 md:grid-cols-2'> 
-                  <Input campo='ID' editable={false} propiedad={general[0].servidor_id} />
-                  <Input campo='Nombre' editable={false} propiedad={general[0].servidor} />
-                  <Input campo='Estatus' editable={false} propiedad={general[0].estatus} />
-                  <Input campo='Direccion' editable={false} propiedad={general[0].ser_direccion} />
-                  <Input campo='OS' editable={false} propiedad={general[0].sistema} />
-                  <Input campo='Version' editable={false} propiedad={general[0].sistema_version} />
-                  <Input campo='Modelo' editable={false} propiedad={general[0].modelo} />
-                  <Input campo='Marca' editable={false} propiedad={general[0].marca} />
-                  <Input campo='Serial' editable={false} propiedad={general[0].mod_serial} />
-                  <Input campo='Cantidad CPU' editable={false} propiedad={general[0].mod_cantidad_cpu} />
-                  <Input campo='Velocidad CPU' editable={false} propiedad={general[0].mod_velocidad_cpu} />
-                  <Input campo='Memoria' editable={false} propiedad={general[0].mod_memoria} />
-                  <Input campo='Region' editable={false} propiedad={general[0].region} />
-                  <Input campo='Localidad' editable={false} propiedad={general[0].localidad} />
+                  <Input campo='ID' editable={false} propiedad={general.servidor_id} />
+                  <Input campo='Nombre' editable={false} propiedad={general.servidor} />
+                  <Input campo='Estatus' editable={false} propiedad={general.estatus} />
+                  <Input campo='Direccion' editable={false} propiedad={general.ser_direccion} />
+                  <Input campo='OS' editable={false} propiedad={general.sistema} />
+                  <Input campo='Version' editable={false} propiedad={general.sistema_version} />
+                  <Input campo='Modelo' editable={false} propiedad={general.modelo} />
+                  <Input campo='Marca' editable={false} propiedad={general.marca} />
+                  <Input campo='Serial' editable={false} propiedad={general.mod_serial} />
+                  <Input campo='Cantidad CPU' editable={false} propiedad={general.mod_cantidad_cpu} />
+                  <Input campo='Velocidad CPU' editable={false} propiedad={general.mod_velocidad_cpu} />
+                  <Input campo='Memoria' editable={false} propiedad={general.mod_memoria} />
+                  <Input campo='Region' editable={false} propiedad={general.region} />
+                  <Input campo='Localidad' editable={false} propiedad={general.localidad} />
                 </div>
               </form>
             </>

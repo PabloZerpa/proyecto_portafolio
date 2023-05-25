@@ -13,7 +13,7 @@ const obtenerUsuarios = async (req,res) => {
         res.send(data[0]);
     }
     catch (error) {
-        return res.status(401).json({ message: 'ERROR' });
+        return res.status(401).json({ message: 'ERROR AL OBTENER USUARIO' });
     }
  }
 
@@ -26,7 +26,7 @@ const obtenerUsuarios = async (req,res) => {
         await pool.query('DELETE FROM usuarios WHERE usuario_id = ?', [id]);
         res.sendStatus(204);
     } catch (error) {
-        console.log("ERROR_DELETE_ITEMS");
+        return res.status(401).json({ message: 'ERROR AL ELIMINAR USUARIO' });
     }
 };
  
@@ -70,7 +70,7 @@ const obtenerPorBusqueda = async (req,res) => {
         res.send(data[0]);
     }
     catch (error) {
-        return res.status(401).json({ message: 'ERROR' });
+        return res.status(401).json({ message: 'ERROR AL BUSCAR USUARIOS' });
     }
  }
 
@@ -89,7 +89,7 @@ const obtenerActividad = async (req,res) => {
         res.send(rows);
     }
     catch (error) {
-        return res.status(401).json({ message: 'ERROR' });
+        return res.status(401).json({ message: 'ERROR AL OBTENER ACTIVIDADES DEL USUARIO' });
     }
  }
 
@@ -114,194 +114,28 @@ const cambiarPermisos = async (req,res) => {
         
         res.send('ACTUALIZACION DE ROL EXITOSA');
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR' });
+        return res.status(401).json({ message: 'ERROR AL ACTUALIZAR USUARIO' });
     }
  }
 
- // *************** LOGEAR USUARIO ***************
-const cambiarPassword = async (req,res) => {
+    // *************** LOGEAR USUARIO ***************
+    const cambiarPassword = async (req,res) => {
     
-    const { indicador, passwordNuevo } = req.body;
-    const passwordEncript = await encriptar(passwordNuevo);
-   
-    try {
-        const rows = await pool.query(`SELECT usuario_id FROM usuarios WHERE indicador = ?;`, [indicador]);
-        const usuario_id = rows[0][0].usuario_id;
+        const { indicador, passwordNuevo } = req.body;
+        const passwordEncript = await encriptar(passwordNuevo);
+    
+        try {
+            const rows = await pool.query(`SELECT usuario_id FROM usuarios WHERE indicador = ?;`, [indicador]);
+            const usuario_id = rows[0][0].usuario_id;
 
-        const query = await pool.query(
-            `UPDATE usuarios 
-            SET password = ?, exp_password = now()
-            WHERE usuario_id = ?;`, [passwordEncript, usuario_id]
-        );
-        res.send('ACTUALIZACION DE CONTRASEÑA EXITOSA');
-    } catch (error) {
-        return res.status(401).json({ message: 'ERROR' });
-    }
- }
-
-
- // *************** OBTENER ROLES ***************
-const obtenerRoles = async (req,res) => {
-    try{
-        const data = await pool.query(`SELECT rol FROM roles`);
-        res.send(data[0]);
-    }
-    catch (error) {
-        return res.status(401).json({ message: 'ERROR' });
-    }
- }
-
-  // *************** OBTENER GERENCIAS ***************
-    const obtenerGerencias = async (req,res) => {
-    try{
-        const data = await pool.query(`SELECT gerencia FROM gerencias`);
-        res.send(data[0]);
-    }
-    catch (error) {
-        return res.status(401).json({ message: 'ERROR' });
-    }
-    }
-
-  // *************** OBTENER CARGOS ***************
-    const obtenerCargos = async (req,res) => {
-        try{
-            const data = await pool.query(`SELECT cargo FROM cargos`);
-            res.send(data[0]);
-        }
-        catch (error) {
-            return res.status(401).json({ message: 'ERROR' });
-        }
-    }
-
-    // *************** OBTENER CARGOS ***************
-    const obtenerCustodios = async (req,res) => {
-        try{
-            const data = await pool.query(`SELECT cus_indicador FROM custodios`);
-            res.send(data[0]);
-        }
-        catch (error) {
-            return res.status(401).json({ message: 'ERROR' });
-        }
-    }
-
-    // *************** OBTENER CARGOS ***************
-    const obtenerLenguajesTabla = async (req,res) => {
-        try{
-            const data = await pool.query(`SELECT lenguaje_id,lenguaje FROM lenguajes`);
-            res.send(data[0]);
-        }
-        catch (error) {
-            return res.status(401).json({ message: 'ERROR' });
-        }
-    }
-
-    // *************** OBTENER CARGOS ***************
-    const obtenerFrameworksTabla = async (req,res) => {
-        try{
-            const data = await pool.query(`SELECT framework_id,framework FROM frameworks`);
-            res.send(data[0]);
-        }
-        catch (error) {
-            return res.status(401).json({ message: 'ERROR' });
-        }
-    }
-
-    // *************** OBTENER CARGOS ***************
-    const obtenerLenguajes = async (req,res) => {
-        try{
-            const data = await pool.query(`SELECT lenguaje FROM lenguajes`);
-            res.send(data[0]);
-        }
-        catch (error) {
-            return res.status(401).json({ message: 'ERROR' });
-        }
-    }
-
-    // *************** OBTENER CARGOS ***************
-    const obtenerPlataformas = async (req,res) => {
-        try{
-            const data = await pool.query(`SELECT plataforma FROM plataformas`);
-            res.send(data[0]);
-        }
-        catch (error) {
-            return res.status(401).json({ message: 'ERROR' });
-        }
-    }
-
-    // *************** OBTENER CARGOS ***************
-    const obtenerBasesDatos = async (req,res) => {
-        try{
-            const data = await pool.query(`SELECT base_datos FROM bases_datos`);
-            res.send(data[0]);
-        }
-        catch (error) {
-            return res.status(401).json({ message: 'ERROR' });
-        }
-    }
-
-    // *************** OBTENER CARGOS ***************
-    const obtenerServidores = async (req,res) => {
-        try{
-            const data = await pool.query(`SELECT servidor FROM servidores`);
-            res.send(data[0]);
-        }
-        catch (error) {
-            return res.status(401).json({ message: 'ERROR' });
-        }
-    }
-
-    // *************** OBTENER CARGOS ***************
-    const obtenerEstatus = async (req,res) => {
-        try{
-            const data = await pool.query(`SELECT estatus FROM estatus`);
-            res.send(data[0]);
-        }
-        catch (error) {
-            return res.status(401).json({ message: 'ERROR' });
-        }
-    }
-
-    // *************** OBTENER CARGOS ***************
-    const obtenerAlcance = async (req,res) => {
-        try{
-            const data = await pool.query(`SELECT alcance FROM alcances`);
-            res.send(data[0]);
-        }
-        catch (error) {
-            return res.status(401).json({ message: 'ERROR' });
-        }
-    }
-
-    // *************** OBTENER CARGOS ***************
-    const obtenerFrecuencias = async (req,res) => {
-        try{
-            const data = await pool.query(`SELECT frecuencia FROM frecuencias`);
-            res.send(data[0]);
-        }
-        catch (error) {
-            return res.status(401).json({ message: 'ERROR' });
-        }
-    }
-
-    // *************** OBTENER CARGOS ***************
-    const obtenerTipoDoc = async (req,res) => {
-        try{
-            const data = await pool.query(`SELECT tipo FROM tipos_documentos;`);
-            res.send(data[0]);
-        }
-        catch (error) {
-            return res.status(401).json({ message: 'ERROR' });
-        }
-    }
-
-    // *************** OBTENER REGIONES ***************
-    const obtenerRegiones = async (req,res) => {
-        try{
-            const [rows, fields] = await pool.query('SELECT region FROM regiones');
-            res.send(rows);
-        }
-        catch (error) {
-            return res.status(401).json({ message: 'ERROR' });
+            const query = await pool.query(
+                `UPDATE usuarios 
+                SET password = ?, exp_password = now()
+                WHERE usuario_id = ?;`, [passwordEncript, usuario_id]
+            );
+            res.send('ACTUALIZACION DE CONTRASEÑA EXITOSA');
+        } catch (error) {
+            return res.status(401).json({ message: 'ERROR AL CAMBIAR CONTRASEÑA' });
         }
     }
 
@@ -317,109 +151,7 @@ const obtenerRoles = async (req,res) => {
             res.send(data[0]);
         }
         catch (error) {
-            return res.status(401).json({ message: 'ERROR' });
-        }
-    }
-
-    // *************** OBTENER CARGOS ***************
-    const obtenerTipos = async (req,res) => {
-        try{
-            const data = await pool.query(`SELECT tipo FROM tipos_bases`);
-            res.send(data[0]);
-        }
-        catch (error) {
-            return res.status(401).json({ message: 'ERROR' });
-        }
-    }
-
-    // *************** OBTENER CARGOS ***************
-    const obtenerMane = async (req,res) => {
-        try{
-            const data = await pool.query(`SELECT manejador FROM manejadores`);
-            res.send(data[0]);
-        }
-        catch (error) {
-            return res.status(401).json({ message: 'ERROR' });
-        }
-    }
-
-    // *************** OBTENER CARGOS ***************
-    const obtenerAmbientes = async (req,res) => {
-        try{
-            const data = await pool.query(`SELECT ambiente FROM ambientes`);
-            res.send(data[0]);
-        }
-        catch (error) {
-            return res.status(401).json({ message: 'ERROR' });
-        }
-    }
-
-    // *************** OBTENER CARGOS ***************
-    const obtenerSistemas = async (req,res) => {
-        try{
-            const data = await pool.query(`SELECT sistema FROM sistemas_operativos`);
-            res.send(data[0]);
-        }
-        catch (error) {
-            return res.status(401).json({ message: 'ERROR' });
-        }
-    }
-
-    // *************** OBTENER CARGOS ***************
-    const obtenerMarcas = async (req,res) => {
-        try{
-            const data = await pool.query(`SELECT marca FROM marcas`);
-            res.send(data[0]);
-        }
-        catch (error) {
-            return res.status(401).json({ message: 'ERROR' });
-        }
-    }
-
-    // *************** OBTENER CARGOS ***************
-    const obtenerAcronimos = async (req,res) => {
-        const { elemento } = req.body;
-        let campo = null, tabla = null;
-
-        if(elemento === 'APLICACION'){
-            campo = 'apl_acronimo';
-            tabla = 'aplicaciones';
-        }
-        else if(elemento === 'BASE DE DATOS'){
-            campo = 'base_datos';
-            tabla = 'bases_datos';
-        }
-        else if(elemento === 'SERVIDOR'){
-            campo = 'servidor';
-            tabla = 'servidores';
-        }
-        
-        try{
-            const data = await pool.query(`SELECT ${campo} FROM ${tabla}`);
-            res.send(data[0]);
-        }
-        catch (error) {
-            return res.status(401).json({ message: 'ERROR' });
-        }
-    }
-
-    // *************** OBTENER CANTIDAD ***************
-    const obtenerCantidad = async (req,res) => {
-        try{
-            const aplicaciones = await pool.query(`SELECT COUNT(*) as cantidad FROM aplicaciones`);
-            const bases_datos = await pool.query(`SELECT COUNT(*) as cantidad FROM bases_datos`);
-            const servidores = await pool.query(`SELECT COUNT(*) as cantidad FROM servidores`);
-
-            const respuesta = {
-                aplicaciones: aplicaciones[0][0].cantidad,
-                bases_datos: bases_datos[0][0].cantidad,
-                servidores: servidores[0][0].cantidad,
-            }
-
-            res.send(respuesta);
-        }
-        catch (error) {
-            return res.status(401).json({ message: 'ERROR' });
+            return res.status(401).json({ message: 'ERROR AL OBTENER LOCALIDADES' });
         }
     }
 
@@ -485,13 +217,118 @@ const obtenerRoles = async (req,res) => {
             res.send(respuesta);
         }
         catch (error) {
-            return res.status(401).json({ message: 'ERROR' });
+            return res.status(401).json({ message: 'ERROR AL OBTENER VALORES PARA LOS DIAGRAMAS' });
         }
     }
 
-module.exports = { obtenerUsuarios, cambiarPermisos, cambiarPassword, obtenerPorBusqueda, obtenerRoles, 
-    obtenerGerencias, obtenerCargos, obtenerCustodios, obtenerLenguajes, obtenerPlataformas, obtenerBasesDatos,
-    obtenerServidores, obtenerEstatus, obtenerAlcance, obtenerFrecuencias, obtenerRegiones, obtenerTipos,
-    obtenerMane, obtenerAmbientes,obtenerMarcas,obtenerSistemas, eliminarUsuario, obtenerLenguajesTabla, 
-    obtenerFrameworksTabla, obtenerAcronimos, obtenerLocalidades,obtenerCantidad, obtenerCantidadRegiones,
-    obtenerTipoDoc, obtenerActividad };
+    // *************** OBTENER VALORES PARA LOS SELECTS ***************
+    const obtenerValores = async (req,res) => {
+        const clave = req.params.id;
+
+        try{
+            if(clave === 'roles'){
+                const data = await pool.query(`SELECT rol FROM roles`);
+                res.send(data[0]);
+            }
+            else if(clave === 'gerencias'){
+                const data = await pool.query(`SELECT gerencia FROM gerencias`);
+                res.send(data[0]);
+            }
+            else if(clave === 'cargos'){
+                const data = await pool.query(`SELECT cargo FROM cargos`);
+                res.send(data[0]);
+            }
+            else if(clave === 'custodios'){
+                const data = await pool.query(`SELECT cus_indicador FROM custodios`);
+                res.send(data[0]);
+            }
+            else if(clave === 'lenguajes'){
+                const data = await pool.query(`SELECT lenguaje FROM lenguajes`);
+                res.send(data[0]);
+            }
+            else if(clave === 'lenguajesTabla'){
+                const data = await pool.query(`SELECT lenguaje_id,lenguaje FROM lenguajes`);
+                res.send(data[0]);
+            }
+            else if(clave === 'plataformas'){
+                const data = await pool.query(`SELECT plataforma FROM plataformas`);
+                res.send(data[0]);
+            }
+            else if(clave === 'basesdatos'){
+                const data = await pool.query(`SELECT base_datos FROM bases_datos`);
+                res.send(data[0]);
+            }
+            else if(clave === 'servidores'){
+                const data = await pool.query(`SELECT servidor FROM servidores`);
+                res.send(data[0]);
+            }
+            else if(clave === 'estatus'){
+                const data = await pool.query(`SELECT estatus FROM estatus`);
+                res.send(data[0]);
+            }
+            else if(clave === 'estados'){
+                const data = await pool.query(`SELECT estado FROM estados`);
+                res.send(data[0]);
+            }
+            else if(clave === 'alcance'){
+                const data = await pool.query(`SELECT alcance FROM alcances`);
+                res.send(data[0]);
+            }
+            else if(clave === 'frecuencias'){
+                const data = await pool.query(`SELECT frecuencia FROM frecuencias`);
+                res.send(data[0]);
+            }
+            else if(clave === 'regiones'){
+                const [rows, fields] = await pool.query('SELECT region FROM regiones');
+                res.send(rows);
+            }
+            else if(clave === 'tipos'){
+                const data = await pool.query(`SELECT tipo FROM tipos_bases`);
+                res.send(data[0]);
+            }
+            else if(clave === 'manejadores'){
+                const data = await pool.query(`SELECT manejador FROM manejadores`);
+                res.send(data[0]);
+            }
+            else if(clave === 'ambientes'){
+                const data = await pool.query(`SELECT ambiente FROM ambientes`);
+                res.send(data[0]);
+            }
+            else if(clave === 'sistemas'){
+                const data = await pool.query(`SELECT sistema FROM sistemas_operativos`);
+                res.send(data[0]);
+            }
+            else if(clave === 'marcas'){
+                const data = await pool.query(`SELECT marca FROM marcas`);
+                res.send(data[0]);
+            }
+            else if(clave === 'documentos'){
+                const data = await pool.query(`SELECT tipo FROM tipos_documentos;`);
+                res.send(data[0]);
+            }
+            else if(clave === 'cantidad'){
+                
+                const aplicaciones = await pool.query(`SELECT COUNT(*) as cantidad FROM aplicaciones`);
+                const bases_datos = await pool.query(`SELECT COUNT(*) as cantidad FROM bases_datos`);
+                const servidores = await pool.query(`SELECT COUNT(*) as cantidad FROM servidores`);
+
+                const respuesta = {
+                    aplicaciones: aplicaciones[0][0].cantidad,
+                    bases_datos: bases_datos[0][0].cantidad,
+                    servidores: servidores[0][0].cantidad,
+                }
+                res.send(respuesta);
+            }
+            else if(clave === 'acronimos'){
+                const data = await pool.query(`SELECT apl_acronimo FROM aplicaciones;`);
+                res.send(data[0]);
+            }
+            
+        }
+        catch (error) {
+            return res.status(401).json({ message: 'ERROR AL OBTENER VALORES DE ' + clave });
+        }
+    }
+
+module.exports = { obtenerUsuarios, cambiarPermisos, cambiarPassword, obtenerPorBusqueda, eliminarUsuario, 
+obtenerLocalidades, obtenerCantidadRegiones, obtenerActividad, obtenerValores };

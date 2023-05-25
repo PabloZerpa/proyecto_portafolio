@@ -1,12 +1,14 @@
 
 
-const { registrarServidor, actualizarServidor, obtenerBusqueda, basedatos, aplicacion, general } = require("../controllers/servidores");
+const { registrarServidor, actualizarServidor, obtenerBusqueda, general } = require("../controllers/servidores");
 const { auth, authAdmin } = require("../middlewares/auth");
 const { validatorServidor } = require("../validators/servidores");
 
 const router = require("express").Router();
 
 
+// *************** RUTA PARA OBTENER INFORMACION GENERAL *************** 
+router.get("/:id", auth, general);
 
 // *************** RUTA PARA OBTENER INFORMACION POR BUSQUEDA *************** 
 router.post("/busqueda", auth, obtenerBusqueda);
@@ -18,18 +20,6 @@ router.post("/", auth, validatorServidor, registrarServidor);
 router.patch("/:id", auth, actualizarServidor);
 
 // router.delete("/:id", actualizarBaseDatos);
-
-
-
-
-// *************** RUTA PARA OBTENER INFORMACION GENERAL *************** 
-router.get("/general/:id", auth, general);
-
-// *************** RUTA PARA OBTENER INFORMACION APLICACIONES *************** 
-router.get("/aplicacion/:id", auth, aplicacion);
-
-// *************** RUTA PARA OBTENER INFORMACION SERVIDORES *************** 
-router.get("/basedatos/:id", auth, basedatos);
 
 
 module.exports = router;

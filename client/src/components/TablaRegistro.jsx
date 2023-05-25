@@ -51,7 +51,7 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
                     {term}, { headers: authHeader() });
             }
         } catch (error) {
-            console.log('Error al obtener dato');
+            console.log(error.response.data.message);
         }
     }
 
@@ -64,7 +64,7 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
             
             setResultado(respuesta.data);
         } catch (error) {
-            console.log('ERROR AL BUSCAR DATOS');
+            console.log(error.response.data.message);
         }
     }
 
@@ -152,14 +152,13 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
                 </div>
             ) : (null)}
 
-            {objetivo !== 'custodio' ? 
-                <div className="flex items-center space-x-8 p-0 ">
-                    <Button color='blue' manejador={(e) => {sendDatos()}}>Agregar</Button>
-                    <Button color='blue' manejador={(e) => setIsOpen(false)}>Cerrar</Button>
-                </div>
-                : 
-                null
-            }
+            <div className="flex items-center space-x-8 p-0 ">
+                {objetivo !== 'custodio' 
+                    ? <Button color='blue' manejador={(e) => {sendDatos()}}>Agregar</Button> 
+                    : null 
+                }
+                <Button color='blue' manejador={(e) => setIsOpen(false)}>Cerrar</Button>
+            </div>
 
         </>
     );

@@ -28,21 +28,18 @@ function VerCustodio() {
   useEffect(() => {
     async function fetchData(){
       try {
-        const gen = await axios.get(`${rutaCustodio}/general/${id}`, { headers: authHeader() });
-        const apl = await axios.get(`${rutaCustodio}/aplicacion/${id}`, { headers: authHeader() });
-        const funcional = await apl.data.aplicacionFuncional;
-        const tecnico = await apl.data.aplicacionTecnico;
-
-        setGeneral(gen.data[0]);
-        setAplFuncional(funcional);
-        setAplTecnico(tecnico);
+        const {data} = await axios.get(`${rutaCustodio}/${id}`, { headers: authHeader() });
+        
+        setGeneral(data.general);
+        setAplFuncional(data.aplicacionFuncional);
+        setAplTecnico(data.aplicacionTecnico);
 
         setLoad(false);
           
-      }catch (error) { console.log(error) }
+      }catch (error) { console.log(error.response.data.message); }
     } 
     fetchData();
-  }, [id,load]);
+  }, [id]);
       
       function General(){
         

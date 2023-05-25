@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Button, Select, TextArea } from "../../../components";
+import { Button, Input, Select, TextArea } from "../../../components";
 import { Notificacion } from "../../../utils/Notificacion";
 import { obtenerUsuario, rutaAplicacion } from "../../../utils/APIRoutes";
 import axios from "axios";
@@ -11,7 +11,6 @@ function ActualizarFalla({setIsOpen, valores, setUpdate}) {
     // ---------- ESTADOS ----------
     const [datos, setDatos] = useState({
         id: valores.falla_id,
-        clase: valores.fal_clase,
         impacto: valores.fal_impacto,
         descripcion: valores.fal_descripcion,
         solucion: valores.fal_solucion,
@@ -29,7 +28,7 @@ function ActualizarFalla({setIsOpen, valores, setUpdate}) {
         e.preventDefault();
         
         try {
-            if(obtenerUsuario().rol === 'admin'){
+            if(obtenerUsuario().rol !== 'user'){
                 await axios.patch(`${rutaAplicacion}/fallas/${datos.id}`, datos, { headers: authHeader() });
                 
                 Notificacion('FALLA MODDIFICADA EXITOSAMENTE', 'success');
@@ -46,7 +45,8 @@ function ActualizarFalla({setIsOpen, valores, setUpdate}) {
             <form className="flex flex-col items-center space-y-8 pb-4 overflow-y-auto" onSubmit={actualizarFalla}>
                 <div className="flex flex-col items-center space-y-2 pb-4 bg-zinc-400 rounded">
                     <div className="flex flex-col p-4 w-[300px] md:w-[400px] lg:w-[500px] bg-zinc-400 rounded">
-                        {/* <Select campo='Clase' name='clase' byId={false} propiedad={valores.fal_clase} opciones={['SELECCIONE','CLASE 1','CLASE 2','CLASE 3']} manejador={setValores} /> */}
+                    <Input campo='Falla ID' name='falla_id' byId={false} editable={false} propiedad={valores.falla_id} manejador={setValores} />
+                        <Input campo='Acronimo' name='apl_acronimo' byId={false} editable={false} propiedad={valores.apl_acronimo} manejador={setValores} />
                         <Select campo='Impacto' name='impacto' byId={false} propiedad={valores.fal_impacto} opciones={['SELECCIONE','ALTA','MEDIA','BAJA']} manejador={setValores}/>
                         <div className="col-span-2">
                             <TextArea campo='Descripcion' name='descripcion' area={true} propiedad={valores.fal_descripcion} editable={true} manejador={setValores} />

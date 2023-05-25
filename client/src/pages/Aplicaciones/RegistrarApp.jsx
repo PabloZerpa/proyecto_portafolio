@@ -57,7 +57,7 @@ function RegistrarApp() {
     async function crearDatos(e) {
         e.preventDefault();
 
-        if(obtenerUsuario().rol === 'admin'){
+        if(obtenerUsuario().rol !== 'user'){
             try {
                 let datosServidor = datos;
                 datosServidor.select_lenguaje = tableDataLenguaje;

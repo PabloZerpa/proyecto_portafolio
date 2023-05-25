@@ -48,7 +48,7 @@ function ActualizarApp() {
     async function actualizar(e) {
         e.preventDefault();
         try {
-            if(obtenerUsuario().rol === 'admin'){
+            if(obtenerUsuario().rol !== 'user'){
 
                 let datosServidor = datos;
                 datosServidor.select_lenguaje = tableDataLenguaje;
@@ -317,7 +317,7 @@ function ActualizarApp() {
     // =============== OBTIENE TOTAL LLAMANDO A LAS OTRAS FUNCIONES ===============
     async function obtenerTodo(id) { 
         try { 
-            const general = await axios.get(`${rutaAplicacion}/general/${id}`, { headers: authHeader() });
+            const general = await axios.get(`${rutaAplicacion}/${id}`, { headers: authHeader() });
             const tecnologia = await axios.get(`${rutaAplicacion}/tecnologia/${id}`, { headers: authHeader() });
             const plataformas = await tecnologia.data.plataformas[0];
             const lenguajes = await tecnologia.data.lenguajes;
@@ -342,7 +342,7 @@ function ActualizarApp() {
 
             return respuesta;
         } catch (error) {
-            console.log('Error al obtener datos'); 
+            console.log(error.response.data.message);
         }
     }
 
@@ -376,15 +376,15 @@ function ActualizarApp() {
             await llenarDatos(); 
             setLoad(false);
 
-        }catch (error) { console.log(error) }
+        }catch (error) { console.log(error.response.data.message); }
         } 
         fetchData();
-    }, [id, load]);
+    }, [id]);
 
 
     const eliminar = async (id) => {
         try {
-            if(obtenerUsuario().rol === 'admin'){
+            if(obtenerUsuario().rol !== 'user'){
                 await axios.delete(`${rutaAplicacion}/${id}`, { headers: authHeader() });
 
                 Notificacion('APLICACION ELIMINADA EXITOSAMENTE', 'success');

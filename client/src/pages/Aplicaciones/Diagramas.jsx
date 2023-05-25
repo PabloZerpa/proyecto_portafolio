@@ -74,7 +74,7 @@ function Diagramas() {
         else if(data.clave === 'modificacion')
             setClaves(meses);
         
-      } catch (error) { console.log('ERROR AL BUSCAR DATOS') }
+      } catch (error) { console.log(error.response.data.message); }
     }
       
     return (

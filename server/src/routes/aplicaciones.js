@@ -1,17 +1,14 @@
 
 const router = require("express").Router();
-const { obtenerDatos, obtenerDato, registrarAplicacion, actualizarAplicacion, eliminarAplicacion, 
-    obtenerBusqueda, obtenerLenguajes,obtenerPlataformas,obtenerFrameworks, obtenerBaseDatos, 
-    obtenerServidores,general, tecno, basedatos, servidor, 
-    documentacion, custodio, obtenerCustodios } = require("../controllers/aplicaciones");
+const { obtenerDatos, registrarAplicacion, actualizarAplicacion, eliminarAplicacion, 
+    obtenerBusqueda,general, tecno, basedatos, servidor, 
+    documentacion, custodio} = require("../controllers/aplicaciones");
+    const { fallas, registrarFalla, actualizarFalla, buscarFalla, eliminarFalla } = require("../controllers/fallas");
 const { auth } = require("../middlewares/auth");
-const { fallas, registrarFalla, actualizarFalla, buscarFalla, eliminarFalla } = require("../controllers/fallas");
 const { validatorApp, validatorFalla } = require("../validators/aplicaciones");
 
 /* 
-    ***********************************                             ***********************************
     *********************************** CREATE-READ-UPDATE-DELETE   ***********************************
-    ***********************************                             ***********************************
 */
 
 // *************** RUTA REGISTRAR UNA APLICACION *************** 
@@ -27,7 +24,7 @@ router.get("/", auth, obtenerDatos);
 
 
 // *************** RUTA PARA OBTENER LOS DATOS POR ID *************** 
-router.get("/:id", auth, obtenerDato);
+router.get("/:id", auth, general);
 
 
 // *************** RUTA PARA OBTENER LOS DATOS POR TERMINO DE BUSQUEDA *************** 
@@ -38,36 +35,8 @@ router.post("/busqueda", auth, obtenerBusqueda);
 router.delete("/:id", auth, eliminarAplicacion);
 
 
-
 /* 
-    ***********************************                             ***********************************
-    *********************************** LISTA DE DATOS PARA SELECTS ***********************************
-    ***********************************                             ***********************************
-*/
-
-// *************** RUTA PARA OBTENER LENGUAJES *************** 
-router.get("/plataformas", auth, obtenerPlataformas);
-
-// *************** RUTA PARA OBTENER LENGUAJES *************** 
-router.get("/lenguajes", auth, obtenerLenguajes);
-
-// *************** RUTA PARA OBTENER FRAMEWORKS *************** 
-router.get("/frameworks", auth, obtenerFrameworks);
-
-// *************** RUTA PARA OBTENER BASES DE DATOS *************** 
-router.get("/basesdatos", auth, obtenerBaseDatos);
-
-// *************** RUTA PARA OBTENER SERVIDORES *************** 
-router.get("/servidores", auth, obtenerServidores);
-
-// *************** RUTA PARA OBTENER RESPONSABLES *************** 
-router.get("/custodios", auth, obtenerCustodios);
-
-
-/* 
-    ***********************************                        ***********************************
     *********************************** INFORMACION PARA VISTA ***********************************
-    ***********************************                        ***********************************
 */
 
 // *************** RUTA PARA OBTENER INFORMACION GENERAL *************** 
@@ -91,9 +60,7 @@ router.get("/documentacion/:id", auth, documentacion);
 
 
 /* 
-    ***********************************          ***********************************
     *********************************** FALLAS   ***********************************
-    ***********************************          ***********************************
 */
 
 // *************** RUTA PARA OBTENER INFORMACION DE LAS FALLAS *************** 
@@ -110,20 +77,6 @@ router.post("/fallas/busqueda", auth, buscarFalla);
 
 // *************** RUTA PARA BUSCAR FALLA *************** 
 router.delete("/fallas/:id", auth, eliminarFalla);
-
-
-
-
-
-
-
-// // *************** RUTA PARA OBTENER CANTIDAD DE REGISTROS *************** 
-// router.get("/total", auth, obtenerCantidadTotal);
-// // *************** RUTA PARA OBTENER LOS DATOS PARA LOS GRAFICOS *************** 
-// router.post("/grafico", auth, obtenerPorGraficos); 
-
-
-
 
 
 module.exports = router; 

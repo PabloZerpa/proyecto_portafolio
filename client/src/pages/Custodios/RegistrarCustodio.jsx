@@ -42,13 +42,12 @@ function RegistrarCustodio() {
             const respuesta = await axios.post(`${rutaUsuario}/localidades`, {region}, { headers: authHeader() });
             return respuesta;
         } catch (error) {
-            console.log('ERROR AL OBTENER LOCALIDADES');
+            console.log(error.response.data.message);
         }
     }
 
     async function OpcionesLocalidades(valor){
         try {
-            //const respuesta = await axios.post(`${rutaUsuario}/localidades`, {valor}, { headers: authHeader() });
             const respuesta = await obtenerLocalidades(valor);
             const data = respuesta.data;
             let opciones = ['SELECCIONE'];
@@ -59,14 +58,14 @@ function RegistrarCustodio() {
             }
             return opciones;
         } catch (error) {
-            console.error(error);
+            console.log(error.response.data.message);
         }
     }
     
     // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
     const setValores = async (e) => {
         const valor = e.target.value.toUpperCase();
-        setDatos({ ...datos, [e.target.name] : valor })
+        setDatos({ ...datos, [e.target.name] : valor });
 
         if(e.target.name === 'region'){
             setLocalidades(await OpcionesLocalidades(e.target.value));
@@ -77,7 +76,7 @@ function RegistrarCustodio() {
     async function registrar(e) {
         e.preventDefault();
         try {
-            if(obtenerUsuario().rol === 'admin'){
+            if(obtenerUsuario().rol !== 'user'){
                 const id = await axios.post(`${rutaCustodio}/`, datos, { headers: authHeader() }) 
                 .then(response => { return response.data; });
 

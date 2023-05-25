@@ -43,7 +43,7 @@ function RegistrarServidor() {
             const respuesta = await axios.post(`${rutaUsuario}/localidades`, {region}, { headers: authHeader() });
             return respuesta;
         } catch (error) {
-            console.log('ERROR AL OBTENER LOCALIDADES');
+            console.log(error.response.data.message);
         }
     }
 
@@ -61,7 +61,7 @@ function RegistrarServidor() {
             return opciones;
             
         } catch (error) {
-            console.error(error);
+            console.log(error.response.data.message);
         }
     }
 
@@ -80,7 +80,7 @@ function RegistrarServidor() {
         e.preventDefault();
 
         try {
-            if(obtenerUsuario().rol === 'admin'){
+            if(obtenerUsuario().rol !== 'user'){
 
                 const id = await axios.post(`${rutaServidor}/`, datos, { headers: authHeader() }) 
                 .then(response => { return response.data; });

@@ -166,7 +166,7 @@ function Servidores() {
             return axios.post(`${rutaServidor}/busqueda`, 
             {term,estatus,region,sistema,marca,orden}, { headers: authHeader() });
         } catch (error) {
-            console.log('Error al obtener dato');
+            console.log(error.response.data.message);
         }
     }
 
@@ -181,7 +181,7 @@ function Servidores() {
             setResultado(respuesta.data);
             
         } catch (error) {
-            console.log('ERROR AL BUSCAR DATOS');
+            console.log(error.response.data.message);
         }
     }
 

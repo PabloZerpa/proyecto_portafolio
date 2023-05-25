@@ -8,8 +8,8 @@ function VerFalla({setIsOpen, valores}) {
         <form className="flex flex-col items-center space-y-8 pb-4 overflow-y-auto">
             <div className="flex flex-col items-center space-y-2 pb-4 bg-zinc-400 rounded">
                 <div className="flex flex-col p-4 w-[300px] md:w-[400px] lg:w-[500px] bg-zinc-400 rounded">
-                    <Input campo='Elemento' name='elemento' editable={false} propiedad={valores.elemento} />
-                    <Input campo='Nombre' name='nombre' editable={false} propiedad={valores.fal_nombre} />
+                    <Input campo='Falla ID' name='falla_id' editable={false} propiedad={valores.falla_id} />
+                    <Input campo='Nombre' name='nombre' editable={false} propiedad={valores.apl_nombre} />
                     <Input campo='Impacto' name='impacto' editable={false} propiedad={valores.fal_impacto} />
                     <div className="col-span-2">
                         <TextArea campo='Descripcion' name='descripcion' editable={false} propiedad={valores.fal_descripcion} />

@@ -72,7 +72,7 @@ const obtenerBusqueda = async (req,res) => {
         res.json(data[0]);
         
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+        return res.status(401).json({ message: 'ERROR AL BUSCAR SERVIDORES' });
     }
 };
 
@@ -148,7 +148,7 @@ const registrarServidor = async (req,res) => {
             res.send(`${servidor_id}`);
         }
     } catch (error) {
-        console.log("ERROR_CREATE_ITEMS");
+        return res.status(401).json({ message: 'ERROR AL REGISTRAR SERVIDOR' });
     }
 };
 
@@ -201,12 +201,9 @@ const actualizarServidor = async (req,res) => {
         res.json('UPDATE EXITOSO');
 
     } catch (error) {
-        console.log("ERROR_UPDATE_ITEMS");
-        console.error(error);
+        return res.status(401).json({ message: 'ERROR AL ACTUALIZAR SERVIDOR' });
     }
 };
-
-
 
 
 // *********************************** OBTENER INFORMACION GENERAL ***********************************
@@ -214,7 +211,7 @@ const general = async (req,res) => {
     try {
         const { id } = req.params;
 
-        const data = await pool.query(`
+        const ser = await pool.query(`
         SELECT 
             servidores.servidor_id,servidor,estado as estatus,ser_direccion,
             sistema,modelo,marca,mod_serial,mod_cantidad_cpu,mod_velocidad_cpu,mod_memoria,region,localidad,
@@ -229,28 +226,7 @@ const general = async (req,res) => {
             LEFT JOIN usuarios ON usuarios.usuario_id = servidores.ser_usuario_actualizo
         WHERE servidores.servidor_id = ?`, [id]);
 
-        const datosAuditoria = {
-            mensaje : `Visualizacion de Servidor ${id}`,
-            ip : req.ip,
-            usuario_id : req.usuario_id
-        }
-        generarLogAuditoria(datosAuditoria);
-
-        
-        res.send(data[0]);
-
-    } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
-    }
-};
-
-
-// *********************************** OBTENER SERVIDOR ***********************************
-const aplicacion = async (req,res) => {
-    try {
-        const { id } = req.params;
-
-        const data = await pool.query(`
+        const app = await pool.query(`
             SELECT 
                 aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_descripcion,estatus,
                 prioridad,apl_critico,alcance,apl_codigo_fuente,
@@ -265,20 +241,7 @@ const aplicacion = async (req,res) => {
             WHERE servidores.servidor_id = ?;`, 
             [id]);
 
-        res.send(data[0]);
-
-    } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
-    }
-};
-
-
-// *********************************** OBTENER SERVIDOR ***********************************
-const basedatos = async (req,res) => {
-    try {
-        const { id } = req.params;
-        
-        const data = await pool.query(`
+        const bd = await pool.query(`
             SELECT 
                 bases_datos.base_datos_id, base_datos, estatus, base_cantidad_usuarios, base_fecha_actualizacion,
                 tipo, manejador,ambiente
@@ -291,19 +254,31 @@ const basedatos = async (req,res) => {
                 JOIN ambientes ON ambientes.ambiente_id = bases_datos.base_ambiente
             WHERE servidores.servidor_id = ?;`, 
             [id]);
-                
-        res.send(data[0]);
+
+        const respuesta = {
+            general: ser[0][0],
+            aplicaciones: app[0],
+            basedatos: bd[0],
+        }
+
+        const datosAuditoria = {
+            mensaje : `Visualizacion de Servidor ${id}`,
+            ip : req.ip,
+            usuario_id : req.usuario_id
+        }
+        generarLogAuditoria(datosAuditoria);
+
+        
+        res.send(respuesta);
+
     } catch (error) {
-        return res.status(401).json({ message: 'ERROR_GET_ITEMS' });
+        return res.status(401).json({ message: 'ERROR AL OBTENER DATOS' });
     }
 };
-
 
 module.exports = { 
     obtenerBusqueda,
     registrarServidor,
     actualizarServidor,
     general,
-    aplicacion,
-    basedatos,
  };

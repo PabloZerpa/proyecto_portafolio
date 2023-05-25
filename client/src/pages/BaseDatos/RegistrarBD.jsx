@@ -52,7 +52,7 @@ function RegistrarBD() {
         e.preventDefault();
 
         try {
-            if(obtenerUsuario().rol === 'admin'){
+            if(obtenerUsuario().rol !== 'user'){
                 let datosServidor = datos;
                 datosServidor.select_servidor = tableDataServidor;
 

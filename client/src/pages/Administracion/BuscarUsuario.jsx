@@ -49,7 +49,7 @@ function BuscarUsuario() {
     try { 
         return axios.post(`${rutaUsuario}/busqueda`, {term}, { headers: authHeader() });
     } catch (error) {
-        console.log('Error al obtener dato');
+        console.log(error.response.data.message);
     }
 }
 
@@ -60,7 +60,7 @@ function BuscarUsuario() {
       const datos = await obtenerUsuarios(termino);
       setResultados(datos.data); 
     } catch (error) { 
-      console.log('ERROR AL BUSCAR DATOS') 
+      console.log(error.response.data.message);
     }
   }
 
@@ -75,7 +75,7 @@ function BuscarUsuario() {
   // =================== FUNCION PARA ELIMINAR USUARIO ===================
   const eliminarUsuario = async (row) => {
     try {
-      if(obtenerUsuario().rol === 'admin'){
+      if(obtenerUsuario().rol !== 'user'){
         
         await axios.delete(`${rutaUsuario}/eliminar/${row.usuario_id}`, { headers: authHeader() });
         onSearch(debounceValue);
