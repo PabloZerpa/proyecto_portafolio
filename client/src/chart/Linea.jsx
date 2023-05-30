@@ -37,7 +37,6 @@ function Linea({datos, categoria, claves}) {
               <Tooltip />
               <Legend iconType="square" /> 
               <Line type="monotone" dataKey="Modificaciones" stroke="#8884d8" />
-              {/* <Line type="monotone" dataKey="uv" stroke="#82ca9d" /> */}
           </LineChart>
       </div>
   );

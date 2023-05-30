@@ -13,7 +13,7 @@ const {
     insertarCustodio
 } = require('../helpers/insertar');
         
-const query = `
+const consultaDeBusqueda = `
     SELECT 
         aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_version,
         alcance,estatus,prioridad,apl_direccion,region,
@@ -69,9 +69,13 @@ const registrarAplicacion = async (req,res) => {
             await insertarLenguaje(aplicacion_id, select_lenguaje);    
             await insertarServidor(aplicacion_id,select_servidor);
             await insertarBase(aplicacion_id,select_base);
-            await insertarCustodio('funcional',aplicacion_id,select_funcional);
-            await insertarCustodio('tecnico',aplicacion_id,select_tecnico);
-            await insertarMantenimiento(aplicacion_id,man_frecuencia,man_horas_prom,man_horas_anuales);          
+
+            if(select_funcional)
+                await insertarCustodio('funcional',aplicacion_id,select_funcional);
+            if(select_tecnico)
+                await insertarCustodio('tecnico',aplicacion_id,select_tecnico);
+
+            await insertarMantenimiento(aplicacion_id,man_frecuencia,man_horas_prom,man_horas_anuales);   
             await insertarDocumentacion(aplicacion_id,select_documentos);
 
             const datosAuditoria = {
@@ -84,7 +88,6 @@ const registrarAplicacion = async (req,res) => {
             res.send(`${aplicacion_id}`);
         }
     } catch (error) {
-        console.log("ERROR AL REGISTRAR APLICACION");
         return res.status(401).json({ message: 'ERROR AL REGISTRAR APLICACION' });
     }
 };
@@ -113,7 +116,7 @@ const actualizarAplicacion = async (req,res) => {
         else{
 
             // ============= UPDATE DE LOS DATOS GENERALES =============
-            const datos = await pool.query(`
+            await pool.query(`
                 UPDATE aplicaciones 
                 SET 
                     apl_acronimo = ?,apl_nombre = ?,apl_descripcion = ?,
@@ -135,7 +138,7 @@ const actualizarAplicacion = async (req,res) => {
     
             // ============= UPDATE DE LA PLATAFORMA =============
             if(plataforma){
-                const pla = await pool.query(`
+                await pool.query(`
                     UPDATE aplicacion_plataforma
                     SET aplicacion_plataforma.plataforma_id = 
                         (SELECT plataforma_id FROM plataformas WHERE plataforma = ?)
@@ -154,21 +157,25 @@ const actualizarAplicacion = async (req,res) => {
                 [id,element.lenguaje_id]); 
             }
     
-            await pool.query(`DELETE FROM aplicacion_basedatos WHERE aplicacion_id = ?;`,[id]);
-            // ============= UPDATE DE LAS BASES DE DATOS =============
-            for (const element of select_base) {
-                await pool.query(
-                    `INSERT INTO aplicacion_basedatos (aplicacion_id,base_datos_id) VALUES (?,?)`,
-                [id,element.base_datos_id]); 
+            if(select_base){
+                await pool.query(`DELETE FROM aplicacion_basedatos WHERE aplicacion_id = ?;`,[id]);
+                // ============= UPDATE DE LAS BASES DE DATOS =============
+                for (const element of select_base) {
+                    await pool.query(
+                        `INSERT INTO aplicacion_basedatos (aplicacion_id,base_datos_id) VALUES (?,?)`,
+                    [id,element.base_datos_id]); 
+                }
             }
     
 
             // ============= UPDATE DE LOS SERVIDORES =============
-            await pool.query(`DELETE FROM aplicacion_servidor WHERE aplicacion_id = ?;`,[id]);
-            for (const element of select_servidor) {
-                await pool.query(
-                    `INSERT INTO aplicacion_servidor (aplicacion_id,servidor_id) VALUES (?,?)`,
-                [id,element.servidor_id]); 
+            if(select_servidor){
+                await pool.query(`DELETE FROM aplicacion_servidor WHERE aplicacion_id = ?;`,[id]);
+                for (const element of select_servidor) {
+                    await pool.query(
+                        `INSERT INTO aplicacion_servidor (aplicacion_id,servidor_id) VALUES (?,?)`,
+                    [id,element.servidor_id]); 
+                }
             }
 
             // ============= UPDATE DE LOS custodioS =============
@@ -193,26 +200,26 @@ const actualizarAplicacion = async (req,res) => {
             }
     
             // ============= UPDATE DE LOS DATOS GENERALES =============
-            await pool.query(`DELETE FROM documentaciones WHERE aplicacion_id = ?;`,[id]);
-            for (const element of select_documentos) {
-                await pool.query(
-                    `INSERT INTO documentaciones (aplicacion_id,doc_descripcion,doc_direccion,doc_tipo)
-                    VALUES (?,?,?,(SELECT tipo_id FROM tipos_documentos WHERE tipo = ?));`,
-                [id,element.doc_descripcion,element.doc_direccion,element.doc_tipo]);
+            if(select_documentos){
+                await pool.query(`DELETE FROM documentaciones WHERE aplicacion_id = ?;`,[id]);
+                for (const element of select_documentos) {
+                    await pool.query(
+                        `INSERT INTO documentaciones (aplicacion_id,doc_descripcion,doc_direccion,doc_tipo)
+                        VALUES (?,?,?,(SELECT tipo_id FROM tipos_documentos WHERE tipo = ?));`,
+                    [id,element.doc_descripcion,element.doc_direccion,element.doc_tipo]);
+                }
             }
     
             // ============= UPDATE DE LOS DATOS GENERALES =============
-            if(man_frecuencia || man_horas_prom || man_horas_anuales){
-                await pool.query(`
-                    UPDATE mantenimientos 
-                        JOIN aplicaciones ON aplicaciones.aplicacion_id = mantenimientos.aplicacion_id
-                    SET 
-                        man_frecuencia = (SELECT frecuencia_id FROM frecuencias WHERE frecuencia = ?),
-                        man_horas_prom = ?, man_horas_anuales = ?
-                    WHERE aplicaciones.aplicacion_id = ?;`,
-                    [man_frecuencia,man_horas_prom,man_horas_anuales,id]
-                );
-            }
+            await pool.query(`
+                UPDATE mantenimientos 
+                    JOIN aplicaciones ON aplicaciones.aplicacion_id = mantenimientos.aplicacion_id
+                SET 
+                    man_frecuencia = (SELECT frecuencia_id FROM frecuencias WHERE frecuencia = ?),
+                    man_horas_prom = ?, man_horas_anuales = ?
+                WHERE aplicaciones.aplicacion_id = ?;`,
+                [man_frecuencia,man_horas_prom,man_horas_anuales,id]
+            );
 
             const datosAuditoria = {
                 mensaje : `Actualizacion de aplicacion ${apl_acronimo}`,
@@ -385,7 +392,7 @@ const obtenerBusqueda = async (req,res) => {
         
         if(region){
             data = await pool.query(
-                `${query}
+                `${consultaDeBusqueda}
                 WHERE (aplicaciones.aplicacion_id LIKE ? OR 
                     apl_acronimo LIKE ? OR 
                     apl_nombre LIKE ? )
@@ -394,7 +401,7 @@ const obtenerBusqueda = async (req,res) => {
         }
         else if(plataforma){
             data = await pool.query(
-                `${query}
+                `${consultaDeBusqueda}
                 WHERE (aplicaciones.aplicacion_id LIKE ? OR 
                     apl_acronimo LIKE ? OR 
                     apl_nombre LIKE ? )
@@ -403,7 +410,7 @@ const obtenerBusqueda = async (req,res) => {
         }
         else if(cantidad){
             data = await pool.query(
-                `${query}
+                `${consultaDeBusqueda}
                 WHERE (aplicaciones.aplicacion_id LIKE ? OR 
                     apl_acronimo LIKE ? OR 
                     apl_nombre LIKE ? )
@@ -413,7 +420,7 @@ const obtenerBusqueda = async (req,res) => {
         }
         else if(alcance){
             data = await pool.query(
-                `${query}
+                `${consultaDeBusqueda}
                 WHERE (aplicaciones.aplicacion_id LIKE ? OR 
                     apl_acronimo LIKE ? OR 
                     apl_nombre LIKE ? )
@@ -422,7 +429,7 @@ const obtenerBusqueda = async (req,res) => {
         }
         else if(mantenimiento){
             data = await pool.query(
-                `${query}
+                `${consultaDeBusqueda}
                 WHERE (aplicaciones.aplicacion_id LIKE ? OR 
                     apl_acronimo LIKE ? OR 
                     apl_nombre LIKE ? )
@@ -431,7 +438,7 @@ const obtenerBusqueda = async (req,res) => {
         }
         else if(critico){
             data = await pool.query(
-                `${query}
+                `${consultaDeBusqueda}
                 WHERE (aplicaciones.aplicacion_id LIKE ? OR 
                     apl_acronimo LIKE ? OR 
                     apl_nombre LIKE ? )
@@ -440,7 +447,7 @@ const obtenerBusqueda = async (req,res) => {
         }
         else if(codigo){
             data = await pool.query(
-                `${query}
+                `${consultaDeBusqueda}
                 WHERE (aplicaciones.aplicacion_id LIKE ? OR 
                     apl_acronimo LIKE ? OR 
                     apl_nombre LIKE ? )
@@ -449,7 +456,7 @@ const obtenerBusqueda = async (req,res) => {
         }
         else if(estatus){
             data = await pool.query(
-                `${query}
+                `${consultaDeBusqueda}
                 WHERE (aplicaciones.aplicacion_id LIKE ? OR 
                     apl_acronimo LIKE ? OR 
                     apl_nombre LIKE ? )
@@ -458,7 +465,7 @@ const obtenerBusqueda = async (req,res) => {
         }
         else if(prioridad){
             data = await pool.query(
-                `${query}
+                `${consultaDeBusqueda}
                 WHERE (aplicaciones.aplicacion_id LIKE ? OR 
                     apl_acronimo LIKE ? OR 
                     apl_nombre LIKE ? )
@@ -467,7 +474,7 @@ const obtenerBusqueda = async (req,res) => {
         }
         else{
             data = await pool.query(
-                `${query}
+                `${consultaDeBusqueda}
                 WHERE 
                     (aplicaciones.aplicacion_id LIKE ? OR 
                     apl_nombre LIKE ? OR 
@@ -520,7 +527,7 @@ const eliminarAplicacion = async (req,res) => {
 const general = async (req,res) => {
     try {
         const { id } = req.params;
-        console.log(id);
+        
         const data = await pool.query(`
         SELECT 
             aplicaciones.aplicacion_id,apl_acronimo,apl_nombre,apl_descripcion,
@@ -533,13 +540,6 @@ const general = async (req,res) => {
             LEFT JOIN alcances ON aplicaciones.apl_alcance = alcances.alcance_id
             LEFT JOIN regiones ON aplicaciones.apl_region = regiones.region_id
         WHERE aplicaciones.aplicacion_id = ?`, [id]);
-
-        const datosAuditoria = {
-            mensaje : `Visualizacion de aplicacion ${data[0][0].apl_acronimo}`,
-            ip : req.ip,
-            usuario_id : req.usuario_id
-        }
-        generarLogAuditoria(datosAuditoria);
 
         res.send(data[0]);
     } catch (error) {
@@ -598,13 +598,13 @@ const basedatos = async (req,res) => {
 
         const data = await pool.query(`
             SELECT 
-                bases_datos.base_datos_id, base_datos, estatus, base_cantidad_usuarios, 
+                bases_datos.base_datos_id, base_datos, estado as estatus, base_cantidad_usuarios, 
                 DATE_FORMAT (base_fecha_actualizacion, '%d-%m-%Y %H:%i') as base_fecha_actualizacion, 
                 tipo, manejador, ambiente
             FROM aplicaciones
                 JOIN aplicacion_basedatos ON aplicaciones.aplicacion_id = aplicacion_basedatos.aplicacion_id
                 JOIN bases_datos ON bases_datos.base_datos_id = aplicacion_basedatos.base_datos_id
-                JOIN estatus ON bases_datos.base_estatus = estatus.estatus_id
+                JOIN estados ON bases_datos.base_estatus = estados.estado_id
                 JOIN tipos_bases ON tipos_bases.tipo_id = bases_datos.base_tipo
                 JOIN manejadores ON manejadores.manejador_id = bases_datos.base_manejador
                 JOIN ambientes ON ambientes.ambiente_id = bases_datos.base_ambiente
@@ -627,11 +627,13 @@ const servidor = async (req,res) => {
 
         const data = await pool.query(`
             SELECT 
-                servidores.servidor_id,servidor,ser_estatus,ser_direccion,sistema,modelo,marca,
-                region,localidad,ser_fecha_actualizacion
+                servidores.servidor_id,servidor,estado as estatus,ser_direccion,sistema,modelo,marca,
+                region,localidad,
+                DATE_FORMAT (ser_fecha_actualizacion, '%d-%m-%Y %H:%i') as ser_fecha_actualizacion
             FROM aplicaciones
                     JOIN aplicacion_servidor ON aplicaciones.aplicacion_id = aplicacion_servidor.aplicacion_id
                     JOIN servidores ON aplicacion_servidor.servidor_id = servidores.servidor_id
+                    JOIN estados ON servidores.ser_estatus = estados.estado_id
                     JOIN sistemas_operativos ON sistemas_operativos.sistema_id = servidores.ser_sistema
                     JOIN modelos ON modelos.modelo_id = servidores.ser_modelo
                     JOIN marcas ON marcas.marca_id = modelos.mod_marca
@@ -703,7 +705,8 @@ const documentacion = async (req,res) => {
 
         const data = await pool.query(`
             SELECT 
-                doc_descripcion,doc_direccion,tipo as doc_tipo,doc_fecha_actualizacion
+                doc_descripcion,doc_direccion,tipo as doc_tipo,
+                DATE_FORMAT (doc_fecha_actualizacion, '%d-%m-%Y %H:%i') as doc_fecha_actualizacion
             FROM aplicaciones
                 inner join documentaciones on aplicaciones.aplicacion_id = documentaciones.aplicacion_id
                 inner join tipos_documentos on documentaciones.doc_tipo = tipos_documentos.tipo_id

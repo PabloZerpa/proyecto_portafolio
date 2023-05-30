@@ -1,6 +1,5 @@
 
 const pool = require('../config');
-const { matchedData } = require("express-validator");
 const { encriptar } = require('../helpers/encriptar');
 
 // *************** OBTENER USUARIO ***************

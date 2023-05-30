@@ -12,7 +12,6 @@ app.use(express.urlencoded({ extended:false }));
 
 // ---------- ROUTE ----------
 app.use("/api/login", require("./routes/login"));
-app.use("/api/logout", require("./routes/logout"));
 app.use("/api/usuarios", require("./routes/usuarios"));
 app.use("/api/aplicaciones", require("./routes/aplicaciones"));
 app.use("/api/basedatos", require("./routes/bases_datos"));

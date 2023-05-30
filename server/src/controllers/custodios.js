@@ -1,7 +1,7 @@
 const pool = require('../config');
 const { generarLogAuditoria } = require('../helpers/auditoria');
 
-const query = `
+const consultaDeBusqueda = `
 SELECT 
     custodios.custodio_id, cus_nombre, cus_apellido ,cus_indicador ,cus_cedula ,
     telefono, cargo, gerencia, region, localidad
@@ -25,7 +25,7 @@ const obtenerBusqueda = async (req,res) => {
 
         if(cargo){
             data = await pool.query(
-                `${query}
+                `${consultaDeBusqueda}
                 WHERE (custodios.custodio_id LIKE ? 
                     OR cus_indicador LIKE ?  
                     OR cus_nombre LIKE ?  
@@ -35,7 +35,7 @@ const obtenerBusqueda = async (req,res) => {
         }
         else if(region){
             data = await pool.query(
-                `${query}
+                `${consultaDeBusqueda}
                 WHERE (custodios.custodio_id LIKE ? 
                     OR cus_indicador LIKE ?  
                     OR cus_nombre LIKE ?  
@@ -45,7 +45,7 @@ const obtenerBusqueda = async (req,res) => {
         }
         else if(gerencia){
             data = await pool.query(
-                `${query}
+                `${consultaDeBusqueda}
                 WHERE (custodios.custodio_id LIKE ? 
                     OR cus_indicador LIKE ?  
                     OR cus_nombre LIKE ?  
@@ -56,12 +56,12 @@ const obtenerBusqueda = async (req,res) => {
         else{
             if(term===''){
                 data = await pool.query(`
-                    ${query}
+                    ${consultaDeBusqueda}
                     ORDER BY custodios.custodio_id ASC`);
             }
             else{
                 data = await pool.query(`
-                    ${query}
+                    ${consultaDeBusqueda}
                     WHERE (custodios.custodio_id LIKE ? 
                         OR cus_indicador LIKE ?  
                         OR cus_nombre LIKE ?  
@@ -82,7 +82,7 @@ const obtenerBusqueda = async (req,res) => {
 const registrarCustodio = async (req,res) => {
     try {
         const { nombre,apellido,indicador,cedula,telefono,cargo,gerencia,region,localidad,usuario_registro } = req.body;
-        
+
         const query = await pool.query(`SELECT custodio_id FROM custodios WHERE cus_indicador = ?`, [indicador]); 
         const custodio = query[0][0];
 
@@ -103,9 +103,9 @@ const registrarCustodio = async (req,res) => {
                     (SELECT usuario_id FROM usuarios WHERE indicador = ?));`, 
                 [nombre,apellido,indicador,cedula,cargo,gerencia,region,localidad,usuario_registro,usuario_registro]);
 
-            const buscarcustodio = await pool.query(
+            const buscarCustodio = await pool.query(
                 `SELECT custodio_id FROM custodios WHERE cus_indicador = ?`, [indicador]);
-            let custodio_id = buscarcustodio[0][0].custodio_id;
+            let custodio_id = buscarCustodio[0][0].custodio_id;
 
             await pool.query( 
                 `INSERT INTO telefonos (custodio_id,telefono) VALUES (?,?)`, [custodio_id,telefono] );
@@ -130,7 +130,12 @@ const registrarCustodio = async (req,res) => {
 const eliminarCustodio = async (req,res) => {
     try {
         const { id } = req.params;
+
+        await pool.query(`DELETE FROM custodios_funcionales WHERE custodio_id = ?;`, [id]);
+        await pool.query(`DELETE FROM custodios_tecnicos WHERE custodio_id = ?;`, [id]);
+        await pool.query(`DELETE FROM telefonos WHERE custodio_id = ?;`, [id]);
         await pool.query('DELETE FROM custodios WHERE custodio_id = ?', [id]);
+        console.log(id);
 
         const datosAuditoria = {
             mensaje : `Eliminado de Custodio ${id}`,
@@ -183,10 +188,8 @@ const actualizarCustodio = async (req,res) => {
     }
  }
 
-
- 
 // *********************************** OBTENER INFORMACION GENERAL ***********************************
-const general = async (req,res) => {
+const obtenerDatos = async (req,res) => {
     try {
         const { id } = req.params;
 
@@ -236,13 +239,6 @@ const general = async (req,res) => {
             aplicacionTecnico: data2[0],
         };
 
-        const datosAuditoria = {
-            mensaje : `Visualizacion de Custodio ${data[0][0].cus_indicador}`,
-            ip : req.ip,
-            usuario_id : req.usuario_id
-        }
-        generarLogAuditoria(datosAuditoria);
-
         res.send(respuesta);
     } catch (error) {
         return res.status(401).json({ message: 'ERROR AL OBTENER CUSTODIOS' });
@@ -250,5 +246,5 @@ const general = async (req,res) => {
 };
 
 module.exports = { 
-    obtenerBusqueda,registrarCustodio,eliminarCustodio,actualizarCustodio, general
+    obtenerBusqueda,registrarCustodio,eliminarCustodio,actualizarCustodio, obtenerDatos
  };

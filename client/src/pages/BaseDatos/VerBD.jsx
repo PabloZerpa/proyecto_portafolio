@@ -57,7 +57,6 @@ function VerBD() {
                   <Input campo='Estatus' editable={false} propiedad={general.estatus} />
                   <Input campo='Tipo' editable={false} propiedad={general.tipo} />
                   <Input campo='Manejador' editable={false} propiedad={general.manejador} />
-                  <Input campo='Version' editable={false} propiedad={general.version_manejador} />
                   <Input campo='N° Usuarios' editable={false} propiedad={general.base_cantidad_usuarios} />
                   <Input campo='Ambiente' editable={false} propiedad={general.ambiente} />
                 </div>
@@ -116,7 +115,7 @@ function VerBD() {
         {
           name: 'Direccion',
           selector: row => 
-            <a className='text-blue-700' href={row.apl_direccion} rel="noreferrer" target='_blank' >
+            <a className='text-blue-700' href={`https://${row.apl_direccion}`} rel="noreferrer" target='_blank' >
               {row.apl_direccion}
             </a>,
           sortable: true,
@@ -199,7 +198,7 @@ function VerBD() {
         {
           name: 'Direccion',
           selector: row => 
-            <a className='text-blue-700' href={row.ser_direccion} rel="noreferrer" target='_blank' >
+            <a className='text-blue-700' href={`https://${row.ser_direccion}`} rel="noreferrer" target='_blank' >
               {row.ser_direccion}
             </a>,
           sortable: true,

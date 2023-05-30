@@ -2,9 +2,9 @@ const { check, validationResult } = require("express-validator");
 
 // *************** VALIDAR DATOS APLICACION ***************
 const validatorServidor = [
-    check("servidor").exists().notEmpty().isString(),
+    check("servidor").exists().notEmpty().isString().isLength({min:3, max:100}),
+    check("direccion").exists().notEmpty().isString().isLength({min:0, max:50}),
     check("estatus").exists().notEmpty().isString(),
-    check("direccion").exists().notEmpty().isString(),
     check("sistema").exists().notEmpty().isString(),
     check("modelo").exists().notEmpty().isString(),
     check("marca").exists().notEmpty().isString(),

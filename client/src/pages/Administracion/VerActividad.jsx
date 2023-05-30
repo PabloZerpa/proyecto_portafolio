@@ -1,7 +1,7 @@
 
-import { Button } from "../../components/";
 import DataTable from "react-data-table-component";
 import { paginacionOpciones } from "../../utils/TablaOpciones";
+import { FaTimes } from "react-icons/fa";
 
 function VerActividad({setIsOpen, valores}) {
 
@@ -30,11 +30,12 @@ function VerActividad({setIsOpen, valores}) {
     ];
 
     return(
-        <div className="flex flex-col space-y-8 justify-center items-center rounded bg-zinc-400 p-4">
+        <div className="relative flex flex-col space-y-4 justify-center items-center rounded bg-zinc-400 p-2">
+          <FaTimes className="absolute top-2 right-2 text-xl text-black cursor-pointer" onClick={(e) => setIsOpen(false)} />
           {/* --------------- SI HAY RESULTADOS, MUESTRA LA TABLA --------------- */}
           {valores ? (
-            <div className="w-full flex flex-col items-center space-y-4">
-              <h2 className="text-black text-xl font-bold">{`Actividad de ${valores[0] ? valores[0].indicador : null}`}</h2>
+            <div className="w-full flex flex-col items-center space-y-3">
+              <h2 className="text-black text-lg font-bold">{`Actividad de ${valores[0] ? valores[0].indicador : null}`}</h2>
               <DataTable
                 columns={columns}
                 data={valores}
@@ -52,9 +53,6 @@ function VerActividad({setIsOpen, valores}) {
           ) : 
           (null)}
 
-          <div className="flex space-x-16">
-            <Button width={32} manejador={(e) => setIsOpen(false)} >Cerrar</Button>
-          </div> 
         </div>
     );
 }

@@ -57,7 +57,6 @@ function VerServidor() {
                   <Input campo='Estatus' editable={false} propiedad={general.estatus} />
                   <Input campo='Direccion' editable={false} propiedad={general.ser_direccion} />
                   <Input campo='OS' editable={false} propiedad={general.sistema} />
-                  <Input campo='Version' editable={false} propiedad={general.sistema_version} />
                   <Input campo='Modelo' editable={false} propiedad={general.modelo} />
                   <Input campo='Marca' editable={false} propiedad={general.marca} />
                   <Input campo='Serial' editable={false} propiedad={general.mod_serial} />
@@ -123,7 +122,7 @@ function VerServidor() {
           name: 'N° Usuarios',
           selector: row => row.base_cantidad_usuarios,
           sortable: true,
-          width: '100px',
+          width: '120px',
           left: true,
         }
       ];
@@ -189,7 +188,7 @@ function VerServidor() {
         {
           name: 'Direccion',
           selector: row => 
-            <a className='text-blue-700' href={row.apl_direccion} rel="noreferrer" target='_blank' >
+            <a className='text-blue-700' href={`https://${row.apl_direccion}`} rel="noreferrer" target='_blank' >
               {row.apl_direccion}
             </a>,
           sortable: true,
@@ -200,14 +199,14 @@ function VerServidor() {
           name: 'N° Usuarios',
           selector: row => row.apl_cantidad_usuarios,
           sortable: true,
-          width: '100px',
+          width: '120px',
           left: true,
         },
         {
           name: 'Region',
           selector: row => row.region,
           sortable: true,
-          width: '150px',
+          width: '200px',
           left: true,
         },
       ];

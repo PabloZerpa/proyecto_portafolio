@@ -118,7 +118,7 @@ function VerCustodio() {
         {
           name: 'Direccion',
           selector: row => 
-            <a className='text-blue-700' href={row.apl_direccion} rel="noreferrer" target='_blank' >
+            <a className='text-blue-700' href={`https://${row.apl_direccion}`} rel="noreferrer" target='_blank' >
               {row.apl_direccion}
             </a>,
           sortable: true,
@@ -129,14 +129,14 @@ function VerCustodio() {
           name: 'N° Usuarios',
           selector: row => row.apl_cantidad_usuarios,
           sortable: true,
-          width: '100px',
+          width: '120px',
           left: true,
         },
         {
           name: 'Region',
           selector: row => row.region,
           sortable: true,
-          width: '150px',
+          width: '200px',
           left: true,
         },
       ];
@@ -144,19 +144,14 @@ function VerCustodio() {
       function Aplicacion() {
         return(
           <> 
-            <h2 className='font-bold text-lg'>Aplicacion</h2>
-            <form className="grid grid-cols-1 justify-center items-center text-center space-y-12 w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-                
-                <div className='flex flex-col space-y-6'>
-                  <h2 className='font-bold text-base'>Aplicaciones como Custodio Funcional</h2>
-                  <Tabla columnas={columnsApl} datos={aplFuncional} />
-                </div>
+            <h2 className='font-bold text-lg'>Aplicaciones como Custodio Funcional</h2>
+            <form className="grid grid-cols-1 justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
+              <Tabla columnas={columnsApl} datos={aplFuncional} />
+            </form>
 
-                <div className='flex flex-col space-y-6'>
-                  <h2 className='font-bold text-base'>Aplicaciones como Custodio Tecnico</h2>
-                  <Tabla columnas={columnsApl} datos={aplTecnico} />
-                </div>
-
+            <h2 className='font-bold text-lg'>Aplicaciones como Custodio Tecnico</h2>
+            <form className="grid grid-cols-1 justify-center items-center w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
+              <Tabla columnas={columnsApl} datos={aplTecnico} />
             </form>
           </>
         )

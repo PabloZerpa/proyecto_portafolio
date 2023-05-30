@@ -1,6 +1,6 @@
 
 import DataTable from "react-data-table-component";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaTimes } from "react-icons/fa";
 import { paginacionOpciones } from "../utils/TablaOpciones";
 import Button from "./Button";
 import { useCallback, useEffect, useState } from "react";
@@ -8,6 +8,7 @@ import { useDebounce } from "use-debounce";
 import { rutaBaseDatos, rutaCustodio, rutaServidor, rutaUsuario } from "../utils/APIRoutes";
 import axios from "axios";
 import authHeader from "../utils/header";
+import Modal from "./Modal";
 
 
 function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busqueda=false, selectDefault=0}) {
@@ -102,18 +103,17 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
     }, []);
 
     return (
-        <>
+        <Modal>
             {busqueda ? (
-                <form className='flex justify-center items-center flex-col p-0 border-solid rounded'>
+                <form className='relative flex justify-center items-center flex-col p-0 border-solid rounded'>
                     <div className='flex flex-col w-full py-2 border-solid'>
 
                         <div className="radioArea">
-                            <div className='mt-4 flex justify-center items-center'>
+                            <div className='mt-2 flex justify-center items-center'>
                                 <div className="relative w-96">
                                     <input 
                                         type="search" 
                                         name='terminoBusqueda'
-                                        // onChange={(e) => setSearchTerm(e.target.value)}
                                         onChange={(e) => setValores(e)}
                                         className="block p-2 pr-12 w-96 text-sm text-black bg-white rounded border-none outline-none" placeholder="Buscar" />
                                     <button 
@@ -131,24 +131,25 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
             ) : null}
 
             {resultado ? (
-                <div className="w-full bg-zinc-400 p-0 rounded">
-                    <DataTable
-                        columns={columnas}
-                        data={resultado}
-                        pagination
-                        paginationComponentOptions={paginacionOpciones}
-                        paginationRowsPerPageOptions={[10,20,30,50,100]}
-                        selectableRows
-                        selectableRowSelected={rowSelectCritera}
-                        onSelectedRowsChange={handleRowSelected}
-                        noDataComponent={"SIN RESULTADOS"}
-                        fixedHeader
-                        fixedHeaderScrollHeight="220px"
-                        highlightOnHover
-                        pointerOnHover
-                        dense
-                    />
-
+                <div className="relative w-full bg-zinc-400 p-0 rounded">
+                    <div className="mt-6">
+                        <DataTable
+                            columns={columnas}
+                            data={resultado}
+                            pagination
+                            paginationComponentOptions={paginacionOpciones}
+                            paginationRowsPerPageOptions={[10,20,30,50,100]}
+                            selectableRows
+                            selectableRowSelected={rowSelectCritera}
+                            onSelectedRowsChange={handleRowSelected}
+                            noDataComponent={"SIN RESULTADOS"}
+                            fixedHeader
+                            fixedHeaderScrollHeight="220px"
+                            highlightOnHover
+                            pointerOnHover
+                            dense
+                        />
+                    </div>
                 </div>
             ) : (null)}
 
@@ -157,10 +158,12 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
                     ? <Button color='blue' manejador={(e) => {sendDatos()}}>Agregar</Button> 
                     : null 
                 }
-                <Button color='blue' manejador={(e) => setIsOpen(false)}>Cerrar</Button>
             </div>
 
-        </>
+            <FaTimes className="absolute top-0 right-4 text-xl text-white cursor-pointer" 
+                onClick={(e) => setIsOpen(false)} />
+
+        </Modal>
     );
 }
 

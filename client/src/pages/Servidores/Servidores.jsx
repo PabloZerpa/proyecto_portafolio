@@ -51,7 +51,11 @@ const columns = [
     },
     {
         name: 'Direccion',
-        selector: row => row.ser_direccion,
+        selector: row => 
+        <a className='text-blue-700' href={`https://${row.ser_direccion}`} rel="noreferrer" target='_blank' >
+            {row.ser_direccion}
+        </a>
+        ,
         sortable: true,
         width: '200px',
         left: true

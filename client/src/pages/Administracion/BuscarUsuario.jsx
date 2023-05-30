@@ -199,7 +199,7 @@ function BuscarUsuario() {
 
       {/* --------------- VENTANA MODAL PARA ACTUALIZAR DATOS --------------- */}
       {isOpen ? (
-          <div className="fixed w-full max-w-2xl max-h-full z-50 overflow-y-auto">
+          <div className="fixed top-24 w-full max-w-2xl max-h-full z-50 overflow-y-auto">
             <ActualizarUsuario 
               setIsOpen={setIsOpen} 
               valores={usuario ? usuario : null}
@@ -211,7 +211,7 @@ function BuscarUsuario() {
 
       {/* --------------- VENTANA MODAL PARA ACTUALIZAR DATOS --------------- */}
       {isOpen2 ? (
-          <div className="fixed w-full max-w-2xl max-h-full z-50 overflow-y-auto">
+          <div className="fixed top-24 w-full max-w-2xl max-h-full z-50 overflow-y-auto">
             <VerActividad
               setIsOpen={setIsOpen2} 
               valores={usuario ? usuario : null}

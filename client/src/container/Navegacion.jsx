@@ -9,16 +9,8 @@ function Navegacion() {
     
     const [open1, setOpen1] = useState(false);
     const [open2, setOpen2] = useState(false);
-    const [open3, setOpen3] = useState(false);
-    const [open4, setOpen4] = useState(false);
-    const [open5, setOpen5] = useState(false);
-    const [open6, setOpen6] = useState(false);
     const openMenu1 = () => setOpen1(!open1);
     const openMenu2 = () => setOpen2(!open2);
-    const openMenu3 = () => setOpen3(!open3);
-    const openMenu4 = () => setOpen4(!open4);
-    const openMenu5 = () => setOpen5(!open5);
-    const openMenu6 = () => setOpen6(!open6);
 
     const [check, setCheck] = useState(false);
 
@@ -90,50 +82,26 @@ function Navegacion() {
                                     </Link>
                                 </div>
                             </li>
+
                             <li>
-                                <div className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg cursor-pointer hover:bg-gray-800 hover:text-gray-100" 
-                                    onClick={openMenu3}>
+                                <Link to="/basedatos" className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100">
                                     <FaDatabase />
                                     <span className="px-2">Base de datos</span>
-                                    {open3 ? <FaChevronUp /> : <FaChevronDown />}
-                                </div>
-
-                                <div style={open3 ? {display: 'block'} : {display: 'none'}} className='pl-4'>
-                                    <Link to="/basedatos" 
-                                        className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
-                                        Busqueda
-                                    </Link>
-                                </div>
+                                </Link>
                             </li>
+
                             <li>
-                                <div className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg cursor-pointer hover:bg-gray-800 hover:text-gray-100" 
-                                    onClick={openMenu4}>
+                                <Link to="/servidores" className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100">
                                     <FaServer />
                                     <span className="px-2">Servidor</span>
-                                    {open4 ? <FaChevronUp /> : <FaChevronDown />}
-                                </div>
-
-                                <div style={open4 ? {display: 'block'} : {display: 'none'}} className='pl-4'>
-                                    <Link to="/servidores" 
-                                        className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
-                                        Busqueda
-                                    </Link>
-                                </div>
+                                </Link>
                             </li>
+
                             <li>
-                                <div className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg cursor-pointer hover:bg-gray-800 hover:text-gray-100" 
-                                    onClick={openMenu5}>
+                                <Link to="/custodios" className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100">
                                     <FaHardHat />
                                     <span className="px-2">Custodios</span>
-                                    {open5 ? <FaChevronUp /> : <FaChevronDown />}
-                                </div>
-
-                                <div style={open5 ? {display: 'block'} : {display: 'none'}} className='pl-4'>
-                                    <Link to="/custodios" 
-                                        className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
-                                        Busqueda
-                                    </Link>
-                                </div>
+                                </Link>
                             </li>
                             
                             <div className="w-full h-0.5 bg-gray-500 opacity-50"></div>

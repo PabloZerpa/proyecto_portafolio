@@ -8,6 +8,7 @@ import { Notificacion } from '../../utils/Notificacion';
 import { obtenerUsuario, rutaServidor, rutaUsuario } from '../../utils/APIRoutes';
 import axios from 'axios';
 import authHeader from '../../utils/header';
+import swal from 'sweetalert';
 
 function ActualizarServidor() {
     
@@ -131,13 +132,27 @@ function ActualizarServidor() {
         }
       }
 
+    const eliminar = async (id) => {
+        try {
+            if(obtenerUsuario().rol !== 'user'){
+                await axios.delete(`${rutaServidor}/${id}`, { headers: authHeader() });
+
+                Notificacion('SERVIDOR ELIMINADO EXITOSAMENTE', 'success');
+                navegar(`/servidores/`);
+            }
+          }
+          catch (error) { 
+            Notificacion(error.response.data.message, 'error');
+          }
+    }
+
     
     if(load)
         <BiLoaderAlt className='text-6xl text-blue-500 animate-spin' />
     else{
         return (
             <Container>
-            <h1 className='font-bold text-lg'>Registro de Servidor</h1>
+            <h1 className='font-bold text-lg'>Actualización de Servidor</h1>
 
             <form className="flex flex-col justify-content items-center space-y-8 relative w-full md:w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" onSubmit={actualizar}>
                 <div className='w-full'>
@@ -149,7 +164,6 @@ function ActualizarServidor() {
                     <Input campo='Direccion' name='direccion' required={true} propiedad={general.ser_direccion} manejador={setValores} />
                     
                     <Select campo='Sistema' name='sistema' required={true} byId={false} propiedad={general.sistema} opciones={sistemas ? sistemas : ['SELECCIONE']} manejador={setValores} />
-                    <Input campo='Version' name='version' manejador={setValores} />
                     
                     <Input campo='Marca' name='marca' required={true} propiedad={general.marca} editable={false} />
                     <Input campo='Modelo' name='modelo' required={true} propiedad={general.modelo} editable={false} />
@@ -162,11 +176,35 @@ function ActualizarServidor() {
                     <Select campo='Localidad' name='localidad' required={true} byId={false} propiedad={general.localidad} opciones={localidades ? localidades : ['SELECCIONE']} manejador={setValores} />
                 </div>
                     
-                <div className="flex space-x-2 md:space-x-12">
+                <div className="flex space-x-2 md:space-x-12 pt-6">
                     <Button tipo='button' color='blue' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
                     <Button tipo='submit' color='blue' width={32}>Actualizar</Button>
+                    {obtenerUsuario().rol === 'admin' ? (
+                        <Button tipo='button' color='red' width={32} manejador={(e) => {
+                            swal({
+                                text: `¿Esta seguro de Eliminar el servidor ${general.servidor}?`,
+                                icon: 'warning',
+                                buttons: {
+                                    cancel: {
+                                    text: "Cancel",
+                                    value: false,
+                                    visible: true,
+                                    className: "bg-red-600 text-white outline-none border-none hover:bg-red-500",
+                                    },
+                                    confirm: {
+                                    text: "Aceptar",
+                                    value: true,
+                                    visible: true,
+                                    className: "bg-blue-600 text-white outline-none border-none hover:bg-blue-500",
+                                    }
+                                },
+                            }).then((result) => {
+                                if (result)
+                                eliminar(id);
+                            })
+                        }} >Eliminar</Button>
+                    ) : null}
                 </div>
-
             </form>
 
         </Container>

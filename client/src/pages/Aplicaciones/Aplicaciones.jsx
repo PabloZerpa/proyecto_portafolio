@@ -71,7 +71,7 @@ const columns = [
   {
       name: 'Direccion',
       selector: row => 
-        <a className="text-blue-400" href="row.apl_direccion" target="_blank" >
+        <a className="text-blue-400" href={`https://${row.apl_direccion}`} rel="noreferrer" target="_blank" >
           {row.apl_direccion}
         </a>,
       sortable: true,

@@ -3,15 +3,15 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Container, Input, Radio, Select, Tabla, TextArea, Modal, TableRegistro } from '../../components';
 import { BiLoaderAlt } from "react-icons/bi";
-import Opciones from '../../utils/Opciones';
-import { columnasModalBD, columnasModalCustodio, columnasModalLenguaje, columnasModalServidor } from '../../utils/columnas';
 import { FaTimesCircle } from 'react-icons/fa';
 import { Notificacion } from '../../utils/Notificacion';
+import { obtenerUsuario, rutaAplicacion } from '../../utils/APIRoutes';
+import { columnasModalBD, columnasModalCustodio, columnasModalLenguaje, columnasModalServidor } from '../../utils/columnas';
+import Opciones from '../../utils/Opciones';
 import swal from 'sweetalert';
 import DocumentosForm from '../../components/DocumentosForm';
-import { obtenerUsuario, rutaAplicacion } from '../../utils/APIRoutes';
 import axios from 'axios';
-import authHeader from '../../utils/header';
+import authHeader from '../../utils/header';  
 
 function ActualizarApp() {
 
@@ -43,30 +43,6 @@ function ActualizarApp() {
     const [plataformas, setPlataformas] = useState('');
     const [frecuencia, setFrecu] = useState('');
     const [regiones, setRegiones] = useState('');
-
-    // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
-    async function actualizar(e) {
-        e.preventDefault();
-        try {
-            if(obtenerUsuario().rol !== 'user'){
-
-                let datosServidor = datos;
-                datosServidor.select_lenguaje = tableDataLenguaje;
-                datosServidor.select_base = tableDataBase;
-                datosServidor.select_servidor = tableDataServidor;
-                datosServidor.select_documentos = tableDataDoc;
-
-                await axios.put(`${rutaAplicacion}/${id}`, datosServidor, { headers: authHeader() }) 
-                .then(response => { return response.data; });
-
-                Notificacion('ACTUALIZACION EXITOSA', 'success');
-                navigate(`/aplicaciones/${id}`);
-            }
-        } 
-        catch (error) { 
-            Notificacion(error.response.data.message, 'error');
-        }
-    }
 
     // FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS
     const setValores = (e) => {
@@ -287,7 +263,7 @@ function ActualizarApp() {
     }
 
     // =================== FUNCION PARA CARGOR LOS VALORES POR DEFECTO AL ESTADO ===================
-    async function llenarDatos(){
+    async function valoresPorDefecto(){
         setDatos({
             ...datos,
             apl_acronimo : general.apl_acronimo,
@@ -303,14 +279,11 @@ function ActualizarApp() {
             apl_cantidad_usuarios : general.apl_cantidad_usuarios,
             apl_region : general.region, 
             plataforma : plataforma,
-            select_funcional: funcional.cus_indicador,
-            select_tecnico: tecnico.cus_indicador,
+            select_funcional: funcional,
+            select_tecnico: tecnico,
             man_frecuencia: mantenimiento.frecuencia,
             man_horas_prom: mantenimiento.man_horas_prom,
             man_horas_anuales: mantenimiento.man_horas_anuales,
-            doc_descripcion: documentacion.doc_descripcion,
-            doc_direccion: documentacion.doc_direccion,
-            doc_tipo: documentacion.doc_tipo,
         });
     }
 
@@ -331,18 +304,18 @@ function ActualizarApp() {
             const respuesta = {
                 general: general.data[0],
                 tecnologia: tecnologia.data.datos[0],
-                plataformas: plataformas,
+                plataformas: plataformas.plataforma,
                 lenguajes: lenguajes,
                 basedatos: basedatos.data.datos,
                 servidor: servidor.data.datos,
-                funcional: funcional,
-                tecnico: tecnico,
+                funcional: funcional.cus_indicador,
+                tecnico: tecnico.cus_indicador,
                 documentacion: documentacion.data.datos,
             } 
 
             return respuesta;
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
@@ -363,7 +336,7 @@ function ActualizarApp() {
             setFuncional(todo.funcional);
             setTecnico(todo.tecnico); 
             setLenguaje(todo.lenguajes);
-            setPlataforma(todo.plataformas.plataforma);
+            setPlataforma(todo.plataformas);
             {todo.documentacion ? setDocumentacion(todo.documentacion) : setDocumentacion('')}
             {todo.tecnologia ? setMantenimiento(todo.tecnologia) : setMantenimiento('')}
 
@@ -373,14 +346,39 @@ function ActualizarApp() {
             llenarTabla(servidor,'servidor_id','servidor',setDataServidor,setSelectServidor);
             llenarTabla(documentacion,'documentacion_id','documentacion',setDataDoc,setSelectDoc);
 
-            await llenarDatos(); 
+            await valoresPorDefecto(); 
             setLoad(false);
 
-        }catch (error) { console.log(error.response.data.message); }
-        } 
+        }catch (error) { 
+            Notificacion(error.response.data.message, 'error');
+        }
+    } 
         fetchData();
-    }, [id]);
+    }, [load]);
 
+    // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
+    async function actualizar(e) {
+        e.preventDefault();
+        try {
+            if(obtenerUsuario().rol !== 'user'){
+
+                let datosServidor = datos;
+                datosServidor.select_lenguaje = tableDataLenguaje;
+                datosServidor.select_base = tableDataBase;
+                datosServidor.select_servidor = tableDataServidor;
+                datosServidor.select_documentos = tableDataDoc;
+
+                await axios.put(`${rutaAplicacion}/${id}`, datosServidor, { headers: authHeader() }) 
+                .then(response => { return response.data; });
+
+                Notificacion('ACTUALIZACION EXITOSA', 'success');
+                navigate(`/aplicaciones/${id}`);
+            }
+        } 
+        catch (error) { 
+            Notificacion(error.response.data.message, 'error');
+        }
+    }
 
     const eliminar = async (id) => {
         try {
@@ -611,29 +609,32 @@ function ActualizarApp() {
                 <div className="flex space-x-2 md:space-x-12">
                     <Button tipo='button' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
                     <Button tipo='submit' width={32}>Actualizar</Button>
-                    <Button tipo='button' color='red' width={32} manejador={(e) => {
-                        swal({
-                            text: `¿Esta seguro de Eliminar la aplicacion ${general.apl_acronimo}?`,
-                            icon: 'warning',
-                            buttons: {
-                                cancel: {
-                                  text: "Cancel",
-                                  value: false,
-                                  visible: true,
-                                  className: "bg-red-600 text-white outline-none border-none hover:bg-red-500",
+                    {obtenerUsuario().rol === 'admin' ? (
+                        <Button tipo='button' color='red' width={32} manejador={(e) => {
+                            swal({
+                                text: `¿Esta seguro de Eliminar la aplicacion ${general.apl_acronimo}?`,
+                                icon: 'warning',
+                                buttons: {
+                                    cancel: {
+                                      text: "Cancel",
+                                      value: false,
+                                      visible: true,
+                                      className: "bg-red-600 text-white outline-none border-none hover:bg-red-500",
+                                    },
+                                    confirm: {
+                                      text: "Aceptar",
+                                      value: true,
+                                      visible: true,
+                                      className: "bg-blue-600 text-white outline-none border-none hover:bg-blue-500",
+                                    }
                                 },
-                                confirm: {
-                                  text: "Aceptar",
-                                  value: true,
-                                  visible: true,
-                                  className: "bg-blue-600 text-white outline-none border-none hover:bg-blue-500",
-                                }
-                            },
-                          }).then((result) => {
-                            if (result)
-                              eliminar(id);
-                          })
-                    }} >Eliminar</Button>
+                              }).then((result) => {
+                                if (result)
+                                  eliminar(id);
+                              })
+                        }} >Eliminar</Button>
+                    ) : null}
+
                 </div>
             </form>
             

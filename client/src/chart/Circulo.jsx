@@ -22,7 +22,6 @@ function Circulo({datos, categoria, claves}) {
     setDatosGrafico(datosTemporales);
   }, []);
   
-  // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#f03737', '#0051bb', '#03792a', '#f8d742', '#970505'];
   const RADIAN = Math.PI / 180;
   

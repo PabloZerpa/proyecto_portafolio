@@ -8,6 +8,7 @@ import Opciones from '../../utils/Opciones';
 import { obtenerUsuario, rutaCustodio, rutaUsuario } from '../../utils/APIRoutes';
 import axios from 'axios';
 import authHeader from '../../utils/header';
+import swal from 'sweetalert';
 
 function ActualizarCustodio() {
 
@@ -60,7 +61,7 @@ function ActualizarCustodio() {
             return opciones;
             
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
@@ -105,18 +106,30 @@ function ActualizarCustodio() {
 
         try {
           if(obtenerUsuario().rol !== 'user'){
-
-            await axios.patch(`${rutaCustodio}/${id}`, datos, { headers: authHeader() }) 
-            .then(response => { return response.data; });
+            await axios.patch(`${rutaCustodio}/${id}`, datos, { headers: authHeader() });
             
             Notificacion('ACTUALIZACION EXITOSA', 'success');
             navigate(`/custodios/${id}`);
           }
         }
         catch (error) { 
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
       }
+
+    const eliminar = async (id) => {
+        try {
+            if(obtenerUsuario().rol !== 'user'){
+                await axios.delete(`${rutaCustodio}/${id}`, { headers: authHeader() });
+
+                Notificacion('CUSTODIO ELIMINADO EXITOSAMENTE', 'success');
+                navegar(`/custodios/`);
+            }
+          }
+          catch (error) { 
+            Notificacion(error.response.data.message, 'error');
+          }
+    }
 
       
     if(load)
@@ -124,7 +137,7 @@ function ActualizarCustodio() {
     else{
         return (
             <Container>
-                <h1 className='font-bold text-lg'>Actualizar de Responsable</h1>
+                <h1 className='font-bold text-lg'>Actualización de Responsable</h1>
 
                 <form className="flex flex-col justify-content items-center space-y-8 relative w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" onSubmit={actualizar}>
                     <div className='w-full grid grid-cols-1'>
@@ -140,6 +153,31 @@ function ActualizarCustodio() {
                     <div className="flex space-x-2 md:space-x-12">
                         <Button tipo='button' color='blue' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
                         <Button tipo='submit' color='blue' width={32}>Actualizar</Button>
+                        {obtenerUsuario().rol === 'admin' ? (
+                                <Button tipo='button' color='red' width={32} manejador={(e) => {
+                                swal({
+                                    text: `¿Esta seguro de Eliminar el custodio ${general.cus_indicador}?`,
+                                    icon: 'warning',
+                                    buttons: {
+                                        cancel: {
+                                        text: "Cancel",
+                                        value: false,
+                                        visible: true,
+                                        className: "bg-red-600 text-white outline-none border-none hover:bg-red-500",
+                                        },
+                                        confirm: {
+                                        text: "Aceptar",
+                                        value: true,
+                                        visible: true,
+                                        className: "bg-blue-600 text-white outline-none border-none hover:bg-blue-500",
+                                        }
+                                    },
+                                }).then((result) => {
+                                    if (result)
+                                    eliminar(id);
+                                })
+                            }} >Eliminar</Button>
+                        ) : null}
                     </div>
                 </form>
     

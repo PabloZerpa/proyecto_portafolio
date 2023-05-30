@@ -5,7 +5,8 @@ import { Container, Input, Radio, Tabla, TextArea } from '../../components';
 import { rutaAplicacion } from '../../utils/APIRoutes';
 import axios from 'axios';
 import authHeader from '../../utils/header';
-import { FaEdit, FaEye } from 'react-icons/fa';
+import { FaEye } from 'react-icons/fa';
+import VerFalla from './Fallas/VerFalla';
 
 const opcionesVista = ['General','Tecnologia', 'Base de datos',
 'Servidor','Custodios','Documentacion','Fallas'];
@@ -24,11 +25,19 @@ function VerAplicacion() {
   const [custodios, setCustodios] = useState('');
   const [documentacion, setDocumentacion] = useState('');
   const [fallas, setFallas] = useState('');
+  const [falla, setFalla] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
 
   // FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS
   const setValores = (e) => {
     setOpcion(e.target.value);
   }
+
+  // =================== FUNCION PARA HABILITAR VENTANA MODAL DE EDICION ===================
+  const habilitar = (dato) => {
+    setFalla(dato);
+    setIsOpen(!isOpen);
+}
   
   useEffect(() => {
     async function fetchData(){
@@ -247,14 +256,17 @@ function VerAplicacion() {
         },
         {
             name: 'Estatus',
-            selector: row => row.ser_estatus,
+            selector: row => row.estatus,
             sortable: true,
             width: '150px',
             left: true,
         },
         {
             name: 'Direccion',
-            selector: row => row.ser_direccion,
+            selector: row => 
+              <a className='text-blue-700' href={`https://${row.ser_direccion}`} rel="noreferrer" target="_blank" >
+                {row.ser_direccion}
+              </a>,
             sortable: true,
             width: '200px',
             left: true,
@@ -410,13 +422,13 @@ function VerAplicacion() {
             name: 'Descripcion',
             selector: row => row.doc_descripcion,
             sortable: true,
-            width: '150px',
+            width: '250px',
             left: true,
         },
         {
             name: 'Direccion',
             selector: row => 
-              <a className='text-blue-700' href={row.doc_direccion} >
+              <a className='text-blue-700' href={`https://${row.doc_direccion}`} rel="noreferrer" target="_blank" >
                 {row.doc_direccion}
               </a>,
             sortable: true,
@@ -453,6 +465,17 @@ function VerAplicacion() {
 
       const columnsFal = [
         {
+          name: 'Ver',
+          button: true,
+          cell: row => 
+            <div className="flex space-x-4">
+                <FaEye
+                    onClick={(e) => habilitar(row)}
+                    className="text-blue-500 text-lg" 
+                />
+            </div>
+        },
+        {
             name: 'Falla ID',
             selector: row => 
               <Link className='text-blue-700' to={row ? `/aplicaciones/fallas` : `/dashboard`} >
@@ -462,20 +485,6 @@ function VerAplicacion() {
             width: '100px',
             left: true,
         },
-        // {
-        //     name: 'Acronimo',
-        //     selector: row => row.apl_acronimo,
-        //     sortable: true,
-        //     width: '100px',
-        //     left: true,
-        // },
-        // {
-        //   name: 'Nombre',
-        //   selector: row => row.apl_nombre,
-        //   sortable: true,
-        //   width: '100px',
-        //   left: true,
-        // },
         {
             name: 'Impacto',
             selector: row => row.fal_impacto,
@@ -483,30 +492,26 @@ function VerAplicacion() {
             width: '100px',
             left: true,
         },
-        {
-          name: 'Descripcion',
-          selector: row => 
-            <TextArea propiedad={row.fal_descripcion} editable={false} />,
-          sortable: true,
-          width: '150px',
-          left: true,
-        },
-        {
-            name: 'Solucion',
-            selector: row => 
-              <TextArea propiedad={row.fal_solucion} editable={false} />,
-            sortable: true,
-            width: '150px',
-            left: true,
-        },
       ];
+      
 
       function Fallas(){
         let datos = fallas.data.datos;
         return (
           <>
+            {/* --------------- VENTANA MODAL PARA VER DATOS --------------- */}
+            {isOpen ? (
+                  <div className="fixed w-full max-w-2xl max-h-full z-50 overflow-y-auto">
+                      <VerFalla
+                          setIsOpen={setIsOpen} 
+                          valores={falla ? falla : null}
+                      />
+                  </div>
+                          
+              ) : (null) 
+            }
             <h2 className='font-bold text-lg'>Fallas</h2>
-            <form className="grid grid-cols-1 justify-center items-center relative w-1/2 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
+            <form className="grid grid-cols-1 justify-center items-center relative w-96 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
               <Tabla columnas={columnsFal} datos={datos} />
             </form>
           </>

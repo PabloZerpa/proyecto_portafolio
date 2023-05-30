@@ -17,6 +17,6 @@ export const logout = async () => {
     localStorage.removeItem("user");
     window.location.reload();
     try {
-        await axios.get(`${baseUrl}/logout`);
+        await axios.get(`${rutaAuth}/logout`);
     } catch (error) {console.log(error.response.data.message); }
 }

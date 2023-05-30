@@ -68,7 +68,11 @@ function RegistrarServidor() {
     // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
     const setValores = async (e) => {
         const valor = e.target.value.toUpperCase();
-        setDatos({ ...datos, [e.target.name] : valor })
+        
+        if(e.target.name === 'direccion')
+            setDatos({ ...datos, [e.target.name] : e.target.value.toLowerCase() });
+        else
+            setDatos({ ...datos, [e.target.name] : valor });
 
         if(e.target.name === 'region'){
             setLocalidades(await OpcionesLocalidades(e.target.value));
@@ -108,7 +112,6 @@ function RegistrarServidor() {
                     <Input campo='Direccion' name='direccion' required={true} manejador={setValores} />
                     
                     <Select campo='Sistema' name='sistema' required={true} opciones={sistemas ? sistemas : ['SELECCIONE']} manejador={setValores} />
-                    <Input campo='Version' name='version' editable={true} manejador={setValores} />
                     
                     <Select campo='Marca' name='marca' required={true} opciones={marcas ? marcas : ['SELECCIONE']} manejador={setValores} />
                     <Input campo='Modelo' name='modelo' required={true} editable={true} manejador={setValores} />

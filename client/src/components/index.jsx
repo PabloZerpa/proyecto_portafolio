@@ -9,7 +9,6 @@ import Select from './Select';
 import Radio from './Radio';
 import Checkbox from './Checkbox';
 import Modal from './Modal';
-import Paginacion from './Paginacion';
 import Card from './Card';
 
 export {
@@ -23,6 +22,5 @@ export {
     Checkbox,
     Modal,
     TableRegistro,
-    Paginacion,
     Card,
 };

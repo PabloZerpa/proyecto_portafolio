@@ -63,11 +63,11 @@ function ActualizarUsuario({setIsOpen, valores, setUpdate}) {
 
 
   return(
-    <form className="flex flex-col items-center space-y-2 pb-4 overflow-y-auto" onSubmit={actualizarDatos} >
+    <form className="flex flex-col items-center space-y-2 pb-4" onSubmit={actualizarDatos} >
 
       <div className="flex flex-col items-center space-y-2 pb-4 bg-zinc-400 rounded">
 
-        <div className="grid grid-cols-1 md:grid-cols-2 w-[300px] lg:w-[500px] space-x-4 p-4">
+        <div className="grid grid-cols-2 md:grid-cols-2 w-[300px] lg:w-[500px] space-x-4 p-4">
           <Input campo='Indicador' name='indicador' direccion="col" editable={false} propiedad={valores.indicador} />
           <Select campo='Rol' name='rol' direccion="col" required={true} byId={false} propiedad={valores.rol} opciones={roles ? roles : ['SELECCIONE']} manejador={setValores} />
           <Input campo='Nombre' name='nombre' direccion="col" required={true} propiedad={valores.nombre} editable={true} manejador={setValores} />
@@ -76,9 +76,9 @@ function ActualizarUsuario({setIsOpen, valores, setUpdate}) {
           <Select campo='Cargo' name='cargo' direccion="col" required={true} byId={false} propiedad={valores.cargo} opciones={cargos ? cargos : ['SELECCIONE']} manejador={setValores} />
         </div> 
 
-        <div className="flex space-x-16">
-          <Button width={32} manejador={(e) => setIsOpen(false)} >Cerrar</Button>
-          <Button tipo="submit" width={32}>Actualizar</Button>
+        <div className="flex space-x-8 lg:space-x-16">
+          <Button width={24} manejador={(e) => setIsOpen(false)} >Cerrar</Button>
+          <Button tipo="submit" width={24}>Actualizar</Button>
         </div>
               
       </div>

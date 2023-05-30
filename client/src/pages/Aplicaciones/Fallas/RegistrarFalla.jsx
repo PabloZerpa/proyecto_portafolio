@@ -96,7 +96,7 @@ function RegistrarFalla() {
                     </div>
                 </div>
 
-                <div className="flex gap-2 md:gap-12">
+                <div className="flex space-x-2 md:space-x-12">
                     <Button tipo='button' width={32} manejador={(e) => navegar(-1)} ><FaArrowLeft className="mr-2" />Volver</Button>
                     <Button tipo='submit' width={32}>Registrar</Button>
                 </div>

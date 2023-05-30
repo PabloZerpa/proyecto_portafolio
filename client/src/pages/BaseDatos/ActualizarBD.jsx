@@ -10,6 +10,7 @@ import { Notificacion } from '../../utils/Notificacion';
 import axios from 'axios';
 import authHeader from '../../utils/header';
 import { obtenerUsuario, rutaBaseDatos } from '../../utils/APIRoutes';
+import swal from 'sweetalert';
 
 function ActualizarBD() {
 
@@ -25,9 +26,13 @@ function ActualizarBD() {
     });
 
     // FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS
-    const setValores = (e) => {
+    const setValores = async(e) => {
         const valor = e.target.value.toUpperCase();
         setDatos({ ...datos, [e.target.name] : valor });
+
+        if(e.target.name === 'tipo'){ 
+            setMane(await OpcionesManejadores(e.target.value));
+        }
     }
 
     const [mane, setMane] = useState('');
@@ -37,7 +42,6 @@ function ActualizarBD() {
 
     // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
     async function establecerDatos(){
-        setMane(await Opciones('manejadores'));
         setEstatus(['SELECCIONE', 'POR DETERMINAR', 'ACTIVO', 'INACTIVO']);
         setTipos(await Opciones('tipos'));
         setAmbientes(await Opciones('ambientes'));
@@ -52,8 +56,33 @@ function ActualizarBD() {
             setTabla(tabla => [...tabla, { [`${id}`]: x[id], [`${nombre}`]: x[nombre]}]); 
             selecciones.push(datos[i][id]); 
         }
-
         setSelect(selecciones);
+    }
+
+    // ---------------- UPDATE DE UN CAMPO DE UN USUARIO ------------------
+    async function obtenerManejadores(tipo) {
+        try { 
+            const respuesta = await axios.post(`${rutaBaseDatos}/manejadores`, {tipo}, { headers: authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log(error.response.data.message);
+        }
+    }
+
+    async function OpcionesManejadores(valor){
+        try {
+            const respuesta = await obtenerManejadores(valor);
+            const data = respuesta.data;
+            let opciones = ['SELECCIONE'];
+        
+            for (let i = 0; i < data.length; i++) {
+                const valor = Object.values(data[i]);
+                opciones.push(valor[0]);
+            }
+            return opciones;
+        } catch (error) {
+            console.log(error.response.data.message);
+        }
     }
 
     // VALORES POR DEFECTO EN LOS INPUTS
@@ -88,7 +117,7 @@ function ActualizarBD() {
                 });
                 
                 setLoad(false);
-            }catch (error) { console.log(error.response.data.message); }
+            }catch (error) { Notificacion(error.response.data.message, 'success'); }
         } 
         fetchData();  
     }, [id]); 
@@ -111,7 +140,7 @@ function ActualizarBD() {
           }
         }
         catch (error) { 
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'success');
         }
       }
 
@@ -128,7 +157,6 @@ function ActualizarBD() {
             setDataServidor(tableDataServidor => [...tableDataServidor, { servidor_id: x.servidor_id, servidor: x.servidor}]);
             selecciones.push(respuesta[i].servidor_id);
         }
-
         setSelectServidor(selecciones); 
     };
 
@@ -141,7 +169,7 @@ function ActualizarBD() {
             let selecciones = [];
             for (let i = 0; i < nuevo.length; i++) 
                 selecciones.push(nuevo[i][elemento]);
-                
+
             setSelecciones(selecciones);
         }
     };
@@ -173,7 +201,20 @@ function ActualizarBD() {
         },
     ];
 
-    
+    const eliminar = async (id) => {
+        try {
+            if(obtenerUsuario().rol !== 'user'){
+                await axios.delete(`${rutaBaseDatos}/${id}`, { headers: authHeader() });
+
+                Notificacion('BASE DE DATPS ELIMINADA EXITOSAMENTE', 'success');
+                navegar(`/basedatos/`);
+            }
+          }
+          catch (error) { 
+            Notificacion(error.response.data.message, 'error');
+          }
+    }
+
     if(load)
         <BiLoaderAlt className='text-6xl text-blue-500 animate-spin' />
     else{
@@ -195,7 +236,7 @@ function ActualizarBD() {
             ) : (null) }
 
 
-            <h1 className='font-bold text-lg'>Registro de Base de datos</h1>
+            <h1 className='font-bold text-lg'>Actualización de Base de datos</h1>
 
             <form className="flex flex-col items-center space-y-4 relative w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" onSubmit={actualizar}>
 
@@ -207,7 +248,6 @@ function ActualizarBD() {
                     <Select campo='Estatus' name='estatus' required={true} byId={false} propiedad={general.estatus} opciones={estatus ? estatus : ['SELECCIONE']} manejador={setValores}/>
                     <Select campo='Tipo' name='tipo' required={true} byId={false} propiedad={general.tipo} opciones={tipos ? tipos : ['SELECCIONE']} manejador={setValores} />
                     <Select campo='Manejador' name='manejador' required={true} byId={false} propiedad={general.manejador} opciones={mane ? mane : ['SELECCIONE']} manejador={setValores} />
-                    <Input campo='Version' name='version_manejador' propiedad={general.version_manejador} editable={true} manejador={setValores} />
                     <Select campo='Ambiente' name='ambiente' required={true} byId={false} propiedad={general.ambiente} opciones={ambientes ? ambientes : ['SELECCIONE']} manejador={setValores} />
                     <Input campo='N° Usuario' name='cantidad_usuarios' propiedad={general.base_cantidad_usuarios} required={true} editable={true} manejador={setValores} />
                 </div>
@@ -226,14 +266,38 @@ function ActualizarBD() {
                     </div>
                 </div>
                     
-                <div className="flex space-x-2 md:space-x-12 mt-12">
+                <div className="flex space-x-2 md:space-x-12 pt-12">
                     <Button tipo='button' color='blue' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
                     <Button tipo='submit' color='blue' width={32}>Actualizar</Button>
-                </div>
+                    {obtenerUsuario().rol === 'admin' ? (
+                        <Button tipo='button' color='red' width={32} manejador={(e) => {
+                            swal({
+                                text: `¿Esta seguro de Eliminar la aplicacion ${general.base_datos}?`,
+                                icon: 'warning',
+                                buttons: {
+                                    cancel: {
+                                      text: "Cancel",
+                                      value: false,
+                                      visible: true,
+                                      className: "bg-red-600 text-white outline-none border-none hover:bg-red-500",
+                                    },
+                                    confirm: {
+                                      text: "Aceptar",
+                                      value: true,
+                                      visible: true,
+                                      className: "bg-blue-600 text-white outline-none border-none hover:bg-blue-500",
+                                    }
+                                },
+                              }).then((result) => {
+                                if (result)
+                                  eliminar(id);
+                              })
+                        }} >Eliminar</Button>
+                    ) : null}
 
+                </div>
             </form>
             
-
         </Container>
         )
     }

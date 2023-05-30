@@ -1,7 +1,7 @@
 const pool = require('../config');
 const { generarLogAuditoria } = require('../helpers/auditoria');
 
-const query = `
+const consultaDeBusqueda = `
 SELECT 
     servidores.servidor_id,servidor,estado as estatus,ser_direccion,sistema,modelo,marca,
     region,localidad,DATE_FORMAT (ser_fecha_actualizacion, '%d-%m-%Y %H:%i') as ser_fecha_actualizacion,indicador
@@ -27,28 +27,28 @@ const obtenerBusqueda = async (req,res) => {
 
         if(estatus){
             data = await pool.query(
-                `${query}
+                `${consultaDeBusqueda}
                 WHERE (servidores.servidor_id LIKE ? OR servidor LIKE ? ) 
                     AND estado LIKE ? ORDER BY servidores.servidor_id ${orden ? orden : 'ASC'};`, 
             [termino,termino,estatus]);
         }
         else if(region){
             data = await pool.query(
-                `${query}
+                `${consultaDeBusqueda}
                 WHERE (servidores.servidor_id LIKE ? OR servidor LIKE ? ) 
                     AND region LIKE ? ORDER BY servidores.servidor_id ${orden ? orden : 'ASC'};`, 
             [termino,termino,region]);
         }
         else if(sistema){
             data = await pool.query(
-                `${query}
+                `${consultaDeBusqueda}
                 WHERE (servidores.servidor_id LIKE ? OR servidor LIKE ? ) 
                     AND sistema LIKE ? ORDER BY servidores.servidor_id ${orden ? orden : 'ASC'};`, 
             [termino,termino,sistema]);
         }
         else if(marca){
             data = await pool.query(
-                `${query}
+                `${consultaDeBusqueda}
                 WHERE (servidores.servidor_id LIKE ? OR servidor LIKE ? ) 
                     AND marca LIKE ? ORDER BY servidores.servidor_id ${orden ? orden : 'ASC'};`, 
             [termino,termino,marca]);
@@ -56,13 +56,13 @@ const obtenerBusqueda = async (req,res) => {
         else{
             if(term===''){
                 data = await pool.query(`
-                    ${query}
+                    ${consultaDeBusqueda}
                     ORDER BY servidores.servidor_id ${orden ? orden : 'ASC'}`, 
                 [termino,termino]);
             }
             else{
                 data = await pool.query(`
-                    ${query}
+                    ${consultaDeBusqueda}
                     WHERE (servidores.servidor_id LIKE ? OR servidor LIKE ? ) 
                     ORDER BY servidores.servidor_id ${orden ? orden : 'ASC'}`, 
                 [termino,termino]);
@@ -81,7 +81,7 @@ const obtenerBusqueda = async (req,res) => {
 const registrarServidor = async (req,res) => {
     try {
         const {
-            servidor,estatus,direccion,sistema,version,modelo,marca,serial,
+            servidor,estatus,direccion,sistema,modelo,marca,serial,
             memoria,velocidad,cantidad,region,localidad,usuario_registro
         } = req.body;
 
@@ -95,18 +95,9 @@ const registrarServidor = async (req,res) => {
         }
         else{
 
-            if(version){
-                const datos_version = await pool.query(
-                    `INSERT INTO versiones_sistemas (version_sistema,sistema_id) 
-                    VALUES 
-                        (?, ?);`, 
-                    [version,sistema]
-                );
-            }
-
             let modelo_id = null;
             if(modelo){
-                const datos_modelo = await pool.query(
+                await pool.query(
                     `INSERT INTO modelos 
                         (modelo,mod_marca,mod_serial,mod_cantidad_cpu,mod_velocidad_cpu,mod_memoria) 
                     VALUES 
@@ -119,7 +110,7 @@ const registrarServidor = async (req,res) => {
                 modelo_id = selectModelo[0][0].modelo_id;
             }
 
-            const datos_servidor = await pool.query(
+            await pool.query(
                 `INSERT INTO servidores 
                     (servidor,ser_estatus,ser_direccion,ser_sistema,ser_modelo,ser_region_id,
                     ser_localidad_id,ser_usuario_registro,ser_usuario_actualizo) 
@@ -160,14 +151,14 @@ const actualizarServidor = async (req,res) => {
         const { id } = req.params;
 
         const {
-            servidor,estatus,direccion,sistema,marca,modelo,serial,
+            servidor,estatus,direccion,sistema,serial,
             velocidad,cantidad,memoria,region,localidad,usuario_actualizo
         } = req.body;
 
-        const query = await pool.query(`SELECT modelo_id FROM modelos WHERE mod_serial = ?;`,[serial]);
-        const modelo_id = query[0][0].modelo_id;
+        const buscarModeloId = await pool.query(`SELECT modelo_id FROM modelos WHERE mod_serial = ?;`,[serial]);
+        const modelo_id = buscarModeloId[0][0].modelo_id;
 
-        const query2 = await pool.query( 
+        await pool.query( 
             `UPDATE modelos  SET 
                 mod_cantidad_cpu = ?, mod_velocidad_cpu = ?, mod_memoria = ?
             WHERE 
@@ -176,7 +167,7 @@ const actualizarServidor = async (req,res) => {
         );
 
         // ACTUALIZAR SERVIDOR
-        const [result] = await pool.query(
+        await pool.query(
             `UPDATE servidores  SET 
                 servidor = ?,
                 ser_estatus = (SELECT estado_id FROM estados WHERE estado = ?),
@@ -207,7 +198,7 @@ const actualizarServidor = async (req,res) => {
 
 
 // *********************************** OBTENER INFORMACION GENERAL ***********************************
-const general = async (req,res) => {
+const obtenerServidor = async (req,res) => {
     try {
         const { id } = req.params;
 
@@ -243,12 +234,12 @@ const general = async (req,res) => {
 
         const bd = await pool.query(`
             SELECT 
-                bases_datos.base_datos_id, base_datos, estatus, base_cantidad_usuarios, base_fecha_actualizacion,
+                bases_datos.base_datos_id, base_datos, estado as estatus, base_cantidad_usuarios, base_fecha_actualizacion,
                 tipo, manejador,ambiente
             FROM bases_datos
                 JOIN basedatos_servidor ON bases_datos.base_datos_id = basedatos_servidor.base_datos_id
                 JOIN servidores ON basedatos_servidor.servidor_id = servidores.servidor_id
-                JOIN estatus ON bases_datos.base_estatus = estatus.estatus_id
+                JOIN estados ON bases_datos.base_estatus = estados.estado_id
                 JOIN tipos_bases ON tipos_bases.tipo_id = bases_datos.base_tipo
                 JOIN manejadores ON manejadores.manejador_id = bases_datos.base_manejador
                 JOIN ambientes ON ambientes.ambiente_id = bases_datos.base_ambiente
@@ -261,13 +252,6 @@ const general = async (req,res) => {
             basedatos: bd[0],
         }
 
-        const datosAuditoria = {
-            mensaje : `Visualizacion de Servidor ${id}`,
-            ip : req.ip,
-            usuario_id : req.usuario_id
-        }
-        generarLogAuditoria(datosAuditoria);
-
         
         res.send(respuesta);
 
@@ -276,9 +260,33 @@ const general = async (req,res) => {
     }
 };
 
+// *********************************** ELIMINAR REGISTRO ***********************************
+const eliminarServidor = async (req,res) => {
+    try {
+        const { id } = req.params;
+
+        await pool.query(`DELETE FROM basedatos_servidor WHERE servidor_id = ?;`, [id]);
+        await pool.query(`DELETE FROM aplicacion_servidor WHERE servidor_id = ?;`, [id]);
+        await pool.query(`DELETE FROM servidores WHERE servidor_id = ?;`, [id]);
+
+        const datosAuditoria = {
+            mensaje : `Eliminacion de servidor ${id}`,
+            ip : req.ip,
+            usuario_id : req.usuario_id
+        }
+        generarLogAuditoria(datosAuditoria);
+
+        res.sendStatus(204);
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR AL ELIMINAR BASE DE DATOS' });
+    }
+};
+
+
 module.exports = { 
     obtenerBusqueda,
     registrarServidor,
     actualizarServidor,
-    general,
+    obtenerServidor,
+    eliminarServidor,
  };

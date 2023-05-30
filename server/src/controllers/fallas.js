@@ -1,6 +1,5 @@
 
 const pool = require('../config');
-const { matchedData } = require("express-validator");
 const { generarLogAuditoria } = require('../helpers/auditoria');
 
 // *********************************** OBTENER FALLAS ***********************************
@@ -53,8 +52,7 @@ const registrarFalla = async (req,res) => {
             usuario_id : req.usuario_id
         }
         generarLogAuditoria(datosAuditoria);
-                
-        console.log('FALLA REGISTRADA CORRECTAMENTE');
+        
         res.send('FALLA REGISTRADA CORRECTAMENTE');
     } catch (error) {
         return res.status(401).json({ message: 'ERROR AL REGISTRAR FALLA' });
@@ -84,7 +82,6 @@ const buscarFalla = async (req,res) => {
             ORDER BY falla_id ASC;`,
             [termino,termino,termino,termino,termino,termino]
         );
-        console.log(data[0][0]);
 
         res.send(data[0]);
     }
@@ -108,8 +105,6 @@ const actualizarFalla = async (req,res) => {
             fal_solucion = ?
         WHERE falla_id = ?`, [impacto, descripcion, solucion, id]
         );
-
-        console.log(id);
 
         res.send('ACTUALIZACION EXITOSA');
     } catch (error) {

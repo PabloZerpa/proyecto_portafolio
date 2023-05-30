@@ -7,7 +7,6 @@ import { FaTimesCircle } from 'react-icons/fa';
 import { columnasModalBD,columnasModalCustodio,columnasModalLenguaje,columnasModalServidor } from '../../utils/columnas';
 import Opciones from '../../utils/Opciones';
 import TableRegistro from '../../components/TablaRegistro';
-import Modal from '../../components/Modal';
 import DocumentosForm from '../../components/DocumentosForm';
 import axios from 'axios';
 import { obtenerUsuario, rutaAplicacion } from '../../utils/APIRoutes';
@@ -50,7 +49,11 @@ function RegistrarApp() {
     // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
     const setValores = (e) => {
         const valor = e.target.value.toUpperCase();
-        setDatos({ ...datos, [e.target.name] : valor });
+
+        if(e.target.name === 'apl_direccion' || e.target.name === 'doc_direccion')
+            setDatos({ ...datos, [e.target.name] : e.target.value.toLowerCase() });
+        else
+            setDatos({ ...datos, [e.target.name] : valor });
     }
 
     // =================== FUNCION PARA ACTUALIZAR DATOS ===================
@@ -66,7 +69,7 @@ function RegistrarApp() {
                 datosServidor.select_documentos = tableDataDoc;
 
                 const id = await axios.post(`${rutaAplicacion}/`, datosServidor, { headers: authHeader() }) 
-                .then(response => { return response.data; });
+                    .then(response => { return response.data; });
 
                 Notificacion('REGISTRO EXITOS', 'success');
                 navigate(`/aplicaciones/${id}`);
@@ -264,81 +267,69 @@ function RegistrarApp() {
 
             {/* --------------- VENTANA MODAL PARA REGISTRAR BASES DE DATOS --------------- */}
             {isOpen ? (
-                <Modal>
-                    <TableRegistro
-                        setIsOpen={setIsOpen}
-                        devolverSelecciones={obtenerSeleccionesBase}
-                        columnas={columnasModalBD}
-                        objetivo='base_datos'
-                        busqueda={true}
-                        selectDefault={select_base}
-                    />
-                </Modal>
+                <TableRegistro
+                    setIsOpen={setIsOpen}
+                    devolverSelecciones={obtenerSeleccionesBase}
+                    columnas={columnasModalBD}
+                    objetivo='base_datos'
+                    busqueda={true}
+                    selectDefault={select_base}
+                />
+                
             ) : (null) }
 
             {/* --------------- VENTANA MODAL PARA REGISTRAR SERVIDORES --------------- */}
             {isOpen2 ? (
-                <Modal>
-                    <TableRegistro
-                        setIsOpen={setIsOpen2}
-                        devolverSelecciones={obtenerSeleccionesServidor}
-                        columnas={columnasModalServidor}
-                        objetivo='servidor'
-                        busqueda={true}
-                        selectDefault={select_servidor}
-                    />
-                </Modal>
+                <TableRegistro
+                    setIsOpen={setIsOpen2}
+                    devolverSelecciones={obtenerSeleccionesServidor}
+                    columnas={columnasModalServidor}
+                    objetivo='servidor'
+                    busqueda={true}
+                    selectDefault={select_servidor}
+                />
             ) : (null) }
 
             {/* --------------- VENTANA MODAL PARA REGISTRAR LENGUAJES --------------- */}
             {isOpen3 ? (
-                <Modal>
-                    <TableRegistro
-                        setIsOpen={setIsOpen3}
-                        devolverSelecciones={obtenerSeleccionesLenguaje}
-                        columnas={columnasModalLenguaje}
-                        objetivo='lenguaje'
-                        selectDefault={select_lenguaje}
-                    />
-                </Modal>
+                <TableRegistro
+                    setIsOpen={setIsOpen3}
+                    devolverSelecciones={obtenerSeleccionesLenguaje}
+                    columnas={columnasModalLenguaje}
+                    objetivo='lenguaje'
+                    selectDefault={select_lenguaje}
+                />
             ) : (null) }
 
             {/* --------------- VENTANA MODAL PARA REGISTRAR DOCUMENTOS --------------- */}
             {isOpen4 ? (
-                <Modal>
-                    {/* --------------- DOCUMENTACION --------------- */}
-                    <DocumentosForm
-                        setIsOpen={setIsOpen4}
-                        devolverSelecciones={obtenerSeleccionesDoc}
-                    />
-                </Modal>
+                <DocumentosForm
+                    setIsOpen={setIsOpen4}
+                    devolverSelecciones={obtenerSeleccionesDoc}
+                />
             ) : (null) }
 
             {/* --------------- VENTANA MODAL PARA REGISTRAR CUSTODIOS --------------- */}
             {isOpen5 ? (
-                <Modal>
-                    <TableRegistro
-                        setIsOpen={setIsOpen5}
-                        devolverSelecciones={obtenerCustodioFuncional}
-                        columnas={columnasModalCustodio}
-                        objetivo='custodio'
-                        busqueda={true}
-                        selectDefault={null}
-                    />
-                </Modal>
+                <TableRegistro
+                    setIsOpen={setIsOpen5}
+                    devolverSelecciones={obtenerCustodioFuncional}
+                    columnas={columnasModalCustodio}
+                    objetivo='custodio'
+                    busqueda={true}
+                    selectDefault={null}
+                />
             ) : (null) }
 
             {isOpen6 ? (
-                <Modal>
-                    <TableRegistro
-                        setIsOpen={setIsOpen6}
-                        devolverSelecciones={obtenerCustodioTecnico}
-                        columnas={columnasModalCustodio}
-                        objetivo='custodio'
-                        busqueda={true}
-                        selectDefault={null}
-                    />
-                </Modal>
+                <TableRegistro
+                    setIsOpen={setIsOpen6}
+                    devolverSelecciones={obtenerCustodioTecnico}
+                    columnas={columnasModalCustodio}
+                    objetivo='custodio'
+                    busqueda={true}
+                    selectDefault={null}
+                />
             ) : (null) }
 
 

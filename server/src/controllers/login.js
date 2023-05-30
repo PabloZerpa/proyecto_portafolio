@@ -3,7 +3,6 @@ const pool = require('../config');
 const { matchedData } = require("express-validator");
 const { generarToken } = require('../helpers/token');
 const { encriptar, comparar } = require('../helpers/encriptar');
-
 const { generarLogAuditoria } = require('../helpers/auditoria');
 
 // *************** LOGEAR USUARIO ***************
@@ -12,17 +11,17 @@ const login = async (req, res) => {
         const body = matchedData(req);
         const {indicador, password} = body;
         
-        const query = await pool.query('SELECT * FROM usuarios WHERE indicador = ?', [indicador]);
-        const user = query[0][0];
+        const buscarUsuario = await pool.query('SELECT * FROM usuarios WHERE indicador = ?', [indicador]);
+        const usuario = buscarUsuario[0][0];
         let rol = null;
 
-        if(user){
-            const query2 = await pool.query('SELECT rol FROM roles WHERE rol_id = ?', [user.rol_id]);
-            rol = query2[0][0].rol;
+        if(usuario){
+            const rolUsuario = await pool.query('SELECT rol FROM roles WHERE rol_id = ?', [usuario.rol_id]);
+            rol = rolUsuario[0][0].rol;
         }
 
         // ********** VERIFICA QUE EL USUARIO EXISTA **********
-        if(!user){
+        if(!usuario){
             return res.status(401).json({ message: 'USUARIO INCORRECTO' });
         }
 
@@ -32,7 +31,7 @@ const login = async (req, res) => {
         }
 
         // ********** VERIFICA LA CONTRASEÑA **********
-        const passwordVerificado = await comparar(password, user.password);
+        const passwordVerificado = await comparar(password, usuario.password);
         if (!passwordVerificado) {
             return res.status(401).json({ message: 'CONTRASEÑA INCORRECTA' });
         }
@@ -46,7 +45,7 @@ const login = async (req, res) => {
             exp = false;
 
         // ********** GENERA EL TOKEN DEL USUARIO **********
-        const token = await generarToken(user.usuario_id,indicador,rol);
+        const token = await generarToken(usuario.usuario_id,indicador,rol);
         const datos = {
             indicador,
             rol,
@@ -57,7 +56,7 @@ const login = async (req, res) => {
         const datosAuditoria = {
             mensaje : 'Inicio de sesion exitoso',
             ip : req.ip,
-            usuario_id : user.usuario_id
+            usuario_id : usuario.usuario_id
         }
         generarLogAuditoria(datosAuditoria);
 
@@ -74,17 +73,18 @@ const registrar = async (req, res) => {
     try {
         const password = await encriptar(req.body.password);
         const datos = {...req.body, password };
+        let usuario_id = null;
 
         const buscarUsuario = await pool.query('SELECT * FROM usuarios WHERE indicador = ?', [datos.indicador]);
-        const user = buscarUsuario[0][0];
+        const usuario = buscarUsuario[0][0];
             
         // ********** VERIFICA QUE EL USUARIO EXISTA **********
-        if(user){
+        if(usuario){
             return res.status(401).json({ message: 'USUARIO YA REGISTRADO' });
         }
 
         if(datos.indicador === 'admin'){
-            const query = await pool.query(
+            await pool.query(
                 `INSERT INTO usuarios 
                     (indicador, password, nombre, apellido, rol_id, cargo_id, gerencia_id, exp_password)
                 VALUES (?,?,?,?,?,?,?, now() );`,
@@ -94,9 +94,9 @@ const registrar = async (req, res) => {
         }
         else{
             const rows = await pool.query(`SELECT usuario_id FROM usuarios WHERE indicador = ?`, [datos.usuario_registro]);
-            const usuario_id = rows[0][0].usuario_id;
+            usuario_id = rows[0][0].usuario_id;
 
-            const query = await pool.query(
+            await pool.query(
                 `INSERT INTO usuarios 
                     (indicador, password, nombre, apellido, rol_id, cargo_id, gerencia_id, 
                     usuario_registro, usuario_actualizo)
@@ -109,7 +109,7 @@ const registrar = async (req, res) => {
         const datosAuditoria = {
             mensaje : `Registro de Usuario ${datos.indicador}`,
             ip : req.ip,
-            usuario_id : req.usuario_id
+            usuario_id : usuario_id
         }
         generarLogAuditoria(datosAuditoria);
 
@@ -120,5 +120,17 @@ const registrar = async (req, res) => {
     
  }
 
+ // *************** CERRAR SESION ***************
+const logout = (req, res) => {
 
-module.exports = { login, registrar };
+    const datosAuditoria = {
+        mensaje : 'Cerro Sesion',
+        ip : req.ip,
+        usuario_id : req.usuario_id
+    }
+
+    generarLogAuditoria(datosAuditoria);
+};
+
+
+module.exports = { login, registrar, logout };

@@ -1,7 +1,7 @@
 const pool = require('../config');
 const { generarLogAuditoria } = require('../helpers/auditoria');
 
-const query = `
+const consultaDeBusqueda = `
 SELECT 
     bases_datos.base_datos_id, base_datos, estado as estatus, tipo, manejador, ambiente, 
     base_cantidad_usuarios, DATE_FORMAT (base_fecha_actualizacion, '%d-%m-%Y %H:%i') as base_fecha_actualizacion, indicador 
@@ -37,27 +37,28 @@ const obtenerDatos = async (req,res) => {
 };
 
 // *********************************** OBTENER TODOS LOS DATOS ***********************************
-const obtenerBaseDatos = async (req,res) => {
-    try {
-        const {id} = req.params;
+// const obtenerBaseDatos = async (req,res) => {
+//     try {
+//         const {id} = req.params;
 
-        const data = await pool.query(`
-            SELECT
-                bases_datos.base_datos_id,base_datos,base_estatus,tipo,manejador,version_manejador,
-                base_cantidad_usuarios,base_ambiente
-            FROM bases_datos
-                JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.base_datos_id
-                JOIN manejadores ON manejadores.manejador_id = bases_datos.base_datos_id
-                JOIN versiones_manejadores ON manejadores.manejador_id = versiones_manejadores.manejador_id
-            WHERE bases_datos.base_datos_id = ?;`, [id]);
+//         const data = await pool.query(`
+//             SELECT
+//                 bases_datos.base_datos_id,base_datos,base_estatus,tipo,manejador,version_manejador,
+//                 base_cantidad_usuarios,base_ambiente
+//             FROM bases_datos
+//                 JOIN tipos_bases ON tipos_bases.tipo_base_id = bases_datos.base_datos_id
+//                 JOIN manejadores ON manejadores.manejador_id = bases_datos.base_datos_id
+//                 JOIN versiones_manejadores ON manejadores.manejador_id = versiones_manejadores.manejador_id
+//             WHERE bases_datos.base_datos_id = ?;`, [id]);
 
-        res.send(data[0][0]);
-    } catch (error) {
-        return res.status(401).json({ message: 'ERROR AL OBTENER DATOS' });
-    }
-};
+//         res.send(data[0][0]);
+//     } catch (error) {
+//         return res.status(401).json({ message: 'ERROR AL OBTENER DATOS' });
+//     }
+// };
 
 // *********************************** OBTENER LOS DATOS POR TERMINO DE BUSQUEDA ***********************************
+
 const obtenerBusqueda = async (req,res) => {
     try {
         const { term,estatus,tipo,manejador,ambiente,count,orden } = req.body;
@@ -70,7 +71,7 @@ const obtenerBusqueda = async (req,res) => {
 
         if(estatus){
             data = await pool.query(
-                `${query}
+                `${consultaDeBusqueda}
                 WHERE (bases_datos.base_datos_id LIKE ? OR 
                     base_datos LIKE ? )
                     AND estado LIKE ? ORDER BY bases_datos.base_datos_id ${orden ? orden : 'ASC'};`, 
@@ -78,7 +79,7 @@ const obtenerBusqueda = async (req,res) => {
         }
         else if(tipo){
             data = await pool.query(
-                `${query}
+                `${consultaDeBusqueda}
                 WHERE (bases_datos.base_datos_id LIKE ? OR 
                     base_datos LIKE ? )
                     AND tipo LIKE ? ORDER BY bases_datos.base_datos_id ${orden ? orden : 'ASC'};`, 
@@ -86,7 +87,7 @@ const obtenerBusqueda = async (req,res) => {
         }
         else if(manejador){
             data = await pool.query(
-                `${query}
+                `${consultaDeBusqueda}
                 WHERE (bases_datos.base_datos_id LIKE ? OR 
                     base_datos LIKE ? )
                     AND manejador LIKE ? ORDER BY bases_datos.base_datos_id ${orden ? orden : 'ASC'};`, 
@@ -94,7 +95,7 @@ const obtenerBusqueda = async (req,res) => {
         }
         else if(ambiente){
             data = await pool.query(
-                `${query}
+                `${consultaDeBusqueda}
                 WHERE (bases_datos.base_datos_id LIKE ? OR 
                     base_datos LIKE ? )
                     AND ambiente LIKE ? ORDER BY bases_datos.base_datos_id ${orden ? orden : 'ASC'};`, 
@@ -103,12 +104,12 @@ const obtenerBusqueda = async (req,res) => {
         else{
             if(term===' '){
                 data = await pool.query(`
-                ${query} 
+                ${consultaDeBusqueda} 
                 ORDER BY bases_datos.base_datos_id ${orden ? orden : 'ASC'}`);
             }
             else{
                 data = await pool.query(`
-                ${query}
+                ${consultaDeBusqueda}
                 WHERE 
                     (bases_datos.base_datos_id LIKE ? OR 
                     base_datos LIKE ? ) 
@@ -127,33 +128,31 @@ const obtenerBusqueda = async (req,res) => {
 
 
 // *********************************** CREAR REGISTRO ***********************************
-const crearBaseDatos = async (req,res) => {
+const registrarBaseDatos = async (req,res) => {
     try {
         const {
-            base_datos,estatus,cantidad_usuarios, tipo, manejador, 
-            version_manejador,ambiente, usuario_registro, select_servidor,
+            base_datos,estatus,cantidad_usuarios, tipo, manejador,ambiente, usuario_registro, select_servidor,
         } = req.body;
 
         const query = await pool.query(
             `SELECT * FROM bases_datos WHERE base_datos = ?`, [base_datos]);
         const bd = query[0][0];
 
-        if(!select_servidor[0]){
-            return res.status(401).json({ message: 'ERROR, SERVIDOR SIN SELECCIONAR' });
-        }
-
         // ****************************** VERIFICA QUE LA APLICACION NO EXISTA ******************************
         if(bd){
             return res.status(401).json({ message: 'ERROR, BASE DE DATOS YA EXISTE' });
         }
         else{
-
+            
             await pool.query(
                 `INSERT INTO bases_datos 
                     (base_datos,base_estatus,base_tipo,base_manejador,base_ambiente,base_cantidad_usuarios,
                     base_usuario_registro,base_usuario_actualizo) 
                 VALUES 
-                    (?,?,?,?,?,?,
+                    (?,?,
+                    (SELECT tipo_id FROM tipos_bases WHERE tipo = ?),
+                    (SELECT manejador_id FROM manejadores WHERE manejador = ?),
+                    ?,?,
                     (SELECT usuario_id FROM usuarios WHERE indicador = ?),
                     (SELECT usuario_id FROM usuarios WHERE indicador = ?)
                 );`, 
@@ -163,9 +162,7 @@ const crearBaseDatos = async (req,res) => {
             const selectBase = await pool.query(`SELECT * FROM bases_datos ORDER BY base_datos_id DESC LIMIT 1`);
             let base_datos_id = selectBase[0][0].base_datos_id;
 
-
             if(select_servidor){
-
                 for (const element of select_servidor) {
             
                     await pool.query(
@@ -196,12 +193,11 @@ const actualizarBaseDatos = async (req,res) => {
         const { id } = req.params;
 
         const {
-            base_datos,estatus,cantidad_usuarios, tipo, manejador, 
-            manejador_version,ambiente, select_servidor, usuario_actualizo
+            base_datos,estatus,cantidad_usuarios, tipo, manejador,ambiente, select_servidor, usuario_actualizo
         } = req.body;
 
         // ACTUALIZAR LA BASE DE DATOS
-        const [result] = await pool.query(
+        await pool.query(
             `UPDATE bases_datos  SET 
                 base_datos = ?,
                 base_estatus = (SELECT estado_id FROM estados WHERE estado = ?),
@@ -219,11 +215,13 @@ const actualizarBaseDatos = async (req,res) => {
             ]
         );
 
-        await pool.query(`DELETE FROM basedatos_servidor WHERE base_datos_id = ?;`,[id]);
-        for (const element of select_servidor) {
-            await pool.query(
-                `INSERT INTO basedatos_servidor (base_datos_id,servidor_id) VALUES (?,?)`,
-            [id,element.servidor_id]); 
+        if(select_servidor){
+            await pool.query(`DELETE FROM basedatos_servidor WHERE base_datos_id = ?;`,[id]);
+            for (const element of select_servidor) {
+                await pool.query(
+                    `INSERT INTO basedatos_servidor (base_datos_id,servidor_id) VALUES (?,?)`,
+                [id,element.servidor_id]); 
+            }
         }
 
         const datosAuditoria = {
@@ -242,7 +240,7 @@ const actualizarBaseDatos = async (req,res) => {
 
 
 // *********************************** OBTENER INFORMACION GENERAL ***********************************
-const general = async (req,res) => {
+const obtenerBaseDatos = async (req,res) => {
     try {
         const { id } = req.params;
 
@@ -310,13 +308,6 @@ const general = async (req,res) => {
             servidores: servidor,
         }
 
-        const datosAuditoria = {
-            mensaje : `Visualizacion de Base de datos ${db[0][0].base_datos_id}`,
-            ip : req.ip,
-            usuario_id : req.usuario_id
-        }
-        generarLogAuditoria(datosAuditoria);
-
         res.send(respuesta);
 
     } catch (error) {
@@ -325,12 +316,51 @@ const general = async (req,res) => {
 };
 
 
+// *********************************** ELIMINAR REGISTRO ***********************************
+const eliminarBaseDatos = async (req,res) => {
+    try {
+        const { id } = req.params;
+
+        await pool.query(`DELETE FROM basedatos_servidor WHERE base_datos_id = ?;`, [id]);
+        await pool.query(`DELETE FROM aplicacion_basedatos WHERE base_datos_id = ?;`, [id]);
+        await pool.query(`DELETE FROM bases_datos WHERE base_datos_id = ?;`, [id]);
+
+        const datosAuditoria = {
+            mensaje : `Eliminacion de base de datos ${id}`,
+            ip : req.ip,
+            usuario_id : req.usuario_id
+        }
+        generarLogAuditoria(datosAuditoria);
+
+        res.sendStatus(204);
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR AL ELIMINAR BASE DE DATOS' });
+    }
+};
+
+// *********************************** MANEJADORES ***********************************
+const obtenerManejadores = async (req,res) => {
+    const { tipo } = req.body;
+
+    const query = await pool.query(`SELECT tipo_id FROM tipos_bases WHERE tipo = ?;`,[tipo]);
+    const tipo_id = query[0][0].tipo_id;
+
+    try{
+        const data = await pool.query(`SELECT manejador FROM manejadores WHERE tipo_id = ?;`,[tipo_id]);
+        res.send(data[0]);
+    }
+    catch (error) {
+        return res.status(401).json({ message: 'ERROR AL OBTENER MANEJADORES' });
+    }
+}
 
 module.exports = { 
     obtenerDatos,
     obtenerBaseDatos,
     obtenerBusqueda,
-    crearBaseDatos,
+    registrarBaseDatos,
     actualizarBaseDatos,
-    general,
+    obtenerBaseDatos,
+    eliminarBaseDatos,
+    obtenerManejadores,
 };

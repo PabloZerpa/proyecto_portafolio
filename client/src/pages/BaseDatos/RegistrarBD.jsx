@@ -30,7 +30,6 @@ function RegistrarBD() {
 
     // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
     async function establecerDatos(){
-        setMane(await Opciones('manejadores'));
         setEstatus(['SELECCIONE', 'POR DETERMINAR', 'ACTIVO', 'INACTIVO']);
         setTipos(await Opciones('tipos'));
         setAmbientes(await Opciones('ambientes'));
@@ -42,9 +41,39 @@ function RegistrarBD() {
 
 
     // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
-    const setValores = (e) => {
+    const setValores = async(e) => {
         const valor = e.target.value.toUpperCase();
-        setDatos({ ...datos, [e.target.name] : valor })
+        setDatos({ ...datos, [e.target.name] : valor });
+
+        if(e.target.name === 'tipo'){
+            setMane(await OpcionesManejadores(e.target.value));
+        }
+    }
+
+    // ---------------- UPDATE DE UN CAMPO DE UN USUARIO ------------------
+    async function obtenerManejadores(tipo) {
+        try { 
+            const respuesta = await axios.post(`${rutaBaseDatos}/manejadores`, {tipo}, { headers: authHeader() });
+            return respuesta;
+        } catch (error) {
+            console.log(error.response.data.message);
+        }
+    }
+
+    async function OpcionesManejadores(valor){
+        try {
+            const respuesta = await obtenerManejadores(valor);
+            const data = respuesta.data;
+            let opciones = ['SELECCIONE'];
+        
+            for (let i = 0; i < data.length; i++) {
+                const valor = Object.values(data[i]);
+                opciones.push(valor[0]);
+            }
+            return opciones;
+        } catch (error) {
+            console.log(error.response.data.message);
+        }
     }
 
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
@@ -145,9 +174,8 @@ function RegistrarBD() {
 
                 <div className="w-full grid grid-cols-1 md:grid-cols-2 relative space-x-4 mb-0">
                     <Select campo='Estatus' name='estatus' required={true} opciones={estatus ? estatus : ['SELECCIONE']} manejador={setValores}/>
-                    <Select campo='Tipo' name='tipo' required={true} opciones={tipos ? tipos : ['SELECCIONE']} manejador={setValores} />
-                    <Select campo='Manejador' name='manejador' required={true} opciones={mane ? mane : ['SELECCIONE']} manejador={setValores} />
-                    <Input campo='Version' name='version_manejador' editable={true} manejador={setValores} />
+                    <Select campo='Tipo' name='tipo' byId={false} required={true} opciones={tipos ? tipos : ['SELECCIONE']} manejador={setValores} />
+                    <Select campo='Manejador' name='manejador' byId={false} required={true} opciones={mane ? mane : ['SELECCIONE']} manejador={setValores} />
                     <Select campo='Ambiente' name='ambiente' required={true} opciones={ambientes ? ambientes : ['SELECCIONE']} manejador={setValores} />
                     <Input campo='N° Usuario' name='cantidad_usuarios' required={true} editable={true} manejador={setValores} />
                 </div>
@@ -166,7 +194,7 @@ function RegistrarBD() {
                     </div>
                 </div>
                     
-                <div className="flex space-x-2 md:space-x-12 mt-12">
+                <div className="flex space-x-2 md:space-x-12 pt-12">
                     <Button tipo='button' color='blue' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
                     <Button tipo='submit' color='blue' width={32}>Registrar</Button>
                 </div>

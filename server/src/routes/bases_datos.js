@@ -1,6 +1,8 @@
 
-const { obtenerDatos, obtenerBusqueda, crearBaseDatos, actualizarBaseDatos,  
-    general, obtenerBaseDatos } = require("../controllers/bases_datos");
+const { obtenerDatos, obtenerBusqueda, registrarBaseDatos, actualizarBaseDatos,  
+    obtenerBaseDatos, 
+    eliminarBaseDatos,
+    obtenerManejadores} = require("../controllers/bases_datos");
 const { auth, authAdmin } = require("../middlewares/auth");
 const { validatorBase } = require("../validators/base_datos");
 
@@ -10,18 +12,22 @@ const router = require("express").Router();
 router.get("/", auth, obtenerDatos);
 
 // *************** RUTA PARA OBTENER INFORMACION POR ID DE UNA BASE DE DATOS *************** 
-router.get("/:id", auth, general);
+router.get("/:id", auth, obtenerBaseDatos);
 
 // *************** RUTA PARA OBTENER INFORMACION POR BUSQUEDA *************** 
 router.post("/busqueda", auth, obtenerBusqueda);
 
 // *************** RUTA PARA REGISTRAR UNA BASES DE DATOS *************** 
-router.post("/", auth, validatorBase, crearBaseDatos);
+router.post("/", auth, validatorBase, registrarBaseDatos);
 
 // *************** RUTA PARA ACTUALIZAR UNA BASES DE DATOS *************** 
 router.patch("/:id", auth, actualizarBaseDatos);
 
-// router.delete("/:id", actualizarBaseDatos);
+// *************** RUTA PARA ELIMINAR DATOS POR ID *************** 
+router.delete("/:id", auth, eliminarBaseDatos);
+
+// *************** RUTA PARA OBTENER MANEJADORES *************** 
+router.post("/manejadores", auth, obtenerManejadores);
 
 
 module.exports = router;

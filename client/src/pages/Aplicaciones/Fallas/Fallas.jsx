@@ -140,28 +140,31 @@ function Fallas() {
               <div>
                 <FaTimesCircle
                     onClick={() => {
-                      swal({
-                        text: `¿Esta seguro de Eliminar a la falla numero ${row.falla_id}?`,
-                        icon: 'warning',
-                        buttons: {
-                          cancel: {
-                            text: "Cancel",
-                            value: false,
-                            visible: true,
-                            className: "bg-red-600 text-white outline-none border-none hover:bg-red-500",
-                          },
-                          confirm: {
-                            text: "Aceptar",
-                            value: true,
-                            visible: true,
-                            className: "bg-blue-600 text-white outline-none border-none hover:bg-blue-500",
-                          }
-                        },
-                      }).then((result) => {
-                        if (result)
-                          eliminarFalla(row);
-                      })
-                    }} 
+                        if(obtenerUsuario().rol === 'admin'){
+                            swal({
+                                text: `¿Esta seguro de Eliminar a la falla numero ${row.falla_id}?`,
+                                icon: 'warning',
+                                buttons: {
+                                cancel: {
+                                    text: "Cancel",
+                                    value: false,
+                                    visible: true,
+                                    className: "bg-red-600 text-white outline-none border-none hover:bg-red-500",
+                                },
+                                confirm: {
+                                    text: "Aceptar",
+                                    value: true,
+                                    visible: true,
+                                    className: "bg-blue-600 text-white outline-none border-none hover:bg-blue-500",
+                                }
+                                },
+                            }).then((result) => {
+                                if (result)
+                                eliminarFalla(row);
+                            })
+                        }
+                    }
+                    } 
                     className="ml-3 text-red-500 text-lg cursor-pointer"
                 />
               </div>,
@@ -184,7 +187,7 @@ function Fallas() {
         <Container>
             {/* --------------- VENTANA MODAL PARA ACTUALIZAR DATOS --------------- */}
             {isOpen ? (
-                <div className="fixed w-full max-w-2xl max-h-full z-50 overflow-y-auto">
+                <div className="fixed top-24 w-full max-w-2xl max-h-full z-50 overflow-y-auto">
                     <ActualizarFalla
                         setIsOpen={setIsOpen} 
                         valores={falla ? falla : null}
@@ -194,9 +197,9 @@ function Fallas() {
                         
             ) : (null) }
 
-            {/* --------------- VENTANA MODAL PARA ACTUALIZAR DATOS --------------- */}
+            {/* --------------- VENTANA MODAL PARA VER DATOS --------------- */}
             {isOpen2 ? (
-                <div className="fixed w-full max-w-2xl max-h-full z-50 overflow-y-auto">
+                <div className="fixed top-24 w-full max-w-2xl max-h-full z-50 overflow-y-auto">
                     <VerFalla
                         setIsOpen={setIsOpen2} 
                         valores={falla ? falla : null}
