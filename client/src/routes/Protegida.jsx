@@ -10,7 +10,7 @@ export const Protegida = ({children, redirectTo}) => {
             return <Navigate to={redirectTo} />
         }
     }
-    else if(obtenerUsuario() === null)
+    else if(obtenerUsuario() === null) 
         return <Navigate to={redirectTo} />
 
         

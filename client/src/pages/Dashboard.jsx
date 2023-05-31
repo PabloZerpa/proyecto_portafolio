@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import authHeader from "../utils/header";
 import axios from "axios";
 import { rutaAplicacion, rutaUsuario } from "../utils/APIRoutes";
+import { Notificacion } from "../utils/Notificacion";
 
 const columns = [
 	{
@@ -69,7 +70,7 @@ const columns = [
 ];
 
 
-function Dashboard() {
+function Dashboard() { 
   
   const [datos, setDatos] = useState([]);
   const [aplicaciones, setAplicaciones] = useState([]);
@@ -92,7 +93,7 @@ function Dashboard() {
         setLoad(false);
       }
       catch (error) {
-        console.log(error.response.data.message);
+        Notificacion(error.response.data.message, 'error');
       }
     }
     fetchData();

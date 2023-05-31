@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Container, Select, TextArea } from "../../../components";
+import { Button, Container, Input, Select, TableRegistro, TextArea } from "../../../components";
 import { Notificacion } from "../../../utils/Notificacion";
 import { FaArrowLeft } from "react-icons/fa";
 import axios from "axios";
@@ -15,6 +15,7 @@ function RegistrarFalla() {
     function navegar(ruta) { navigate(ruta) }
 
     // ---------- ESTADOS ----------
+    const [isOpen, setIsOpen] = useState(false);
     const [acronimos, setAcronimos] = useState('');
     const [datos, setDatos] = useState({
         usuario_creador: obtenerUsuario().indicador,
@@ -26,9 +27,9 @@ function RegistrarFalla() {
             const respuesta = await axios.get(`${rutaUsuario}/acronimos`, { headers: authHeader() });
             return respuesta;
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
-    }
+    } 
 
     async function OpcionesAcronimos(){
         try {
@@ -38,13 +39,13 @@ function RegistrarFalla() {
         
             for (let i = 0; i < data.length; i++) {
                 const valor = Object.values(data[i]);
-                opciones.push(valor[0]);
+                opciones.push(valor[0]); 
             }
         
             return opciones;
             
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
@@ -55,6 +56,7 @@ function RegistrarFalla() {
 
     useEffect(() => {
         establecerDatos();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
@@ -79,15 +81,100 @@ function RegistrarFalla() {
         }
     }
 
+    const obtenerAplicacion = (respuesta) => {
+        setDatos({ ...datos, ['aplicacion'] : respuesta });
+    };
+
+    const columns = [
+        {
+            name: 'ID',
+            selector: row => row.aplicacion_id,
+            sortable: true,
+            left: true,
+            width: '60px',
+        },
+        {
+            name: 'Acronimo',
+            selector: row => row.apl_acronimo,
+            sortable: true,
+            left: true,
+            width: "100px",
+        },
+        {
+            name: 'Nombre',
+            selector: row => row.apl_nombre,
+            sortable: true,
+            left: true,
+            width: '150px',
+        },
+        {
+          name: 'Alcance',
+          selector: row => row.alcance,
+          sortable: true,
+          width: "150px",
+          left: true
+      },
+        {
+            name: 'Estatus',
+            selector: row => row.estatus,
+            sortable: true,
+            left: true,
+            width: "150px",
+        },
+        {
+            name: 'Prioridad',
+            selector: row => row.prioridad,
+            sortable: true,
+            width: "100px",
+            left: true
+        },
+        {
+            name: 'Direccion',
+            selector: row => 
+              <a className="text-blue-400" href={`https://${row.apl_direccion}`} rel="noreferrer" target="_blank" >
+                {row.apl_direccion}
+              </a>,
+            sortable: true,
+            width: "200px",
+            left: true
+        },
+        {
+            name: 'Region',
+            selector: row => row.region,
+            sortable: true,
+            width: "150px",
+            left: true
+        },
+    ];
+
     return (
         <Container>
+
+            {/* --------------- VENTANA MODAL PARA REGISTRAR CUSTODIOS --------------- */}
+            {isOpen ? (
+                <TableRegistro
+                    setIsOpen={setIsOpen}
+                    devolverSelecciones={obtenerAplicacion}
+                    columnas={columns}
+                    objetivo='aplicacion'
+                    busqueda={true}
+                    selectDefault={null}
+                />
+            ) : (null) }
             <form className="flex flex-col items-center space-y-8 pb-4" onSubmit={registrarFalla}>
 
                 <div className="flex flex-col space-y-2">
                     <h2 className='font-bold text-base'>Datos de la Falla</h2>
 
                     <div className="flex flex-col p-4 w-[320px] md:w-[640px] lg:w-[800px] bg-zinc-400 rounded">
-                        <Select campo='Aplicacion' name='aplicacion' required={true} byId={false} opciones={acronimos ? acronimos : ['SELECCIONE']} manejador={setValores} />
+                        <div className="flex items-center space-x-4">
+                            <Input campo='Aplicacion' name='aplicacion' editable={false} propiedad={datos.aplicacion ? datos.aplicacion : 'SELECCIONE'} />
+                            <button type='button' className="p-1 mt-2 w-20 h-8 bg-blue-600 text-white text-sm rounded" 
+                                onClick={(e) => {setIsOpen(!isOpen)}} >
+                                Seleccionar
+                            </button>
+                        </div>
+                        
                         <Select campo='Impacto' name='impacto' required={true} byId={false} opciones={['SELECCIONE','ALTA','MEDIA','BAJA']} manejador={setValores}/>
                         <div className="col-span-2">
                             <TextArea campo='Descripcion' name='descripcion' area={true} required={true} editable={true} manejador={setValores} />

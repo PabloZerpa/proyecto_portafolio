@@ -2,6 +2,7 @@
 import axios from "axios";
 import { rutaUsuario } from "./APIRoutes";
 import authHeader from "../utils/header";
+import { Notificacion } from "./Notificacion";
 
 export async function Opciones(ruta, busqueda=false){
 
@@ -21,8 +22,8 @@ export async function Opciones(ruta, busqueda=false){
         return opciones;
         
     } catch (error) {
-        console.log(error.response.data.message);
+        Notificacion(error.response.data.message, 'error');
     }
-}
+} 
 
 export default Opciones;

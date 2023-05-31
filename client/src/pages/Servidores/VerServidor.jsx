@@ -6,6 +6,7 @@ import { Container, Input, Radio, Tabla } from '../../components';
 import { rutaServidor } from '../../utils/APIRoutes';
 import axios from 'axios';
 import authHeader from '../../utils/header';
+import { Notificacion } from '../../utils/Notificacion';
 
 const opcionesVista = ['General','Base de datos','Aplicacion'];
 
@@ -20,7 +21,7 @@ function VerServidor() {
   const [basedatos, setBaseDatos] = useState('');
   const [aplicacion, setAplicacion] = useState('');
 
-  // FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS
+  // FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS 
   const setValores = (e) => {
     setOpcion(e.target.value);
   }
@@ -36,7 +37,7 @@ function VerServidor() {
 
         setLoad(false);
           
-      }catch (error) { console.log(error.response.data.message); }
+      }catch (error) { Notificacion(error.response.data.message, 'error'); }
     } 
     fetchData();
   }, [id]);

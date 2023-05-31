@@ -6,61 +6,31 @@ const config = {
 }
 const ad = new activeDirectory(config);
 
-// *************** VERIFICAR EL TOKEN PARA EL LOGIN ***************
-const autenticarUser = async(req, res, next) => {
-    try {
-        const { indicador, password } = req.body;
-        const correo = `${indicador}@pdvsa.com`.toLowerCase();
-
-        ad.authenticate(correo, password, (err, auth) => {
-            if (err) {
-                console.log('ERROR: ' + JSON.stringify(err));
-                return;
-            }
-
-            if (auth) {
-                console.log('Authenticated!');
-                next();
-            } else {
-                console.log('Authentication failed!');
-            }
-        });
-
-    } catch (e) {
-        console.log('NO SE PUDO AUNTETICAR');
-    }
-};
+// *************** VERIFICAR EL INDICADOR EN DIRECTORIO ACTIVO ***************
 
 const verificarUser = (req, res, next) => {
 
     const { indicador } = req.body;
 
-    ad.userExists(indicador, function(err, exists) {
-        if (err) {
-            console.log('ERROR: ' + JSON.stringify(err));
-            return;
-        }
-
-        console.log(indicador + ' exists: ' + exists);
+    if(indicador === 'admin'){
         next();
-    });
+    }
+    else{
+
+        ad.userExists(indicador, function(err, exists) {
+            if (err) {
+                return res.status(401).json({ message: err });
+            }
+
+            if(exists)
+                next();
+            else
+                return res.status(401).json({ message: 'INDICADOR INVALIDO' });
+    
+        });
+    }
+
 }
 
-const buscarUser = (req, res, next) => {
 
-    const { indicador } = req.body;
-
-    ad.findUser(indicador, true, function(err, users) {
-        if (err) {
-            console.log('ERROR: ' + JSON.stringify(err));
-            return;
-        }
-
-        if (!users) console.log('User: ' + indicador + ' not found.');
-        else console.log(JSON.stringify(users));
-    });
-}
-
-
-
-module.exports = { autenticarUser, verificarUser, buscarUser };
+module.exports = { verificarUser };

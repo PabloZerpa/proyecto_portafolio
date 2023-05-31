@@ -2,9 +2,9 @@
 
 import { FaTimes } from "react-icons/fa";
 import { Input, TextArea } from "../../../components";
- 
-function VerFalla({setIsOpen, valores}) {
 
+function VerFalla({setIsOpen, valores}) {
+ 
     return (
         <form className="flex flex-col items-center space-y-4">
 

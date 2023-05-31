@@ -10,6 +10,7 @@ import Opciones from "../../utils/Opciones";
 import axios from "axios";
 import authHeader from "../../utils/header";
 import { rutaUsuario } from "../../utils/APIRoutes";
+import { Notificacion } from "../../utils/Notificacion";
 
 const opcionCategoria = ['Region', 'Plataforma', 'Estatus', 'Prioridad', 'Modificacion'];
 const opcionMostrar = ['Cantidad', 'Porcentaje', 'Histograma'];
@@ -58,7 +59,7 @@ function Diagramas() {
 
     const onSearch = async (categoria,mostrar) => {
       try {
-
+ 
         const {data} = await axios.post(`${rutaUsuario}/cantidadRegiones`, {categoria,mostrar}, { headers: authHeader() });
 
         setResultados(data.cantidad);
@@ -68,13 +69,13 @@ function Diagramas() {
         else if(data.clave === 'plataforma')
             setClaves(plataformas);
         else if(data.clave === 'estatus')
-            setClaves(estatus);
+            setClaves(estatus); 
         else if(data.clave === 'prioridad')
             setClaves(prioridades);
         else if(data.clave === 'modificacion')
             setClaves(meses);
         
-      } catch (error) { console.log(error.response.data.message); }
+      } catch (error) { Notificacion(error.response.data.message, 'error'); }
     }
       
     return (

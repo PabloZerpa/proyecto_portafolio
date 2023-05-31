@@ -43,9 +43,9 @@ function ActualizarCustodio() {
             const respuesta = await axios.post(`${rutaUsuario}/localidades`, {region}, { headers: authHeader() });
             return respuesta;
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
-    }
+    } 
 
     async function OpcionesLocalidades(valor){
         try {
@@ -97,6 +97,7 @@ function ActualizarCustodio() {
             setLoad(false);
         }
         fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
 

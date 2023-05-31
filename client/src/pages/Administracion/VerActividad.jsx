@@ -6,7 +6,7 @@ import { FaTimes } from "react-icons/fa";
 function VerActividad({setIsOpen, valores}) {
 
     const columns = [
-      {
+      { 
           name: 'Descripcion',
           selector: row => row.mensaje,
           sortable: true,

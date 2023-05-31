@@ -17,7 +17,7 @@ function Perfil({tipo='admin'}) {
                     <Input campo='Nombre' name='nombre' direccion="row" />
                     <Input campo='Indicador' name='indicador' direccion="row" />
                     <Input campo='Usuario' name='tipoUsuario' direccion="row" />
-                </div>
+                </div> 
             </div>
 
             <h2 className='font-bold text-lg'>Informacion de Contacto</h2>

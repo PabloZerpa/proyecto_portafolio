@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Notificacion } from "./Notificacion";
 
 const baseUrl = process.env.REACT_APP_URL;
 
@@ -18,5 +19,5 @@ export const logout = async () => {
     window.location.reload();
     try {
         await axios.get(`${rutaAuth}/logout`);
-    } catch (error) {console.log(error.response.data.message); }
-}
+    } catch (error) {Notificacion(error, 'error'); }
+} 

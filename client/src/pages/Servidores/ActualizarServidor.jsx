@@ -8,7 +8,7 @@ import { Notificacion } from '../../utils/Notificacion';
 import { obtenerUsuario, rutaServidor, rutaUsuario } from '../../utils/APIRoutes';
 import axios from 'axios';
 import authHeader from '../../utils/header';
-import swal from 'sweetalert';
+import swal from 'sweetalert'; 
 
 function ActualizarServidor() {
     
@@ -44,7 +44,7 @@ function ActualizarServidor() {
             const respuesta = await axios.post(`${rutaUsuario}/localidades`, {region}, { headers: authHeader() });
             return respuesta;
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
@@ -62,7 +62,7 @@ function ActualizarServidor() {
             return opciones;
             
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
@@ -97,6 +97,7 @@ function ActualizarServidor() {
             setLoad(false);
         }
         fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS

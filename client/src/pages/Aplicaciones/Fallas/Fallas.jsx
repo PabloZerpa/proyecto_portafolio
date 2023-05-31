@@ -38,14 +38,14 @@ function Fallas() {
     // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
     const setValores = (e) => {
         setDatos({ ...datos, [e.target.name] : e.target.value })    
-    }
+    } 
 
     // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
     async function obtenerFallaPorBusqueda(term) {
         try {
             return axios.post(`${rutaAplicacion}/fallas/busqueda`,{term}, { headers: authHeader() });
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
@@ -57,7 +57,7 @@ function Fallas() {
             const datos = await obtenerFallaPorBusqueda(terminoBusqueda);
             setResultados(datos.data);
         } catch (error) { 
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
@@ -67,6 +67,8 @@ function Fallas() {
             onSearch(debounceValue);
         else
             setResultados(null) 
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debounceValue, update, datos]);
 
 

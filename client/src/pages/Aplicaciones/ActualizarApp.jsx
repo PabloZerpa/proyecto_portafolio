@@ -351,9 +351,11 @@ function ActualizarApp() {
 
         }catch (error) { 
             Notificacion(error.response.data.message, 'error');
-        }
+        } 
     } 
         fetchData();
+         
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [load]);
 
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------

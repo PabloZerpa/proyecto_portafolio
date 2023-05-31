@@ -22,7 +22,7 @@ function ActualizarFalla({setIsOpen, valores, setUpdate}) {
     const setValores = (e) => {
         const valor = e.target.value.toUpperCase();
         setDatos({ ...datos, [e.target.name] : valor })
-    }
+    } 
 
     // =================== FUNCION PARA ACTUALIZAR FALLA ===================
 	async function actualizarFalla(e){
@@ -39,7 +39,7 @@ function ActualizarFalla({setIsOpen, valores, setUpdate}) {
         }
         catch (error) {
             Notificacion(error.response.data.message, 'error');
-        }
+        } 
     }
 
     return (

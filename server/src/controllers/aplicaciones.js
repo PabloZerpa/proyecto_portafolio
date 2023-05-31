@@ -106,12 +106,14 @@ const actualizarAplicacion = async (req,res) => {
             select_lenguaje, select_base, select_servidor,select_documentos,
             select_funcional, select_tecnico
         } = req.body;
-        
-        const query = await pool.query(`SELECT aplicacion_id FROM aplicaciones WHERE aplicacion_id = ?`,[id]);
-        const app = query[0][0].aplicacion_id; 
 
-        if(app === id){
-            return res.status(401).json({ message: 'ACRONIMO YA OCUPADO' });
+        const buscarApp = await pool.query(
+            `SELECT * FROM aplicaciones WHERE apl_acronimo = ? AND aplicacion_id <> ?;`,
+        [apl_acronimo,id]);
+        const app = buscarApp[0][0];
+
+        if(app){
+            return res.status(401).json({ message: 'ACRONIMO O NOMBRE OCUPADO' });
         }
         else{
 
@@ -232,7 +234,6 @@ const actualizarAplicacion = async (req,res) => {
         }
 
     } catch (error) {  
-        console.log("ERROR AL ACTUALIZAR APLICACION");
         return res.status(401).json({ message: 'ERROR AL ACTUALIZAR APLICACION' });
     }
 };
@@ -382,7 +383,7 @@ const obtenerDato = async (req,res) => {
 const obtenerBusqueda = async (req,res) => {
     try {
         const { term,estatus,prioridad,region,alcance,mantenimiento,
-                critico,codigo,count,order,pagina,plataforma,cantidad } = req.body;
+                critico,codigo,order,plataforma,cantidad } = req.body;
         const termino = '%' + term + '%';
         const maxCantidad = parseInt(cantidad) + 9;
         let data;
@@ -513,7 +514,6 @@ const eliminarAplicacion = async (req,res) => {
 
         res.sendStatus(204);
     } catch (error) {
-        console.log("ERROR AL ELIMINAR APLICACION");
         return res.status(401).json({ message: 'ERROR AL ELIMINAR APLICACION' });
     }
 };

@@ -118,7 +118,7 @@ function Aplicaciones() {
       loading();
   }, [resultado]);
   
-  return (
+  return ( 
     <Container>
 
       <Busqueda 

@@ -5,10 +5,11 @@ import { paginacionOpciones } from "../utils/TablaOpciones";
 import Button from "./Button";
 import { useCallback, useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
-import { rutaBaseDatos, rutaCustodio, rutaServidor, rutaUsuario } from "../utils/APIRoutes";
+import { rutaAplicacion, rutaBaseDatos, rutaCustodio, rutaServidor, rutaUsuario } from "../utils/APIRoutes";
 import axios from "axios";
 import authHeader from "../utils/header";
 import Modal from "./Modal";
+import { Notificacion } from "../utils/Notificacion";
 
 
 function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busqueda=false, selectDefault=0}) {
@@ -51,8 +52,13 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
                 return axios.post(`${rutaCustodio}/busqueda`, 
                     {term}, { headers: authHeader() });
             }
+            else if(objetivo === 'aplicacion'){
+                const order = 'ASC';
+                return axios.post(`${rutaAplicacion}/busqueda`, 
+                    {term,order}, { headers: authHeader() });
+            }
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
@@ -62,10 +68,9 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
             const { terminoBusqueda } = value;
 
             respuesta = await obtenerPorBusqueda(objetivo,terminoBusqueda);
-            
             setResultado(respuesta.data);
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
@@ -73,6 +78,12 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
         if(objetivo === 'custodio'){
             if(state.selectedRows[0]){
                 devolverSelecciones(state.selectedRows[0].cus_indicador);
+                setIsOpen(false);
+            }
+        }
+        else if(objetivo === 'aplicacion'){
+            if(state.selectedRows[0]){
+                devolverSelecciones(state.selectedRows[0].apl_acronimo);
                 setIsOpen(false);
             }
         }

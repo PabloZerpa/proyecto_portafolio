@@ -65,9 +65,9 @@ function ActualizarBD() {
             const respuesta = await axios.post(`${rutaBaseDatos}/manejadores`, {tipo}, { headers: authHeader() });
             return respuesta;
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
-    }
+    } 
 
     async function OpcionesManejadores(valor){
         try {
@@ -81,7 +81,7 @@ function ActualizarBD() {
             }
             return opciones;
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
@@ -119,7 +119,8 @@ function ActualizarBD() {
                 setLoad(false);
             }catch (error) { Notificacion(error.response.data.message, 'success'); }
         } 
-        fetchData();  
+        fetchData(); 
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
     }, [id]); 
 
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------

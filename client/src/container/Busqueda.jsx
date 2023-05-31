@@ -7,6 +7,7 @@ import { rutaAplicacion } from '../utils/APIRoutes';
 import Opciones from '../utils/Opciones';
 import axios from 'axios';
 import authHeader from '../utils/header';
+import { Notificacion } from '../utils/Notificacion';
 
 function Busqueda({manejarBusqueda}) {
 
@@ -83,7 +84,7 @@ function Busqueda({manejarBusqueda}) {
                 {term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
                 critico,codigo,count,order,cantidad}, { headers: authHeader() });
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
@@ -100,7 +101,7 @@ function Busqueda({manejarBusqueda}) {
             manejarBusqueda(respuesta.data);
             
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
     }
 

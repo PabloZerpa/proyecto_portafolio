@@ -43,13 +43,13 @@ function BuscarUsuario() {
     setIsOpen2(!isOpen2);
     setUsuario(x.data); 
   }
-
+ 
   // =============== OBTIENE LOS DATOS DE LOS USUARIOS ===============
   async function obtenerUsuarios(term) { 
     try { 
         return axios.post(`${rutaUsuario}/busqueda`, {term}, { headers: authHeader() });
     } catch (error) {
-        console.log(error.response.data.message);
+        Notificacion(error.response.data.message, 'error');
     }
 }
 
@@ -60,7 +60,7 @@ function BuscarUsuario() {
       const datos = await obtenerUsuarios(termino);
       setResultados(datos.data); 
     } catch (error) { 
-      console.log(error.response.data.message);
+      Notificacion(error.response.data.message, 'error');
     }
   }
 
@@ -70,6 +70,8 @@ function BuscarUsuario() {
       onSearch(debounceValue);
     else
       setResultados(null) 
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debounceValue, update]);
   
   // =================== FUNCION PARA ELIMINAR USUARIO ===================

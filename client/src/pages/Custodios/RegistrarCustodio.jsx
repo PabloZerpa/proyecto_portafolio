@@ -35,14 +35,14 @@ function RegistrarCustodio() {
     useEffect(() => {
         establecerDatos();
     }, []);
-
+ 
     // ---------------- UPDATE DE UN CAMPO DE UN USUARIO ------------------
     async function obtenerLocalidades(region) {
         try { 
             const respuesta = await axios.post(`${rutaUsuario}/localidades`, {region}, { headers: authHeader() });
             return respuesta;
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
@@ -58,7 +58,7 @@ function RegistrarCustodio() {
             }
             return opciones;
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
     }
     

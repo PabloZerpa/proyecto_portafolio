@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'; 
 import { useNavigate } from 'react-router-dom';
 import { Button, Container, Input, Radio, Select, TextArea, Tabla } from '../../components';
 import { Notificacion } from '../../utils/Notificacion';
@@ -10,7 +10,7 @@ import TableRegistro from '../../components/TablaRegistro';
 import DocumentosForm from '../../components/DocumentosForm';
 import axios from 'axios';
 import { obtenerUsuario, rutaAplicacion } from '../../utils/APIRoutes';
-import authHeader from '../../utils/header';
+import authHeader from '../../utils/header';  
  
 function RegistrarApp() {
 

@@ -6,12 +6,13 @@ import { Container, Input, Radio, Tabla } from '../../components';
 import { rutaBaseDatos } from '../../utils/APIRoutes';
 import axios from 'axios';
 import authHeader from '../../utils/header';
+import { Notificacion } from '../../utils/Notificacion';
 
 const opcionesVista = ['General','Aplicacion','Servidor'];
 
-function VerBD() {
+function VerBD() { 
 
-  // -------- ESTADOS ---------
+  // -------- ESTADOS --------- 
   const { id } = useParams();
   const [load, setLoad] = useState(true);
 
@@ -36,7 +37,7 @@ function VerBD() {
 
         setLoad(false);
           
-      }catch (error) { console.log(error.response.data.message); }
+      }catch (error) { Notificacion(error.response.data.message, 'error'); }
     } 
     fetchData();
   }, [id]);

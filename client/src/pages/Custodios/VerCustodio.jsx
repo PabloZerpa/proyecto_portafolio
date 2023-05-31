@@ -6,6 +6,7 @@ import { Container, Input, Radio, Tabla } from '../../components';
 import axios from 'axios';
 import { rutaCustodio } from '../../utils/APIRoutes';
 import authHeader from '../../utils/header';
+import { Notificacion } from '../../utils/Notificacion';
 
 const opcionesVista = ['General','Aplicacion'];
 
@@ -31,12 +32,12 @@ function VerCustodio() {
         const {data} = await axios.get(`${rutaCustodio}/${id}`, { headers: authHeader() });
         
         setGeneral(data.general);
-        setAplFuncional(data.aplicacionFuncional);
+        setAplFuncional(data.aplicacionFuncional); 
         setAplTecnico(data.aplicacionTecnico);
 
         setLoad(false);
           
-      }catch (error) { console.log(error.response.data.message); }
+      }catch (error) { Notificacion(error.response.data.message, 'error'); }
     } 
     fetchData();
   }, [id]);

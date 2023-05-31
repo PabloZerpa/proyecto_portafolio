@@ -7,6 +7,7 @@ import axios from 'axios';
 import authHeader from '../../utils/header';
 import { FaEye } from 'react-icons/fa';
 import VerFalla from './Fallas/VerFalla';
+import { Notificacion } from '../../utils/Notificacion';
 
 const opcionesVista = ['General','Tecnologia', 'Base de datos',
 'Servidor','Custodios','Documentacion','Fallas'];
@@ -16,7 +17,7 @@ function VerAplicacion() {
   // -------- ESTADOS ---------
   const { id } = useParams();
   const [load, setLoad] = useState(true);
-
+ 
   const [opcion, setOpcion] = useState('General');
   const [general, setGeneral] = useState('');
   const [tecnologia, setTecnologia] = useState('');
@@ -39,7 +40,7 @@ function VerAplicacion() {
     setIsOpen(!isOpen);
 }
   
-  useEffect(() => {
+  useEffect(() => { 
     async function fetchData(){
       try {
 
@@ -61,7 +62,7 @@ function VerAplicacion() {
 
         setLoad(false);
         
-      }catch (error) { console.log(error.response.data.message); }
+      }catch (error) { Notificacion(error.response.data.message, 'error'); }
     } 
     fetchData();
   }, [id]);

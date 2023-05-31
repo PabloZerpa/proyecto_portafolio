@@ -32,7 +32,7 @@ import CambioPassword from "../pages/CambioPassword";
 
 function Rutas() {
     return (
-        <Routes> 
+        <Routes>  
         
           <Route element={<Protegida redirectTo='/dashboard' />}>
             <Route path="*" element={<Login />} />

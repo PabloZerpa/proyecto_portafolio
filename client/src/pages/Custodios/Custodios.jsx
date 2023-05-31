@@ -8,6 +8,7 @@ import Opciones from "../../utils/Opciones";
 import axios from "axios";
 import { obtenerUsuario, rutaCustodio } from "../../utils/APIRoutes";
 import authHeader from "../../utils/header";
+import { Notificacion } from "../../utils/Notificacion";
 
 const columns = [
     {
@@ -137,7 +138,7 @@ function Custodios() {
             else
                 datos[clave] = '';
         }
-        onSearch(debounceValue)
+        onSearch(debounceValue) 
     }
 
     // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
@@ -153,7 +154,7 @@ function Custodios() {
             return axios.post(`${rutaCustodio}/busqueda`, 
             {term,cargo,gerencia,region}, { headers: authHeader() });
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
@@ -165,7 +166,7 @@ function Custodios() {
             setResultado(respuesta.data);
             
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
@@ -176,6 +177,7 @@ function Custodios() {
         } else {
             setResultado(null);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debounceValue, datos]); 
     
     // =================== FUNCION PARA MOSTRAR LOAD EN TABLA DE BUSQUEDA ===================

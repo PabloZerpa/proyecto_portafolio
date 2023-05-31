@@ -36,7 +36,7 @@ function ActualizarUsuario({setIsOpen, valores, setUpdate}) {
       establecerDatos();
   }, []);
 
-  
+   
   // =================== FUNCION PARA OBTENER Y GUARDAR VALORES DEL LOS INPUTS ===================
   const setValores = (e) => {
       const valor = e.target.value.toUpperCase();

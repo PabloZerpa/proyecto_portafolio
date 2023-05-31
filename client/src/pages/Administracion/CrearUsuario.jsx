@@ -47,7 +47,7 @@ function CrearUsuario() {
 
     // =================== CREAR USUARIOS ===================
     async function crearUsuario(e){
-        e.preventDefault();
+        e.preventDefault(); 
 
         if(obtenerUsuario().rol !== 'user'){
             try {

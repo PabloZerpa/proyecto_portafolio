@@ -8,6 +8,7 @@ import Opciones from "../../utils/Opciones";
 import { obtenerUsuario, rutaBaseDatos } from "../../utils/APIRoutes";
 import axios from "axios";
 import authHeader from "../../utils/header";
+import { Notificacion } from "../../utils/Notificacion";
 
 
 const columns = [
@@ -154,8 +155,8 @@ function BaseDatos() {
             return axios.post(`${rutaBaseDatos}/busqueda`, 
             {term,estatus,tipo,manejador,ambiente,count,orden}, { headers: authHeader() });
         } catch (error) {
-            console.log(error.response.data.message);
-        }
+            Notificacion(error.response.data.message, 'error');
+        } 
     }
 
     // FUNCION PARA BUSCAR DATOS EN LA DATABASE
@@ -167,7 +168,7 @@ function BaseDatos() {
             setResultado(respuesta.data);
             
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
@@ -178,6 +179,8 @@ function BaseDatos() {
         } else {
             setResultado(null);
         }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debounceValue, datos]); 
 
     // =================== FUNCION PARA MOSTRAR LOAD EN TABLA DE BUSQUEDA ===================

@@ -41,9 +41,9 @@ function RegistrarServidor() {
     async function obtenerLocalidades(region) {
         try { 
             const respuesta = await axios.post(`${rutaUsuario}/localidades`, {region}, { headers: authHeader() });
-            return respuesta;
+            return respuesta; 
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
@@ -61,7 +61,7 @@ function RegistrarServidor() {
             return opciones;
             
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
     }
 

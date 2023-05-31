@@ -135,7 +135,6 @@ const eliminarCustodio = async (req,res) => {
         await pool.query(`DELETE FROM custodios_tecnicos WHERE custodio_id = ?;`, [id]);
         await pool.query(`DELETE FROM telefonos WHERE custodio_id = ?;`, [id]);
         await pool.query('DELETE FROM custodios WHERE custodio_id = ?', [id]);
-        console.log(id);
 
         const datosAuditoria = {
             mensaje : `Eliminado de Custodio ${id}`,

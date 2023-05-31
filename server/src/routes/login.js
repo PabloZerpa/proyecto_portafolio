@@ -1,14 +1,14 @@
 
 const router = require("express").Router();
 const { validatorLogin, validatorRegistro } = require("../validators/login");
-const { autenticarUser } = require("../middlewares/ad");
+const { verificarUser } = require("../middlewares/ad");
 const { login, registrar, logout } = require("../controllers/login");
 
-router.post("/", validatorLogin, login);
+router.post("/", verificarUser, validatorLogin, login);
 
-router.post("/registro", validatorRegistro, registrar);
+router.post("/registro", verificarUser, validatorRegistro, registrar);
 
-router.get("/logout", logout);
+router.get("/logout", logout); 
 
 
 module.exports = router;  

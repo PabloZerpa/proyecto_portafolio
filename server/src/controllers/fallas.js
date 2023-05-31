@@ -30,14 +30,10 @@ const registrarFalla = async (req,res) => {
         
         const { aplicacion,impacto,descripcion,solucion,usuario_creador } = req.body;
 
-        console.log(aplicacion,impacto,descripcion,solucion,usuario_creador);
-
         const x = await pool.query(`SELECT usuario_id FROM usuarios WHERE indicador = ?`, [usuario_creador]); 
         const usuario_id = x[0][0].usuario_id;
         const query = await pool.query(`SELECT aplicacion_id FROM aplicaciones WHERE apl_acronimo = ?`, [aplicacion]); 
         const aplicacion_id = query[0][0].aplicacion_id;
-
-        console.log(aplicacion_id,descripcion,solucion,impacto, usuario_id);
 
         await pool.query(`
             INSERT INTO fallas

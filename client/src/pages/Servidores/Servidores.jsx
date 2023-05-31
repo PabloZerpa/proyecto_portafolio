@@ -8,6 +8,7 @@ import Opciones from "../../utils/Opciones";
 import { obtenerUsuario, rutaServidor } from "../../utils/APIRoutes";
 import axios from "axios";
 import authHeader from "../../utils/header";
+import { Notificacion } from "../../utils/Notificacion";
 
 const columns = [
     {
@@ -87,7 +88,7 @@ const columns = [
         sortable: true,
         width: '150px',
         left: true
-      },
+      }, 
       {
         name: 'Localidad',
         selector: row => row.localidad,
@@ -129,7 +130,6 @@ function Servidores() {
     const [sistemas, setSistemas] = useState('');
     const [estatus, setEstatus] = useState('');
     const [regiones, setRegiones] = useState('');
-    const [localidades, setLocalidades] = useState('');
 
     // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
     async function establecerDatos(){
@@ -170,7 +170,7 @@ function Servidores() {
             return axios.post(`${rutaServidor}/busqueda`, 
             {term,estatus,region,sistema,marca,orden}, { headers: authHeader() });
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
@@ -185,7 +185,7 @@ function Servidores() {
             setResultado(respuesta.data);
             
         } catch (error) {
-            console.log(error.response.data.message);
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
@@ -196,6 +196,7 @@ function Servidores() {
         } else {
             setResultado(null);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debounceValue, datos]); 
     
     // =================== FUNCION PARA MOSTRAR LOAD EN TABLA DE BUSQUEDA ===================
