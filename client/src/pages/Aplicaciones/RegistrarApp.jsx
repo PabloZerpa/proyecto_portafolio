@@ -160,11 +160,11 @@ function RegistrarApp() {
     const [isOpen6, setIsOpen6] = useState(false);
 
     const obtenerCustodioFuncional = (respuesta) => {
-        setDatos({ ...datos, ['select_funcional'] : respuesta });
+        setDatos({ ...datos, 'select_funcional' : respuesta });
     };
 
     const obtenerCustodioTecnico = (respuesta) => {
-        setDatos({ ...datos, ['select_tecnico'] : respuesta });
+        setDatos({ ...datos, 'select_tecnico' : respuesta });
     };
 
     // -------------------- FUNCION QUE ELIMINA ELEMENTO SELECCIONADA DE LA TABLA --------------------

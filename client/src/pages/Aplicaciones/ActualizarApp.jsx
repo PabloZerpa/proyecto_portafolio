@@ -24,7 +24,7 @@ function ActualizarApp() {
     const [load, setLoad] = useState(true);
     const [datos, setDatos] = useState({
         usuario_actualizo: obtenerUsuario().indicador, 
-    });
+    }); 
 
     // VALORES POR DEFECTO EN LOS INPUTS
     const [general, setGeneral] = useState('');
@@ -128,11 +128,11 @@ function ActualizarApp() {
     const [isOpen6, setIsOpen6] = useState(false);
 
     const obtenerCustodioFuncional = (respuesta) => {
-        setDatos({ ...datos, ['select_funcional'] : respuesta });
+        setDatos({ ...datos, 'select_funcional' : respuesta });
     };
 
     const obtenerCustodioTecnico = (respuesta) => {
-        setDatos({ ...datos, ['select_tecnico'] : respuesta });
+        setDatos({ ...datos, 'select_tecnico' : respuesta });
     };
 
     // -------------------- FUNCION PARA LLENAR TABLA POR DEFECTO --------------------
@@ -337,8 +337,10 @@ function ActualizarApp() {
             setTecnico(todo.tecnico); 
             setLenguaje(todo.lenguajes);
             setPlataforma(todo.plataformas);
-            {todo.documentacion ? setDocumentacion(todo.documentacion) : setDocumentacion('')}
-            {todo.tecnologia ? setMantenimiento(todo.tecnologia) : setMantenimiento('')}
+            if(todo.documentacion)
+                setDocumentacion(todo.documentacion);
+            if(todo.tecnologia)
+                setMantenimiento(todo.tecnologia);
 
             // ========== LLENA LA TABLA CON LOS VALORES POR DEFECTO ==========
             llenarTabla(lenguaje,'lenguaje_id','lenguaje',setDataLenguaje,setSelectLenguaje);

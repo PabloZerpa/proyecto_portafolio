@@ -22,27 +22,22 @@ function Login() {
     if(password.length > 7 && indicador !== ''){
       try {
         
-        const loginData = await axios.post(rutaAuth, {indicador,password})
-        .then(response => {
-          if(!response.data.exp){
-              if (response.data.token)
-                  localStorage.setItem("user", JSON.stringify(response.data));
-          }
-          return response.data;
-        });
-        
-
-        if(loginData.exp){
-          navigate("/cambio_password", {state: { indicador: indicador, passwordVieja: password}} );
-        }
-        else{
-          Notificacion('LOGIN EXITOSO', 'success');
+        await axios.post(rutaAuth, {indicador,password})
+          .then(response => {
+            if(!response.data.exp){
+                if (response.data.token)
+                    localStorage.setItem("user", JSON.stringify(response.data));
+            }
+            return response.data;
+          });
           
-          setTimeout(() => {
-            window.location.reload();
-            navigate("/dashboard");
-          }, "2000");
-        }
+        Notificacion('LOGIN EXITOSO', 'success');
+        
+        setTimeout(() => {
+          window.location.reload();
+          navigate("/dashboard");
+        }, "2000");
+
       } 
       catch (error) {
         if(error.response)
@@ -60,7 +55,7 @@ function Login() {
     <div className='relative flex flex-col justify-center items-center w-full h-screen bg-zinc-300'>
 
       <form
-        className='flex justify-center items-center flex-col space-y-6 w-96 mt-20 px-13 py-4 
+        className='flex justify-center items-center flex-col space-y-6 w-96 px-13 py-4 
         bg-zinc-100 font-medium list-none rounded-lg drop-shadow-md' onSubmit={iniciarSesion}
       >
 

@@ -113,17 +113,6 @@ const insertarDocumentacion = async (id,select_documentos) => {
     }
 }
 
-// const insertarDocumentacion = async (id,descripcion,direccion,tipo) => {
-//     // registra una nueva documentacion
-//     const datos_doc = await pool.query(
-//         `INSERT INTO documentaciones (aplicacion_id,doc_descripcion,doc_direccion,doc_tipo)
-//         VALUES (?,?,?,?)`,
-//         [id,descripcion,direccion,tipo,]
-//     );
-// }
-
-
-
 module.exports = { insertarAplicacion, insertarPlataforma, 
     insertarLenguaje, insertarServidor, 
     insertarBase, insertarMantenimiento,insertarDocumentacion, insertarCustodio };

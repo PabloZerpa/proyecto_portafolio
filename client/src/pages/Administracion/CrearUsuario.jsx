@@ -75,7 +75,7 @@ function CrearUsuario() {
                         <Select campo='Rol' name='rol' direccion="col" required={true} opciones={roles ? roles : ['SELECCIONE']} manejador={setValores} />
                         <Input campo='Nombre' name='nombre' direccion="col" required={true} editable={true} manejador={setValores} />
                         <Input campo='Apellido' name='apellido' direccion="col" required={true} editable={true} manejador={setValores} />
-                        <Input campo='Contraseña' name='password' direccion="col" required={true} editable={true} manejador={setValores} />
+                        {/* <Input campo='Contraseña' name='password' direccion="col" required={true} editable={true} manejador={setValores} /> */}
                         <Select campo='Gerencia' name='gerencia' direccion="col" required={true} opciones={gerencias ? gerencias : ['SELECCIONE']} manejador={setValores} />
                         <Select campo='Cargo' name='cargo' direccion="col" required={true} opciones={cargos ? cargos : ['SELECCIONE']} manejador={setValores} />
                     </div> 

@@ -28,7 +28,6 @@ import {
   ActualizarCustodio,
   VerCustodio,
 } from '../pages';
-import CambioPassword from "../pages/CambioPassword";
 
 function Rutas() {
     return (
@@ -36,7 +35,6 @@ function Rutas() {
         
           <Route element={<Protegida redirectTo='/dashboard' />}>
             <Route path="*" element={<Login />} />
-            <Route path="/cambio_password" element={<CambioPassword />} />
           </Route>
 
           <Route element={<Protegida redirectTo='/' />}>

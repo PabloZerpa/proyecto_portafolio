@@ -19,7 +19,7 @@ const validatorLogin = [
 // *************** VALIDAR DATOS DE LOGIN ***************
 const validatorRegistro = [
     check("indicador").exists().notEmpty().isString().isLength({min:4, max:10}),
-    check("password").exists().notEmpty().isLength({min:8, max:12}),
+    //check("password").exists().notEmpty().isLength({min:8, max:12}),
     check("nombre").exists().notEmpty().isString().isLength({min:3, max:20}),
     check("apellido").exists().notEmpty().isString().isLength({min:3, max:20}),
     check("rol").exists().notEmpty().isInt(),

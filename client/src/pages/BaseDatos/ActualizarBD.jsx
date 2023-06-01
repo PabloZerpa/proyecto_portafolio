@@ -44,6 +44,7 @@ function ActualizarBD() {
     async function establecerDatos(){
         setEstatus(['SELECCIONE', 'POR DETERMINAR', 'ACTIVO', 'INACTIVO']);
         setTipos(await Opciones('tipos'));
+        setMane(await Opciones(''));
         setAmbientes(await Opciones('ambientes'));
     }
 
@@ -65,7 +66,7 @@ function ActualizarBD() {
             const respuesta = await axios.post(`${rutaBaseDatos}/manejadores`, {tipo}, { headers: authHeader() });
             return respuesta;
         } catch (error) {
-            Notificacion(error.response.data.message, 'error');
+            //Notificacion(error.response.data.message, 'error');
         }
     } 
 
@@ -81,7 +82,7 @@ function ActualizarBD() {
             }
             return opciones;
         } catch (error) {
-            Notificacion(error.response.data.message, 'error');
+            //Notificacion(error.response.data.message, 'error');
         }
     }
 
@@ -115,7 +116,7 @@ function ActualizarBD() {
                     tipo : x.tipo,
                     ambiente : x.ambiente,
                 });
-                
+                setMane(await OpcionesManejadores(x.tipo));
                 setLoad(false);
             }catch (error) { Notificacion(error.response.data.message, 'success'); }
         } 
