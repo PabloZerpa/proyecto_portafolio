@@ -25,6 +25,7 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
             onSearch(debounceValue);
         else
             setResultado(null);
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
 	}, [debounceValue]); 
 
     // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
@@ -90,6 +91,7 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
         else{
             setElementos(elementos[0] = state.selectedRows);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
 	}, []);
     
 
@@ -111,6 +113,7 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
                     return true;
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
     }, []);
 
     return (

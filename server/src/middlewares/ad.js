@@ -17,13 +17,14 @@ const autenticarUser = async(req, res, next) => {
         }
         else{
             ad.authenticate(correo, password, (err, auth) => {
+
                 if (err) 
                     return res.status(401).json({ message: 'ERROR AL AUTENTICAR' });
 
                 if (auth) 
                     next();
                 else 
-                    return res.status(401).json({ message: 'INDICADOR O CONTRASEÑA INCORRECTAS' });
+                    return res.status(401).json({ message: 'ERROR AL AUTENTICAR' });
             });
         }
     } catch (e) {

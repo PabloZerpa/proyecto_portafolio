@@ -134,7 +134,7 @@ function Servidores() {
     // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
     async function establecerDatos(){
         setMarcas(await Opciones('marcas',true));
-        setEstatus(['SELECCIONE', 'TODAS', 'POR DETERMINAR', 'ACTIVO', 'INACTIVO']);
+        setEstatus(await Opciones('estados'));
         setSistemas(await Opciones('sistemas',true));
         setRegiones(await Opciones('regiones',true));
     }

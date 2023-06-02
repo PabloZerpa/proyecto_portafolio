@@ -1,11 +1,11 @@
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Container, Input, Select, TableRegistro, TextArea } from "../../../components";
 import { Notificacion } from "../../../utils/Notificacion";
 import { FaArrowLeft } from "react-icons/fa";
 import axios from "axios";
-import { obtenerUsuario, rutaAplicacion, rutaUsuario } from "../../../utils/APIRoutes";
+import { obtenerUsuario, rutaAplicacion } from "../../../utils/APIRoutes";
 import authHeader from "../../../utils/header";
 
 function RegistrarFalla() {
@@ -16,48 +16,9 @@ function RegistrarFalla() {
 
     // ---------- ESTADOS ----------
     const [isOpen, setIsOpen] = useState(false);
-    const [acronimos, setAcronimos] = useState('');
     const [datos, setDatos] = useState({
         usuario_creador: obtenerUsuario().indicador,
     });
-
-     // ---------------- UPDATE DE UN CAMPO DE UN USUARIO ------------------
-     async function obtenerAcronimos() {
-        try { 
-            const respuesta = await axios.get(`${rutaUsuario}/acronimos`, { headers: authHeader() });
-            return respuesta;
-        } catch (error) {
-            Notificacion(error.response.data.message, 'error');
-        }
-    } 
-
-    async function OpcionesAcronimos(){
-        try {
-            const respuesta = await obtenerAcronimos();
-            const data = respuesta.data;
-            let opciones = ['SELECCIONE'];
-        
-            for (let i = 0; i < data.length; i++) {
-                const valor = Object.values(data[i]);
-                opciones.push(valor[0]); 
-            }
-        
-            return opciones;
-            
-        } catch (error) {
-            Notificacion(error.response.data.message, 'error');
-        }
-    }
-
-    // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
-    async function establecerDatos(){
-        setAcronimos(await OpcionesAcronimos());
-    }
-
-    useEffect(() => {
-        establecerDatos();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     // =================== FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS ===================
     const setValores = async (e) => {
@@ -82,7 +43,7 @@ function RegistrarFalla() {
     }
 
     const obtenerAplicacion = (respuesta) => {
-        setDatos({ ...datos, ['aplicacion'] : respuesta });
+        setDatos({ ...datos, 'aplicacion' : respuesta });
     };
 
     const columns = [
@@ -113,7 +74,7 @@ function RegistrarFalla() {
           sortable: true,
           width: "150px",
           left: true
-      },
+        },
         {
             name: 'Estatus',
             selector: row => row.estatus,
@@ -131,9 +92,9 @@ function RegistrarFalla() {
         {
             name: 'Direccion',
             selector: row => 
-              <a className="text-blue-400" href={`https://${row.apl_direccion}`} rel="noreferrer" target="_blank" >
+            <a className="text-blue-400" href={`https://${row.apl_direccion}`} rel="noreferrer" target="_blank" >
                 {row.apl_direccion}
-              </a>,
+            </a>,
             sortable: true,
             width: "200px",
             left: true

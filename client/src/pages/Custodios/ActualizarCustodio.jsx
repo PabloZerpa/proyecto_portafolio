@@ -150,8 +150,7 @@ function ActualizarCustodio() {
                         <Select campo='Region' name='region' required={true} byId={false} propiedad={general.region} opciones={regiones ? regiones : ['SELECCIONE']} manejador={setValores} />
                         <Select campo='Localidad' name='localidad' required={true} byId={false} propiedad={general.localidad} opciones={localidades ? localidades : ['SELECCIONE']} manejador={setValores} />
                     </div>  
-
-                    <div className="flex space-x-2 md:space-x-12">
+                    <div className="flex flex-col space-x-0 space-y-3 md:flex-row md:space-x-12 md:space-y-0">
                         <Button tipo='button' color='blue' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
                         <Button tipo='submit' color='blue' width={32}>Actualizar</Button>
                         {obtenerUsuario().rol === 'admin' ? (

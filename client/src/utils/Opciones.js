@@ -22,7 +22,7 @@ export async function Opciones(ruta, busqueda=false){
         return opciones;
         
     } catch (error) {
-        //console.log(error.response.data.message);
+        Notificacion(error.response.data.message, 'error');
     }
 } 
 

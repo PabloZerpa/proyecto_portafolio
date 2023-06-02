@@ -1,6 +1,6 @@
 
 import { useNavigate, useParams } from 'react-router-dom';
-import { Button, Container, Input, Modal, Select, Tabla, TableRegistro, TextArea } from '../../components';
+import { Button, Container, Input, Select, Tabla, TableRegistro, TextArea } from '../../components';
 import { BiLoaderAlt } from "react-icons/bi";
 import { useEffect, useState } from 'react';
 import { columnasModalServidor } from '../../utils/columnas';
@@ -25,6 +25,18 @@ function ActualizarBD() {
         usuario_actualizo: obtenerUsuario().indicador,
     });
 
+    const [tipos, setTipos] = useState('');
+    const [estatus, setEstatus] = useState('');
+    const [ambientes, setAmbientes] = useState('');
+    const [mane, setMane] = useState('');
+
+    // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
+    async function establecerDatos(){
+        setEstatus(await Opciones('estados'));
+        setTipos(await Opciones('tipos'));
+        setAmbientes(await Opciones('ambientes'));
+    }
+
     // FUNCION PARA OBTENER Y GUARDAR LOS DATOS EN LOS INPUTS
     const setValores = async(e) => {
         const valor = e.target.value.toUpperCase();
@@ -33,19 +45,6 @@ function ActualizarBD() {
         if(e.target.name === 'tipo'){ 
             setMane(await OpcionesManejadores(e.target.value));
         }
-    }
-
-    const [mane, setMane] = useState('');
-    const [tipos, setTipos] = useState('');
-    const [estatus, setEstatus] = useState('');
-    const [ambientes, setAmbientes] = useState('');
-
-    // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
-    async function establecerDatos(){
-        setEstatus(['SELECCIONE', 'POR DETERMINAR', 'ACTIVO', 'INACTIVO']);
-        setTipos(await Opciones('tipos'));
-        setMane(await Opciones(''));
-        setAmbientes(await Opciones('ambientes'));
     }
 
     // -------------------- FUNCION PARA LLENAR TABLA POR DEFECTO --------------------
@@ -66,7 +65,7 @@ function ActualizarBD() {
             const respuesta = await axios.post(`${rutaBaseDatos}/manejadores`, {tipo}, { headers: authHeader() });
             return respuesta;
         } catch (error) {
-            //Notificacion(error.response.data.message, 'error');
+            Notificacion(error.response.data.message, 'error');
         }
     } 
 
@@ -82,13 +81,12 @@ function ActualizarBD() {
             }
             return opciones;
         } catch (error) {
-            //Notificacion(error.response.data.message, 'error');
+            Notificacion(error.response.data.message, 'error');
         }
     }
 
     // VALORES POR DEFECTO EN LOS INPUTS
     const [general, setGeneral] = useState('');
-    const [servidor, setServidor] = useState('');
 
     useEffect(() => {
         async function fetchData(){
@@ -101,12 +99,10 @@ function ActualizarBD() {
                 const x = await data.general;
 
                 setGeneral(data.general);
-                setServidor(data.datos);
 
                 // ========== LLENAN LA TABLA CON LOS VALORES POR DEFECTO ==========
                 llenarTabla(data.servidores.datos,'servidor_id','servidor',setDataServidor,setSelectServidor);
-
-                //await llenarDatos();
+                
                 setDatos({
                     ...datos,
                     base_datos : x.base_datos,
@@ -116,6 +112,7 @@ function ActualizarBD() {
                     tipo : x.tipo,
                     ambiente : x.ambiente,
                 });
+                
                 setMane(await OpcionesManejadores(x.tipo));
                 setLoad(false);
             }catch (error) { Notificacion(error.response.data.message, 'success'); }
@@ -208,7 +205,7 @@ function ActualizarBD() {
             if(obtenerUsuario().rol !== 'user'){
                 await axios.delete(`${rutaBaseDatos}/${id}`, { headers: authHeader() });
 
-                Notificacion('BASE DE DATPS ELIMINADA EXITOSAMENTE', 'success');
+                Notificacion('BASE DE DATOS ELIMINADA EXITOSAMENTE', 'success');
                 navegar(`/basedatos/`);
             }
           }
@@ -225,16 +222,14 @@ function ActualizarBD() {
 
             {/* --------------- VENTANA MODAL PARA REGISTRAR SERVIDORES --------------- */}
             {isOpen ? (
-                <Modal>
-                    <TableRegistro
-                        setIsOpen={setIsOpen}
-                        devolverSelecciones={obtenerSeleccionesServidor}
-                        columnas={columnasModalServidor}
-                        objetivo='servidor'
-                        busqueda={true}
-                        selectDefault={select_servidor}
-                    />
-                </Modal>
+                <TableRegistro
+                    setIsOpen={setIsOpen}
+                    devolverSelecciones={obtenerSeleccionesServidor}
+                    columnas={columnasModalServidor}
+                    objetivo='servidor'
+                    busqueda={true}
+                    selectDefault={select_servidor}
+                />
             ) : (null) }
 
 
@@ -267,8 +262,8 @@ function ActualizarBD() {
                         <Tabla columnas={columnasServidor} datos={tableDataServidor} />
                     </div>
                 </div>
-                    
-                <div className="flex space-x-2 md:space-x-12 pt-12">
+
+                <div className="flex flex-col space-x-0 space-y-3 pt-12 md:flex-row md:space-x-12 md:space-y-0">
                     <Button tipo='button' color='blue' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
                     <Button tipo='submit' color='blue' width={32}>Actualizar</Button>
                     {obtenerUsuario().rol === 'admin' ? (
@@ -278,22 +273,22 @@ function ActualizarBD() {
                                 icon: 'warning',
                                 buttons: {
                                     cancel: {
-                                      text: "Cancel",
-                                      value: false,
-                                      visible: true,
-                                      className: "bg-red-600 text-white outline-none border-none hover:bg-red-500",
+                                        text: "Cancel",
+                                        value: false,
+                                        visible: true,
+                                        className: "bg-red-600 text-white outline-none border-none hover:bg-red-500",
                                     },
                                     confirm: {
-                                      text: "Aceptar",
-                                      value: true,
-                                      visible: true,
-                                      className: "bg-blue-600 text-white outline-none border-none hover:bg-blue-500",
+                                        text: "Aceptar",
+                                        value: true,
+                                        visible: true,
+                                        className: "bg-blue-600 text-white outline-none border-none hover:bg-blue-500",
                                     }
                                 },
-                              }).then((result) => {
+                                }).then((result) => {
                                 if (result)
-                                  eliminar(id);
-                              })
+                                    eliminar(id);
+                                })
                         }} >Eliminar</Button>
                     ) : null}
 

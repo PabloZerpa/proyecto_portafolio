@@ -118,7 +118,7 @@ function BaseDatos() {
     // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
     async function establecerDatos(){
         setMane(await Opciones('manejadores',true));
-        setEstatus(['SELECCIONE','TODAS', 'POR DETERMINAR', 'ACTIVO', 'INACTIVO']);
+        setEstatus(await Opciones('estados'));
         setTipos(await Opciones('tipos',true));
         setAmbientes(await Opciones('ambientes',true));
     }

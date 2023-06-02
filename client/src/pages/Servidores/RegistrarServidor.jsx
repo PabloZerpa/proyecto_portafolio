@@ -28,7 +28,7 @@ function RegistrarServidor() {
     // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
     async function establecerDatos(){
         setMarcas(await Opciones('marcas'));
-        setEstatus(['SELECCIONE', 'POR DETERMINAR', 'ACTIVO', 'INACTIVO']);
+        setEstatus(await Opciones('estados'));
         setSistemas(await Opciones('sistemas'));
         setRegiones(await Opciones('regiones'));
     }

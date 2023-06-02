@@ -24,7 +24,6 @@ function ActualizarServidor() {
     });
 
     const [general, setGeneral] = useState('');
-    const [marcas, setMarcas] = useState('');
     const [sistemas, setSistemas] = useState('');
     const [estatus, setEstatus] = useState('');
     const [regiones, setRegiones] = useState('');
@@ -32,8 +31,7 @@ function ActualizarServidor() {
 
     // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
     async function establecerDatos(){
-        setMarcas(await Opciones('marcas'));
-        setEstatus(['SELECCIONE', 'POR DETERMINAR', 'ACTIVO', 'INACTIVO']);
+        setEstatus(await Opciones('estados'));
         setSistemas(await Opciones('sistemas'));
         setRegiones(await Opciones('regiones'));
     }
@@ -92,7 +90,8 @@ function ActualizarServidor() {
                 region : x.region,
                 localidad : x.localidad,
             });
-            
+            console.log(x.region);
+            console.log(localidades);
             setLocalidades(await OpcionesLocalidades(x.region));
             setLoad(false);
         }

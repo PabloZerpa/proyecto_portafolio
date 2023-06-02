@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Container, Input, Select, Tabla, TextArea } from '../../components';
 import { Notificacion } from '../../utils/Notificacion';
 import { FaTimesCircle } from 'react-icons/fa';
-import Modal from '../../components/Modal';
 import TableRegistro from '../../components/TablaRegistro';
 import { columnasModalServidor } from '../../utils/columnas';
 import Opciones from '../../utils/Opciones';
@@ -30,7 +29,7 @@ function RegistrarBD() {
 
     // =================== FUNCION PARA OBTENER LOS VALORES DE LOS SELECTS ===================
     async function establecerDatos(){
-        setEstatus(['SELECCIONE', 'POR DETERMINAR', 'ACTIVO', 'INACTIVO']);
+        setEstatus(await Opciones('estados'));
         setTipos(await Opciones('tipos'));
         setAmbientes(await Opciones('ambientes'));
     }
@@ -152,7 +151,6 @@ function RegistrarBD() {
 
             {/* --------------- VENTANA MODAL PARA REGISTRAR SERVIDORES --------------- */}
             {isOpen ? (
-                <Modal>
                 <TableRegistro
                     setIsOpen={setIsOpen}
                     devolverSelecciones={obtenerSeleccionesServidor}
@@ -160,7 +158,6 @@ function RegistrarBD() {
                     objetivo='servidor'
                     busqueda={true}
                 />
-            </Modal>
             ) : (null) }
 
 

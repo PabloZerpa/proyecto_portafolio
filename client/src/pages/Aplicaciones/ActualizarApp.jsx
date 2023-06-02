@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button, Container, Input, Radio, Select, Tabla, TextArea, Modal, TableRegistro } from '../../components';
+import { Button, Container, Input, Radio, Select, Tabla, TextArea, TableRegistro } from '../../components';
 import { BiLoaderAlt } from "react-icons/bi";
 import { FaTimesCircle } from 'react-icons/fa';
 import { Notificacion } from '../../utils/Notificacion';
@@ -407,77 +407,64 @@ function ActualizarApp() {
 
             {/* --------------- VENTANA MODAL PARA REGISTRAR BASES DE DATOS --------------- */}
             {isOpen ? (
-                <Modal>
-                    <TableRegistro
+                <TableRegistro
                         setIsOpen={setIsOpen}
                         devolverSelecciones={obtenerSeleccionesBase}
                         columnas={columnasModalBD}
                         objetivo='base_datos'
                         busqueda={true}
                         selectDefault={select_base}
-                    />
-                </Modal> 
+                />
             ) : (null) }
             {/* --------------- VENTANA MODAL PARA REGISTRAR SERVIDOcus --------------- */}
             {isOpen2 ? (
-                <Modal>
-                    <TableRegistro
-                        setIsOpen={setIsOpen2}
-                        devolverSelecciones={obtenerSeleccionesServidor}
-                        columnas={columnasModalServidor}
-                        objetivo='servidor'
-                        busqueda={true}
-                        selectDefault={select_servidor}
-                    />
-                </Modal>
+                <TableRegistro
+                    setIsOpen={setIsOpen2}
+                    devolverSelecciones={obtenerSeleccionesServidor}
+                    columnas={columnasModalServidor}
+                    objetivo='servidor'
+                    busqueda={true}
+                    selectDefault={select_servidor}
+                />
             ) : (null) }
             {/* --------------- VENTANA MODAL PARA REGISTRAR LENGUAJES --------------- */}
             {isOpen3 ? (
-                <Modal>
-                    <TableRegistro
-                        setIsOpen={setIsOpen3}
-                        devolverSelecciones={obtenerSeleccionesLenguaje}
-                        columnas={columnasModalLenguaje}
-                        objetivo='lenguaje'
-                        selectDefault={select_lenguaje}
-                    />
-                </Modal>
+                <TableRegistro
+                    setIsOpen={setIsOpen3}
+                    devolverSelecciones={obtenerSeleccionesLenguaje}
+                    columnas={columnasModalLenguaje}
+                    objetivo='lenguaje'
+                    selectDefault={select_lenguaje}
+                />
             ) : (null) }
             {/* --------------- VENTANA MODAL PARA REGISTRAR DOCUMENTOS --------------- */}
             {isOpen4 ? (
-                <Modal>
-                    {/* --------------- DOCUMENTACION --------------- */}
-                    <DocumentosForm
-                        setIsOpen={setIsOpen4}
-                        devolverSelecciones={obtenerSeleccionesDoc}
-                    />
-                </Modal>
+                <DocumentosForm
+                    setIsOpen={setIsOpen4}
+                    devolverSelecciones={obtenerSeleccionesDoc}
+                />
             ) : (null) }
             {/* --------------- VENTANA MODAL PARA REGISTRAR CUSTODIOS --------------- */}
             {isOpen5 ? (
-                <Modal>
-                    <TableRegistro
-                        setIsOpen={setIsOpen5}
-                        devolverSelecciones={obtenerCustodioFuncional}
-                        columnas={columnasModalCustodio}
-                        objetivo='custodio'
-                        busqueda={true}
-                        selectDefault={null}
-                    />
-                </Modal>
+                <TableRegistro
+                    setIsOpen={setIsOpen5}
+                    devolverSelecciones={obtenerCustodioFuncional}
+                    columnas={columnasModalCustodio}
+                    objetivo='custodio'
+                    busqueda={true}
+                    selectDefault={null}
+                />
             ) : (null) }
 
             {isOpen6 ? (
-                <Modal>
-                    <TableRegistro
-                        setIsOpen={setIsOpen6}
-                        devolverSelecciones={obtenerCustodioTecnico}
-                        columnas={columnasModalCustodio}
-                        objetivo='custodio'
-                        busqueda={true}
-                        selectDefault={null}
-                    />
-                </Modal>
+                <TableRegistro
+                    setIsOpen={setIsOpen6}
+                    devolverSelecciones={obtenerCustodioTecnico}
+                    columnas={columnasModalCustodio}
+                    objetivo='custodio'
+                    busqueda={true}
+                    selectDefault={null}
+                />
             ) : (null) }
 
             <h2 className='font-bold text-lg'>Actualizacion de Aplicacion</h2>

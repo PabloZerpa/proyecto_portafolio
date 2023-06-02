@@ -51,3 +51,37 @@ export {
     ActualizarCustodio,
     VerCustodio,
 };
+
+/*
+
+.custom(value => {
+            const caracteres = value.split("");
+            let puntosConsecutivos = false;
+
+            caracteres.filter((caracter, index) => {
+                if(index === 0 && !parseInt(caracter)){
+                    console.log('VERSION INVALIDA');
+                    return res.status(401).json({ message: 'VERSION INVALIDA' });
+                }
+                if(parseInt(caracter) || caracter === '0'){
+                    puntosConsecutivos = false;
+                    console.log('ES EL NUMERO: ' + caracter);
+                }
+                else if(caracter === '.'){
+                    console.log('ES UN PUNTO: ' + caracter);
+
+                    if(puntosConsecutivos){
+                        console.log('VERSION INVALIDA');
+                        return res.status(401).json({ message: 'VERSION INVALIDA' });
+                    }
+                    puntosConsecutivos = true;
+                }
+                else{ 
+                    console.log('VERSION INVALIDA');
+                    throw new Error('VERSION INVALIDA');
+                }
+            });
+        }),
+
+
+*/
