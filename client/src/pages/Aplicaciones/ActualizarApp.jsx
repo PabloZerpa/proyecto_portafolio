@@ -236,8 +236,8 @@ function ActualizarApp() {
     ];
 
     const columnasDoc = [
-        generarColumna('Descripcion','doc_descripcion','150px'),
-        generarColumna('Direccion','doc_direccion','150px'),
+        generarColumna('Descripcion','doc_descripcion','250px'),
+        generarColumna('Direccion','doc_direccion','250px'),
         generarColumna('Tipo','doc_tipo','150px'),
         {
             name: 'Remover',
@@ -356,7 +356,7 @@ function ActualizarApp() {
         } 
     } 
         fetchData();
-         
+    
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [load]);
 
@@ -392,10 +392,10 @@ function ActualizarApp() {
                 Notificacion('APLICACION ELIMINADA EXITOSAMENTE', 'success');
                 navegar(`/aplicaciones/`);
             }
-          }
-          catch (error) { 
+        }
+        catch (error) { 
             Notificacion(error.response.data.message, 'error');
-          }
+        }
     }
 
     if(load){
@@ -474,7 +474,7 @@ function ActualizarApp() {
                 <div className="flex flex-col relative w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
 
                     <h2 className='font-bold text-base mb-6'>Informacion General</h2>
-                    <div className="grid grid-cols-2 space-x-4">
+                    <div className="grid grid-cols-2 space-x-2">
                         {/* --------------- INFORMACION BASICA --------------- */}
                         <Input campo='Acronimo' name='apl_acronimo' required={true} propiedad={general.apl_acronimo} manejador={setValores} />
                         <Select campo='Estatus' name='apl_estatus' required={true} byId={false} opciones={estatus ? estatus : ['SELECCIONE']} propiedad={general.estatus} manejador={setValores}/>
@@ -483,20 +483,26 @@ function ActualizarApp() {
                     <TextArea campo='Nombre' name='apl_nombre' required={true} propiedad={general.apl_nombre} manejador={setValores} />
                     <TextArea campo='Descripcion' name='apl_descripcion' required={true} propiedad={general.apl_descripcion} manejador={setValores} />
 
-                    <div className="relative grid grid-cols-2 space-x-4 mb-0">
-                        <Input campo='Version' name='apl_version' required={true} propiedad={general.apl_version} manejador={setValores} />
-                        <Select campo='Prioridad' name='apl_prioridad' required={true} byId={false} opciones={['SELECCIONE','ALTA','MEDIA','BAJA',]} propiedad={general.prioridad} manejador={setValores} />
-                        <Select campo='Alcance' name='apl_alcance' required={true} byId={false} opciones={alcance ? alcance : ['SELECCIONE']} propiedad={general.alcance} manejador={setValores} />
-                        <Input campo='Direccion' name='apl_direccion' required={true} propiedad={general.apl_direccion} manejador={setValores} />
-                        <Input campo='N° Usuarios' name='apl_cantidad_usuarios' required={true} propiedad={general.apl_cantidad_usuarios} manejador={setValores} />
-                        <Select campo='Region' name='apl_region' required={true} byId={false} opciones={regiones ? regiones : ['SELECCIONE']} propiedad={general.region} manejador={setValores} />
-                        <Radio label='Critico' name='apl_critico' required={true} opciones={['SI','NO']} manejador={setValores} />
-                        <Radio label='Codigo Fuente' name='apl_codigo_fuente' required={true} opciones={['SI', 'NO']} manejador={setValores} />
+                    <div className="w-full grid grid-cols-1 md:grid-cols-2">
+                        <div className='w-full flex flex-col'>
+                            <Input campo='Version' name='apl_version' required={true} propiedad={general.apl_version} manejador={setValores} />
+                            <Select campo='Alcance' name='apl_alcance' required={true} byId={false} opciones={alcance ? alcance : ['SELECCIONE']} propiedad={general.alcance} manejador={setValores} />
+                            <Input campo='N° Usuarios' name='apl_cantidad_usuarios' required={true} propiedad={general.apl_cantidad_usuarios} manejador={setValores} />
+                            <Radio label='Critico' name='apl_critico' required={true} opciones={['SI','NO']} manejador={setValores} />
+                        </div>
+
+                        <div className='w-full flex flex-col md:ml-2'>
+                            <Select campo='Prioridad' name='apl_prioridad' required={true} byId={false} opciones={['SELECCIONE','ALTA','MEDIA','BAJA',]} propiedad={general.prioridad} manejador={setValores} />
+                            <Input campo='Direccion' name='apl_direccion' required={true} propiedad={general.apl_direccion} manejador={setValores} />
+                            <Select campo='Region' name='apl_region' required={true} byId={false} opciones={regiones ? regiones : ['SELECCIONE']} propiedad={general.region} manejador={setValores} />
+                            <Radio label='Codigo Fuente' name='apl_codigo_fuente' required={true} opciones={['SI', 'NO']} manejador={setValores} />
+                        </div>
                     </div>
+
                 </div> 
 
                 {/* --------------- CUSTODIOS --------------- */} 
-                <div className="flex flex-col w-full md:w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
+                <div className="flex flex-col w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 space-y-4 space-x-0 md:space-x-4 md:space-y-0">
 
@@ -580,7 +586,7 @@ function ActualizarApp() {
                             Agregar
                         </button>
 
-                        <div className="w-4/3">
+                        <div className="w-full">
                             <Tabla columnas={columnasDoc} datos={tableDataDoc} />
                         </div>
                     </div>
@@ -590,7 +596,7 @@ function ActualizarApp() {
                 <div className="flex flex-col relative w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
                     {/* --------------- MANTENIMIENTO --------------- */}
                     <p className='font-bold text-base my-4'>Mantenimiento</p>
-                    <div className="grid grid-cols-2 space-x-4">
+                    <div className="flex flex-col">
                         <Select campo='Frecuencia' name='man_frecuencia' propiedad={datos.man_frecuencia} byId={false} opciones={frecuencia ? frecuencia : ['SELECCIONE']} manejador={setValores}/>
                         <Input campo='Horas Pro' name='man_horas_prom' propiedad={datos.man_horas_prom} manejador={setValores} />
                         <Input campo='Horas Anu' name='man_horas_anuales' propiedad={datos.man_horas_anuales} manejador={setValores} />

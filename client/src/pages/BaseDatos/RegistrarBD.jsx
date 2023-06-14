@@ -163,18 +163,23 @@ function RegistrarBD() {
 
             <h1 className='font-bold text-lg'>Registro de Base de datos</h1>
 
-            <form className="flex flex-col items-center space-y-4 relative w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" onSubmit={createData}>
+            <form className="flex flex-col items-center space-y-4 relative w-3/4 bg-zinc-400 p-4 rounded drop-shadow-md" onSubmit={createData}>
 
                 <div className='w-full'>
                     <TextArea campo='Nombre' name='base_datos' required={true} editable={true} area={true} manejador={setValores} />
                 </div>
 
-                <div className="w-full grid grid-cols-1 md:grid-cols-2 relative space-x-4 mb-0">
-                    <Select campo='Estatus' name='estatus' required={true} opciones={estatus ? estatus : ['SELECCIONE']} manejador={setValores}/>
-                    <Select campo='Tipo' name='tipo' byId={false} required={true} opciones={tipos ? tipos : ['SELECCIONE']} manejador={setValores} />
-                    <Select campo='Manejador' name='manejador' byId={false} required={true} opciones={mane ? mane : ['SELECCIONE']} manejador={setValores} />
-                    <Select campo='Ambiente' name='ambiente' required={true} opciones={ambientes ? ambientes : ['SELECCIONE']} manejador={setValores} />
-                    <Input campo='N° Usuario' name='cantidad_usuarios' required={true} editable={true} manejador={setValores} />
+                <div className='w-full grid grid-cols-1 md:grid-cols-2'>
+                    <div className='w-full flex flex-col'>
+                        <Select campo='Estatus' name='estatus' required={true} opciones={estatus ? estatus : ['SELECCIONE']} manejador={setValores}/>
+                        <Select campo='Manejador' name='manejador' byId={false} required={true} opciones={mane ? mane : ['SELECCIONE']} manejador={setValores} />
+                        <Input campo='N° Usuario' name='cantidad_usuarios' required={true} editable={true} manejador={setValores} />
+                    </div>
+
+                    <div className='w-full flex flex-col md:ml-2'>
+                        <Select campo='Tipo' name='tipo' byId={false} required={true} opciones={tipos ? tipos : ['SELECCIONE']} manejador={setValores} />
+                        <Select campo='Ambiente' name='ambiente' required={true} opciones={ambientes ? ambientes : ['SELECCIONE']} manejador={setValores} />
+                    </div>
                 </div>
  
                 {/* --------------- SERVIDOR --------------- */}

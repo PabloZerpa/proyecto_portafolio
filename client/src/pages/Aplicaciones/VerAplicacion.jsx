@@ -74,26 +74,38 @@ function VerAplicacion() {
             <h2 className='font-bold text-lg'>Informacion General</h2>
             <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
     
-              <div className='grid space-x-6 mb-6 md:grid-cols-2'>
-                <Input campo='Acronimo' propiedad={general.apl_acronimo} editable={false} />
-                <Input campo='Estatus' propiedad={general.estatus} editable={false} />
-                <Input campo='Version' propiedad={general.apl_version} editable={false} />
-                <Input campo='Direccion' propiedad={general.apl_direccion} editable={false} />
+              <div className='w-full grid grid-cols-1 md:grid-cols-2'>
+                <div className='w-full flex flex-col'>
+                  <Input campo='Acronimo' propiedad={general.apl_acronimo} editable={false} />
+                  <Input campo='Version' propiedad={general.apl_version} editable={false} />
+                </div>
+
+                <div className='w-full flex flex-col md:ml-2'>
+                  <Input campo='Estatus' propiedad={general.estatus} editable={false} />
+                  <Input campo='Direccion' propiedad={general.apl_direccion} editable={false} />
+                </div>
               </div>
     
-              <div className='flex flex-col space-x-2 text-sm font-medium text-gray-900 mb-6'>
+              <div className='flex flex-col text-sm font-medium text-gray-900 mb-6'>
                 <TextArea campo='Nombre' propiedad={general.apl_nombre} editable={false} />
                 <TextArea campo='Descripcion' propiedad={general.apl_descripcion} editable={false} />
               </div>
                 
-              <div className='grid space-x-6 mb-6 md:grid-cols-2'>
-                <Input campo='Prioridad' propiedad={general.prioridad} editable={false} />
-                <Input campo='Alcance' propiedad={general.alcance} editable={false} />
-                <Input campo='Critico' propiedad={general.apl_critico} editable={false} />
-                <Input campo='Codigo Fuente' propiedad={general.apl_codigo_fuente} editable={false} />
-                <Input campo='N° Usuarios' propiedad={general.apl_cantidad_usuarios} editable={false} />
-                <Input campo='Region' propiedad={general.region} editable={false} /> 
-                <Input campo='Ultima Actualizacion' propiedad={general.apl_fecha_actualizacion} editable={false} /> 
+              <div className='w-full grid grid-cols-1 md:grid-cols-2'>
+
+                <div className='w-full flex flex-col'>
+                  <Input campo='Prioridad' propiedad={general.prioridad} editable={false} />
+                  <Input campo='Critico' propiedad={general.apl_critico} editable={false} />
+                  <Input campo='N° Usuarios' propiedad={general.apl_cantidad_usuarios} editable={false} />
+                  <Input campo='Ultima Actualizacion' propiedad={general.apl_fecha_actualizacion} editable={false} /> 
+                </div>
+
+                <div className='w-full flex flex-col md:ml-2'>
+                  <Input campo='Alcance' propiedad={general.alcance} editable={false} />
+                  <Input campo='Codigo Fuente' propiedad={general.apl_codigo_fuente} editable={false} />
+                  <Input campo='Region' propiedad={general.region} editable={false} /> 
+                </div>
+
               </div>
             </form>
           </>

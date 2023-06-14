@@ -10,6 +10,9 @@ import Radio from './Radio';
 import Checkbox from './Checkbox';
 import Modal from './Modal';
 import Card from './Card';
+import Linea from './Linea';
+import Circulo from './Circulo';
+import Barra from './Barra';
 
 export {
     Tabla,
@@ -23,4 +26,7 @@ export {
     Modal,
     TableRegistro,
     Card,
+    Linea,
+    Circulo,
+    Barra,
 };

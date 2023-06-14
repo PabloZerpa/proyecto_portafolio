@@ -2,9 +2,7 @@
 import { useState, useEffect } from "react";
 import { Container, Button } from "../../components";
 import { BiLoaderAlt } from "react-icons/bi";
-import Barra from "../../chart/Barra";
-import Circulo from "../../chart/Circulo";
-import Linea from "../../chart/Linea";
+import { Barra, Circulo, Linea } from "../../components";
 import Radio from "../../components/Radio";
 import Opciones from "../../utils/Opciones";
 import axios from "axios";
@@ -58,8 +56,8 @@ function Diagramas() {
     }
 
     const onSearch = async (categoria,mostrar) => {
-      try {
- 
+    try {
+
         const {data} = await axios.post(`${rutaUsuario}/cantidadRegiones`, {categoria,mostrar}, { headers: authHeader() });
 
         setResultados(data.cantidad);

@@ -12,6 +12,7 @@ const login = async (req, res) => {
         
         const buscarUsuario = await pool.query('SELECT * FROM usuarios WHERE indicador = ?', [indicador]);
         const usuario = buscarUsuario[0][0];
+        const usuario_id = usuario.usuario_id;
         let rol = null;
 
         if(usuario){
@@ -36,9 +37,10 @@ const login = async (req, res) => {
         
 
         // ********** GENERA EL TOKEN DEL USUARIO **********
-        const token = await generarToken(usuario.usuario_id,indicador,rol);
+        const token = await generarToken(usuario_id,indicador,rol);
         const datos = {
             indicador,
+            usuario_id,
             rol,
             token 
         }
@@ -46,7 +48,7 @@ const login = async (req, res) => {
         const datosAuditoria = {
             mensaje : 'Inicio de sesion exitoso',
             ip : req.ip,
-            usuario_id : usuario.usuario_id
+            usuario_id : usuario_id
         }
         generarLogAuditoria(datosAuditoria);
 
@@ -100,10 +102,12 @@ const registrar = async (req, res) => {
  // *************** CERRAR SESION ***************
 const logout = (req, res) => {
 
+    const {id} = req.params;
+    
     const datosAuditoria = {
-        mensaje : 'Cerro Sesion',
+        mensaje : 'Cierre de sesion',
         ip : req.ip,
-        usuario_id : req.usuario_id
+        usuario_id : id
     }
 
     generarLogAuditoria(datosAuditoria);

@@ -36,7 +36,7 @@ function ActualizarUsuario({setIsOpen, valores, setUpdate}) {
       establecerDatos();
   }, []);
 
-   
+
   // =================== FUNCION PARA OBTENER Y GUARDAR VALORES DEL LOS INPUTS ===================
   const setValores = (e) => {
       const valor = e.target.value.toUpperCase();
@@ -67,14 +67,24 @@ function ActualizarUsuario({setIsOpen, valores, setUpdate}) {
 
       <div className="flex flex-col items-center space-y-2 pb-4 bg-zinc-400 rounded">
 
-        <div className="grid grid-cols-2 md:grid-cols-2 w-[300px] lg:w-[500px] space-x-4 p-4">
-          <Input campo='Indicador' name='indicador' direccion="col" editable={false} propiedad={valores.indicador} />
-          <Select campo='Rol' name='rol' direccion="col" required={true} byId={false} propiedad={valores.rol} opciones={roles ? roles : ['SELECCIONE']} manejador={setValores} />
-          <Input campo='Nombre' name='nombre' direccion="col" required={true} propiedad={valores.nombre} editable={true} manejador={setValores} />
-          <Input campo='Apellido' name='apellido' direccion="col" required={true} propiedad={valores.apellido} editable={true} manejador={setValores} />
-          <Select campo='Gerencia' name='gerencia' direccion="col" required={true} byId={false} propiedad={valores.gerencia} opciones={gerencias ? gerencias : ['SELECCIONE']} manejador={setValores} />
-          <Select campo='Cargo' name='cargo' direccion="col" required={true} byId={false} propiedad={valores.cargo} opciones={cargos ? cargos : ['SELECCIONE']} manejador={setValores} />
-        </div> 
+      <div className="flex flex-col space-y-4 p-2 items-center">{}
+          <h2 className='font-bold text-base'>Actualizar Usuario</h2>
+
+            <div className='w-full grid grid-cols-1 md:grid-cols-2 p-4 bg-zinc-400 rounded'>
+
+                <div className='w-full flex flex-col'>
+                    <Input campo='Indicador' name='indicador' direccion="col" editable={false} propiedad={valores.indicador} />
+                    <Input campo='Nombre' name='nombre' direccion="col" required={true} propiedad={valores.nombre} editable={true} manejador={setValores} />
+                    <Select campo='Gerencia' name='gerencia' direccion="col" required={true} byId={false} propiedad={valores.gerencia} opciones={gerencias ? gerencias : ['SELECCIONE']} manejador={setValores} />
+                </div>
+
+                <div className='w-full flex flex-col md:ml-2'>
+                    <Select campo='Rol' name='rol' direccion="col" required={true} byId={false} propiedad={valores.rol} opciones={roles ? roles : ['SELECCIONE']} manejador={setValores} />
+                    <Input campo='Apellido' name='apellido' direccion="col" required={true} propiedad={valores.apellido} editable={true} manejador={setValores} />
+                    <Select campo='Cargo' name='cargo' direccion="col" required={true} byId={false} propiedad={valores.cargo} opciones={cargos ? cargos : ['SELECCIONE']} manejador={setValores} />
+                </div>
+              </div>
+      </div>
 
         <div className="flex space-x-8 lg:space-x-16">
           <Button width={24} manejador={(e) => setIsOpen(false)} >Cerrar</Button>

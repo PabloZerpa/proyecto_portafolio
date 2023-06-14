@@ -245,8 +245,8 @@ function RegistrarApp() {
     ];
 
     const columnasDoc = [
-        generarColumna('Descripcion','doc_descripcion','150px'),
-        generarColumna('Direccion','doc_direccion','150px'),
+        generarColumna('Descripcion','doc_descripcion','250px'),
+        generarColumna('Direccion','doc_direccion','250px'),
         generarColumna('Tipo','doc_tipo','150px'),
         {
             name: 'Remover',
@@ -338,9 +338,10 @@ function RegistrarApp() {
             <form className="flex flex-col justify-center items-center w-full p-4 mb-10 z-40" onSubmit={crearDatos} >
                 
                 {/* --------------- INFORMACION BASICA --------------- */}
-                <div className="flex flex-col w-full md:w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
+                <div className="flex flex-col w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
+
                     <h2 className='font-bold text-base mb-6'>Informacion General</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 space-x-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 md:space-x-2">
                         <Input campo='Acronimo' name='apl_acronimo' required={true} manejador={setValores} />
                         <Select campo='Estatus' name='apl_estatus' required={true} opciones={estatus ? estatus : ['SELECCIONE']} manejador={setValores}/>
                     </div>
@@ -348,20 +349,26 @@ function RegistrarApp() {
                     <TextArea campo='Nombre' name='apl_nombre' required={true} manejador={setValores} />
                     <TextArea campo='Descripcion' required={true} name='apl_descripcion' manejador={setValores} />
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 space-x-4 mb-0">
-                        <Input campo='Version' name='apl_version' required={true} manejador={setValores} />
-                        <Select campo='Prioridad' name='apl_prioridad' opciones={['SELECCIONE','BAJA','MEDIA','ALTA',]} manejador={setValores} />
-                        <Select campo='Alcance' name='apl_alcance' opciones={alcance ? alcance : ['SELECCIONE']} manejador={setValores} />
-                        <Input campo='Direccion' name='apl_direccion' manejador={setValores} />
-                        <Input campo='N° Usuarios' name='apl_cantidad_usuarios' manejador={setValores} />
-                        <Select campo='Region' name='apl_region' opciones={regiones ? regiones : ['SELECCIONE']} manejador={setValores} />
-                        <Radio label='Critico' name='apl_critico' opciones={['SI','NO']} manejador={setValores} />
-                        <Radio label='Codigo Fuente' name='apl_codigo_fuente' opciones={['SI', 'NO']} manejador={setValores} />
+                    <div className="w-full grid grid-cols-1 md:grid-cols-2">
+
+                        <div className='w-full flex flex-col'>
+                            <Input campo='Version' name='apl_version' required={true} manejador={setValores} />
+                            <Select campo='Alcance' name='apl_alcance' opciones={alcance ? alcance : ['SELECCIONE']} manejador={setValores} />
+                            <Input campo='N° Usuarios' name='apl_cantidad_usuarios' manejador={setValores} />
+                            <Radio label='Critico' name='apl_critico' opciones={['SI','NO']} manejador={setValores} />
+                        </div>
+
+                        <div className='w-full flex flex-col md:ml-2'>
+                            <Select campo='Prioridad' name='apl_prioridad' opciones={['SELECCIONE','BAJA','MEDIA','ALTA',]} manejador={setValores} />
+                            <Input campo='Direccion' name='apl_direccion' manejador={setValores} />
+                            <Select campo='Region' name='apl_region' opciones={regiones ? regiones : ['SELECCIONE']} manejador={setValores} />
+                            <Radio label='Codigo Fuente' name='apl_codigo_fuente' opciones={['SI', 'NO']} manejador={setValores} />
+                        </div>
                     </div>
                 </div>
 
                 {/* --------------- CUSTODIOS --------------- */} 
-                <div className="flex flex-col w-full md:w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
+                <div className="flex flex-col w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 space-y-4 space-x-0 md:space-x-4 md:space-y-0">
 
@@ -388,7 +395,7 @@ function RegistrarApp() {
 
                 
                 {/* --------------- TECNOLOGIAS --------------- */}
-                <div className="flex flex-col w-full md:w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
+                <div className="flex flex-col w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
                     <h2 className='font-bold text-base my-4'>Tecnologia</h2>
                     <div className="grid grid-cols-2">
                         <Select campo='Plataforma' name='plataforma' opciones={plataformas ? plataformas : ['SELECCIONE']} manejador={setValores} />
@@ -449,14 +456,12 @@ function RegistrarApp() {
                             <Tabla columnas={columnasDoc} datos={tableDataDoc} />
                         </div>
                     </div>
-
                 </div>
 
- 
-                <div className="flex flex-col w-full md:w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
+                <div className="flex flex-col w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
                     {/* --------------- MANTENIMIENTO --------------- */}
                     <p className='font-bold text-base my-4'>Mantenimiento</p>
-                    <div className="flex flex-col ">
+                    <div className="flex flex-col">
                         <Select campo='Frecuencia' name='man_frecuencia' opciones={frecuencia ? frecuencia : ['SELECCIONAR']} manejador={setValores}/>
                         <Input campo='Horas Pro' name='man_horas_prom' manejador={setValores} />
                         <Input campo='Horas Anu' name='man_horas_anuales' manejador={setValores} />

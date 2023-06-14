@@ -241,14 +241,20 @@ function ActualizarBD() {
                     <TextArea campo='Nombre' name='base_datos' required={true} editable={true} propiedad={general.base_datos} manejador={setValores} />
                 </div>
 
-                <div className="w-full grid grid-cols-1 md:grid-cols-2 relative space-x-4 mb-0">
-                    <Select campo='Estatus' name='estatus' required={true} byId={false} propiedad={general.estatus} opciones={estatus ? estatus : ['SELECCIONE']} manejador={setValores}/>
-                    <Select campo='Tipo' name='tipo' required={true} byId={false} propiedad={general.tipo} opciones={tipos ? tipos : ['SELECCIONE']} manejador={setValores} />
-                    <Select campo='Manejador' name='manejador' required={true} byId={false} propiedad={general.manejador} opciones={mane ? mane : ['SELECCIONE']} manejador={setValores} />
-                    <Select campo='Ambiente' name='ambiente' required={true} byId={false} propiedad={general.ambiente} opciones={ambientes ? ambientes : ['SELECCIONE']} manejador={setValores} />
-                    <Input campo='N° Usuario' name='cantidad_usuarios' propiedad={general.base_cantidad_usuarios} required={true} editable={true} manejador={setValores} />
+                <div className='w-full grid grid-cols-1 md:grid-cols-2'>
+                    <div className='w-full flex flex-col'>
+                        <Select campo='Estatus' name='estatus' required={true} byId={false} propiedad={general.estatus} opciones={estatus ? estatus : ['SELECCIONE']} manejador={setValores}/>
+                        <Select campo='Manejador' name='manejador' required={true} byId={false} propiedad={general.manejador} opciones={mane ? mane : ['SELECCIONE']} manejador={setValores} />
+                        <Input campo='N° Usuario' name='cantidad_usuarios' propiedad={general.base_cantidad_usuarios} required={true} editable={true} manejador={setValores} />
+                    </div>
+
+                    <div className='w-full flex flex-col md:ml-2'>
+                        <Select campo='Tipo' name='tipo' required={true} byId={false} propiedad={general.tipo} opciones={tipos ? tipos : ['SELECCIONE']} manejador={setValores} />
+                        <Select campo='Ambiente' name='ambiente' required={true} byId={false} propiedad={general.ambiente} opciones={ambientes ? ambientes : ['SELECCIONE']} manejador={setValores} />
+
+                    </div>
                 </div>
- 
+
                 {/* --------------- SERVIDOR --------------- */}
                 <p className='font-bold text-sm my-4'>Servidor</p>
                     <div className='w-full flex flex-col justify-center items-center space-y-4'>

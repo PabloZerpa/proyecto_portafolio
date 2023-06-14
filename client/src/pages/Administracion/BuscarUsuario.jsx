@@ -201,7 +201,7 @@ function BuscarUsuario() {
 
       {/* --------------- VENTANA MODAL PARA ACTUALIZAR DATOS --------------- */}
       {isOpen ? (
-          <div className="fixed top-24 w-full max-w-2xl max-h-full z-50 overflow-y-auto">
+          <div className="fixed top-24 w-full max-w-2xl max-h-full z-50 overflow-y-auto drop-shadow-xl">
             <ActualizarUsuario 
               setIsOpen={setIsOpen} 
               valores={usuario ? usuario : null}
@@ -213,7 +213,7 @@ function BuscarUsuario() {
 
       {/* --------------- VENTANA MODAL PARA ACTUALIZAR DATOS --------------- */}
       {isOpen2 ? (
-          <div className="fixed top-24 w-full max-w-2xl max-h-full z-50 overflow-y-auto">
+          <div className="fixed top-24 w-full max-w-2xl max-h-full z-50 overflow-y-auto drop-shadow-xl">
             <VerActividad
               setIsOpen={setIsOpen2} 
               valores={usuario ? usuario : null}
@@ -254,7 +254,7 @@ function BuscarUsuario() {
       (null)}
 
       <div className="flex gap-16">
-        <Button width={32} manejador={(e) => navegar(-1)} ><FaArrowLeft />Volver</Button>
+        <Button width={32} manejador={(e) => navegar(-1)} ><FaArrowLeft className="mr-1" />Volver</Button>
       </div>
 
     </Container>

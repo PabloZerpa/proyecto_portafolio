@@ -52,21 +52,29 @@ function VerServidor() {
             <>
               <h2 className='font-bold text-lg'>Servidor</h2>
               <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-                <div className='grid space-x-4 mb-6 md:grid-cols-2'> 
-                  <Input campo='ID' editable={false} propiedad={general.servidor_id} />
-                  <Input campo='Nombre' editable={false} propiedad={general.servidor} />
-                  <Input campo='Estatus' editable={false} propiedad={general.estatus} />
-                  <Input campo='Direccion' editable={false} propiedad={general.ser_direccion} />
-                  <Input campo='OS' editable={false} propiedad={general.sistema} />
-                  <Input campo='Modelo' editable={false} propiedad={general.modelo} />
-                  <Input campo='Marca' editable={false} propiedad={general.marca} />
-                  <Input campo='Serial' editable={false} propiedad={general.mod_serial} />
-                  <Input campo='Cantidad CPU' editable={false} propiedad={general.mod_cantidad_cpu} />
-                  <Input campo='Velocidad CPU' editable={false} propiedad={general.mod_velocidad_cpu} />
-                  <Input campo='Memoria' editable={false} propiedad={general.mod_memoria} />
-                  <Input campo='Region' editable={false} propiedad={general.region} />
-                  <Input campo='Localidad' editable={false} propiedad={general.localidad} />
+
+              <div className='w-full grid grid-cols-1 md:grid-cols-2'>
+
+                  <div className='w-full flex flex-col'>
+                    <Input campo='ID' editable={false} propiedad={general.servidor_id} />
+                    <Input campo='Estatus' editable={false} propiedad={general.estatus} />
+                    <Input campo='OS' editable={false} propiedad={general.sistema} />
+                    <Input campo='Marca' editable={false} propiedad={general.marca} />
+                    <Input campo='Cantidad CPU' editable={false} propiedad={general.mod_cantidad_cpu} />
+                    <Input campo='Memoria' editable={false} propiedad={general.mod_memoria} />
+                    <Input campo='Localidad' editable={false} propiedad={general.localidad} />
+                  </div>
+
+                  <div className='w-full flex flex-col md:ml-2'>
+                    <Input campo='Nombre' editable={false} propiedad={general.servidor} />
+                    <Input campo='Direccion' editable={false} propiedad={general.ser_direccion} />
+                    <Input campo='Modelo' editable={false} propiedad={general.modelo} />
+                    <Input campo='Serial' editable={false} propiedad={general.mod_serial} />
+                    <Input campo='Velocidad CPU' editable={false} propiedad={general.mod_velocidad_cpu} />
+                    <Input campo='Region' editable={false} propiedad={general.region} />
+                  </div>
                 </div>
+                
               </form>
             </>
           ) 

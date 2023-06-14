@@ -1,8 +1,14 @@
 
-const { obtenerBusqueda, registrarCustodio, actualizarCustodio, eliminarCustodio, obtenerDatos } = require("../controllers/custodios");
+const { obtenerBusqueda, registrarCustodio, actualizarCustodio, eliminarCustodio, obtenerDatos, registrarCustodio2, buscarCustodio2 } = require("../controllers/custodios");
 const { auth } = require("../middlewares/auth");
 const { validatorCustodio } = require("../validators/custodios");
 const router = require("express").Router();
+
+
+// *************** RUTA DE PRUEBA *************** 
+router.post("/registroPrueba", registrarCustodio2);
+
+router.post("/buscarPrueba", buscarCustodio2);
 
 
 // *************** RUTA PARA OBTENER INFORMACION GENERAL *************** 

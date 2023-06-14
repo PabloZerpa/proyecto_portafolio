@@ -1,5 +1,7 @@
+
 const pool = require('../config');
 const { generarLogAuditoria } = require('../helpers/auditoria');
+const Custodio = require("../models/custodio.js");
 
 const consultaDeBusqueda = `
 SELECT 
@@ -11,6 +13,72 @@ FROM custodios
 	LEFT JOIN cargos ON custodios.cus_cargo = cargos.cargo_id 
     LEFT JOIN regiones ON regiones.region_id = custodios.cus_region
     LEFT JOIN localidades ON localidades.localidad_id = custodios.cus_localidad`;
+
+
+// Registra y Guarda un Custodio
+const registrarCustodio2 = async (req, res) => {
+
+    // Validar datos
+    if (!req.body)
+        res.status(400).send({ message: "Contenido no puede ser vacio!" });
+
+    const { nombre,apellido,indicador,cedula,telefono,cargo,gerencia,region,localidad,usuario_registro } = req.body;
+
+    // Crea custodio
+    const custodio = new Custodio({
+        nombre : nombre,
+        apellido : apellido,
+        indicador : indicador,
+        cedula : cedula,
+        cargo : cargo,
+        gerencia : gerencia,
+        region : region,
+        localidad : localidad,
+        usuario_registro : usuario_registro,
+    });
+
+    // Guarda el custodio en la base de datos
+    Custodio.registrar(custodio,telefono, (err, data) => {
+        if (err)
+            res.status(500).send({
+            message:
+            err.message || "Some error occurred while creating the Custodio."
+        });
+        else res.send(data);
+    });
+
+    res.send(`CUSTODIO CREADO`);
+
+};
+
+// Buscar Custodio
+const buscarCustodio2 = async (req, res) => {
+
+    // Validar datos
+    if (!req.body)
+        res.status(400).send({ message: "Contenido no puede ser vacio!" });
+
+    const { term, cargo,gerencia,region } = req.body;
+    const termino = '%' + term + '%';
+    let data;
+
+    if (term === undefined || null)
+        return res.status(404).json({ message: "Error al recibir consulta" });
+
+    // Guarda el custodio en la base de datos
+    Custodio.busqueda(termino, (err, data) => {
+        if (err)
+            res.status(500).send({
+            message:
+            err.message || "Some error occurred while creating the Custodio."
+        });
+        else res.send(data);
+    });
+
+    res.json(data[0]);
+};
+
+
 
 // *********************************** OBTENER LOS DATOS POR TERMINO DE BUSQUEDA ***********************************
 const obtenerBusqueda = async (req,res) => {
@@ -245,5 +313,6 @@ const obtenerDatos = async (req,res) => {
 };
 
 module.exports = { 
-    obtenerBusqueda,registrarCustodio,eliminarCustodio,actualizarCustodio, obtenerDatos
+    obtenerBusqueda,registrarCustodio,eliminarCustodio,actualizarCustodio, obtenerDatos,
+    registrarCustodio2,buscarCustodio2,
  };

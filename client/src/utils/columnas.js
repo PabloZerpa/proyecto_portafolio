@@ -11,28 +11,28 @@ const generarColumna = (titulo,key,width) => {
 }
 
 export const columnasModalBD = [
-    generarColumna('ID','base_datos_id',null),
-    generarColumna('Nombre','base_datos',null),
-    generarColumna('Estatus','bas_estatus',null),
-    generarColumna('Tipo','tipo',null),
-    generarColumna('Manejador','manejador',null),
-    generarColumna('N° de Usuarios','bas_cantidad_usuarios',null),
-    generarColumna('Ambiente','tipo_ambiente',null),
+    generarColumna('ID','base_datos_id','60px'),
+    generarColumna('Nombre','base_datos','200px'),
+    generarColumna('Estatus','estatus','150px'),
+    generarColumna('Tipo','tipo','150px'),
+    generarColumna('Manejador','manejador','150px'),
+    generarColumna('N° Usuarios','base_cantidad_usuarios','150px'),
+    generarColumna('Ambiente','ambiente','150px'),
 ];
 
 
 export const columnasModalServidor = [
-    generarColumna('ID','servidor_id',null),
-    generarColumna('Nombre','servidor',null),
-    generarColumna('Estatus','ser_estatus',null),
-    generarColumna('Direccion','ser_direccion',null),
-    generarColumna('OS','sistema',null),
-    generarColumna('Modelo','modelo',null),
-    generarColumna('Marca','marca',null),
-    generarColumna('Region','region',null),
-    generarColumna('Localidad','localidad',null),
-    generarColumna('Ultima Actualizacion','ser_fecha_actualizacion',null),
-    generarColumna('Por','indicador',null),
+    generarColumna('ID','servidor_id','60px'),
+    generarColumna('Nombre','servidor','200px'),
+    generarColumna('Estatus','estatus','150px'),
+    generarColumna('Direccion','ser_direccion','200px'),
+    generarColumna('OS','sistema','150px'),
+    generarColumna('Modelo','modelo','150px'),
+    generarColumna('Marca','marca','150px'),
+    generarColumna('Region','region','150px'),
+    generarColumna('Localidad','localidad','150px'),
+    generarColumna('Ultima Actualizacion','ser_fecha_actualizacion','150px'),
+    generarColumna('Por','indicador','150px'),
 ];
 
 

@@ -38,7 +38,7 @@ function Login() {
           navigate("/dashboard");
         }, "2000");
 
-      } 
+      }
       catch (error) {
         if(error.response)
           Notificacion(error.response.data.message, 'error');

@@ -200,113 +200,114 @@ const cambiarPermisos = async (req,res) => {
  }
 
  // *************** OBTENER VALORES PARA LOS SELECTS ***************
- const obtenerValores = async (req,res) => {
-     const clave = req.params.id;
+    const obtenerValores = async (req,res) => {
+    const clave = req.params.id;
 
-     try{
-         if(clave === 'roles'){
-             const data = await pool.query(`SELECT rol FROM roles`);
-             res.send(data[0]);
-         }
-         else if(clave === 'gerencias'){
-             const data = await pool.query(`SELECT gerencia FROM gerencias`);
-             res.send(data[0]);
-         }
-         else if(clave === 'cargos'){
-             const data = await pool.query(`SELECT cargo FROM cargos`);
-             res.send(data[0]);
-         }
-         else if(clave === 'custodios'){
-             const data = await pool.query(`SELECT cus_indicador FROM custodios`);
-             res.send(data[0]);
-         }
-         else if(clave === 'lenguajes'){
-             const data = await pool.query(`SELECT lenguaje FROM lenguajes`);
-             res.send(data[0]);
-         }
-         else if(clave === 'lenguajesTabla'){
-             const data = await pool.query(`SELECT lenguaje_id,lenguaje FROM lenguajes`);
-             res.send(data[0]);
-         }
-         else if(clave === 'plataformas'){
-             const data = await pool.query(`SELECT plataforma FROM plataformas`);
-             res.send(data[0]);
-         }
-         else if(clave === 'basesdatos'){
-             const data = await pool.query(`SELECT base_datos FROM bases_datos`);
-             res.send(data[0]);
-         }
-         else if(clave === 'servidores'){
-             const data = await pool.query(`SELECT servidor FROM servidores`);
-             res.send(data[0]);
-         }
-         else if(clave === 'estatus'){
-             const data = await pool.query(`SELECT estatus FROM estatus`);
-             res.send(data[0]);
-         }
-         else if(clave === 'estados'){
-             const data = await pool.query(`SELECT estado FROM estados`);
-             res.send(data[0]);
-         }
-         else if(clave === 'alcance'){
-             const data = await pool.query(`SELECT alcance FROM alcances`);
-             res.send(data[0]);
-         }
-         else if(clave === 'frecuencias'){
-             const data = await pool.query(`SELECT frecuencia FROM frecuencias`);
-             res.send(data[0]);
-         }
-         else if(clave === 'regiones'){
-             const [rows, fields] = await pool.query('SELECT region FROM regiones');
-             res.send(rows);
-         }
-         else if(clave === 'tipos'){
-             const data = await pool.query(`SELECT tipo FROM tipos_bases`);
-             res.send(data[0]);
-         }
-         else if(clave === 'manejadores'){
-             const data = await pool.query(`SELECT manejador FROM manejadores`);
-             res.send(data[0]);
-         }
-         else if(clave === 'ambientes'){
-             const data = await pool.query(`SELECT ambiente FROM ambientes`);
-             res.send(data[0]);
-         }
-         else if(clave === 'sistemas'){
-             const data = await pool.query(`SELECT sistema FROM sistemas_operativos`);
-             res.send(data[0]);
-         }
-         else if(clave === 'marcas'){
-             const data = await pool.query(`SELECT marca FROM marcas`);
-             res.send(data[0]);
-         }
-         else if(clave === 'documentos'){
-             const data = await pool.query(`SELECT tipo FROM tipos_documentos;`);
-             res.send(data[0]);
-         }
-         else if(clave === 'cantidad'){
-             
-             const aplicaciones = await pool.query(`SELECT COUNT(*) as cantidad FROM aplicaciones`);
-             const bases_datos = await pool.query(`SELECT COUNT(*) as cantidad FROM bases_datos`);
-             const servidores = await pool.query(`SELECT COUNT(*) as cantidad FROM servidores`);
+    try{
+        if(clave === 'roles'){
+            const data = await pool.query(`SELECT rol FROM roles`);
+            res.send(data[0]);
+        }
+        else if(clave === 'gerencias'){
+            const data = await pool.query(`SELECT gerencia FROM gerencias`);
+            res.send(data[0]);
+        }
+        else if(clave === 'cargos'){
+            const data = await pool.query(`SELECT cargo FROM cargos`);
+            res.send(data[0]);
+        }
+        else if(clave === 'custodios'){
+            const data = await pool.query(`SELECT cus_indicador FROM custodios`);
+            res.send(data[0]);
+        }
+        else if(clave === 'lenguajes'){
+            const data = await pool.query(`SELECT lenguaje FROM lenguajes`);
+            res.send(data[0]);
+        }
+        else if(clave === 'lenguajesTabla'){
+            const data = await pool.query(`SELECT lenguaje_id,lenguaje FROM lenguajes`);
+            res.send(data[0]);
+        }
+        else if(clave === 'plataformas'){
+            const data = await pool.query(`SELECT plataforma FROM plataformas`);
+            res.send(data[0]);
+        }
+        else if(clave === 'basesdatos'){
+            const data = await pool.query(`SELECT base_datos FROM bases_datos`);
+            res.send(data[0]);
+        }
+        else if(clave === 'servidores'){
+            const data = await pool.query(`SELECT servidor FROM servidores`);
+            res.send(data[0]);
+        }
+        else if(clave === 'estatus'){
+            const data = await pool.query(`SELECT estatus FROM estatus`);
+            res.send(data[0]);
+        }
+        else if(clave === 'estados'){
+            const data = await pool.query(`SELECT estado FROM estados`);
+            res.send(data[0]);
+        }
+        else if(clave === 'alcance'){
+            const data = await pool.query(`SELECT alcance FROM alcances`);
+            res.send(data[0]);
+        }
+        else if(clave === 'frecuencias'){
+            const data = await pool.query(`SELECT frecuencia FROM frecuencias`);
+            res.send(data[0]);
+        }
+        else if(clave === 'regiones'){
+            const [rows, fields] = await pool.query('SELECT region FROM regiones');
+            res.send(rows);
+        }
+        else if(clave === 'tipos'){
+            const data = await pool.query(`SELECT tipo FROM tipos_bases`);
+            res.send(data[0]);
+        }
+        else if(clave === 'manejadores'){
+            const data = await pool.query(`SELECT manejador FROM manejadores`);
+            res.send(data[0]);
+        }
+        else if(clave === 'ambientes'){
+            const data = await pool.query(`SELECT ambiente FROM ambientes`);
+            res.send(data[0]);
+        }
+        else if(clave === 'sistemas'){
+            const data = await pool.query(`SELECT sistema FROM sistemas_operativos`);
+            res.send(data[0]);
+        }
+        else if(clave === 'marcas'){
+            const data = await pool.query(`SELECT marca FROM marcas`);
+            res.send(data[0]);
+        }
+        else if(clave === 'documentos'){
+            const data = await pool.query(`SELECT tipo FROM tipos_documentos;`);
+            res.send(data[0]);
+        }
+        else if(clave === 'cantidad'){
+            
+            const aplicaciones = await pool.query(`SELECT COUNT(*) as cantidad FROM aplicaciones`);
+            const bases_datos = await pool.query(`SELECT COUNT(*) as cantidad FROM bases_datos`);
+            const servidores = await pool.query(`SELECT COUNT(*) as cantidad FROM servidores`);
 
-             const respuesta = {
-                 aplicaciones: aplicaciones[0][0].cantidad,
-                 bases_datos: bases_datos[0][0].cantidad,
-                 servidores: servidores[0][0].cantidad,
-             }
-             res.send(respuesta);
-         }
-         else if(clave === 'acronimos'){
-             const data = await pool.query(`SELECT apl_acronimo FROM aplicaciones;`);
-             res.send(data[0]);
-         }
-         
-     }
-     catch (error) {
-         return res.status(401).json({ message: 'ERROR AL OBTENER VALORES DE ' + clave });
-     }
- }
+            const respuesta = {
+                aplicaciones: aplicaciones[0][0].cantidad,
+                bases_datos: bases_datos[0][0].cantidad,
+                servidores: servidores[0][0].cantidad,
+            }
 
+            res.send(respuesta);
+        }
+        else if(clave === 'acronimos'){
+            const data = await pool.query(`SELECT apl_acronimo FROM aplicaciones;`);
+            res.send(data[0]);
+        }
+        
+    }
+    catch (error) {
+        return res.status(401).json({ message: 'ERROR AL OBTENER VALORES DE ' + clave });
+    }
+}
+    
 module.exports = { obtenerUsuarios, cambiarPermisos, obtenerPorBusqueda, eliminarUsuario, 
 obtenerLocalidades, obtenerCantidadRegiones, obtenerActividad, obtenerValores };

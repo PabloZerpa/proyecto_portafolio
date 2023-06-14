@@ -1,5 +1,5 @@
-const { check, validationResult } = require("express-validator");
 
+const { check, validationResult } = require("express-validator");
 
 // *************** VALIDAR DATOS CUSTODIO ***************
 const validatorCustodio = [

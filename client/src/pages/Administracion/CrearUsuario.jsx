@@ -68,22 +68,28 @@ function CrearUsuario() {
 
             <form className="flex flex-col items-center space-y-8 pb-4" onSubmit={crearUsuario}>
 
-                <div className="flex flex-col space-y-4">
+                <div className="flex flex-col items-center space-y-4">
                     <h2 className='font-bold text-base'>Datos del Nuevo Usuario</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 w-[400px] md:w-[600px] lg:w-[800px] space-x-4 p-4 bg-zinc-400 rounded">
-                        <Input campo='Indicador' name='indicador' direccion="col" required={true} editable={true} manejador={setValores} />
-                        <Select campo='Rol' name='rol' direccion="col" required={true} opciones={roles ? roles : ['SELECCIONE']} manejador={setValores} />
-                        <Input campo='Nombre' name='nombre' direccion="col" required={true} editable={true} manejador={setValores} />
-                        <Input campo='Apellido' name='apellido' direccion="col" required={true} editable={true} manejador={setValores} />
-                        {/* <Input campo='Contraseña' name='password' direccion="col" required={true} editable={true} manejador={setValores} /> */}
-                        <Select campo='Gerencia' name='gerencia' direccion="col" required={true} opciones={gerencias ? gerencias : ['SELECCIONE']} manejador={setValores} />
-                        <Select campo='Cargo' name='cargo' direccion="col" required={true} opciones={cargos ? cargos : ['SELECCIONE']} manejador={setValores} />
-                    </div> 
+
+                    <div className='w-full grid grid-cols-1 md:grid-cols-2 w-[400px] md:w-[600px] lg:w-[800px] p-4 bg-zinc-400 rounded'>
+                        <div className='w-full flex flex-col'>
+                            <Input campo='Indicador' name='indicador' direccion="col" required={true} editable={true} manejador={setValores} />
+                            <Input campo='Nombre' name='nombre' direccion="col" required={true} editable={true} manejador={setValores} />
+                            <Select campo='Gerencia' name='gerencia' direccion="col" required={true} opciones={gerencias ? gerencias : ['SELECCIONE']} manejador={setValores} />
+                        </div>
+
+                        <div className='w-full flex flex-col md:ml-2'>
+                            <Select campo='Rol' name='rol' direccion="col" required={true} opciones={roles ? roles : ['SELECCIONE']} manejador={setValores} />
+                            <Input campo='Apellido' name='apellido' direccion="col" required={true} editable={true} manejador={setValores} />
+                            <Select campo='Cargo' name='cargo' direccion="col" required={true} opciones={cargos ? cargos : ['SELECCIONE']} manejador={setValores} />
+                        </div>
+                    </div>
+                    
                 </div>
 
                 <div className="flex space-x-16">
-                    <Button width={32} manejador={(e) => navegar(-1)} ><FaArrowLeft />Volver</Button>
-                    <Button tipo="submit" width={32}>Crear Usuario</Button>
+                    <Button width={32} manejador={(e) => navegar(-1)} ><FaArrowLeft className="mr-1" />Volver</Button>
+                    <Button tipo="submit" width={32}>Registrar Usuario</Button>
                 </div>
 
             </form>

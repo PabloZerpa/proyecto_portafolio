@@ -52,14 +52,20 @@ function VerBD() {
             <>
               <h2 className='font-bold text-lg'>Base de datos</h2>
               <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-                <div className='grid space-x-4 mb-6 md:grid-cols-2'> 
-                  <Input campo='ID' editable={false} propiedad={general.base_datos_id} />
-                  <Input campo='Nombre' editable={false} propiedad={general.base_datos} />
-                  <Input campo='Estatus' editable={false} propiedad={general.estatus} />
-                  <Input campo='Tipo' editable={false} propiedad={general.tipo} />
-                  <Input campo='Manejador' editable={false} propiedad={general.manejador} />
-                  <Input campo='N° Usuarios' editable={false} propiedad={general.base_cantidad_usuarios} />
-                  <Input campo='Ambiente' editable={false} propiedad={general.ambiente} />
+
+                <div className='w-full grid grid-cols-1 md:grid-cols-2'>
+                    <div className='w-full flex flex-col'>
+                      <Input campo='ID' editable={false} propiedad={general.base_datos_id} />
+                      <Input campo='Estatus' editable={false} propiedad={general.estatus} />
+                      <Input campo='Manejador' editable={false} propiedad={general.manejador} />
+                      <Input campo='Ambiente' editable={false} propiedad={general.ambiente} />
+                    </div>
+
+                    <div className='w-full flex flex-col md:ml-2'>
+                      <Input campo='Nombre' editable={false} propiedad={general.base_datos} />
+                      <Input campo='Tipo' editable={false} propiedad={general.tipo} />
+                      <Input campo='N° Usuarios' editable={false} propiedad={general.base_cantidad_usuarios} />
+                    </div>
                 </div>
               </form>
             </>

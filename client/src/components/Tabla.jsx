@@ -13,7 +13,7 @@ function Tabla({columnas, datos, paginacion=false, pending=false}) {
                 highlightOnHover
                 pointerOnHover
                 dense
-                noDataComponent={"SIN RESULTADOS"}
+                noDataComponent={'SIN CONTENIDO'}
                 fixedHeader
                 fixedHeaderScrollHeight="600px"
                 pagination={paginacion}

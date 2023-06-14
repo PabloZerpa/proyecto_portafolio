@@ -145,7 +145,7 @@ function TableRegistro({devolverSelecciones, setIsOpen, columnas, objetivo, busq
             ) : null}
 
             {resultado ? (
-                <div className="relative w-full bg-zinc-400 p-0 rounded">
+                <div className="relative w-full p-0 rounded">
                     <div className="mt-6">
                         <DataTable
                             columns={columnas}

@@ -8,7 +8,7 @@ router.post("/", autenticarUser, validatorLogin, login);
 
 router.post("/registro", verificarUser, validatorRegistro, registrar);
 
-router.get("/logout", logout); 
+router.get("/logout/:id", logout); 
 
 
 module.exports = router;  

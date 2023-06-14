@@ -102,26 +102,30 @@ function RegistrarServidor() {
         <Container>
             <h1 className='font-bold text-lg'>Registro de Servidor</h1>
 
-            <form className="flex flex-col justify-content items-center space-y-8 relative w-full md:w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" onSubmit={createData}>
+            <form className="flex flex-col items-center space-y-4 relative w-3/4 bg-zinc-400 p-4 rounded drop-shadow-md" onSubmit={createData}>
                 <div className='w-full'>
                     <TextArea campo='Nombre' name='servidor' required={true} editable={true} manejador={setValores} />
                 </div>
 
-                <div className="w-full relative grid grid-cols-1 md:grid-cols-2 space-x-4 mb-0">
-                    <Select campo='Estatus' name='estatus' required={true} opciones={estatus ? estatus : ['SELECCIONE']} manejador={setValores}/>
-                    <Input campo='Direccion' name='direccion' required={true} manejador={setValores} />
-                    
-                    <Select campo='Sistema' name='sistema' required={true} opciones={sistemas ? sistemas : ['SELECCIONE']} manejador={setValores} />
-                    
-                    <Select campo='Marca' name='marca' required={true} opciones={marcas ? marcas : ['SELECCIONE']} manejador={setValores} />
-                    <Input campo='Modelo' name='modelo' required={true} editable={true} manejador={setValores} />
-                    <Input campo='Serial' name='serial' editable={true} manejador={setValores} />
-                    <Input campo='Velocidad CPU' name='velocidad' required={true} editable={true} manejador={setValores} />
-                    <Input campo='Cantidad CPU' name='cantidad' required={true} editable={true} manejador={setValores} />
-                    <Input campo='Memoria' name='memoria' required={true} editable={true} manejador={setValores} />
+                <div className='w-full grid grid-cols-1 md:grid-cols-2'>
 
-                    <Select campo='Region' name='region' required={true} byId={false} opciones={regiones ? regiones : ['SELECCIONE']} manejador={setValores} />
-                    <Select campo='Localidad' name='localidad' required={true} byId={false} opciones={localidades ? localidades : ['SELECCIONE']} manejador={setValores} />
+                    <div className='w-full flex flex-col'>
+                        <Select campo='Estatus' name='estatus' required={true} opciones={estatus ? estatus : ['SELECCIONE']} manejador={setValores}/>
+                        <Select campo='Sistema' name='sistema' required={true} opciones={sistemas ? sistemas : ['SELECCIONE']} manejador={setValores} />
+                        <Input campo='Modelo' name='modelo' required={true} editable={true} manejador={setValores} />
+                        <Input campo='Velocidad CPU' name='velocidad' required={true} editable={true} manejador={setValores} />
+                        <Input campo='Memoria' name='memoria' required={true} editable={true} manejador={setValores} />
+                        <Select campo='Localidad' name='localidad' required={true} byId={false} opciones={localidades ? localidades : ['SELECCIONE']} manejador={setValores} />
+                    </div>
+
+                    
+                    <div className='w-full flex flex-col md:ml-2'>
+                        <Input campo='Direccion' name='direccion' required={true} manejador={setValores} />
+                        <Select campo='Marca' name='marca' required={true} opciones={marcas ? marcas : ['SELECCIONE']} manejador={setValores} />
+                        <Input campo='Serial' name='serial' editable={true} manejador={setValores} />
+                        <Input campo='Cantidad CPU' name='cantidad' required={true} editable={true} manejador={setValores} />
+                        <Select campo='Region' name='region' required={true} byId={false} opciones={regiones ? regiones : ['SELECCIONE']} manejador={setValores} />
+                    </div>
                 </div>
                     
                 <div className="flex space-x-2 md:space-x-12">

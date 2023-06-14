@@ -27,6 +27,7 @@ import {
   Custodios,
   ActualizarCustodio,
   VerCustodio,
+  Perfil,
 } from '../pages';
 
 function Rutas() {
@@ -40,6 +41,7 @@ function Rutas() {
           <Route element={<Protegida redirectTo='/' />}>
             <Route path='*' element={<Dashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/perfil" element={<Perfil />} />
 
             {/* MODULO DE ADMINISTRACION */}
             <Route element={<ProtegidaAdm />} >

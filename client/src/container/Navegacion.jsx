@@ -50,7 +50,7 @@ function Navegacion() {
                                             style={obtenerUsuario().rol!=='admin' ? {pointerEvents: 'none', display: 'none'} : {pointerEvents: 'auto'} }
                                             to="/administracion/permisos" 
                                             className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
-                                                Permisos
+                                                Usuarios
                                         </Link>
                                         <Link to="/administracion/registro" 
                                             className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100" >
@@ -86,14 +86,14 @@ function Navegacion() {
                             <li>
                                 <Link to="/basedatos" className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100">
                                     <FaDatabase />
-                                    <span className="px-2">Base de datos</span>
+                                    <span className="px-2">Bases de datos</span>
                                 </Link>
                             </li>
 
                             <li>
                                 <Link to="/servidores" className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100">
                                     <FaServer />
-                                    <span className="px-2">Servidor</span>
+                                    <span className="px-2">Servidores</span>
                                 </Link>
                             </li>
 

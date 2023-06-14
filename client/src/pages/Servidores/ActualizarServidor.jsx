@@ -90,8 +90,7 @@ function ActualizarServidor() {
                 region : x.region,
                 localidad : x.localidad,
             });
-            console.log(x.region);
-            console.log(localidades);
+            
             setLocalidades(await OpcionesLocalidades(x.region));
             setLoad(false);
         }
@@ -140,10 +139,10 @@ function ActualizarServidor() {
                 Notificacion('SERVIDOR ELIMINADO EXITOSAMENTE', 'success');
                 navegar(`/servidores/`);
             }
-          }
-          catch (error) { 
+        }
+        catch (error) { 
             Notificacion(error.response.data.message, 'error');
-          }
+        }
     }
 
     
@@ -154,29 +153,34 @@ function ActualizarServidor() {
             <Container>
             <h1 className='font-bold text-lg'>Actualización de Servidor</h1>
 
-            <form className="flex flex-col justify-content items-center space-y-8 relative w-full md:w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" onSubmit={actualizar}>
+            <form className="flex flex-col items-center space-y-4 relative w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" onSubmit={actualizar}>
                 <div className='w-full'>
                     <TextArea campo='Nombre' name='servidor' required={true} propiedad={general.servidor} manejador={setValores} />
                 </div>
 
-                <div className="w-full relative grid grid-cols-1 md:grid-cols-2 space-x-4 mb-0">
-                    <Select campo='Estatus' name='estatus' required={true} byId={false} propiedad={general.estatus} opciones={estatus ? estatus : ['SELECCIONE']} manejador={setValores}/>
-                    <Input campo='Direccion' name='direccion' required={true} propiedad={general.ser_direccion} manejador={setValores} />
-                    
-                    <Select campo='Sistema' name='sistema' required={true} byId={false} propiedad={general.sistema} opciones={sistemas ? sistemas : ['SELECCIONE']} manejador={setValores} />
-                    
-                    <Input campo='Marca' name='marca' required={true} propiedad={general.marca} editable={false} />
-                    <Input campo='Modelo' name='modelo' required={true} propiedad={general.modelo} editable={false} />
-                    <Input campo='Serial' name='serial' propiedad={general.mod_serial} editable={false} />
-                    <Input campo='Velocidad CPU' name='velocidad' required={true} propiedad={general.mod_velocidad_cpu} manejador={setValores} />
-                    <Input campo='Cantidad CPU' name='cantidad' required={true} propiedad={general.mod_cantidad_cpu} manejador={setValores} />
-                    <Input campo='Memoria' name='memoria' required={true} propiedad={general.mod_memoria} manejador={setValores} />
+                <div className='w-full grid grid-cols-1 md:grid-cols-2'>
 
-                    <Select campo='Region' name='region' required={true} byId={false} propiedad={general.region} opciones={regiones ? regiones : ['SELECCIONE']} manejador={setValores} />
-                    <Select campo='Localidad' name='localidad' required={true} byId={false} propiedad={general.localidad} opciones={localidades ? localidades : ['SELECCIONE']} manejador={setValores} />
-                </div>
+                    <div className='w-full flex flex-col'>
+                        <Select campo='Estatus' name='estatus' required={true} byId={false} propiedad={general.estatus} opciones={estatus ? estatus : ['SELECCIONE']} manejador={setValores}/>
+                        <Select campo='Sistema' name='sistema' required={true} byId={false} propiedad={general.sistema} opciones={sistemas ? sistemas : ['SELECCIONE']} manejador={setValores} />
+                        <Input campo='Modelo' name='modelo' required={true} propiedad={general.modelo} editable={false} />
+                        <Input campo='Velocidad CPU' name='velocidad' required={true} propiedad={general.mod_velocidad_cpu} manejador={setValores} />
+                        <Input campo='Memoria' name='memoria' required={true} propiedad={general.mod_memoria} manejador={setValores} />
+                        <Select campo='Localidad' name='localidad' required={true} byId={false} propiedad={general.localidad} opciones={localidades ? localidades : ['SELECCIONE']} manejador={setValores} />
+                    </div>
+
                     
-                <div className="flex space-x-2 md:space-x-12 pt-6">
+                    <div className='w-full flex flex-col md:ml-2'>
+                        <Input campo='Direccion' name='direccion' required={true} propiedad={general.ser_direccion} manejador={setValores} />
+                        <Input campo='Marca' name='marca' required={true} propiedad={general.marca} editable={false} />
+                        <Input campo='Serial' name='serial' propiedad={general.mod_serial} editable={false} />
+                        <Input campo='Cantidad CPU' name='cantidad' required={true} propiedad={general.mod_cantidad_cpu} manejador={setValores} />
+                        <Select campo='Region' name='region' required={true} byId={false} propiedad={general.region} opciones={regiones ? regiones : ['SELECCIONE']} manejador={setValores} />
+                    </div>
+                </div>
+
+                    
+                <div className="flex flex-col space-x-0 space-y-3 pt-12 md:flex-row md:space-x-12 md:space-y-0">
                     <Button tipo='button' color='blue' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
                     <Button tipo='submit' color='blue' width={32}>Actualizar</Button>
                     {obtenerUsuario().rol === 'admin' ? (

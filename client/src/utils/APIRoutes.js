@@ -15,9 +15,10 @@ export const obtenerUsuario = () => { return JSON.parse(localStorage.getItem('us
 
 // ---------------- LOGOUT ------------------
 export const logout = async () => {
+    const id = obtenerUsuario().usuario_id;
     localStorage.removeItem("user");
     window.location.reload();
     try {
-        await axios.get(`${rutaAuth}/logout`);
+        await axios.get(`${rutaAuth}/logout/${id}`);
     } catch (error) {Notificacion(error, 'error'); }
 } 

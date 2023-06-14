@@ -52,17 +52,25 @@ function VerCustodio() {
             <>
               <h2 className='font-bold text-lg'>Custodio</h2>
               <form className="w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" >
-                <div className='grid space-x-4 mb-6 md:grid-cols-2'> 
-                  <Input campo='Nombre' editable={false} propiedad={general.cus_nombre} />
-                  <Input campo='Apellido' editable={false} propiedad={general.cus_apellido} />
-                  <Input campo='Indicador' editable={false} propiedad={general.cus_indicador} />
-                  <Input campo='Cedula' editable={false} propiedad={general.cus_cedula} />
-                  <Input campo='Correo' editable={false} propiedad={`${general.cus_indicador}@pdvsa.com`} />
-                  <Input campo='Telefono' editable={false} propiedad={general.telefono} />
-                  <Input campo='Cargo' editable={false} propiedad={general.cargo} />
-                  <Input campo='Gerencia' editable={false} propiedad={general.gerencia} />
-                  <Input campo='Region' editable={false} propiedad={general.region} />
-                  <Input campo='Localidad' editable={false} propiedad={general.localidad} />
+                
+                <div className='w-full grid grid-cols-1 md:grid-cols-2'> 
+
+                  <div className='w-full flex flex-col'>
+                    <Input campo='Nombre' editable={false} propiedad={general.cus_nombre} />
+                    <Input campo='Indicador' editable={false} propiedad={general.cus_indicador} />
+                    <Input campo='Correo' editable={false} propiedad={`${general.cus_indicador}@pdvsa.com`} />
+                    <Input campo='Cargo' editable={false} propiedad={general.cargo} />
+                    <Input campo='Region' editable={false} propiedad={general.region} />
+                  </div>
+
+                  <div className='w-full flex flex-col md:ml-2'>
+                    <Input campo='Apellido' editable={false} propiedad={general.cus_apellido} />
+                    <Input campo='Cedula' editable={false} propiedad={general.cus_cedula} />
+                    <Input campo='Telefono' editable={false} propiedad={general.telefono} />
+                    <Input campo='Gerencia' editable={false} propiedad={general.gerencia} />
+                    <Input campo='Localidad' editable={false} propiedad={general.localidad} />
+                  </div>
+
                 </div>
               </form>
             </>

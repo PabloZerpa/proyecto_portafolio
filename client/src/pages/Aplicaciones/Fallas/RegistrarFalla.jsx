@@ -124,7 +124,7 @@ function RegistrarFalla() {
             ) : (null) }
             <form className="flex flex-col items-center space-y-8 pb-4" onSubmit={registrarFalla}>
 
-                <div className="flex flex-col space-y-2">
+                <div className="flex flex-col items-center space-y-2">
                     <h2 className='font-bold text-base'>Datos de la Falla</h2>
 
                     <div className="flex flex-col p-4 w-[320px] md:w-[640px] lg:w-[800px] bg-zinc-400 rounded">
