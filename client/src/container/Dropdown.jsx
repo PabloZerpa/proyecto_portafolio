@@ -2,7 +2,7 @@
 
 import { FaUserCircle, FaChevronDown, FaSignOutAlt, FaRegIdCard } from 'react-icons/fa';
 import { useState } from "react";
-import { logout } from "../utils/APIRoutes";
+import { cerrarSesion } from "../utils/APIRoutes";
 import { Link } from "react-router-dom";
 
 function Dropdown({ user }) {
@@ -34,7 +34,7 @@ function Dropdown({ user }) {
                   <span className="px-0">Ver Perfil</span>
                 </span>
 
-                <span className="flex justify-center items-center space-x-2 px-2 py-2 text-black no-underline rounded-sm hover:bg-gray-800 hover:text-gray-100" onClick={logout} >
+                <span className="flex justify-center items-center space-x-2 px-2 py-2 text-black no-underline rounded-sm hover:bg-gray-800 hover:text-gray-100" onClick={cerrarSesion} >
                   <FaSignOutAlt className="text-lg cursor-pointer" />
                   <span className="px-0">Cerrar Sesion</span>
                 </span>

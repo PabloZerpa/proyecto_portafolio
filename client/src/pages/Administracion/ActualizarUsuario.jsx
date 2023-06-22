@@ -50,7 +50,7 @@ function ActualizarUsuario({setIsOpen, valores, setUpdate}) {
     try {
       if(obtenerUsuario().rol !== 'user'){
 
-        await axios.patch(`${rutaUsuario}/permisos/${datos.id}`, datos, { headers: authHeader() });
+        await axios.patch(`${rutaUsuario}/${datos.id}`, datos, { headers: authHeader() });
         Notificacion('USUARIO MODDIFICADO EXITOSAMENTE', 'success');
         setUpdate(true);
         setIsOpen(false);

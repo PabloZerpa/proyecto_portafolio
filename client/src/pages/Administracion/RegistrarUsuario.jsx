@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-import { Button, Container, Input, Select } from "../../components/";
+import { Button, Container, Input, Select } from "../../components";
 import { FaArrowLeft } from "react-icons/fa";
 import { Notificacion } from "../../utils/Notificacion";
 import Opciones from "../../utils/Opciones";
@@ -9,7 +9,7 @@ import { obtenerUsuario, rutaAuth } from "../../utils/APIRoutes";
 import axios from "axios";
 import authHeader from "../../utils/header";
 
-function CrearUsuario() {
+function RegistrarUsuario() {
 
     // ---------- FUNCION PARA NAVEGAR A RUTA INDICADA ----------
     const navigate = useNavigate();
@@ -46,7 +46,7 @@ function CrearUsuario() {
     }
 
     // =================== CREAR USUARIOS ===================
-    async function crearUsuario(e){
+    async function registrarUsuario(e){
         e.preventDefault(); 
 
         if(obtenerUsuario().rol !== 'user'){
@@ -66,7 +66,7 @@ function CrearUsuario() {
     return(
         <Container>
 
-            <form className="flex flex-col items-center space-y-8 pb-4" onSubmit={crearUsuario}>
+            <form className="flex flex-col items-center space-y-8 pb-4" onSubmit={registrarUsuario}>
 
                 <div className="flex flex-col items-center space-y-4">
                     <h2 className='font-bold text-base'>Datos del Nuevo Usuario</h2>
@@ -91,11 +91,11 @@ function CrearUsuario() {
                     <Button width={32} manejador={(e) => navegar(-1)} ><FaArrowLeft className="mr-1" />Volver</Button>
                     <Button tipo="submit" width={32}>Registrar Usuario</Button>
                 </div>
-
+ 
             </form>
 
         </Container>
     );
 }
 
-export default CrearUsuario;
+export default RegistrarUsuario; 

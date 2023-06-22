@@ -57,7 +57,7 @@ function RegistrarApp() {
     }
 
     // =================== FUNCION PARA ACTUALIZAR DATOS ===================
-    async function crearDatos(e) {
+    async function registrarAplicacion(e) {
         e.preventDefault();
 
         if(obtenerUsuario().rol !== 'user'){
@@ -335,7 +335,7 @@ function RegistrarApp() {
 
             <h1 className='font-bold text-lg'>Registro de Aplicacion</h1>
 
-            <form className="flex flex-col justify-center items-center w-full p-4 mb-10 z-40" onSubmit={crearDatos} >
+            <form className="flex flex-col justify-center items-center w-full p-4 mb-10 z-40" onSubmit={registrarAplicacion} >
                 
                 {/* --------------- INFORMACION BASICA --------------- */}
                 <div className="flex flex-col w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >

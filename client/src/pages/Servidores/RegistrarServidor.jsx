@@ -80,7 +80,7 @@ function RegistrarServidor() {
     }
 
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
-    async function createData(e) {
+    async function registrarServidor(e) {
         e.preventDefault();
 
         try {
@@ -102,7 +102,7 @@ function RegistrarServidor() {
         <Container>
             <h1 className='font-bold text-lg'>Registro de Servidor</h1>
 
-            <form className="flex flex-col items-center space-y-4 relative w-3/4 bg-zinc-400 p-4 rounded drop-shadow-md" onSubmit={createData}>
+            <form className="flex flex-col items-center space-y-4 relative w-3/4 bg-zinc-400 p-4 rounded drop-shadow-md" onSubmit={registrarServidor}>
                 <div className='w-full'>
                     <TextArea campo='Nombre' name='servidor' required={true} editable={true} manejador={setValores} />
                 </div>

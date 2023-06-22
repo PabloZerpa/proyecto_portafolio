@@ -165,7 +165,7 @@ function Servidores() {
     }
 
     // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
-    async function obtenerServidorPorBusqueda(term,estatus,region,sistema,marca,orden) {
+    async function obtenerBusqueda(term,estatus,region,sistema,marca,orden) {
         try {
             return axios.post(`${rutaServidor}/busqueda`, 
             {term,estatus,region,sistema,marca,orden}, { headers: authHeader() });
@@ -179,7 +179,7 @@ function Servidores() {
         try {
             const { terminoBusqueda,estatus,region,sistema,marca,orden } = datos;
 
-            const respuesta = await obtenerServidorPorBusqueda(
+            const respuesta = await obtenerBusqueda(
                 terminoBusqueda,estatus,region,sistema,marca,orden);
 
             setResultado(respuesta.data);

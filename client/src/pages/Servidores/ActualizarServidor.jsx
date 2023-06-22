@@ -10,7 +10,7 @@ import axios from 'axios';
 import authHeader from '../../utils/header';
 import swal from 'sweetalert'; 
 
-function ActualizarServidor() {
+function ActualizarServidorServidor() {
     
     // ---------- FUNCION PARA NAVEGAR A RUTA INDICADA ----------
     const navigate = useNavigate();
@@ -113,7 +113,7 @@ function ActualizarServidor() {
     }
 
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
-    async function actualizar(e) {
+    async function actualizarServidor(e) {
         e.preventDefault();
 
         try {
@@ -131,7 +131,7 @@ function ActualizarServidor() {
         }
       }
 
-    const eliminar = async (id) => {
+    const eliminarServidor = async (id) => {
         try {
             if(obtenerUsuario().rol !== 'user'){
                 await axios.delete(`${rutaServidor}/${id}`, { headers: authHeader() });
@@ -153,7 +153,7 @@ function ActualizarServidor() {
             <Container>
             <h1 className='font-bold text-lg'>Actualización de Servidor</h1>
 
-            <form className="flex flex-col items-center space-y-4 relative w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" onSubmit={actualizar}>
+            <form className="flex flex-col items-center space-y-4 relative w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" onSubmit={actualizarServidor}>
                 <div className='w-full'>
                     <TextArea campo='Nombre' name='servidor' required={true} propiedad={general.servidor} manejador={setValores} />
                 </div>
@@ -182,7 +182,7 @@ function ActualizarServidor() {
                     
                 <div className="flex flex-col space-x-0 space-y-3 pt-12 md:flex-row md:space-x-12 md:space-y-0">
                     <Button tipo='button' color='blue' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
-                    <Button tipo='submit' color='blue' width={32}>Actualizar</Button>
+                    <Button tipo='submit' color='blue' width={32}>ActualizarServidor</Button>
                     {obtenerUsuario().rol === 'admin' ? (
                         <Button tipo='button' color='red' width={32} manejador={(e) => {
                             swal({
@@ -204,7 +204,7 @@ function ActualizarServidor() {
                                 },
                             }).then((result) => {
                                 if (result)
-                                eliminar(id);
+                                eliminarServidor(id);
                             })
                         }} >Eliminar</Button>
                     ) : null}
@@ -216,4 +216,4 @@ function ActualizarServidor() {
     }
 };
 
-export default ActualizarServidor;
+export default ActualizarServidorServidor;

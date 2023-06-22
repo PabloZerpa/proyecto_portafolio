@@ -134,7 +134,7 @@ const cambiarPermisos = async (req,res) => {
  }
  
  // *************** OBTENER CANTIDAD POR REGIONES ***************
- const obtenerCantidadRegiones = async (req,res) => {
+ const obtenerCantidadCategoria = async (req,res) => {
      const { categoria,orden } = req.body;
 
      try{
@@ -310,4 +310,4 @@ const cambiarPermisos = async (req,res) => {
 }
     
 module.exports = { obtenerUsuarios, cambiarPermisos, obtenerPorBusqueda, eliminarUsuario, 
-obtenerLocalidades, obtenerCantidadRegiones, obtenerActividad, obtenerValores };
+obtenerLocalidades, obtenerCantidadCategoria, obtenerActividad, obtenerValores };

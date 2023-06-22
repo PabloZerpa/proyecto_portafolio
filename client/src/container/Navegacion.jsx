@@ -3,7 +3,7 @@ import { useState } from "react";
 import { FaHome, FaCode,FaDatabase, FaChevronDown, FaChevronUp, 
     FaKey, FaSignOutAlt, FaBars, FaHardHat, FaServer } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { logout, obtenerUsuario } from "../utils/APIRoutes";
+import { cerrarSesion, obtenerUsuario } from "../utils/APIRoutes";
 
 function Navegacion() {
     
@@ -107,7 +107,7 @@ function Navegacion() {
                             <div className="w-full h-0.5 bg-gray-500 opacity-50"></div>
 
                             <li>
-                                <span className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100 cursor-pointer" onClick={logout} >
+                                <span className="flex items-center p-2 no-underline text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-800 hover:text-gray-100 cursor-pointer" onClick={cerrarSesion} >
                                     <FaSignOutAlt />
                                     <span className="px-2">Cerrar Sesion</span>
                                 </span>

@@ -30,14 +30,14 @@ function BuscarUsuario() {
   const [update, setUpdate] = useState(false);
 
   // =================== FUNCION PARA HABILITAR VENTANA MODAL DE EDICION ===================
-  const habilitarEdicion = (dato) => {
+  const mostrarEdicion = (dato) => {
     if(dato.rol !== 'admin'){
       setIsOpen(!isOpen);
       setUsuario(dato); 
     }
   }
 
-  const habilitarActividad = async (dato) => {
+  const mostrarActividad = async (dato) => {
     const x = await axios.get(`${rutaUsuario}/actividad/${dato.usuario_id}`, { headers: authHeader() });
     
     setIsOpen2(!isOpen2);
@@ -79,7 +79,7 @@ function BuscarUsuario() {
     try {
       if(obtenerUsuario().rol !== 'user'){
         
-        await axios.delete(`${rutaUsuario}/eliminar/${row.usuario_id}`, { headers: authHeader() });
+        await axios.delete(`${rutaUsuario}/${row.usuario_id}`, { headers: authHeader() });
         onSearch(debounceValue);
         Notificacion('USUARIO ELIMINADO EXITOSAMENTE', 'success');
       }
@@ -97,7 +97,7 @@ function BuscarUsuario() {
       cell: row => 
         <div className="flex space-x-4">
           <FaEye 
-            onClick={(e) => habilitarActividad(row)}
+            onClick={(e) => mostrarActividad(row)}
             className="text-blue-500 text-lg" 
           />
         </div>
@@ -109,7 +109,7 @@ function BuscarUsuario() {
       cell: row => 
         <div className="flex space-x-4">
           <FaEdit 
-            onClick={(e) => habilitarEdicion(row)}
+            onClick={(e) => mostrarEdicion(row)}
             className="text-blue-500 text-lg" 
           />
         </div>

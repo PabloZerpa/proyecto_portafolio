@@ -14,7 +14,7 @@ export const rutaUsuario = `${baseUrl}usuarios/`;
 export const obtenerUsuario = () => { return JSON.parse(localStorage.getItem('user')); }
 
 // ---------------- LOGOUT ------------------
-export const logout = async () => {
+export const cerrarSesion = async () => {
     const id = obtenerUsuario().usuario_id;
     localStorage.removeItem("user");
     window.location.reload();

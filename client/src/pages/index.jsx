@@ -5,7 +5,7 @@ import ActualizarApp from './Aplicaciones/ActualizarApp';
 import Registrar from './Administracion/Registrar';
 import RegistrarApp from './Aplicaciones/RegistrarApp';
 import Permisos from './Administracion/Permisos';
-import CrearUsuario from './Administracion/CrearUsuario';
+import RegistrarUsuario from './Administracion/RegistrarUsuario';
 import BuscarUsuario from './Administracion/BuscarUsuario';
 import Aplicaciones from './Aplicaciones/Aplicaciones';
 import VerAplicacion from './Aplicaciones/VerAplicacion';
@@ -33,7 +33,7 @@ export {
     Registrar,
     RegistrarApp,
     Permisos,
-    CrearUsuario,
+    RegistrarUsuario,
     BuscarUsuario,
     Aplicaciones,
     VerAplicacion,

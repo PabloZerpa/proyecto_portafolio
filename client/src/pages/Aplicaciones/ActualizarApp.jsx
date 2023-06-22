@@ -13,7 +13,7 @@ import DocumentosForm from '../../components/DocumentosForm';
 import axios from 'axios';
 import authHeader from '../../utils/header';  
 
-function ActualizarApp() {
+function ActualizarAplicacionApp() {
 
     // ---------- FUNCION PARA NAVEGAR A RUTA INDICADA ----------
     const navigate = useNavigate();
@@ -361,7 +361,7 @@ function ActualizarApp() {
     }, [load]);
 
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
-    async function actualizar(e) {
+    async function actualizarAplicacion(e) {
         e.preventDefault();
         try {
             if(obtenerUsuario().rol !== 'user'){
@@ -469,7 +469,7 @@ function ActualizarApp() {
 
             <h2 className='font-bold text-lg'>Actualizacion de Aplicacion</h2>
 
-            <form className="flex flex-col justify-center items-center relative w-full p-4 mb-10 z-40" onSubmit={actualizar} >
+            <form className="flex flex-col justify-center items-center relative w-full p-4 mb-10 z-40" onSubmit={actualizarAplicacion} >
 
                 <div className="flex flex-col relative w-3/4 bg-zinc-400 p-4 pb-4 mb-10 rounded drop-shadow-md" >
 
@@ -605,7 +605,7 @@ function ActualizarApp() {
 
                 <div className="flex space-x-2 md:space-x-12">
                     <Button tipo='button' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
-                    <Button tipo='submit' width={32}>Actualizar</Button>
+                    <Button tipo='submit' width={32}>ActualizarAplicacion</Button>
                     {obtenerUsuario().rol === 'admin' ? (
                         <Button tipo='button' color='red' width={32} manejador={(e) => {
                             swal({
@@ -640,4 +640,4 @@ function ActualizarApp() {
     }
 };
 
-export default ActualizarApp;
+export default ActualizarAplicacionApp;

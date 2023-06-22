@@ -150,7 +150,7 @@ function BaseDatos() {
     }
 
     // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
-    async function obtenerBDPorBusqueda(term,estatus,tipo,manejador,ambiente,count,orden) {
+    async function obtenerBusqueda(term,estatus,tipo,manejador,ambiente,count,orden) {
         try {
             return axios.post(`${rutaBaseDatos}/busqueda`, 
             {term,estatus,tipo,manejador,ambiente,count,orden}, { headers: authHeader() });
@@ -164,7 +164,7 @@ function BaseDatos() {
         try {
             const { terminoBusqueda,estatus,tipo,manejador,ambiente,registros,orden } = datos;
 
-            const respuesta = await obtenerBDPorBusqueda(terminoBusqueda,estatus,tipo,manejador,ambiente,registros,orden);
+            const respuesta = await obtenerBusqueda(terminoBusqueda,estatus,tipo,manejador,ambiente,registros,orden);
             setResultado(respuesta.data);
             
         } catch (error) {

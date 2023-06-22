@@ -76,7 +76,7 @@ function RegistrarBD() {
     }
 
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
-    async function createData(e) {
+    async function registrarBaseDatos(e) {
         e.preventDefault();
 
         try {
@@ -163,7 +163,7 @@ function RegistrarBD() {
 
             <h1 className='font-bold text-lg'>Registro de Base de datos</h1>
 
-            <form className="flex flex-col items-center space-y-4 relative w-3/4 bg-zinc-400 p-4 rounded drop-shadow-md" onSubmit={createData}>
+            <form className="flex flex-col items-center space-y-4 relative w-3/4 bg-zinc-400 p-4 rounded drop-shadow-md" onSubmit={registrarBaseDatos}>
 
                 <div className='w-full'>
                     <TextArea campo='Nombre' name='base_datos' required={true} editable={true} area={true} manejador={setValores} />

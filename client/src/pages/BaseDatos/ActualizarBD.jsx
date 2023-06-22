@@ -12,7 +12,7 @@ import authHeader from '../../utils/header';
 import { obtenerUsuario, rutaBaseDatos } from '../../utils/APIRoutes';
 import swal from 'sweetalert';
 
-function ActualizarBD() {
+function ActualizarBDBD() {
 
     // ---------- FUNCION PARA NAVEGAR A RUTA INDICADA ----------
     const navigate = useNavigate();
@@ -122,7 +122,7 @@ function ActualizarBD() {
     }, [id]); 
 
     // -------------------- FUNCION PARA ACTUALIZAR DATOS --------------------
-    async function actualizar(e) {
+    async function actualizarBD(e) {
         e.preventDefault();
 
         try {
@@ -200,7 +200,7 @@ function ActualizarBD() {
         },
     ];
 
-    const eliminar = async (id) => {
+    const eliminarBD = async (id) => {
         try {
             if(obtenerUsuario().rol !== 'user'){
                 await axios.delete(`${rutaBaseDatos}/${id}`, { headers: authHeader() });
@@ -235,7 +235,7 @@ function ActualizarBD() {
 
             <h1 className='font-bold text-lg'>Actualización de Base de datos</h1>
 
-            <form className="flex flex-col items-center space-y-4 relative w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" onSubmit={actualizar}>
+            <form className="flex flex-col items-center space-y-4 relative w-3/4 bg-zinc-400 p-4 mb-10 rounded drop-shadow-md" onSubmit={actualizarBD}>
 
                 <div className='w-full'>
                     <TextArea campo='Nombre' name='base_datos' required={true} editable={true} propiedad={general.base_datos} manejador={setValores} />
@@ -271,7 +271,7 @@ function ActualizarBD() {
 
                 <div className="flex flex-col space-x-0 space-y-3 pt-12 md:flex-row md:space-x-12 md:space-y-0">
                     <Button tipo='button' color='blue' width={32} manejador={(e) => navegar(-1)} >Cancelar</Button>
-                    <Button tipo='submit' color='blue' width={32}>Actualizar</Button>
+                    <Button tipo='submit' color='blue' width={32}>ActualizarBD</Button>
                     {obtenerUsuario().rol === 'admin' ? (
                         <Button tipo='button' color='red' width={32} manejador={(e) => {
                             swal({
@@ -293,7 +293,7 @@ function ActualizarBD() {
                                 },
                                 }).then((result) => {
                                 if (result)
-                                    eliminar(id);
+                                    eliminarBD(id);
                                 })
                         }} >Eliminar</Button>
                     ) : null}
@@ -306,4 +306,4 @@ function ActualizarBD() {
     }
 };
 
-export default ActualizarBD;
+export default ActualizarBDBD;

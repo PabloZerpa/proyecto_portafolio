@@ -58,7 +58,7 @@ function Diagramas() {
     const onSearch = async (categoria,mostrar) => {
     try {
 
-        const {data} = await axios.post(`${rutaUsuario}/cantidadRegiones`, {categoria,mostrar}, { headers: authHeader() });
+        const {data} = await axios.post(`${rutaUsuario}/cantidadCategorias`, {categoria,mostrar}, { headers: authHeader() });
 
         setResultados(data.cantidad);
 

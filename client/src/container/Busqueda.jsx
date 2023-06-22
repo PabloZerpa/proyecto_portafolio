@@ -77,7 +77,7 @@ function Busqueda({manejarBusqueda}) {
 
 
     // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
-    async function obtenerPorBusqueda(term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
+    async function obtenerBusqueda(term,estatus,plataforma,prioridad,region,alcance,mantenimiento,
         critico,codigo,count,order,cantidad) {
         try {
             return axios.post(`${rutaAplicacion}/busqueda`, 
@@ -93,7 +93,7 @@ function Busqueda({manejarBusqueda}) {
             const { terminoBusqueda, estatus,plataforma,prioridad,region,alcance,mantenimiento,
                 critico,codigo,registros,orden,cantidad } = datos;
 
-            const respuesta = await obtenerPorBusqueda
+            const respuesta = await obtenerBusqueda
                 (terminoBusqueda,estatus,plataforma,prioridad,region,
                 alcance,mantenimiento,critico,codigo,registros,orden,cantidad);
 

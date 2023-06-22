@@ -41,7 +41,7 @@ function Fallas() {
     } 
 
     // =============== OBTIENE LOS DATOS POR EL TERMINO BUSCADO ===============
-    async function obtenerFallaPorBusqueda(term) {
+    async function obtenerBusqueda(term) {
         try {
             return axios.post(`${rutaAplicacion}/fallas/busqueda`,{term}, { headers: authHeader() });
         } catch (error) {
@@ -54,7 +54,7 @@ function Fallas() {
     const onSearch = async (termino) => {
         try {
             const { terminoBusqueda } = termino;
-            const datos = await obtenerFallaPorBusqueda(terminoBusqueda);
+            const datos = await obtenerBusqueda(terminoBusqueda);
             setResultados(datos.data);
         } catch (error) { 
             Notificacion(error.response.data.message, 'error');

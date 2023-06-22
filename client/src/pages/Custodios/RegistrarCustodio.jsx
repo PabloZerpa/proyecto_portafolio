@@ -81,7 +81,7 @@ function RegistrarCustodio() {
                 .then(response => { return response.data; });
 
                 Notificacion('REGISTRO EXITOSO', 'success');
-                navigate(`/custodios/${id}`);
+                navigate(`/custodios/${id}`);  
             }
         }
         catch (error) { 

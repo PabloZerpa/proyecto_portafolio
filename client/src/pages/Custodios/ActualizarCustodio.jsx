@@ -96,7 +96,7 @@ function ActualizarCustodio() {
             setLocalidades(await OpcionesLocalidades(data.general.region));
             setLoad(false);
         }
-        fetchData();
+        fetchData(); 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -107,6 +107,7 @@ function ActualizarCustodio() {
 
         try {
           if(obtenerUsuario().rol !== 'user'){
+            console.log(datos);
             await axios.patch(`${rutaCustodio}/${id}`, datos, { headers: authHeader() });
             
             Notificacion('ACTUALIZACION EXITOSA', 'success');

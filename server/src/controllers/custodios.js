@@ -15,68 +15,132 @@ FROM custodios
     LEFT JOIN localidades ON localidades.localidad_id = custodios.cus_localidad`;
 
 
-// Registra y Guarda un Custodio
-const registrarCustodio2 = async (req, res) => {
+// *********************************** OBTENER LOS DATOS POR TERMINO DE BUSQUEDA ***********************************
+const obtenerBusqueda2 = async (req,res) => {
+    try {
+        const { term, cargo,gerencia,region } = req.body;
+        // const termino = '%' + term + '%';
 
-    // Validar datos
-    if (!req.body)
-        res.status(400).send({ message: "Contenido no puede ser vacio!" });
+        if (term === undefined || null)
+            return res.status(404).json({ message: "Error al recibir consulta" });
+    
 
-    const { nombre,apellido,indicador,cedula,telefono,cargo,gerencia,region,localidad,usuario_registro } = req.body;
+        const busqueda = await Custodio.busqueda(req.body);
 
-    // Crea custodio
+        res.json(busqueda);
+        
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR AL BUSCAR CUSTODIOS' });
+    }
+};
+
+// *********************************** OBTENER FALLAS ***********************************
+const registrarCustodio2 = async (req,res) => {
+
+    // Create Custodio
     const custodio = new Custodio({
-        nombre : nombre,
-        apellido : apellido,
-        indicador : indicador,
-        cedula : cedula,
-        cargo : cargo,
-        gerencia : gerencia,
-        region : region,
-        localidad : localidad,
-        usuario_registro : usuario_registro,
+        nombre: req.body.nombre,
+        apellido: req.body.apellido,
+        indicador: req.body.indicador,
+        cedula: req.body.cedula,
+        telefono: req.body.telefono,
+        cargo: req.body.cargo,
+        gerencia: req.body.gerencia,
+        region: req.body.region,
+        localidad: req.body.localidad,
+        usuario_registro: req.body.usuario_registro,
     });
 
-    // Guarda el custodio en la base de datos
-    Custodio.registrar(custodio,telefono, (err, data) => {
-        if (err)
-            res.status(500).send({
-            message:
-            err.message || "Some error occurred while creating the Custodio."
+    const custodioExiste = await Custodio.existe(req.body.indicador)
+
+    if(custodioExiste){
+        return res.status(401).json({ message: 'PERSONA YA REGISTRADA' });
+    }
+    else
+    {
+        // Save Custodio in the database
+        const id = await Custodio.registrar(custodio, (err, data) => {
+            if (err)
+                res.status(500).send({ message: err.message || "ERROR AL REGISTRAR"});
+            else 
+                return(data);
         });
-        else res.send(data);
-    });
 
-    res.send(`CUSTODIO CREADO`);
-
+        const datosAuditoria = {
+            mensaje : `Registro de Custodio ${req.body.indicador}`,
+            ip : req.ip,
+            usuario_id : req.usuario_id
+        }
+        generarLogAuditoria(datosAuditoria);
+    
+        res.send(`${id}`);
+    }
 };
 
-// Buscar Custodio
-const buscarCustodio2 = async (req, res) => {
+// *********************************** ELIMINAR REGISTRO ***********************************
+const eliminarCustodio2 = async (req,res) => {
+    try {
+        const { id } = req.params;
 
-    // Validar datos
-    if (!req.body)
-        res.status(400).send({ message: "Contenido no puede ser vacio!" });
+        Custodio.eliminar(id);
 
-    const { term, cargo,gerencia,region } = req.body;
-    const termino = '%' + term + '%';
-    let data;
+        const datosAuditoria = {
+            mensaje : `Eliminado de Custodio ${id}`,
+            ip : req.ip,
+            usuario_id : req.usuario_id
+        }
+        generarLogAuditoria(datosAuditoria);
 
-    if (term === undefined || null)
-        return res.status(404).json({ message: "Error al recibir consulta" });
-
-    // Guarda el custodio en la base de datos
-    Custodio.busqueda(termino, (err, data) => {
-        if (err)
-            res.status(500).send({
-            message:
-            err.message || "Some error occurred while creating the Custodio."
-        });
-        else res.send(data);
-    });
-
-    res.json(data[0]);
+        res.sendStatus(204);
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR AL ELIMINAR CUSTODIOS' });
+    }
 };
+
+// *********************************** OBTENER INFORMACION GENERAL ***********************************
+const obtenerDatos2 = async (req,res) => {
+    try {
+        const { id } = req.params;
+
+        const general = await Custodio.infoGeneral(id);
+        const aplicacionFuncional = await Custodio.appFuncional(id);
+        const aplicacionTecnico = await Custodio.appTecnico(id);
+
+        const respuesta = {
+            general: general,
+            aplicacionFuncional: aplicacionFuncional,
+            aplicacionTecnico: aplicacionTecnico,
+        };
+        console.log(respuesta);
+        res.send(respuesta);
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR AL OBTENER CUSTODIOS' });
+    }
+};
+
+// *********************************** ACTUALIZAR REGISTRO ***********************************
+const actualizarCustodio2 = async (req,res) => {
+    const { id } = req.params;
+
+    try {
+
+        Custodio.actualizar(req.body, id);
+            
+        const datosAuditoria = {
+            mensaje : `Actualizacion de Custodio ${id}`,
+            ip : req.ip,
+            usuario_id : req.usuario_id
+        }
+        generarLogAuditoria(datosAuditoria);
+        
+        res.send('ACTUALIZACION EXITOSA');
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR AL ACTUALIZAR CUSTODIOS' });
+    }
+ }
+
+
+
 
 
 
@@ -145,6 +209,7 @@ const obtenerBusqueda = async (req,res) => {
         return res.status(401).json({ message: 'ERROR AL BUSCAR CUSTODIOS' });
     }
 };
+
 
 // *********************************** OBTENER FALLAS ***********************************
 const registrarCustodio = async (req,res) => {
@@ -314,5 +379,5 @@ const obtenerDatos = async (req,res) => {
 
 module.exports = { 
     obtenerBusqueda,registrarCustodio,eliminarCustodio,actualizarCustodio, obtenerDatos,
-    registrarCustodio2,buscarCustodio2,
+    registrarCustodio2,eliminarCustodio2,obtenerDatos2,actualizarCustodio2,obtenerBusqueda2
  };
